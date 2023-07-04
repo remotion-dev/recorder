@@ -114,6 +114,155 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       ></Composition>
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        height={1080}
+        width={1920}
+        id="Day4"
+        schema={videoConf}
+        defaultProps={{
+          prefix: "day4",
+          subtitle: "New in Remotion 4.0",
+          title: "Data-driven videos",
+          scenes: [
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+          ],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      ></Composition>
     </>
   );
 };
