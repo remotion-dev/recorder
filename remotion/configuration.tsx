@@ -1,0 +1,90 @@
+import { getStaticFiles, StaticFile } from "remotion";
+import { z } from "zod";
+
+export type SceneMetadata = {
+  durationInFrames: number;
+  width: number;
+  height: number;
+};
+
+export const configuration = z.object({
+  webcamPosition: z.enum([
+    "top-left",
+    "top-right",
+    "bottom-left",
+    "bottom-right",
+  ]),
+  trimStart: z.number(),
+  duration: z.number().nullable().default(null),
+});
+
+export const videoConf = z.object({
+  scenes: z.array(configuration),
+  title: z.string(),
+  subtitle: z.string(),
+});
+
+export const getPairs = (prefix: string) => {
+  const files = getStaticFiles().filter((f) => f.name.startsWith(prefix));
+
+  const pairs = files
+    .map((f): Pair | null => {
+      if (f.name.startsWith(`${prefix}/display`)) {
+        const timestamp = f.name
+          .replace(`${prefix}/display`, "")
+          .replace(".webm", "");
+        const webcam = files.find(
+          (f) => f.name === `${prefix}/webcam${timestamp}.webm`
+        );
+        if (!webcam) {
+          throw new Error(`No webcam file found for ${f.name}`);
+        }
+
+        return { display: f, webcam: webcam! };
+      }
+
+      return null;
+    })
+    .filter(Boolean) as Pair[];
+  return pairs;
+};
+
+export type Pair = {
+  display: StaticFile;
+  webcam: StaticFile;
+};
+
+export const safeSpaceBottom = 120;
+export const frameWidth = 10;
+export const borderRadius = 10;
+
+export const getLayout = (width: number, height: number) => {
+  const canvasWidth = 1920;
+  const canvasHeight = 1080;
+
+  const safeSpace = 50;
+
+  const maxHeight = canvasHeight - safeSpaceBottom - safeSpace;
+  const maxWidth = canvasWidth - safeSpace * 2;
+
+  const heightRatio = maxHeight / (height + frameWidth * 2);
+  const widthRatio = maxWidth / (width + frameWidth * 2);
+
+  const ratio = Math.min(heightRatio, widthRatio);
+
+  const newWidth = (width + frameWidth * 2) * ratio;
+  const newHeight = (height + frameWidth * 2) * ratio;
+
+  const x = (canvasWidth - newWidth) / 2;
+  const y = (canvasHeight - newHeight - safeSpaceBottom) / 2;
+
+  return {
+    x,
+    y,
+    width: newWidth,
+    height: newHeight,
+  };
+};
+
+export const introDuration = 50;
+export const fps = 30;
