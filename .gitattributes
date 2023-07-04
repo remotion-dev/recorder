@@ -1,0 +1,6 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+public filter=lfs diff=lfs merge=lfs -text
+public/day2 filter=lfs diff=lfs merge=lfs -text
+public/day3 filter=lfs diff=lfs merge=lfs -text
+public/*/** filter=lfs diff=lfs merge=lfs -text
