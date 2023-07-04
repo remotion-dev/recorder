@@ -13,7 +13,7 @@ import {
 export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   props,
 }) => {
-  const pairs = getPairs("day2");
+  const pairs = getPairs(props.prefix);
   const metadata = await Promise.all(
     pairs.map(async (p, i): Promise<SceneMetadata> => {
       const scene = props.scenes[i];

@@ -100,6 +100,7 @@ export const Scene: React.FC<{
 
   return (
     <Sequence
+      name={`Scene ${index}`}
       from={from}
       durationInFrames={Math.max(1, metadata.durationInFrames)}
     >

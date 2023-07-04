@@ -16,8 +16,11 @@ const sorted = webcam.sort((a, b) => {
 
 const latest = sorted[0];
 const latestTimestamp = Number(latest.match(/([0-9]+)/)[1]);
-const displayLatest = `${prefix}/display${latestTimestamp}.webm`;
+const displayLatest = `display${latestTimestamp}.webm`;
 
-fs.copyFileSync(`${downloadsDir}/${displayLatest}`, `public/${displayLatest}`);
+fs.copyFileSync(
+  `${downloadsDir}/${displayLatest}`,
+  `public/${prefix}/${displayLatest}`
+);
 fs.copyFileSync(`${downloadsDir}/${latest}`, `public/${prefix}/${latest}`);
 console.log("copied", latest, displayLatest);
