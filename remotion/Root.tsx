@@ -275,7 +275,53 @@ export const Root = () => {
           prefix: "day5",
           subtitle: "New in Remotion 4.0",
           title: "Last but not least",
-          scenes: [],
+          scenes: [
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+          ],
           metadata: [],
           pairs: [],
         }}
