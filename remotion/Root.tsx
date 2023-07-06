@@ -30,14 +30,21 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "day2",
-          subtitle: "New in Remotion 4.0",
-          title: "Visual editing",
           scenes: [
             {
               webcamPosition: "bottom-left" as const,
               trimStart: 103,
               duration: 800,
               isTitle: null,
+            },
+            {
+              webcamPosition: "bottom-left" as const,
+              trimStart: 103,
+              duration: 800,
+              isTitle: {
+                subtitle: "New in Remotion 4.0",
+                title: "Visual editing",
+              },
             },
             {
               webcamPosition: "bottom-left" as const,
@@ -109,9 +116,17 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "day3",
-          subtitle: "New in Remotion 4.0",
-          title: "Render Button",
-          scenes: [],
+          scenes: [
+            {
+              webcamPosition: "bottom-left" as const,
+              trimStart: 0,
+              duration: 0,
+              isTitle: {
+                subtitle: "New in Remotion 4.0",
+                title: "Render Button",
+              },
+            },
+          ],
           metadata: [],
           pairs: [],
         }}
@@ -127,9 +142,16 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "day4",
-          subtitle: "New in Remotion 4.0",
-          title: "Data-driven videos",
           scenes: [
+            {
+              webcamPosition: "bottom-left" as const,
+              trimStart: 0,
+              duration: 0,
+              isTitle: {
+                title: "Data-driven videos",
+                subtitle: "New in Remotion 4.0",
+              },
+            },
             {
               webcamPosition: "top-left" as const,
               trimStart: 65,
@@ -302,8 +324,6 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "day5",
-          subtitle: "New in Remotion 4.0",
-          title: "Last but not least",
           scenes: [
             {
               webcamPosition: "bottom-left" as const,
@@ -462,9 +482,16 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "bts",
-          subtitle: "New in Remotion 4.0",
-          title: "Behind the scenes",
           scenes: [
+            {
+              webcamPosition: "bottom-left" as const,
+              trimStart: 0,
+              duration: 0,
+              isTitle: {
+                title: "Behind the scenes",
+                subtitle: "Remotion 4.0 Launch Week",
+              },
+            },
             {
               webcamPosition: "top-left" as const,
               trimStart: 42,
