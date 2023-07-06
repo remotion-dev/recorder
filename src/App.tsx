@@ -71,12 +71,12 @@ function App() {
     const displayMediaRecorder = new MediaRecorder(display, {
       audioBitsPerSecond: 128000,
       mimeType: "video/webm;codecs=vp8,opus",
-      videoBitsPerSecond: 2500000,
+      videoBitsPerSecond: 4000000,
     });
     const webcamRecorder = new MediaRecorder(webcam, {
       audioBitsPerSecond: 128000,
       mimeType: "video/webm;codecs=vp8,opus",
-      videoBitsPerSecond: 2500000,
+      videoBitsPerSecond: 4000000,
     });
     setMediaDisplayRecorder(displayMediaRecorder);
     setWebcamDisplayRecorder(webcamRecorder);
