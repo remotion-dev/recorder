@@ -1,14 +1,7 @@
 import { getVideoMetadata } from "@remotion/media-utils";
 import { CalculateMetadataFunction } from "remotion";
-import { z } from "zod";
 import { AllProps } from "./All";
-import {
-  fps,
-  getPairs,
-  introDuration,
-  SceneMetadata,
-  videoConf,
-} from "./configuration";
+import { fps, getPairs, titleDuration, SceneMetadata } from "./configuration";
 
 export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   props,
@@ -23,7 +16,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
         return {
           width: 0,
           height: 0,
-          durationInFrames: 50,
+          durationInFrames: titleDuration,
         };
       }
 
@@ -54,7 +47,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   );
 
   return {
-    durationInFrames: totalDuration + introDuration,
+    durationInFrames: totalDuration + titleDuration,
     props: {
       ...props,
       pairs,

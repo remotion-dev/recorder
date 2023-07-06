@@ -12,7 +12,7 @@ import {
 } from "remotion";
 import { z } from "zod";
 import { Pair, SceneMetadata, videoConf } from "./configuration";
-import { Intro } from "./Intro";
+import { Title } from "./Title";
 import { Scene } from "./Scene";
 
 export type AllProps = z.infer<typeof videoConf> & {
@@ -31,7 +31,7 @@ export const All: React.FC<AllProps> = ({
   subtitle,
 }) => {
   let addedUpDurations = 0;
-  let sceneCounter = -1;
+  let videoCounter = -1;
 
   return (
     <AbsoluteFill
@@ -39,26 +39,32 @@ export const All: React.FC<AllProps> = ({
         backgroundColor: "white",
       }}
     >
-      <Sequence durationInFrames={60}>
-        <Intro subtitle={subtitle} title={title}></Intro>
-      </Sequence>
       {scenes.map((scene, i) => {
+        const yo = addedUpDurations;
+        addedUpDurations += metadata[i].durationInFrames;
+
         if (scene.isTitle) {
-          return <div>title</div>;
+          return (
+            <Sequence from={yo} durationInFrames={60}>
+              <Title
+                subtitle={scene.isTitle.subtitle}
+                title={scene.isTitle.title}
+              ></Title>
+            </Sequence>
+          );
         }
 
-        sceneCounter += 1;
-        const pair = pairs[sceneCounter];
-        const yo = addedUpDurations;
-        addedUpDurations += metadata[sceneCounter].durationInFrames;
+        videoCounter += 1;
+        const pair = pairs[videoCounter];
         return (
           <Scene
-            key={sceneCounter}
+            key={videoCounter}
             start={yo}
             pair={pair}
-            conf={scenes[sceneCounter]}
-            metadata={metadata[sceneCounter]}
-            index={sceneCounter}
+            conf={scenes[i]}
+            metadata={metadata[i]}
+            index={videoCounter}
+            prevWasTitle={i === 0 ? false : scenes[i - 1].isTitle !== null}
           ></Scene>
         );
       })}
