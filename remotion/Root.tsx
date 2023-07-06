@@ -307,6 +307,16 @@ export const Root = () => {
               duration: null,
             },
             {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
               webcamPosition: "top-left" as const,
               trimStart: 0,
               duration: null,
