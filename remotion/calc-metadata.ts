@@ -14,9 +14,21 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   props,
 }) => {
   const pairs = getPairs(props.prefix);
+
+  let videoIndex = -1;
+
   const metadata = await Promise.all(
-    pairs.map(async (p, i): Promise<SceneMetadata> => {
-      const scene = props.scenes[i];
+    props.scenes.map(async (scene, i): Promise<SceneMetadata> => {
+      if (scene.isTitle) {
+        return {
+          width: 0,
+          height: 0,
+          durationInFrames: 50,
+        };
+      }
+
+      videoIndex += 1;
+      const p = pairs[videoIndex];
 
       const { durationInSeconds, height, width } = await getVideoMetadata(
         p.display.src

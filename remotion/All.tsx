@@ -31,6 +31,7 @@ export const All: React.FC<AllProps> = ({
   subtitle,
 }) => {
   let addedUpDurations = 0;
+  let sceneCounter = -1;
 
   return (
     <AbsoluteFill
@@ -41,17 +42,23 @@ export const All: React.FC<AllProps> = ({
       <Sequence durationInFrames={60}>
         <Intro subtitle={subtitle} title={title}></Intro>
       </Sequence>
-      {pairs.map((pair, i) => {
+      {scenes.map((scene, i) => {
+        if (scene.isTitle) {
+          return <div>title</div>;
+        }
+
+        sceneCounter += 1;
+        const pair = pairs[sceneCounter];
         const yo = addedUpDurations;
-        addedUpDurations += metadata[i].durationInFrames;
+        addedUpDurations += metadata[sceneCounter].durationInFrames;
         return (
           <Scene
-            key={i}
+            key={sceneCounter}
             start={yo}
             pair={pair}
-            conf={scenes[i]}
-            metadata={metadata[i]}
-            index={i}
+            conf={scenes[sceneCounter]}
+            metadata={metadata[sceneCounter]}
+            index={sceneCounter}
           ></Scene>
         );
       })}
