@@ -347,11 +347,21 @@ export const Root = () => {
               duration: 124,
               isTitle: null,
             },
+
             {
               webcamPosition: "top-right" as const,
               trimStart: 35,
               duration: 531,
               isTitle: null,
+            },
+            {
+              webcamPosition: "bottom-left",
+              trimStart: 0,
+              duration: 0,
+              isTitle: {
+                title: "Better debug logging",
+                subtitle: null,
+              },
             },
             {
               webcamPosition: "bottom-right" as const,
@@ -366,6 +376,15 @@ export const Root = () => {
               isTitle: null,
             },
             {
+              webcamPosition: "bottom-left",
+              trimStart: 0,
+              duration: 0,
+              isTitle: {
+                title: "Smaller and built-in FFmpeg",
+                subtitle: null,
+              },
+            },
+            {
               webcamPosition: "bottom-right" as const,
               trimStart: 114,
               duration: 1703,
@@ -377,6 +396,7 @@ export const Root = () => {
               duration: 1522,
               isTitle: null,
             },
+
             {
               webcamPosition: "top-left" as const,
               trimStart: 144,
@@ -388,6 +408,15 @@ export const Root = () => {
               trimStart: 20,
               duration: 280,
               isTitle: null,
+            },
+            {
+              webcamPosition: "bottom-left",
+              trimStart: 0,
+              duration: 0,
+              isTitle: {
+                title: "selectComposition()",
+                subtitle: null,
+              },
             },
             {
               webcamPosition: "top-left" as const,
@@ -402,10 +431,28 @@ export const Root = () => {
               isTitle: null,
             },
             {
+              webcamPosition: "bottom-left",
+              trimStart: 0,
+              duration: 0,
+              isTitle: {
+                title: "Updated TTS template",
+                subtitle: null,
+              },
+            },
+            {
               webcamPosition: "top-left" as const,
               trimStart: 52,
               duration: 1750,
               isTitle: null,
+            },
+            {
+              webcamPosition: "bottom-left",
+              trimStart: 0,
+              duration: 0,
+              isTitle: {
+                title: "DX Polish",
+                subtitle: null,
+              },
             },
             {
               webcamPosition: "top-left" as const,
