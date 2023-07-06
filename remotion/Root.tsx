@@ -2,14 +2,14 @@ import React from "react";
 import { Composition } from "remotion";
 import { fps, videoConf } from "./configuration";
 import { All } from "./All";
-import { Intro } from "./Intro";
+import { Title } from "./Title";
 import { calcMetadata } from "./calc-metadata";
 
 export const Root = () => {
   return (
     <>
       <Composition
-        component={Intro}
+        component={Title}
         durationInFrames={100}
         fps={30}
         height={1080}
@@ -306,10 +306,28 @@ export const Root = () => {
           title: "Last but not least",
           scenes: [
             {
+              webcamPosition: "bottom-left",
+              trimStart: 0,
+              duration: 0,
+              isTitle: {
+                title: "Last but not least",
+                subtitle: "New in Remotion 4.0",
+              },
+            },
+            {
               webcamPosition: "bottom-left" as const,
               trimStart: 45,
               duration: 530,
               isTitle: null,
+            },
+            {
+              webcamPosition: "bottom-left",
+              trimStart: 0,
+              duration: 0,
+              isTitle: {
+                title: "PDF and WebP export",
+                subtitle: null,
+              },
             },
             {
               webcamPosition: "top-right" as const,

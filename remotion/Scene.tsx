@@ -15,7 +15,7 @@ import {
   configuration,
   frameWidth,
   getLayout,
-  introDuration,
+  titleDuration,
   Pair,
   safeSpaceBottom,
   SceneMetadata,
@@ -27,11 +27,12 @@ export const Scene: React.FC<{
   conf: z.infer<typeof configuration> | undefined;
   start: number;
   index: number;
-}> = ({ metadata, pair, conf, start, index }) => {
+  prevWasTitle: boolean;
+}> = ({ metadata, pair, conf, start, index, prevWasTitle }) => {
   const { fps, height, width } = useVideoConfig();
   const frame = useCurrentFrame();
 
-  const from = start + introDuration;
+  const from = start;
 
   if (conf === undefined) {
     return (
@@ -83,7 +84,7 @@ export const Scene: React.FC<{
   const layout = getLayout(metadata.width, metadata.height);
 
   const enter = (() => {
-    if (index === 0) {
+    if (prevWasTitle) {
       const spr = spring({
         fps,
         frame,

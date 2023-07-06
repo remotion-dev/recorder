@@ -19,7 +19,7 @@ export const configuration = z.object({
   isTitle: z
     .object({
       title: z.string(),
-      subtitle: z.string(),
+      subtitle: z.string().nullable(),
     })
     .nullable()
     .default(null),
@@ -93,5 +93,5 @@ export const getLayout = (width: number, height: number) => {
   };
 };
 
-export const introDuration = 50;
+export const titleDuration = 50;
 export const fps = 30;

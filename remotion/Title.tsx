@@ -6,11 +6,11 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { introDuration } from "./configuration";
+import { titleDuration } from "./configuration";
 
-export const Intro: React.FC<{
+export const Title: React.FC<{
   title: string;
-  subtitle: string;
+  subtitle: string | null;
 }> = ({ subtitle, title }) => {
   const { fps, width } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -33,7 +33,7 @@ export const Intro: React.FC<{
     config: {
       damping: 200,
     },
-    delay: introDuration,
+    delay: titleDuration,
   });
 
   return (
@@ -48,14 +48,14 @@ export const Intro: React.FC<{
         style={{
           fontFamily: "GT Planar",
           fontSize: 130,
-          color: "#000",
+          color: subtitle ? "#000" : "#fff",
           lineHeight: 1.1,
           fontWeight: "bolder",
           border: "10px solid black",
           borderRadius: 20,
           padding: "15px 40px",
           display: "inline",
-          background: "white",
+          background: subtitle ? "white" : "#0B84F3",
           marginLeft: 30,
           position: "absolute",
           marginTop: 100,
@@ -64,25 +64,27 @@ export const Intro: React.FC<{
       >
         {title}
       </div>
-      <div
-        style={{
-          fontFamily: "GT Planar",
-          fontSize: 60,
-          background: "#0B84F3",
-          lineHeight: 1.1,
-          fontWeight: "bold",
-          display: "inline",
-          color: "white",
-          border: "10px solid black",
-          borderRadius: 20,
-          padding: "15px 30px",
-          position: "absolute",
-          marginTop: -140,
-          translate: interpolate(show(0), [0, 1], [width, 0]) + "px",
-        }}
-      >
-        {subtitle}
-      </div>
+      {subtitle ? (
+        <div
+          style={{
+            fontFamily: "GT Planar",
+            fontSize: 60,
+            background: "#0B84F3",
+            lineHeight: 1.1,
+            fontWeight: "bold",
+            display: "inline",
+            color: "white",
+            border: "10px solid black",
+            borderRadius: 20,
+            padding: "15px 30px",
+            position: "absolute",
+            marginTop: -140,
+            translate: interpolate(show(0), [0, 1], [width, 0]) + "px",
+          }}
+        >
+          {subtitle}
+        </div>
+      ) : null}
     </AbsoluteFill>
   );
 };
