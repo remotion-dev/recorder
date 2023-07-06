@@ -263,6 +263,24 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       ></Composition>
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        height={1080}
+        width={1920}
+        id="Day5"
+        schema={videoConf}
+        defaultProps={{
+          prefix: "day5",
+          subtitle: "New in Remotion 4.0",
+          title: "Last but not least",
+          scenes: [],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      ></Composition>
     </>
   );
 };
