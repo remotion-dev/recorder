@@ -11,7 +11,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { z } from "zod";
-import { Pair, SceneMetadata, videoConf } from "./configuration";
+import { Pair, SceneMetadata, titleDuration, videoConf } from "./configuration";
 import { Title } from "./Title";
 import { Scene } from "./Scene";
 
@@ -45,7 +45,7 @@ export const All: React.FC<AllProps> = ({
 
         if (scene.isTitle) {
           return (
-            <Sequence from={yo} durationInFrames={60}>
+            <Sequence from={yo} durationInFrames={titleDuration + 20}>
               <Title
                 subtitle={scene.isTitle.subtitle}
                 title={scene.isTitle.title}

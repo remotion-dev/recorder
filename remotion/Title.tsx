@@ -56,9 +56,9 @@ export const Title: React.FC<{
           padding: "15px 40px",
           display: "inline",
           background: subtitle ? "white" : "#0B84F3",
-          marginLeft: 30,
+          marginLeft: subtitle ? 30 : 0,
           position: "absolute",
-          marginTop: 100,
+          marginTop: subtitle ? 100 : 0,
           translate: interpolate(show(6), [0, 1], [width, 0]) + "px",
         }}
       >
