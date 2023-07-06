@@ -277,79 +277,79 @@ export const Root = () => {
           title: "Last but not least",
           scenes: [
             {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
+              webcamPosition: "bottom-left" as const,
+              trimStart: 45,
+              duration: 530,
+            },
+            {
+              webcamPosition: "top-right" as const,
+              trimStart: 230,
+              duration: 830,
+            },
+            {
+              webcamPosition: "bottom-left" as const,
+              trimStart: 27,
+              duration: 1020,
             },
             {
               webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
+              trimStart: 37,
+              duration: 124,
             },
             {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-            },
-            {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-            },
-            {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-            },
-            {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
+              webcamPosition: "top-right" as const,
+              trimStart: 35,
+              duration: 531,
             },
             {
               webcamPosition: "bottom-right" as const,
-              trimStart: 0,
-              duration: null,
-            },
-            {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-            },
-            {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-            },
-            {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-            },
-            {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-            },
-            {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-            },
-            {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-            },
-            {
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
+              trimStart: 106,
+              duration: 997,
             },
             {
               webcamPosition: "bottom-right" as const,
-              trimStart: 0,
-              duration: null,
+              trimStart: 33,
+              duration: 450,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 114,
+              duration: 1703,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 110,
+              duration: 1522,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 144,
+              duration: 816,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 20,
+              duration: 280,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 40,
+              duration: 810,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 43,
+              duration: 1460,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 52,
+              duration: 1750,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 24,
+              duration: 1864,
             },
           ],
           metadata: [],
@@ -382,7 +382,7 @@ export const Root = () => {
             },
             {
               webcamPosition: "top-left" as const,
-              trimStart: 55,
+              trimStart: 56,
               duration: 3310,
             },
             {
@@ -393,7 +393,7 @@ export const Root = () => {
             {
               webcamPosition: "top-left" as const,
               trimStart: 54,
-              duration: 1780,
+              duration: 1795,
             },
             {
               webcamPosition: "top-left" as const,
@@ -402,8 +402,8 @@ export const Root = () => {
             },
             {
               webcamPosition: "bottom-right" as const,
-              trimStart: 0,
-              duration: 2329,
+              trimStart: 75,
+              duration: 580,
             },
             {
               webcamPosition: "top-left" as const,
@@ -412,7 +412,7 @@ export const Root = () => {
             },
             {
               webcamPosition: "top-left" as const,
-              trimStart: 62,
+              trimStart: 93,
               duration: 661,
             },
             {
