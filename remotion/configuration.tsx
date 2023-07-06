@@ -27,8 +27,6 @@ export const configuration = z.object({
 
 export const videoConf = z.object({
   scenes: z.array(configuration),
-  title: z.string(),
-  subtitle: z.string(),
 });
 
 export const getPairs = (prefix: string) => {
