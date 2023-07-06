@@ -357,6 +357,105 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       ></Composition>
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        height={1080}
+        width={1920}
+        id="bts"
+        schema={videoConf}
+        defaultProps={{
+          prefix: "bts",
+          subtitle: "New in Remotion 4.0",
+          title: "Behind the scenes",
+          scenes: [
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 42,
+              duration: 2619,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 58,
+              duration: 2949,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 55,
+              duration: 3310,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 45,
+              duration: 1657,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 54,
+              duration: 1780,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 149,
+              duration: 3416,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: 2329,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 26,
+              duration: 702,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 62,
+              duration: 661,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+          ],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      ></Composition>
     </>
   );
 };

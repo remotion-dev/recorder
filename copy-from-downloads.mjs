@@ -1,7 +1,7 @@
 import fs from "fs";
 import { late } from "zod";
 
-const prefix = "day5";
+const prefix = "bts";
 
 const downloadsDir = "/Users/jonathanburger/Downloads";
 const filesFromDownloads = await fs.readdirSync(downloadsDir);
