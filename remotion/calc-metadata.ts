@@ -47,7 +47,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   );
 
   return {
-    durationInFrames: totalDuration + titleDuration,
+    durationInFrames: totalDuration,
     props: {
       ...props,
       pairs,
