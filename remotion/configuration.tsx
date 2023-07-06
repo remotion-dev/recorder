@@ -16,6 +16,13 @@ export const configuration = z.object({
   ]),
   trimStart: z.number(),
   duration: z.number().nullable().default(null),
+  isTitle: z
+    .object({
+      title: z.string(),
+      subtitle: z.string(),
+    })
+    .nullable()
+    .default(null),
 });
 
 export const videoConf = z.object({
