@@ -15,7 +15,6 @@ import {
   configuration,
   frameWidth,
   getLayout,
-  titleDuration,
   Pair,
   safeSpaceBottom,
   SceneMetadata,

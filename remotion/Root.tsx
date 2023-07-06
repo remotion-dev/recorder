@@ -443,7 +443,7 @@ export const Root = () => {
             {
               webcamPosition: "bottom-right" as const,
               trimStart: 24,
-              duration: 1864,
+              duration: 834,
               isTitle: null,
             },
           ],
