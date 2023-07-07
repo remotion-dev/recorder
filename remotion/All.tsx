@@ -1,17 +1,8 @@
 import React from "react";
-import {
-  AbsoluteFill,
-  getStaticFiles,
-  OffthreadVideo,
-  Sequence,
-  Series,
-  spring,
-  StaticFile,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
-import { z } from "zod";
-import { Pair, SceneMetadata, titleDuration, videoConf } from "./configuration";
+import { AbsoluteFill, Sequence } from "remotion";
+import type { z } from "zod";
+import type { Pair, SceneMetadata, videoConf } from "./configuration";
+import { titleDuration } from "./configuration";
 import { Title } from "./Title";
 import { Scene } from "./Scene";
 
@@ -37,11 +28,15 @@ export const All: React.FC<AllProps> = ({ pairs, metadata, scenes }) => {
 
         if (scene.isTitle) {
           return (
-            <Sequence from={yo} durationInFrames={titleDuration + 20}>
+            <Sequence
+              key={scene.isTitle.title}
+              from={yo}
+              durationInFrames={titleDuration + 20}
+            >
               <Title
                 subtitle={scene.isTitle.subtitle}
                 title={scene.isTitle.title}
-              ></Title>
+              />
             </Sequence>
           );
         }
@@ -57,7 +52,7 @@ export const All: React.FC<AllProps> = ({ pairs, metadata, scenes }) => {
             metadata={metadata[i]}
             index={videoCounter}
             prevWasTitle={i === 0 ? false : scenes[i - 1].isTitle !== null}
-          ></Scene>
+          />
         );
       })}
     </AbsoluteFill>

@@ -23,7 +23,7 @@ export const Title: React.FC<{
       config: {
         damping: 200,
       },
-      delay: delay,
+      delay,
     });
 
   const hide = spring({

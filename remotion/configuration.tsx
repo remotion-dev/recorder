@@ -1,4 +1,5 @@
-import { getStaticFiles, StaticFile } from "remotion";
+import type { StaticFile } from "remotion";
+import { getStaticFiles } from "remotion";
 import { z } from "zod";
 
 export type SceneMetadata = {
@@ -39,13 +40,13 @@ export const getPairs = (prefix: string) => {
           .replace(`${prefix}/display`, "")
           .replace(".webm", "");
         const webcam = files.find(
-          (f) => f.name === `${prefix}/webcam${timestamp}.webm`
+          (_f) => _f.name === `${prefix}/webcam${timestamp}.webm`
         );
         if (!webcam) {
           throw new Error(`No webcam file found for ${f.name}`);
         }
 
-        return { display: f, webcam: webcam! };
+        return { display: f, webcam };
       }
 
       return null;

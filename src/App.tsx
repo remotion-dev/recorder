@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+/* eslint-disable no-alert */
+import { useCallback, useEffect, useRef, useState } from "react";
 import { webmFixDuration } from "webm-fix-duration";
 import "./App.css";
 
@@ -8,10 +9,11 @@ let webcamchunks: Blob[] = [];
 let duration = 0;
 let endDate = 0;
 
-function App() {
+const App = () => {
   const live = useRef<HTMLVideoElement>(null);
   const screen = useRef<HTMLVideoElement>(null);
 
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [display, setDisplay] = useState<MediaStream | null>(null);
   const [webcam, setWebcam] = useState<MediaStream | null>(null);
   const [displayMediaRecorder, setMediaDisplayRecorder] =
@@ -24,7 +26,7 @@ function App() {
     null
   );
 
-  const select = () => {
+  const select = useCallback(() => {
     const microphone = devices.find(
       (d) => d.kind === "audioinput" && d.label.includes("NT-USB")
     );
@@ -45,18 +47,26 @@ function App() {
         audio: { deviceId: microphone.deviceId },
       })
       .then((stream) => {
-        live.current!.srcObject = stream;
-        live.current!.play();
+        if (live.current) {
+          live.current.srcObject = stream;
+          live.current.play();
+        }
+
         setWebcam(stream);
       });
-  };
+  }, [devices, selectedVideo]);
+
   const selectscreen = () => {
     window.navigator.mediaDevices
       .getDisplayMedia({ video: true })
       .then((stream) => {
         setDisplay(stream);
-        screen.current!.srcObject = stream;
-        screen.current!.play();
+        if (!screen.current) {
+          return;
+        }
+
+        screen.current.srcObject = stream;
+        screen.current.play();
       });
   };
 
@@ -64,11 +74,12 @@ function App() {
     if (!display) {
       throw new Error("No display");
     }
+
     if (!webcam) {
       throw new Error("No webcam");
     }
 
-    const displayMediaRecorder = new MediaRecorder(display, {
+    const displayRecorder = new MediaRecorder(display, {
       audioBitsPerSecond: 128000,
       mimeType: "video/webm;codecs=vp8,opus",
       videoBitsPerSecond: 4000000,
@@ -78,13 +89,13 @@ function App() {
       mimeType: "video/webm;codecs=vp8,opus",
       videoBitsPerSecond: 4000000,
     });
-    setMediaDisplayRecorder(displayMediaRecorder);
+    setMediaDisplayRecorder(displayRecorder);
     setWebcamDisplayRecorder(webcamRecorder);
 
-    displayMediaRecorder.start();
+    displayRecorder.start();
     webcamRecorder.start();
     setRecording(Date.now());
-    displayMediaRecorder.addEventListener("dataavailable", ({ data }) => {
+    displayRecorder.addEventListener("dataavailable", ({ data }) => {
       if (data.size > 0) {
         displaychunks.push(data);
       }
@@ -134,6 +145,7 @@ function App() {
     if (!displayMediaRecorder) {
       throw new Error("No display media recorder");
     }
+
     if (!webcamMediaRecorder) {
       throw new Error("No display media recorder");
     }
@@ -145,12 +157,10 @@ function App() {
     setRecording(false);
   };
 
-  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
-
   useEffect(() => {
-    navigator.mediaDevices.enumerateDevices().then((devices) => {
-      setSelectedVideo(devices[0].deviceId);
-      setDevices(devices);
+    navigator.mediaDevices.enumerateDevices().then((_devices) => {
+      setSelectedVideo(_devices[0].deviceId);
+      setDevices(_devices);
     });
   }, []);
 
@@ -158,37 +168,42 @@ function App() {
     if (devices.length > 0) {
       select();
     }
-  }, [devices]);
+  }, [devices, select]);
 
   return (
     <div className="App">
       <div style={{ color: recording ? "red" : "black" }}>
         {recording ? "recording" : "not recording"}
       </div>
-      <button onClick={select}>Select media</button>
-      <button onClick={selectscreen}>Select screen</button>
+      <button type="button" onClick={select}>
+        Select media
+      </button>
+      <button type="button" onClick={selectscreen}>
+        Select screen
+      </button>
       <button
+        type="button"
         disabled={!webcam || !display || recording !== false}
         onClick={start}
       >
         Start
       </button>
-      <button disabled={!recording} onClick={stop}>
+      <button type="button" disabled={!recording} onClick={stop}>
         Stop
       </button>
       <table>
         <tbody>
           <tr>
             <td>
-              <video muted ref={live} width="320"></video>
+              <video ref={live} muted width="320" />
             </td>
             <td>
-              <video muted ref={screen} width="320"></video>
+              <video ref={screen} muted width="320" />
             </td>
           </tr>
         </tbody>
       </table>
-      <br></br>
+      <br />
       Video:
       <select
         onChange={(e) => {
@@ -199,7 +214,7 @@ function App() {
           .filter((d) => d.kind === "videoinput")
           .map((d) => {
             return (
-              <option value={d.deviceId}>
+              <option key={d.deviceId} value={d.deviceId}>
                 {d.label} ({d.kind})
               </option>
             );
@@ -208,6 +223,6 @@ function App() {
       <br />
     </div>
   );
-}
+};
 
 export default App;
