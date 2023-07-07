@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "lint": "eslint . --ext .ts,.tsx",
     "remotion": "remotion studio",
     "pull": "node copy-from-downloads.mjs"
   },
   "dependencies": {
+    "eslint": "^8.44.0",
     "prettier": "^2.8.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -18,12 +20,13 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@remotion/cli": "4.0.1",
-    "@remotion/media-utils": "4.0.1",
+    "@jonny/eslint-config": "^3.0.275",
+    "@remotion/cli": "4.0.3",
+    "@remotion/media-utils": "4.0.3",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react-swc": "^3.0.0",
-    "remotion": "4.0.1",
+    "remotion": "4.0.3",
     "typescript": "^4.9.3",
     "vite": "^4.1.0"
   }

@@ -19,7 +19,7 @@ export const Root = () => {
           subtitle: "New in Remotion 4.0",
           title: "Render button",
         }}
-      ></Composition>
+      />
       <Composition
         component={All}
         fps={fps}
@@ -105,7 +105,7 @@ export const Root = () => {
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
-      ></Composition>
+      />
       <Composition
         component={All}
         fps={fps}
@@ -131,7 +131,7 @@ export const Root = () => {
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
-      ></Composition>
+      />
       <Composition
         component={All}
         fps={fps}
@@ -313,7 +313,7 @@ export const Root = () => {
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
-      ></Composition>
+      />
       <Composition
         component={All}
         fps={fps}
@@ -471,7 +471,7 @@ export const Root = () => {
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
-      ></Composition>
+      />
       <Composition
         component={All}
         fps={fps}
@@ -593,7 +593,7 @@ export const Root = () => {
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
-      ></Composition>
+      />
     </>
   );
 };

@@ -1,23 +1,20 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {
   AbsoluteFill,
   interpolate,
   OffthreadVideo,
   Sequence,
-  Series,
   spring,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { z } from "zod";
+import type { z } from "zod";
+import type { configuration, Pair, SceneMetadata } from "./configuration";
 import {
   borderRadius,
-  configuration,
   frameWidth,
   getLayout,
-  Pair,
   safeSpaceBottom,
-  SceneMetadata,
 } from "./configuration";
 
 export const Scene: React.FC<{
@@ -59,18 +56,21 @@ export const Scene: React.FC<{
         alignItems: "flex-start",
       };
     }
+
     if (conf.webcamPosition === "bottom-right") {
       return {
         justifyContent: "flex-end",
         alignItems: "flex-end",
       };
     }
+
     if (conf.webcamPosition === "top-left") {
       return {
         justifyContent: "flex-start",
         alignItems: "flex-start",
       };
     }
+
     return {
       justifyContent: "flex-start",
       alignItems: "flex-end",
@@ -95,6 +95,7 @@ export const Scene: React.FC<{
       });
       return spr;
     }
+
     return 1;
   })();
 
@@ -124,7 +125,7 @@ export const Scene: React.FC<{
             src={pair.display.src}
             style={{
               width: "100%",
-              borderRadius: borderRadius,
+              borderRadius,
             }}
           />
         </div>
@@ -152,7 +153,7 @@ export const Scene: React.FC<{
                 height: 400,
                 objectFit: "cover",
                 display: "block",
-                borderRadius: borderRadius,
+                borderRadius,
                 overflow: "hidden",
               }}
               src={pair.webcam.src}
