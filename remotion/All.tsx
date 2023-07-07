@@ -23,8 +23,13 @@ export const All: React.FC<AllProps> = ({ pairs, metadata, scenes }) => {
       }}
     >
       {scenes.map((scene, i) => {
+        const metadataForScene = metadata[i];
+        if (!metadataForScene) {
+          return null;
+        }
+
         const yo = addedUpDurations;
-        addedUpDurations += metadata[i].durationInFrames;
+        addedUpDurations += metadataForScene.durationInFrames;
 
         if (scene.isTitle) {
           return (
@@ -49,7 +54,7 @@ export const All: React.FC<AllProps> = ({ pairs, metadata, scenes }) => {
             start={yo}
             pair={pair}
             conf={scenes[i]}
-            metadata={metadata[i]}
+            metadata={metadataForScene}
             index={videoCounter}
             prevWasTitle={i === 0 ? false : scenes[i - 1].isTitle !== null}
           />
