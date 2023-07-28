@@ -4,8 +4,10 @@ import { z } from "zod";
 
 export type SceneMetadata = {
   durationInFrames: number;
-  width: number;
-  height: number;
+  webcamWidth: number;
+  webcamHeight: number;
+  displayWidth: number;
+  displayHeight: number;
 };
 
 export const configuration = z.object({

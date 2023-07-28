@@ -80,7 +80,7 @@ export const Scene: React.FC<{
   const startFrom = conf.trimStart ?? 0;
   const endAt = conf.duration ? startFrom + conf.duration : undefined;
 
-  const layout = getLayout(metadata.width, metadata.height);
+  const layout = getLayout(metadata.displayWidth, metadata.displayHeight);
 
   const enter = (() => {
     if (prevWasTitle) {
@@ -125,7 +125,7 @@ export const Scene: React.FC<{
               endAt={endAt}
               src={pair.display.src}
               style={{
-                width: "100%",
+                maxWidth: "100%",
                 borderRadius,
               }}
             />

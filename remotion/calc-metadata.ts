@@ -17,8 +17,10 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
       props.scenes.map(async (scene): Promise<SceneMetadata | null> => {
         if (scene.isTitle) {
           return {
-            width: 0,
-            height: 0,
+            displayHeight: 0,
+            displayWidth: 0,
+            webcamHeight: 0,
+            webcamWidth: 0,
             durationInFrames: titleDuration,
           };
         }
@@ -29,9 +31,14 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           return null;
         }
 
-        const { durationInSeconds, height, width } = await getVideoMetadata(
-          p.webcam.src
-        );
+        const {
+          durationInSeconds,
+          height: webcamHeight,
+          width: webcamWidth,
+        } = await getVideoMetadata(p.webcam.src);
+        const { height: displayHeight, width: displayWidth } = p.display
+          ? await getVideoMetadata(p.display.src)
+          : { height: 0, width: 0 };
         const durationInFrames = Math.round(durationInSeconds * fps);
 
         const trimStart = scene?.trimStart ?? 0;
@@ -41,8 +48,10 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
         return {
           durationInFrames: duration,
-          height,
-          width,
+          displayHeight,
+          displayWidth,
+          webcamHeight,
+          webcamWidth,
         };
       })
     )
