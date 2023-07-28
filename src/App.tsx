@@ -223,6 +223,7 @@ const App = () => {
       <button type="button" onClick={selectWebcam}>
         Confirm
       </button>{" "}
+      <br />
       Virtual screen:{" "}
       <select
         onChange={(e) => {
