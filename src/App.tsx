@@ -217,8 +217,9 @@ const App = () => {
           })}
       </select>
       <button type="button" onClick={selectWebcam}>
-        Select webcam
+        Confirm
       </button>{" "}
+      Virtual screen:{" "}
       <select
         onChange={(e) => {
           setSelectedScreen(e.target.value as ConstrainDOMString);
@@ -234,6 +235,9 @@ const App = () => {
             );
           })}
       </select>
+      <button type="button" onClick={selectScreen}>
+        Confirm
+      </button>{" "}
       <br />
     </div>
   );
