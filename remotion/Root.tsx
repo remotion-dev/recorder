@@ -594,6 +594,74 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       />
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        height={1080}
+        width={1920}
+        id="asyncproblem"
+        schema={videoConf}
+        defaultProps={{
+          prefix: "asyncproblem",
+          scenes: [
+            {
+              webcamPosition: "bottom-left" as const,
+              trimStart: 0,
+              duration: 0,
+              isTitle: {
+                title: "Behind the scenes",
+                subtitle: "Remotion 4.0 Launch Week",
+              },
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+          ],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
     </>
   );
 };
