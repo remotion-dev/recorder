@@ -20,6 +20,7 @@ export const configuration = z.object({
     "top-right",
     "bottom-left",
     "bottom-right",
+    "center",
   ]),
   trimStart: z.number(),
   duration: z.number().nullable().default(null),

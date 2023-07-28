@@ -606,7 +606,7 @@ export const Root = () => {
           prefix: "asyncproblem",
           scenes: [
             {
-              webcamPosition: "bottom-right" as const,
+              webcamPosition: "center" as const,
               trimStart: 40,
               duration: 609,
               isTitle: null,

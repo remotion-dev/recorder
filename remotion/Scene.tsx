@@ -71,6 +71,13 @@ export const Scene: React.FC<{
       };
     }
 
+    if (conf.webcamPosition === "center") {
+      return {
+        justifyContent: "center",
+        alignItems: "center",
+      };
+    }
+
     return {
       justifyContent: "flex-start",
       alignItems: "flex-end",
