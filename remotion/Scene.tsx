@@ -80,7 +80,10 @@ export const Scene: React.FC<{
   const startFrom = conf.trimStart ?? 0;
   const endAt = conf.duration ? startFrom + conf.duration : undefined;
 
-  const layout = getLayout(metadata.displayWidth, metadata.displayHeight);
+  const layout = getLayout({
+    displayWidth: metadata.displayWidth,
+    displayHeight: metadata.displayHeight,
+  });
 
   const enter = (() => {
     if (prevWasTitle) {

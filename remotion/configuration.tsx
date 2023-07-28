@@ -63,7 +63,7 @@ export const safeSpaceBottom = 120;
 export const frameWidth = 10;
 export const borderRadius = 10;
 
-export const getLayout = (width: number, height: number) => {
+const wideLayout = (width: number, height: number) => {
   const canvasWidth = 1920;
   const canvasHeight = 1080;
 
@@ -89,6 +89,16 @@ export const getLayout = (width: number, height: number) => {
     width: newWidth,
     height: newHeight,
   };
+};
+
+export const getLayout = ({
+  displayWidth,
+  displayHeight,
+}: {
+  displayWidth: number;
+  displayHeight: number;
+}) => {
+  return wideLayout(displayWidth, displayHeight);
 };
 
 export const titleDuration = 50;
