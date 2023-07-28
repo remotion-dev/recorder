@@ -13,8 +13,9 @@ const mediaRecorderOptions: MediaRecorderOptions = {
 };
 
 const App = () => {
-  const live = useRef<HTMLVideoElement>(null);
-  const screen = useRef<HTMLVideoElement>(null);
+  const liveRef = useRef<HTMLVideoElement>(null);
+  const screenRef = useRef<HTMLVideoElement>(null);
+  const virtualScreenRef = useRef<HTMLVideoElement>(null);
 
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [display, setDisplay] = useState<MediaStream | null>(null);
@@ -52,16 +53,16 @@ const App = () => {
         audio: { deviceId: microphone.deviceId },
       })
       .then((stream) => {
-        if (live.current) {
-          live.current.srcObject = stream;
-          live.current.play();
+        if (liveRef.current) {
+          liveRef.current.srcObject = stream;
+          liveRef.current.play();
         }
 
         setWebcam(stream);
       });
   }, [devices, selectedWebcam]);
 
-  const selectScreen = useCallback(() => {
+  const selectVirtualScreen = useCallback(() => {
     if (!selectedScreen) {
       alert("No video selected");
       return;
@@ -72,9 +73,9 @@ const App = () => {
         video: { deviceId: selectedScreen },
       })
       .then((stream) => {
-        if (live.current) {
-          live.current.srcObject = stream;
-          live.current.play();
+        if (virtualScreenRef.current) {
+          virtualScreenRef.current.srcObject = stream;
+          virtualScreenRef.current.play();
         }
 
         setVirtualScreen(stream);
@@ -86,12 +87,12 @@ const App = () => {
       .getDisplayMedia({ video: true })
       .then((stream) => {
         setDisplay(stream);
-        if (!screen.current) {
+        if (!screenRef.current) {
           return;
         }
 
-        screen.current.srcObject = stream;
-        screen.current.play();
+        screenRef.current.srcObject = stream;
+        screenRef.current.play();
       });
   };
 
@@ -191,10 +192,13 @@ const App = () => {
         <tbody>
           <tr>
             <td>
-              <video ref={live} muted width="320" />
+              <video ref={liveRef} muted width="320" />
             </td>
             <td>
-              <video ref={screen} muted width="320" />
+              <video ref={screenRef} muted width="320" />
+            </td>
+            <td>
+              <video ref={virtualScreenRef} muted width="320" />
             </td>
           </tr>
         </tbody>
@@ -235,7 +239,7 @@ const App = () => {
             );
           })}
       </select>
-      <button type="button" onClick={selectScreen}>
+      <button type="button" onClick={selectVirtualScreen}>
         Confirm
       </button>{" "}
       <br />
