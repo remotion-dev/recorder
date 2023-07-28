@@ -106,29 +106,32 @@ export const Scene: React.FC<{
       durationInFrames={Math.max(1, metadata.durationInFrames)}
     >
       <AbsoluteFill style={{}}>
-        <div
-          style={{
-            width: layout.width,
-            height: layout.height,
-            left: layout.x,
-            top: layout.y,
-            position: "absolute",
-            backgroundColor: "black",
-            padding: frameWidth,
-            borderRadius: borderRadius + frameWidth,
-            translate: interpolate(enter, [0, 1], [width, 0]) + "px 0",
-          }}
-        >
-          <OffthreadVideo
-            startFrom={startFrom}
-            endAt={endAt}
-            src={pair.display.src}
+        {pair.display ? (
+          <div
             style={{
-              width: "100%",
-              borderRadius,
+              width: layout.width,
+              height: layout.height,
+              left: layout.x,
+              top: layout.y,
+              position: "absolute",
+              backgroundColor: "black",
+              padding: frameWidth,
+              borderRadius: borderRadius + frameWidth,
+              translate: interpolate(enter, [0, 1], [width, 0]) + "px 0",
             }}
-          />
-        </div>
+          >
+            <OffthreadVideo
+              startFrom={startFrom}
+              endAt={endAt}
+              src={pair.display.src}
+              style={{
+                width: "100%",
+                borderRadius,
+              }}
+            />
+          </div>
+        ) : null}
+
         <AbsoluteFill
           style={{
             ...videoStyle,

@@ -35,18 +35,15 @@ export const getPairs = (prefix: string) => {
 
   const pairs = files
     .map((f): Pair | null => {
-      if (f.name.startsWith(`${prefix}/display`)) {
+      if (f.name.startsWith(`${prefix}/webcam`)) {
         const timestamp = f.name
-          .replace(`${prefix}/display`, "")
+          .replace(`${prefix}/webcam`, "")
           .replace(".webm", "");
-        const webcam = files.find(
-          (_f) => _f.name === `${prefix}/webcam${timestamp}.webm`
+        const display = files.find(
+          (_f) => _f.name === `${prefix}/display${timestamp}.webm`
         );
-        if (!webcam) {
-          throw new Error(`No webcam file found for ${f.name}`);
-        }
 
-        return { display: f, webcam };
+        return { display: display ?? null, webcam: f };
       }
 
       return null;
@@ -56,7 +53,7 @@ export const getPairs = (prefix: string) => {
 };
 
 export type Pair = {
-  display: StaticFile;
+  display: StaticFile | null;
   webcam: StaticFile;
 };
 
