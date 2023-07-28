@@ -625,7 +625,7 @@ export const Root = () => {
             },
             {
               webcamPosition: "bottom-right" as const,
-              trimStart: 48,
+              trimStart: 43,
               duration: 2002,
               isTitle: null,
             },
