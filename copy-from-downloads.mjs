@@ -1,7 +1,7 @@
 import fs, { existsSync } from "fs";
 import path from "path";
 
-const prefix = "bts";
+const prefix = "asyncproblem";
 
 const downloadsDir =
   process.platform === "win32"
