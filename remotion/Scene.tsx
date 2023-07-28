@@ -80,9 +80,15 @@ export const Scene: React.FC<{
   const startFrom = conf.trimStart ?? 0;
   const endAt = conf.duration ? startFrom + conf.duration : undefined;
 
-  const layout = getLayout({
-    displayWidth: metadata.displayWidth,
-    displayHeight: metadata.displayHeight,
+  const { displayLayout, webcamLayout } = getLayout({
+    display: {
+      width: metadata.displayWidth,
+      height: metadata.displayHeight,
+    },
+    webcam: {
+      width: metadata.webcamWidth,
+      height: metadata.webcamHeight,
+    },
   });
 
   const enter = (() => {
@@ -109,13 +115,13 @@ export const Scene: React.FC<{
       durationInFrames={Math.max(1, metadata.durationInFrames)}
     >
       <AbsoluteFill style={{}}>
-        {pair.display ? (
+        {displayLayout && pair.display ? (
           <div
             style={{
-              width: layout.width,
-              height: layout.height,
-              left: layout.x,
-              top: layout.y,
+              width: displayLayout.width,
+              height: displayLayout.height,
+              left: displayLayout.x,
+              top: displayLayout.y,
               position: "absolute",
               backgroundColor: "black",
               padding: frameWidth,
@@ -135,37 +141,39 @@ export const Scene: React.FC<{
           </div>
         ) : null}
 
-        <AbsoluteFill
-          style={{
-            ...videoStyle,
-            padding: 40,
-            paddingBottom: safeSpaceBottom,
-            translate: "0 " + interpolate(enter, [0, 1], [height, 0]) + "px",
-          }}
-        >
-          <div
+        {webcamLayout ? (
+          <AbsoluteFill
             style={{
-              borderRadius: borderRadius + frameWidth,
-              overflow: "hidden",
-              padding: frameWidth,
-              backgroundColor: "black",
+              ...videoStyle,
+              padding: 40,
+              paddingBottom: safeSpaceBottom,
+              translate: "0 " + interpolate(enter, [0, 1], [height, 0]) + "px",
             }}
           >
-            <OffthreadVideo
-              startFrom={startFrom}
-              endAt={endAt}
+            <div
               style={{
-                width: 350,
-                height: 400,
-                objectFit: "cover",
-                display: "block",
-                borderRadius,
+                borderRadius: borderRadius + frameWidth,
                 overflow: "hidden",
+                padding: frameWidth,
+                backgroundColor: "black",
               }}
-              src={pair.webcam.src}
-            />
-          </div>
-        </AbsoluteFill>
+            >
+              <OffthreadVideo
+                startFrom={startFrom}
+                endAt={endAt}
+                style={{
+                  width: webcamLayout.width,
+                  height: webcamLayout.height,
+                  objectFit: "cover",
+                  display: "block",
+                  borderRadius,
+                  overflow: "hidden",
+                }}
+                src={pair.webcam.src}
+              />
+            </div>
+          </AbsoluteFill>
+        ) : null}
       </AbsoluteFill>
     </Sequence>
   );

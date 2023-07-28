@@ -63,7 +63,14 @@ export const safeSpaceBottom = 120;
 export const frameWidth = 10;
 export const borderRadius = 10;
 
-const wideLayout = (width: number, height: number) => {
+type Layout = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+const wideLayout = (width: number, height: number): Layout => {
   const canvasWidth = 1920;
   const canvasHeight = 1080;
 
@@ -92,13 +99,25 @@ const wideLayout = (width: number, height: number) => {
 };
 
 export const getLayout = ({
-  displayWidth,
-  displayHeight,
+  display,
+  webcam,
 }: {
-  displayWidth: number;
-  displayHeight: number;
-}) => {
-  return wideLayout(displayWidth, displayHeight);
+  display: {
+    width: number;
+    height: number;
+  } | null;
+  webcam: {
+    width: number;
+    height: number;
+  } | null;
+}): { webcamLayout: Layout | null; displayLayout: Layout | null } => {
+  const displayLayout = display
+    ? wideLayout(display.width, display.height)
+    : null;
+
+  const webcamLayout = webcam ? { width: 350, height: 400, x: 0, y: 0 } : null;
+
+  return { displayLayout, webcamLayout };
 };
 
 export const titleDuration = 50;
