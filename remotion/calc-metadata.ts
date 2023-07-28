@@ -30,7 +30,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
         }
 
         const { durationInSeconds, height, width } = await getVideoMetadata(
-          p.display.src
+          p.webcam.src
         );
         const durationInFrames = Math.round(durationInSeconds * fps);
 
