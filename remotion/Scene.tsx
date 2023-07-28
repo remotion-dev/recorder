@@ -81,14 +81,8 @@ export const Scene: React.FC<{
   const endAt = conf.duration ? startFrom + conf.duration : undefined;
 
   const { displayLayout, webcamLayout } = getLayout({
-    display: {
-      width: metadata.displayWidth,
-      height: metadata.displayHeight,
-    },
-    webcam: {
-      width: metadata.webcamWidth,
-      height: metadata.webcamHeight,
-    },
+    display: metadata.display,
+    webcam: metadata.webcam,
   });
 
   const enter = (() => {
@@ -156,14 +150,17 @@ export const Scene: React.FC<{
                 overflow: "hidden",
                 padding: frameWidth,
                 backgroundColor: "black",
+                width: webcamLayout.width,
+                height: webcamLayout.height,
+                position: "relative",
               }}
             >
               <OffthreadVideo
                 startFrom={startFrom}
                 endAt={endAt}
                 style={{
-                  width: webcamLayout.width,
-                  height: webcamLayout.height,
+                  width: "100%",
+                  height: "100%",
                   objectFit: "cover",
                   display: "block",
                   borderRadius,

@@ -17,10 +17,8 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
       props.scenes.map(async (scene): Promise<SceneMetadata | null> => {
         if (scene.isTitle) {
           return {
-            displayHeight: 0,
-            displayWidth: 0,
-            webcamHeight: 0,
-            webcamWidth: 0,
+            display: null,
+            webcam: null,
             durationInFrames: titleDuration,
           };
         }
@@ -48,10 +46,14 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
         return {
           durationInFrames: duration,
-          displayHeight,
-          displayWidth,
-          webcamHeight,
-          webcamWidth,
+          display: {
+            height: displayHeight,
+            width: displayWidth,
+          },
+          webcam: {
+            height: webcamHeight,
+            width: webcamWidth,
+          },
         };
       })
     )
