@@ -191,15 +191,21 @@ const App = () => {
       <table>
         <tbody>
           <tr>
-            <td>
-              <video ref={liveRef} muted width="320" />
-            </td>
-            <td>
-              <video ref={screenRef} muted width="320" />
-            </td>
-            <td>
-              <video ref={virtualScreenRef} muted width="320" />
-            </td>
+            {webcam && (
+              <td>
+                <video ref={liveRef} muted width="640" />
+              </td>
+            )}
+            {display && (
+              <td>
+                <video ref={screenRef} muted width="640" />
+              </td>
+            )}
+            {virtualScreen && (
+              <td>
+                <video ref={virtualScreenRef} muted width="640" />
+              </td>
+            )}
           </tr>
         </tbody>
       </table>
