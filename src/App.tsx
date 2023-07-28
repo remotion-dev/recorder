@@ -25,6 +25,8 @@ const App = () => {
     useState<MediaRecorder | null>(null);
   const [webcamMediaRecorder, setWebcamDisplayRecorder] =
     useState<MediaRecorder | null>(null);
+  const [virtualScreenRecorder, setVirtualScreenRecorder] =
+    useState<MediaRecorder | null>(null);
   const [recording, setRecording] = useState<number | false>(false);
 
   const [selectedWebcam, setSelectedWebcamVideo] =
@@ -130,14 +132,14 @@ const App = () => {
 
     if (virtualScreen) {
       const recorder = new MediaRecorder(virtualScreen, mediaRecorderOptions);
-      setWebcamDisplayRecorder(recorder);
+      setVirtualScreenRecorder(recorder);
       recorder.addEventListener("dataavailable", ({ data }) => {
         onVideo(data, duration, endDate, "display");
       });
 
       toStart.push(() => recorder.start());
     } else {
-      setWebcamDisplayRecorder(null);
+      setVirtualScreenRecorder(null);
     }
 
     toStart.forEach((f) => f());
@@ -150,6 +152,10 @@ const App = () => {
 
     if (webcamMediaRecorder) {
       webcamMediaRecorder.stop();
+    }
+
+    if (virtualScreenRecorder) {
+      virtualScreenRecorder.stop();
     }
 
     endDate = Date.now();
