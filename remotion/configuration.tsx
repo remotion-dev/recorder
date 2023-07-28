@@ -4,10 +4,14 @@ import { z } from "zod";
 
 export type SceneMetadata = {
   durationInFrames: number;
-  webcamWidth: number;
-  webcamHeight: number;
-  displayWidth: number;
-  displayHeight: number;
+  webcam: {
+    width: number;
+    height: number;
+  } | null;
+  display: {
+    width: number;
+    height: number;
+  } | null;
 };
 
 export const configuration = z.object({
@@ -115,7 +119,11 @@ export const getLayout = ({
     ? wideLayout(display.width, display.height)
     : null;
 
-  const webcamLayout = webcam ? { width: 350, height: 400, x: 0, y: 0 } : null;
+  const webcamLayout = webcam
+    ? display
+      ? { width: 350, height: 400, x: 0, y: 0 }
+      : wideLayout(webcam.width, webcam.height)
+    : null;
 
   return { displayLayout, webcamLayout };
 };
