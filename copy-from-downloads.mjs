@@ -1,9 +1,12 @@
-import fs from "fs";
-import { late } from "zod";
+import fs, { existsSync } from "fs";
+import path from "path";
 
 const prefix = "bts";
 
-const downloadsDir = "/Users/jonathanburger/Downloads";
+const downloadsDir =
+  process.platform === "win32"
+    ? "C:\\Users\\Jonny\\Downloads"
+    : "/Users/jonathanburger/Downloads";
 const filesFromDownloads = await fs.readdirSync(downloadsDir);
 
 const webcam = filesFromDownloads.filter((file) => file.includes("webcam"));
@@ -18,9 +21,17 @@ const latest = sorted[0];
 const latestTimestamp = Number(latest.match(/([0-9]+)/)[1]);
 const displayLatest = `display${latestTimestamp}.webm`;
 
+const displaySrc = `${downloadsDir}${path.sep}${displayLatest}`;
+
+if (existsSync(displaySrc)) {
+  fs.copyFileSync(
+    displaySrc,
+    `public${path.sep}${prefix}${path.sep}${displayLatest}`
+  );
+}
+
 fs.copyFileSync(
-  `${downloadsDir}/${displayLatest}`,
-  `public/${prefix}/${displayLatest}`
+  `${downloadsDir}${path.sep}${latest}`,
+  `public${path.sep}${prefix}${path.sep}${latest}`
 );
-fs.copyFileSync(`${downloadsDir}/${latest}`, `public/${prefix}/${latest}`);
 console.log("copied", latest, displayLatest);
