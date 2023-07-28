@@ -1,13 +1,16 @@
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { webmFixDuration } from "webm-fix-duration";
 import "./App.css";
-
-let displaychunks: Blob[] = [];
-let webcamchunks: Blob[] = [];
+import { onVideo } from "./on-video";
 
 let duration = 0;
 let endDate = 0;
+
+const mediaRecorderOptions: MediaRecorderOptions = {
+  audioBitsPerSecond: 128000,
+  mimeType: "video/webm;codecs=vp8,opus",
+  videoBitsPerSecond: 4000000,
+};
 
 const App = () => {
   const live = useRef<HTMLVideoElement>(null);
@@ -22,9 +25,8 @@ const App = () => {
     useState<MediaRecorder | null>(null);
   const [recording, setRecording] = useState<number | false>(false);
 
-  const [selectedVideo, setSelectedVideo] = useState<ConstrainDOMString | null>(
-    null
-  );
+  const [selectedWebcam, setSelectedWebcamVideo] =
+    useState<ConstrainDOMString | null>(null);
 
   const select = useCallback(() => {
     const microphone = devices.find(
@@ -36,14 +38,14 @@ const App = () => {
       return;
     }
 
-    if (!selectedVideo) {
+    if (!selectedWebcam) {
       alert("No video selected");
       return;
     }
 
     window.navigator.mediaDevices
       .getUserMedia({
-        video: { deviceId: selectedVideo },
+        video: { deviceId: selectedWebcam },
         audio: { deviceId: microphone.deviceId },
       })
       .then((stream) => {
@@ -54,7 +56,7 @@ const App = () => {
 
         setWebcam(stream);
       });
-  }, [devices, selectedVideo]);
+  }, [devices, selectedWebcam]);
 
   const selectscreen = () => {
     window.navigator.mediaDevices
@@ -71,87 +73,49 @@ const App = () => {
   };
 
   const start = () => {
-    if (!display) {
-      throw new Error("No display");
-    }
-
     if (!webcam) {
       throw new Error("No webcam");
     }
 
-    const displayRecorder = new MediaRecorder(display, {
-      audioBitsPerSecond: 128000,
-      mimeType: "video/webm;codecs=vp8,opus",
-      videoBitsPerSecond: 4000000,
-    });
-    const webcamRecorder = new MediaRecorder(webcam, {
-      audioBitsPerSecond: 128000,
-      mimeType: "video/webm;codecs=vp8,opus",
-      videoBitsPerSecond: 4000000,
-    });
-    setMediaDisplayRecorder(displayRecorder);
-    setWebcamDisplayRecorder(webcamRecorder);
-
-    displayRecorder.start();
-    webcamRecorder.start();
     setRecording(Date.now());
-    displayRecorder.addEventListener("dataavailable", ({ data }) => {
-      if (data.size > 0) {
-        displaychunks.push(data);
-      }
 
-      const blob = new Blob(displaychunks);
+    const toStart = [];
 
-      webmFixDuration(blob, duration).then((fixedBlob) => {
-        const blobUrl = URL.createObjectURL(fixedBlob);
-        const link = document.createElement("a");
-
-        link.href = blobUrl;
-        link.download = `display${endDate}.webm`;
-
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        window.URL.revokeObjectURL(blobUrl);
-        displaychunks = [];
-        console.log("available");
+    if (display) {
+      const displayRecorder = new MediaRecorder(display, mediaRecorderOptions);
+      setMediaDisplayRecorder(displayRecorder);
+      displayRecorder.addEventListener("dataavailable", ({ data }) => {
+        onVideo(data, duration, endDate, "display");
       });
-    });
-    webcamRecorder.addEventListener("dataavailable", ({ data }) => {
-      if (data.size > 0) {
-        webcamchunks.push(data);
-      }
+      toStart.push(() => displayRecorder.start());
+    } else {
+      setMediaDisplayRecorder(null);
+    }
 
-      const blob = new Blob(webcamchunks);
-
-      const link = document.createElement("a");
-      webmFixDuration(blob, duration).then((fixedBlob) => {
-        const blobUrl = URL.createObjectURL(fixedBlob);
-        link.href = blobUrl;
-        link.download = `webcam${endDate}.webm`;
-
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        window.URL.revokeObjectURL(blobUrl);
-        webcamchunks = [];
+    if (webcam) {
+      const webcamRecorder = new MediaRecorder(webcam, mediaRecorderOptions);
+      setWebcamDisplayRecorder(webcamRecorder);
+      webcamRecorder.addEventListener("dataavailable", ({ data }) => {
+        onVideo(data, duration, endDate, "webcam");
       });
-    });
+
+      toStart.push(() => webcamRecorder.start());
+    } else {
+      setWebcamDisplayRecorder(null);
+    }
+
+    toStart.forEach((f) => f());
   };
 
   const stop = () => {
-    if (!displayMediaRecorder) {
-      throw new Error("No display media recorder");
+    if (displayMediaRecorder) {
+      displayMediaRecorder.stop();
     }
 
-    if (!webcamMediaRecorder) {
-      throw new Error("No display media recorder");
+    if (webcamMediaRecorder) {
+      webcamMediaRecorder.stop();
     }
 
-    displayMediaRecorder.stop();
-    webcamMediaRecorder.stop();
     endDate = Date.now();
     duration = endDate - (recording as number);
     setRecording(false);
@@ -159,7 +123,7 @@ const App = () => {
 
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then((_devices) => {
-      setSelectedVideo(_devices[0].deviceId);
+      setSelectedWebcamVideo(_devices[0].deviceId);
       setDevices(_devices);
     });
   }, []);
@@ -175,9 +139,6 @@ const App = () => {
       <div style={{ color: recording ? "red" : "black" }}>
         {recording ? "recording" : "not recording"}
       </div>
-      <button type="button" onClick={select}>
-        Select media
-      </button>
       <button type="button" onClick={selectscreen}>
         Select screen
       </button>
@@ -204,10 +165,10 @@ const App = () => {
         </tbody>
       </table>
       <br />
-      Video:
+      Webcam:
       <select
         onChange={(e) => {
-          setSelectedVideo(e.target.value as ConstrainDOMString);
+          setSelectedWebcamVideo(e.target.value as ConstrainDOMString);
         }}
       >
         {devices
@@ -220,6 +181,9 @@ const App = () => {
             );
           })}
       </select>
+      <button type="button" onClick={select}>
+        Select webcam
+      </button>
       <br />
     </div>
   );
