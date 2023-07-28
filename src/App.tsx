@@ -19,6 +19,7 @@ const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [display, setDisplay] = useState<MediaStream | null>(null);
   const [webcam, setWebcam] = useState<MediaStream | null>(null);
+  const [virtualScreen, setVirtualScreen] = useState<MediaStream | null>(null);
   const [displayMediaRecorder, setMediaDisplayRecorder] =
     useState<MediaRecorder | null>(null);
   const [webcamMediaRecorder, setWebcamDisplayRecorder] =
@@ -27,8 +28,10 @@ const App = () => {
 
   const [selectedWebcam, setSelectedWebcamVideo] =
     useState<ConstrainDOMString | null>(null);
+  const [selectedScreen, setSelectedScreen] =
+    useState<ConstrainDOMString | null>(null);
 
-  const select = useCallback(() => {
+  const selectWebcam = useCallback(() => {
     const microphone = devices.find(
       (d) => d.kind === "audioinput" && d.label.includes("NT-USB")
     );
@@ -57,6 +60,26 @@ const App = () => {
         setWebcam(stream);
       });
   }, [devices, selectedWebcam]);
+
+  const selectScreen = useCallback(() => {
+    if (!selectedScreen) {
+      alert("No video selected");
+      return;
+    }
+
+    window.navigator.mediaDevices
+      .getUserMedia({
+        video: { deviceId: selectedScreen },
+      })
+      .then((stream) => {
+        if (live.current) {
+          live.current.srcObject = stream;
+          live.current.play();
+        }
+
+        setVirtualScreen(stream);
+      });
+  }, [selectedScreen]);
 
   const selectscreen = () => {
     window.navigator.mediaDevices
@@ -104,6 +127,18 @@ const App = () => {
       setWebcamDisplayRecorder(null);
     }
 
+    if (virtualScreen) {
+      const recorder = new MediaRecorder(virtualScreen, mediaRecorderOptions);
+      setWebcamDisplayRecorder(recorder);
+      recorder.addEventListener("dataavailable", ({ data }) => {
+        onVideo(data, duration, endDate, "display");
+      });
+
+      toStart.push(() => recorder.start());
+    } else {
+      setWebcamDisplayRecorder(null);
+    }
+
     toStart.forEach((f) => f());
   };
 
@@ -130,9 +165,9 @@ const App = () => {
 
   useEffect(() => {
     if (devices.length > 0) {
-      select();
+      selectWebcam();
     }
-  }, [devices, select]);
+  }, [devices, selectWebcam]);
 
   return (
     <div className="App">
@@ -144,7 +179,7 @@ const App = () => {
       </button>
       <button
         type="button"
-        disabled={!webcam || !display || recording !== false}
+        disabled={!webcam || recording !== false}
         onClick={start}
       >
         Start
@@ -181,9 +216,24 @@ const App = () => {
             );
           })}
       </select>
-      <button type="button" onClick={select}>
+      <button type="button" onClick={selectWebcam}>
         Select webcam
-      </button>
+      </button>{" "}
+      <select
+        onChange={(e) => {
+          setSelectedScreen(e.target.value as ConstrainDOMString);
+        }}
+      >
+        {devices
+          .filter((d) => d.kind === "videoinput")
+          .map((d) => {
+            return (
+              <option key={d.deviceId} value={d.deviceId}>
+                {d.label} ({d.kind})
+              </option>
+            );
+          })}
+      </select>
       <br />
     </div>
   );
