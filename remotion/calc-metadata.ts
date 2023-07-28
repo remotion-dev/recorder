@@ -34,9 +34,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           height: webcamHeight,
           width: webcamWidth,
         } = await getVideoMetadata(p.webcam.src);
-        const { height: displayHeight, width: displayWidth } = p.display
-          ? await getVideoMetadata(p.display.src)
-          : { height: 0, width: 0 };
+        const dim = p.display ? await getVideoMetadata(p.display.src) : null;
         const durationInFrames = Math.round(durationInSeconds * fps);
 
         const trimStart = scene?.trimStart ?? 0;
@@ -46,10 +44,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
         return {
           durationInFrames: duration,
-          display: {
-            height: displayHeight,
-            width: displayWidth,
-          },
+          display: dim,
           webcam: {
             height: webcamHeight,
             width: webcamWidth,
