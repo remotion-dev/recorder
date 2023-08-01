@@ -706,6 +706,155 @@ export const Root = () => {
               duration: null,
               isTitle: null,
             },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "center" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+          ],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        height={1080}
+        width={1920}
+        id="saas-inflation"
+        schema={videoConf}
+        defaultProps={{
+          prefix: "saas-inflation",
+          scenes: [
+            {
+              webcamPosition: "center" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "center" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "center" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
+            {
+              webcamPosition: "center" as const,
+              trimStart: 0,
+              duration: null,
+              isTitle: null,
+            },
           ],
           metadata: [],
           pairs: [],
