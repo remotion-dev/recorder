@@ -1,7 +1,7 @@
 import fs, { existsSync } from "fs";
 import path from "path";
 
-const prefix = "july";
+const prefix = "saas-inflation";
 
 const downloadsDir =
   process.platform === "win32"
