@@ -832,13 +832,13 @@ export const Root = () => {
               isTitle: null,
             },
             {
-              webcamPosition: "center" as const,
+              webcamPosition: "bottom-right" as const,
               trimStart: 0,
               duration: null,
               isTitle: null,
             },
             {
-              webcamPosition: "top-left" as const,
+              webcamPosition: "center" as const,
               trimStart: 0,
               duration: null,
               isTitle: null,
