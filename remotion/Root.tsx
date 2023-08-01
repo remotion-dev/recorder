@@ -809,8 +809,8 @@ export const Root = () => {
             },
             {
               webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
+              trimStart: 73,
+              duration: 2023,
               isTitle: null,
             },
             {
