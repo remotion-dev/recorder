@@ -49,6 +49,10 @@ export const Scene: React.FC<{
     );
   }
 
+  if (conf.type !== "scene") {
+    throw new Error("Not a scene");
+  }
+
   const videoStyle = (() => {
     if (conf.webcamPosition === "bottom-left") {
       return {

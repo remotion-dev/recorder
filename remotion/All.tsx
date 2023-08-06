@@ -31,17 +31,14 @@ export const All: React.FC<AllProps> = ({ pairs, metadata, scenes }) => {
         const yo = addedUpDurations;
         addedUpDurations += metadataForScene.durationInFrames;
 
-        if (scene.isTitle) {
+        if (scene.type === "title") {
           return (
             <Sequence
-              key={scene.isTitle.title}
+              key={scene.title}
               from={yo}
               durationInFrames={titleDuration + 20}
             >
-              <Title
-                subtitle={scene.isTitle.subtitle}
-                title={scene.isTitle.title}
-              />
+              <Title subtitle={scene.subtitle} title={scene.title} />
             </Sequence>
           );
         }
@@ -56,7 +53,7 @@ export const All: React.FC<AllProps> = ({ pairs, metadata, scenes }) => {
             conf={scenes[i]}
             metadata={metadataForScene}
             index={videoCounter}
-            prevWasTitle={i === 0 ? false : scenes[i - 1].isTitle !== null}
+            prevWasTitle={i === 0 ? false : scenes[i - 1].type === "title"}
           />
         );
       })}

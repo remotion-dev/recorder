@@ -14,24 +14,25 @@ export type SceneMetadata = {
   } | null;
 };
 
-export const configuration = z.object({
-  webcamPosition: z.enum([
-    "top-left",
-    "top-right",
-    "bottom-left",
-    "bottom-right",
-    "center",
-  ]),
-  trimStart: z.number(),
-  duration: z.number().nullable().default(null),
-  isTitle: z
-    .object({
-      title: z.string(),
-      subtitle: z.string().nullable(),
-    })
-    .nullable()
-    .default(null),
-});
+export const configuration = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("scene"),
+    webcamPosition: z.enum([
+      "top-left",
+      "top-right",
+      "bottom-left",
+      "bottom-right",
+      "center",
+    ]),
+    trimStart: z.number(),
+    duration: z.number().nullable().default(null),
+  }),
+  z.object({
+    type: z.literal("title"),
+    title: z.string(),
+    subtitle: z.string().nullable(),
+  }),
+]);
 
 export const videoConf = z.object({
   scenes: z.array(configuration),
