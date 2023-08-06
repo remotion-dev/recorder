@@ -15,7 +15,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   const metadata = (
     await Promise.all(
       props.scenes.map(async (scene): Promise<SceneMetadata | null> => {
-        if (scene.isTitle) {
+        if (scene.type === "title") {
           return {
             display: null,
             webcam: null,
