@@ -766,7 +766,7 @@ export const Root = () => {
               isTitle: null,
             },
             {
-              webcamPosition: "top-left" as const,
+              webcamPosition: "center" as const,
               trimStart: 38,
               duration: 174,
               isTitle: null,
@@ -779,7 +779,7 @@ export const Root = () => {
             },
             {
               webcamPosition: "bottom-right" as const,
-              trimStart: 0,
+              trimStart: 60,
               duration: 1150,
               isTitle: null,
             },
