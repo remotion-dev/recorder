@@ -3,7 +3,7 @@ import path from "path";
 import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "child_process";
 
-const prefix = "get-silent-parts";
+const prefix = "empty";
 
 const downloadsDir =
   process.platform === "win32"
@@ -37,7 +37,7 @@ const { audibleParts } = await getSilentParts({
   src: webcamSrc,
 });
 
-const padding = 0.3;
+const padding = 0.2;
 
 const ffmpegTrim =
   audibleParts.length === 1
@@ -52,20 +52,32 @@ const ffmpegTrim =
 const convert = (i, o) => {
   console.log({ i, o });
 
-  execSync(["ffmpeg", "-i", i, ...ffmpegTrim, "-y", o].join(" "), {
-    stdio: "inherit",
-  });
+  execSync(
+    [
+      "npx remotion ffmpeg",
+      "-i",
+      i,
+      ...ffmpegTrim,
+      "-c:v",
+      "libvpx",
+      "-y",
+      o,
+    ].join(" "),
+    {
+      stdio: "inherit",
+    }
+  );
 };
 
 if (existsSync(displaySrc)) {
   convert(
     displaySrc,
-    `${folder}${path.sep}${displayLatest.replace(".webm", ".mp4")}`
+    `${folder}${path.sep}${displayLatest.replace(".webm", ".webm")}`
   );
 }
 
 convert(
   webcamSrc,
-  `${folder}${path.sep}${webcamLatest.replace(".webm", ".mp4")}`
+  `${folder}${path.sep}${webcamLatest.replace(".webm", ".webm")}`
 );
 console.log("copied", latest, displayLatest);

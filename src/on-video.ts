@@ -1,5 +1,3 @@
-import { webmFixDuration } from "webm-fix-duration";
-
 export const onVideo = (
   data: Blob,
   duration: number,
@@ -15,16 +13,14 @@ export const onVideo = (
   const blob = new Blob(webcamchunks);
 
   const link = document.createElement("a");
-  webmFixDuration(blob, duration).then((fixedBlob) => {
-    const blobUrl = URL.createObjectURL(fixedBlob);
-    link.href = blobUrl;
-    link.download = `${prefix}${endDate}.webm`;
+  const blobUrl = URL.createObjectURL(blob);
+  link.href = blobUrl;
+  link.download = `${prefix}${endDate}.webm`;
 
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 
-    window.URL.revokeObjectURL(blobUrl);
-    webcamchunks = [];
-  });
+  window.URL.revokeObjectURL(blobUrl);
+  webcamchunks = [];
 };
