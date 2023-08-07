@@ -835,6 +835,22 @@ export const Root = () => {
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
+      />{" "}
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        height={1080}
+        width={1920}
+        id="get-silent-parts"
+        schema={videoConf}
+        defaultProps={{
+          prefix: "get-silent-parts",
+          scenes: [],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
       />
     </>
   );
