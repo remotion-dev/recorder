@@ -846,7 +846,44 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "get-silent-parts",
-          scenes: [],
+          scenes: [
+            {
+              type: "scene" as const,
+              webcamPosition: "center" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+            },
+          ],
           metadata: [],
           pairs: [],
         }}
