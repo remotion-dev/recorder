@@ -1,5 +1,7 @@
 import fs, { existsSync, mkdirSync } from "fs";
 import path from "path";
+import { getSilentParts } from "@remotion/renderer";
+import { execSync } from "child_process";
 
 const prefix = "get-silent-parts";
 
@@ -19,20 +21,51 @@ const sorted = webcam.sort((a, b) => {
 
 const latest = sorted[0];
 const latestTimestamp = Number(latest.match(/([0-9]+)/)[1]);
-const displayLatest = `display${latestTimestamp}.webm`;
-
-const displaySrc = `${downloadsDir}${path.sep}${displayLatest}`;
 
 const folder = `public${path.sep}${prefix}`;
 
+const displayLatest = `display${latestTimestamp}.webm`;
+const webcamLatest = `webcam${latestTimestamp}.webm`;
+
+const displaySrc = `${downloadsDir}${path.sep}${displayLatest}`;
+
+const webcamSrc = `${downloadsDir}${path.sep}${webcamLatest}`;
+
 mkdirSync(folder, { recursive: true });
 
+const { audibleParts } = await getSilentParts({
+  src: webcamSrc,
+});
+
+const padding = 0.3;
+
+const ffmpegTrim =
+  audibleParts.length === 1
+    ? [
+        "-ss",
+        audibleParts[0].startInSeconds - padding,
+        "-to",
+        audibleParts[0].endInSeconds + padding * 2,
+      ]
+    : [];
+
+const convert = (i, o) => {
+  console.log({ i, o });
+
+  execSync(["ffmpeg", "-i", i, ...ffmpegTrim, "-y", o].join(" "), {
+    stdio: "inherit",
+  });
+};
+
 if (existsSync(displaySrc)) {
-  fs.copyFileSync(displaySrc, `${folder}${path.sep}${displayLatest}`);
+  convert(
+    displaySrc,
+    `${folder}${path.sep}${displayLatest.replace(".webm", ".mp4")}`
+  );
 }
 
-fs.copyFileSync(
-  `${downloadsDir}${path.sep}${latest}`,
-  `${folder}${path.sep}${latest}`
+convert(
+  webcamSrc,
+  `${folder}${path.sep}${webcamLatest.replace(".webm", ".mp4")}`
 );
 console.log("copied", latest, displayLatest);

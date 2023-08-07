@@ -46,9 +46,12 @@ export const getPairs = (prefix: string) => {
       if (f.name.startsWith(`${prefix}/webcam`)) {
         const timestamp = f.name
           .replace(`${prefix}/webcam`, "")
-          .replace(".webm", "");
+          .replace(".webm", "")
+          .replace(".mp4", "");
         const display = files.find(
-          (_f) => _f.name === `${prefix}/display${timestamp}.webm`
+          (_f) =>
+            _f.name === `${prefix}/display${timestamp}.webm` ||
+            _f.name === `${prefix}/display${timestamp}.mp4`
         );
 
         return { display: display ?? null, webcam: f };
