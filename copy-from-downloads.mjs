@@ -1,7 +1,7 @@
-import fs, { existsSync } from "fs";
+import fs, { existsSync, mkdirSync } from "fs";
 import path from "path";
 
-const prefix = "saas-inflation";
+const prefix = "get-silent-parts";
 
 const downloadsDir =
   process.platform === "win32"
@@ -23,15 +23,16 @@ const displayLatest = `display${latestTimestamp}.webm`;
 
 const displaySrc = `${downloadsDir}${path.sep}${displayLatest}`;
 
+const folder = `public${path.sep}${prefix}`;
+
+mkdirSync(folder, { recursive: true });
+
 if (existsSync(displaySrc)) {
-  fs.copyFileSync(
-    displaySrc,
-    `public${path.sep}${prefix}${path.sep}${displayLatest}`
-  );
+  fs.copyFileSync(displaySrc, `${folder}${path.sep}${displayLatest}`);
 }
 
 fs.copyFileSync(
   `${downloadsDir}${path.sep}${latest}`,
-  `public${path.sep}${prefix}${path.sep}${latest}`
+  `${folder}${path.sep}${latest}`
 );
 console.log("copied", latest, displayLatest);
