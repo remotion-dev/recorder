@@ -895,6 +895,22 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       />
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        height={1080}
+        width={1920}
+        id="empty"
+        schema={videoConf}
+        defaultProps={{
+          prefix: "empty",
+          scenes: [],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
     </>
   );
 };
