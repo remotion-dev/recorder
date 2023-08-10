@@ -94,6 +94,8 @@ export const Scene: React.FC<{
   const { displayLayout, webcamLayout } = getLayout({
     display: metadata.display,
     webcam: metadata.webcam,
+    canvasWidth: width,
+    canvasHeight: height,
   });
 
   const enter = (() => {
