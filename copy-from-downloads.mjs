@@ -3,7 +3,7 @@ import path from "path";
 import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "child_process";
 
-const prefix = "lambda-rendering";
+const prefix = "lambda-debugging";
 
 const downloadsDir =
   process.platform === "win32"
