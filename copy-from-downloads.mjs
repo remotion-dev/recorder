@@ -59,8 +59,8 @@ const convert = (i, o) => {
       "-i",
       i,
       ...ffmpegTrim,
-      "-c:v",
-      "libvpx",
+      "-movflags",
+      "+faststart",
       "-y",
       o,
     ].join(" "),
@@ -73,12 +73,12 @@ const convert = (i, o) => {
 if (existsSync(displaySrc)) {
   convert(
     displaySrc,
-    `${folder}${path.sep}${displayLatest.replace(".webm", ".webm")}`
+    `${folder}${path.sep}${displayLatest.replace(".webm", ".mp4")}`
   );
 }
 
 convert(
   webcamSrc,
-  `${folder}${path.sep}${webcamLatest.replace(".webm", ".webm")}`
+  `${folder}${path.sep}${webcamLatest.replace(".webm", ".mp4")}`
 );
 console.log("copied", latest, displayLatest);
