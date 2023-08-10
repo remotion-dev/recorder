@@ -1319,12 +1319,18 @@ export const Root = () => {
             {
               type: "scene" as const,
               webcamPosition: "top-left" as const,
-              trimStart: 60,
+              trimStart: 0,
               duration: null,
             },
             {
               type: "scene" as const,
               webcamPosition: "bottom-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
               trimStart: 0,
               duration: null,
             },
