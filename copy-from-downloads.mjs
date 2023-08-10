@@ -3,7 +3,7 @@ import path from "path";
 import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "child_process";
 
-const prefix = "lambda-debugging";
+const prefix = "dvd";
 
 const downloadsDir =
   process.platform === "win32"
@@ -35,7 +35,7 @@ mkdirSync(folder, { recursive: true });
 
 const { audibleParts } = await getSilentParts({
   src: webcamSrc,
-  minDurationInSeconds: 1,
+  minDurationInSeconds: 0.3,
 });
 
 const padding = 0.2;
