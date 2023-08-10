@@ -1288,7 +1288,7 @@ export const Root = () => {
             },
             {
               type: "scene" as const,
-              webcamPosition: "bottom-left" as const,
+              webcamPosition: "bottom-right" as const,
               trimStart: 0,
               duration: 120,
             },
