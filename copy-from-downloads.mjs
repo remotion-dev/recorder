@@ -3,7 +3,7 @@ import path from "path";
 import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "child_process";
 
-const prefix = "lambda-setup";
+const prefix = "lambda-rendering";
 
 const downloadsDir =
   process.platform === "win32"
@@ -56,11 +56,13 @@ const convert = (i, o) => {
   execSync(
     [
       "npx remotion ffmpeg",
+      ...ffmpegTrim,
       "-i",
       i,
-      ...ffmpegTrim,
       "-movflags",
       "+faststart",
+      "-r",
+      "30",
       "-y",
       o,
     ].join(" "),

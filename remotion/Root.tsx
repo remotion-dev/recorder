@@ -1032,6 +1032,29 @@ export const Root = () => {
         durationInFrames={100}
         height={1080}
         width={1920}
+        id="lambda-rendering"
+        schema={videoConf}
+        defaultProps={{
+          prefix: "lambda-rendering",
+          scenes: [
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+            },
+          ],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        height={1080}
+        width={1920}
         id="empty"
         schema={videoConf}
         defaultProps={{
