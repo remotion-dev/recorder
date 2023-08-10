@@ -1249,7 +1249,7 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
+        height={850}
         width={1080}
         id="dvd"
         schema={videoConf}
