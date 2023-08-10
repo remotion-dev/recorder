@@ -3,7 +3,7 @@ import path from "path";
 import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "child_process";
 
-const prefix = "empty";
+const prefix = "lambda-setup";
 
 const downloadsDir =
   process.platform === "win32"
@@ -35,22 +35,23 @@ mkdirSync(folder, { recursive: true });
 
 const { audibleParts } = await getSilentParts({
   src: webcamSrc,
+  minDurationInSeconds: 1,
 });
 
 const padding = 0.2;
 
 const ffmpegTrim =
-  audibleParts.length === 1
+  audibleParts.length > 0
     ? [
         "-ss",
         audibleParts[0].startInSeconds - padding,
         "-to",
-        audibleParts[0].endInSeconds + padding * 2,
+        audibleParts[audibleParts.length - 1].endInSeconds + padding * 2,
       ]
     : [];
 
 const convert = (i, o) => {
-  console.log({ i, o });
+  console.log({ i, o, audibleParts });
 
   execSync(
     [
