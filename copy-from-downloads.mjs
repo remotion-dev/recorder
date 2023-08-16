@@ -38,7 +38,7 @@ const { audibleParts } = await getSilentParts({
   minDurationInSeconds: 0.3,
 });
 
-const padding = 0.2;
+const padding = 0.4;
 
 const ffmpegTrim =
   audibleParts.length > 0
