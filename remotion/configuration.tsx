@@ -54,7 +54,11 @@ export const getPairs = (prefix: string) => {
             _f.name === `${prefix}/display${timestamp}.mp4`
         );
 
-        return { display: display ?? null, webcam: f };
+        const sub = files.find((_f) => {
+          return _f.name === `${prefix}/subs${timestamp}.json`;
+        });
+
+        return { display: display ?? null, webcam: f, sub: sub ?? null };
       }
 
       return null;
@@ -66,6 +70,7 @@ export const getPairs = (prefix: string) => {
 export type Pair = {
   display: StaticFile | null;
   webcam: StaticFile;
+  sub: StaticFile | null;
 };
 
 export const safeSpaceBottom = 120;

@@ -16,6 +16,7 @@ import {
   getLayout,
   safeSpaceBottom,
 } from "./configuration";
+import { Subs } from "./Subs/Subs";
 
 export const Scene: React.FC<{
   metadata: SceneMetadata;
@@ -185,6 +186,7 @@ export const Scene: React.FC<{
           </AbsoluteFill>
         ) : null}
       </AbsoluteFill>
+      {pair.sub ? <Subs file={pair.sub} /> : null}
     </Sequence>
   );
 };
