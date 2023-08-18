@@ -29,6 +29,7 @@ export const Root = () => {
         id="Day2"
         schema={videoConf}
         defaultProps={{
+          music: "none",
           prefix: "day2",
           scenes: [
             {
@@ -112,6 +113,7 @@ export const Root = () => {
         id="Day3"
         schema={videoConf}
         defaultProps={{
+          music: "none",
           prefix: "day3",
           scenes: [
             {
@@ -135,6 +137,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "day4",
+          music: "none",
           scenes: [
             {
               type: "title",
@@ -313,6 +316,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "day5",
+          music: "none",
           scenes: [
             {
               type: "title",
@@ -461,6 +465,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "bts",
+          music: "none",
           scenes: [
             {
               type: "title",
@@ -579,6 +584,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "asyncproblem",
+          music: "none",
           scenes: [
             {
               webcamPosition: "center" as const,
@@ -632,6 +638,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "july",
+          music: "none",
           scenes: [
             {
               webcamPosition: "center" as const,
@@ -709,6 +716,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "saas-inflation",
+          music: "none",
           scenes: [
             {
               webcamPosition: "center" as const,
@@ -846,6 +854,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "get-silent-parts",
+          music: "none",
           scenes: [
             {
               type: "scene" as const,
@@ -905,6 +914,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "lambda-setup",
+          music: "none",
           scenes: [
             {
               type: "scene" as const,
@@ -1036,6 +1046,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "lambda-rendering",
+          music: "none",
           scenes: [
             {
               type: "scene" as const,
@@ -1137,6 +1148,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "lambda-debugging",
+          music: "none",
           scenes: [
             {
               type: "scene" as const,
@@ -1255,6 +1267,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "dvd",
+          music: "dancelikemike" as const,
           scenes: [
             {
               type: "scene" as const,
@@ -1356,6 +1369,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           prefix: "empty",
+          music: "none",
           scenes: [],
           metadata: [],
           pairs: [],

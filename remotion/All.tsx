@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, Sequence } from "remotion";
+import { AbsoluteFill, Audio, Sequence, staticFile } from "remotion";
 import type { z } from "zod";
 import type { Pair, SceneMetadata, videoConf } from "./configuration";
 import { titleDuration } from "./configuration";
@@ -12,7 +12,7 @@ export type AllProps = z.infer<typeof videoConf> & {
   prefix: string;
 };
 
-export const All: React.FC<AllProps> = ({ pairs, metadata, scenes }) => {
+export const All: React.FC<AllProps> = ({ pairs, metadata, scenes, music }) => {
   let addedUpDurations = 0;
   let videoCounter = -1;
 
@@ -57,6 +57,9 @@ export const All: React.FC<AllProps> = ({ pairs, metadata, scenes }) => {
           />
         );
       })}
+      {music && (
+        <Audio src={staticFile("sounds/dancelikemike.mp3")} volume={0.08} />
+      )}
     </AbsoluteFill>
   );
 };

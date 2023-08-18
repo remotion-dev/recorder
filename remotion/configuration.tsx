@@ -36,6 +36,7 @@ export const configuration = z.discriminatedUnion("type", [
 
 export const videoConf = z.object({
   scenes: z.array(configuration),
+  music: z.enum(["none", "dancelikemike"]),
 });
 
 export const getPairs = (prefix: string) => {
