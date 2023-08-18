@@ -31,18 +31,27 @@ export const SegmentComp: React.FC<{
     <AbsoluteFill
       style={{
         top: "auto",
-        height: "auto",
         textAlign: "center",
         fontSize: getFontSize(height),
-        paddingBottom: 50,
         fontFamily: "GT Planar",
         fontWeight: 500,
-        display: "block",
+        display: "flex",
+        // @ts-expect-error not yet available
+        textWrap: "balance",
+        lineHeight: 1.4,
+        height: 100,
+        bottom: 20,
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
-      {segment.words.map((word) => {
-        return <WordComp key={word.start} trimStart={trimStart} word={word} />;
-      })}
+      <div>
+        {segment.words.map((word) => {
+          return (
+            <WordComp key={word.start} trimStart={trimStart} word={word} />
+          );
+        })}
+      </div>
     </AbsoluteFill>
   );
 };
