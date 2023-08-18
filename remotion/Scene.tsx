@@ -186,7 +186,7 @@ export const Scene: React.FC<{
           </AbsoluteFill>
         ) : null}
       </AbsoluteFill>
-      {pair.sub ? <Subs file={pair.sub} /> : null}
+      {pair.sub ? <Subs trimStart={startFrom} file={pair.sub} /> : null}
     </Sequence>
   );
 };

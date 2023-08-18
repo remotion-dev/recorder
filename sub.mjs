@@ -1,10 +1,10 @@
 import { execSync } from "node:child_process";
-import { renameSync } from "node:fs";
+import { existsSync, readdirSync, renameSync } from "node:fs";
 import path from "path";
 
 const subFile = (file) => {
   execSync(
-    `whisper --language=English --word_timestamps True --output_format=json --output_dir=${path.dirname(
+    `whisper --language=English --model=base.en --word_timestamps True --output_format=json --output_dir=${path.dirname(
       file
     )} ${file}`,
     {
@@ -16,6 +16,33 @@ const subFile = (file) => {
   renameSync(output, output.replace("webcam", "subs"));
 };
 
-subFile(
-  "/Users/jonathanburger/dual-recorder/public/dvd/webcam1691688332959.mp4"
-);
+const folders = readdirSync("public").filter((f) => f !== ".DS_Store");
+
+for (const folder of folders) {
+  const files = readdirSync(`public/${folder}`).filter(
+    (f) => f !== ".DS_Store"
+  );
+  for (const file of files) {
+    if (!file.startsWith("webcam")) {
+      continue;
+    }
+
+    const fileToTranscribe = path.join(
+      process.cwd(),
+      `public/${folder}/${file}`
+    );
+
+    const isTranscribed = existsSync(
+      fileToTranscribe.replace(".mp4", ".json").replace("webcam", "subs")
+    );
+    if (isTranscribed) {
+      console.log("is transcribed");
+      continue;
+    }
+
+    console.log(fileToTranscribe);
+    subFile(fileToTranscribe);
+  }
+}
+
+console.log(folders);

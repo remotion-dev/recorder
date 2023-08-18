@@ -7,7 +7,8 @@ import { SegmentComp } from "./Segment";
 
 export const Subs: React.FC<{
   file: StaticFile;
-}> = ({ file }) => {
+  trimStart: number;
+}> = ({ file, trimStart }) => {
   const [data, setData] = useState<SubTypes | null>(null);
   const [handle] = useState(() => delayRender());
 
@@ -32,6 +33,7 @@ export const Subs: React.FC<{
             key={segment.id}
             isLast={index === data.segments.length - 1}
             segment={segment}
+            trimStart={trimStart}
           />
         );
       })}
