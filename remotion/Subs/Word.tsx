@@ -20,7 +20,8 @@ export const WordComp: React.FC<{
 }> = ({ word, trimStart }) => {
   const time = useTime(trimStart);
 
-  const opacity = word.start <= time ? 1 : 0.3;
+  const appeared = word.start <= time;
+  const opacity = appeared ? 1 : 0.3;
 
   const monospace =
     word.word.trimStart().startsWith("`") && word.word.endsWith("`");
@@ -32,8 +33,8 @@ export const WordComp: React.FC<{
       style={{
         ...style,
         opacity,
-        color: monospace ? "#0b84f3" : "black",
-        fontWeight: monospace ? 400 : 500,
+        color: monospace && appeared ? "#0b84f3" : "black",
+        fontWeight: 500,
       }}
     >
       {withoutBackticks}
