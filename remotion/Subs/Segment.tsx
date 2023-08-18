@@ -5,7 +5,7 @@ import { useTime, WordComp } from "./Word";
 
 const getFontSize = (height: number) => {
   if (height < 1000) {
-    return 28;
+    return 36;
   }
 
   return 36;
@@ -38,11 +38,13 @@ export const SegmentComp: React.FC<{
         display: "flex",
         // @ts-expect-error not yet available
         textWrap: "balance",
-        lineHeight: 1.4,
+        lineHeight: 1.1,
         height: 100,
         bottom: 20,
         justifyContent: "center",
         alignItems: "center",
+        paddingLeft: 50,
+        paddingRight: 50,
       }}
     >
       <div>
