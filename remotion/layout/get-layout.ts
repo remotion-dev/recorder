@@ -1,8 +1,8 @@
 import type React from "react";
 import type { WebcamPosition } from "../configuration";
 
-export const safeSpaceBottom = 120;
-export const frameWidth = 10;
+export const safeSpaceBottom = 160;
+export const frameWidth = 0;
 export const borderRadius = 10;
 
 type Layout = {
@@ -13,8 +13,8 @@ type Layout = {
 };
 
 const wideLayout = ({
-  videoWidth: width,
-  videoHeight: height,
+  videoWidth,
+  videoHeight,
   canvasWidth,
   canvasHeight,
 }: {
@@ -28,13 +28,13 @@ const wideLayout = ({
   const maxHeight = canvasHeight - safeSpaceBottom - safeSpace;
   const maxWidth = canvasWidth - safeSpace * 2;
 
-  const heightRatio = maxHeight / (height + frameWidth * 2);
-  const widthRatio = maxWidth / (width + frameWidth * 2);
+  const heightRatio = maxHeight / (videoHeight + frameWidth * 2);
+  const widthRatio = maxWidth / (videoWidth + frameWidth * 2);
 
   const ratio = Math.min(heightRatio, widthRatio);
 
-  const newWidth = (width + frameWidth * 2) * ratio;
-  const newHeight = (height + frameWidth * 2) * ratio;
+  const newWidth = (videoWidth + frameWidth * 2) * ratio;
+  const newHeight = (videoHeight + frameWidth * 2) * ratio;
 
   const x = (canvasWidth - newWidth) / 2;
   const y = (canvasHeight - newHeight - safeSpaceBottom) / 2;

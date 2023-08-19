@@ -6,6 +6,7 @@ const style: React.CSSProperties = {
   whiteSpace: "pre-wrap",
   display: "inline-block",
 };
+
 export const useTime = (trimStart: number) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -29,17 +30,16 @@ export const WordComp: React.FC<{
   const withoutBackticks = word.word.replace(/`/g, "");
 
   return (
-    <div
+    <span
       style={{
         ...style,
         opacity,
         fontFamily: monospace ? "GT Planar" : "Inter",
         color: monospace && appeared ? "#3B82EB" : "black",
-        borderRadius: 5,
         fontWeight: monospace ? 500 : 600,
       }}
     >
       {withoutBackticks}
-    </div>
+    </span>
   );
 };
