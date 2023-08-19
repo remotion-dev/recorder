@@ -15,7 +15,7 @@ import {
   frameWidth,
   getLayout,
   safeSpaceBottom,
-} from "./configuration";
+} from "./layout/get-layout";
 import { Subs } from "./Subs/Subs";
 
 export const Scene: React.FC<{
