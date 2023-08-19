@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, Audio, Sequence, staticFile } from "remotion";
+import { AbsoluteFill, Audio, Sequence } from "remotion";
 import type { z } from "zod";
 import type { Pair, SceneMetadata, videoConf } from "./configuration";
 import { titleDuration } from "./configuration";
@@ -13,7 +13,13 @@ export type AllProps = z.infer<typeof videoConf> & {
   prefix: string;
 };
 
-export const All: React.FC<AllProps> = ({ pairs, metadata, scenes, music }) => {
+export const All: React.FC<AllProps> = ({
+  pairs,
+  metadata,
+  scenes,
+  music,
+  layout,
+}) => {
   let addedUpDurations = 0;
   let videoCounter = -1;
 
@@ -55,6 +61,7 @@ export const All: React.FC<AllProps> = ({ pairs, metadata, scenes, music }) => {
             metadata={metadataForScene}
             index={videoCounter}
             prevWasTitle={i === 0 ? false : scenes[i - 1].type === "title"}
+            canvasSize={layout}
           />
         );
       })}

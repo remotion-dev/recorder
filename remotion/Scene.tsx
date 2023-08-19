@@ -9,7 +9,12 @@ import {
   useVideoConfig,
 } from "remotion";
 import type { z } from "zod";
-import type { configuration, Pair, SceneMetadata } from "./configuration";
+import type {
+  CanvasSize,
+  configuration,
+  Pair,
+  SceneMetadata,
+} from "./configuration";
 import {
   borderRadius,
   frameWidth,
@@ -25,7 +30,8 @@ export const Scene: React.FC<{
   start: number;
   index: number;
   prevWasTitle: boolean;
-}> = ({ metadata, pair, conf, start, index, prevWasTitle }) => {
+  canvasSize: CanvasSize;
+}> = ({ metadata, pair, conf, start, index, prevWasTitle, canvasSize }) => {
   const { fps, height, width } = useVideoConfig();
   const frame = useCurrentFrame();
 
@@ -62,6 +68,7 @@ export const Scene: React.FC<{
     webcam: metadata.webcam,
     canvasWidth: width,
     canvasHeight: height,
+    canvasSize,
   });
 
   const enter = (() => {
@@ -119,7 +126,7 @@ export const Scene: React.FC<{
             style={{
               position: "absolute",
               display: "flex",
-              ...webCamCSS(conf.webcamPosition),
+              ...webCamCSS(conf.webcamPosition, canvasSize),
             }}
           >
             <div
@@ -152,7 +159,9 @@ export const Scene: React.FC<{
           </div>
         ) : null}
       </AbsoluteFill>
-      {pair.sub ? <Subs trimStart={startFrom} file={pair.sub} /> : null}
+      {pair.sub ? (
+        <Subs canvasSize={canvasSize} trimStart={startFrom} file={pair.sub} />
+      ) : null}
     </Sequence>
   );
 };
