@@ -1,6 +1,7 @@
 import type { StaticFile } from "remotion";
 import { getStaticFiles } from "remotion";
 import { z } from "zod";
+import { music } from "./layout/music";
 
 type Dimensions = {
   width: number;
@@ -41,7 +42,7 @@ export const canvasSize = z.enum(["wide", "tall", "square"]);
 export type CanvasSize = z.infer<typeof canvasSize>;
 
 export const videoConf = z.object({
-  music: z.enum(["none", "dancelikemike"]),
+  music,
   layout: canvasSize,
   scenes: z.array(configuration),
 });
