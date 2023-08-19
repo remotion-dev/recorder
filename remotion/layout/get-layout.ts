@@ -1,7 +1,7 @@
 import type React from "react";
-import type { WebcamPosition } from "../configuration";
+import type { CanvasSize, WebcamPosition } from "../configuration";
+import { getBottomSafeSpace } from "./get-safe-space";
 
-export const safeSpaceBottom = 160;
 export const frameWidth = 0;
 export const borderRadius = 10;
 
@@ -17,15 +17,19 @@ const wideLayout = ({
   videoHeight,
   canvasWidth,
   canvasHeight,
+  canvasSize,
 }: {
   videoWidth: number;
   videoHeight: number;
   canvasWidth: number;
   canvasHeight: number;
+  canvasSize: CanvasSize;
 }): Layout => {
   const safeSpace = 10;
 
-  const maxHeight = canvasHeight - safeSpaceBottom - safeSpace;
+  const bottomSafeSpace = getBottomSafeSpace(canvasSize);
+
+  const maxHeight = canvasHeight - bottomSafeSpace - safeSpace;
   const maxWidth = canvasWidth - safeSpace * 2;
 
   const heightRatio = maxHeight / (videoHeight + frameWidth * 2);
@@ -37,7 +41,7 @@ const wideLayout = ({
   const newHeight = (videoHeight + frameWidth * 2) * ratio;
 
   const x = (canvasWidth - newWidth) / 2;
-  const y = (canvasHeight - newHeight - safeSpaceBottom) / 2;
+  const y = (canvasHeight - newHeight - bottomSafeSpace) / 2;
 
   return {
     x,
@@ -52,6 +56,7 @@ export const getLayout = ({
   webcam,
   canvasHeight,
   canvasWidth,
+  canvasSize,
 }: {
   display: {
     width: number;
@@ -63,6 +68,7 @@ export const getLayout = ({
   } | null;
   canvasWidth: number;
   canvasHeight: number;
+  canvasSize: CanvasSize;
 }): { webcamLayout: Layout | null; displayLayout: Layout | null } => {
   const displayLayout = display
     ? wideLayout({
@@ -70,6 +76,7 @@ export const getLayout = ({
         videoHeight: display.height,
         canvasWidth,
         canvasHeight,
+        canvasSize,
       })
     : null;
 
@@ -81,6 +88,7 @@ export const getLayout = ({
           videoHeight: webcam.height,
           canvasWidth,
           canvasHeight,
+          canvasSize,
         })
     : null;
 
@@ -88,19 +96,20 @@ export const getLayout = ({
 };
 
 export const webCamCSS = (
-  webcamPosition: WebcamPosition
+  webcamPosition: WebcamPosition,
+  canvasSize: CanvasSize
 ): React.CSSProperties => {
   if (webcamPosition === "bottom-left") {
     return {
       left: 40,
-      bottom: 40 + safeSpaceBottom,
+      bottom: 40 + getBottomSafeSpace(canvasSize),
     };
   }
 
   if (webcamPosition === "bottom-right") {
     return {
       right: 40,
-      bottom: 40 + safeSpaceBottom,
+      bottom: 40 + getBottomSafeSpace(canvasSize),
     };
   }
 
@@ -125,7 +134,7 @@ export const webCamCSS = (
       padding: 40,
       width: "100%",
       height: "100%",
-      paddingBottom: safeSpaceBottom,
+      paddingBottom: getBottomSafeSpace(canvasSize),
     };
   }
 
@@ -133,6 +142,6 @@ export const webCamCSS = (
     justifyContent: "flex-start",
     alignItems: "flex-end",
     padding: 40,
-    paddingBottom: safeSpaceBottom,
+    paddingBottom: getBottomSafeSpace(canvasSize),
   };
 };

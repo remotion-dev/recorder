@@ -3,7 +3,8 @@ import { AbsoluteFill, useVideoConfig } from "remotion";
 import type { Segment } from "../sub-types";
 import { useTime, WordComp } from "./Word";
 import { loadFont } from "@remotion/google-fonts/Inter";
-import { safeSpaceBottom } from "../layout/get-layout";
+import { getBottomSafeSpace } from "../layout/get-safe-space";
+import type { CanvasSize } from "../configuration";
 
 loadFont();
 
@@ -19,7 +20,8 @@ export const SegmentComp: React.FC<{
   segment: Segment;
   isLast: boolean;
   trimStart: number;
-}> = ({ segment, isLast, trimStart }) => {
+  canvasSize: CanvasSize;
+}> = ({ segment, isLast, trimStart, canvasSize }) => {
   const { height } = useVideoConfig();
   const time = useTime(trimStart);
 
@@ -40,7 +42,7 @@ export const SegmentComp: React.FC<{
         display: "flex",
         // @ts-expect-error not yet available
         textWrap: "balance",
-        height: safeSpaceBottom - 20,
+        height: getBottomSafeSpace(canvasSize) - 20,
         bottom: 20,
         lineHeight: 1.2,
         justifyContent: "center",
@@ -56,7 +58,6 @@ export const SegmentComp: React.FC<{
       >
         <span
           style={{
-            backdropFilter: "blur(10px)",
             background: "white",
             lineHeight: 1,
             display: "inline",

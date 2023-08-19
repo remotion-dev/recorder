@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import type { StaticFile } from "remotion";
 import { delayRender, continueRender } from "remotion";
 import { AbsoluteFill } from "remotion";
+import type { CanvasSize } from "../configuration";
 import type { SubTypes } from "../sub-types";
 import { SegmentComp } from "./Segment";
 
 export const Subs: React.FC<{
   file: StaticFile;
   trimStart: number;
-}> = ({ file, trimStart }) => {
+  canvasSize: CanvasSize;
+}> = ({ file, trimStart, canvasSize }) => {
   const [data, setData] = useState<SubTypes | null>(null);
   const [handle] = useState(() => delayRender());
 
@@ -34,6 +36,7 @@ export const Subs: React.FC<{
             isLast={index === data.segments.length - 1}
             segment={segment}
             trimStart={trimStart}
+            canvasSize={canvasSize}
           />
         );
       })}
