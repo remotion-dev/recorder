@@ -10,8 +10,10 @@ export type Dimensions = {
 
 export type SceneMetadata = {
   durationInFrames: number;
-  webcam: Dimensions | null;
-  display: Dimensions | null;
+  videos: {
+    webcam: Dimensions;
+    display: Dimensions | null;
+  } | null;
 };
 
 const webcamPosition = z.enum([

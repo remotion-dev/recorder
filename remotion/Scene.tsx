@@ -55,15 +55,21 @@ export const Scene: React.FC<{
     throw new Error("Not a scene");
   }
 
+  if (metadata.videos === null) {
+    throw new Error("No videos");
+  }
+
   const startFrom = conf.trimStart ?? 0;
   const endAt = conf.duration ? startFrom + conf.duration : undefined;
 
   const { displayLayout, webcamLayout } = getLayout({
-    display: metadata.display,
-    webcam: metadata.webcam,
-    canvasWidth: width,
-    canvasHeight: height,
-    canvasSize,
+    display: metadata.videos.display,
+    webcam: metadata.videos.webcam,
+    canvasSize: {
+      width,
+      height,
+    },
+    canvasLayout: canvasSize,
     webcamPosition: conf.webcamPosition,
   });
 

@@ -1,4 +1,5 @@
 import type { CanvasLayout } from "../configuration";
+import { safeSpace } from "./get-layout";
 
 export const getBottomSafeSpace = (canvasSize: CanvasLayout) => {
   if (canvasSize === "wide") {
@@ -6,7 +7,7 @@ export const getBottomSafeSpace = (canvasSize: CanvasLayout) => {
   }
 
   if (canvasSize === "square") {
-    return 160;
+    return safeSpace;
   }
 
   return 120;
