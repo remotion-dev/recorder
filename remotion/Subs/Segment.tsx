@@ -3,15 +3,16 @@ import { AbsoluteFill, useVideoConfig } from "remotion";
 import type { Segment } from "../sub-types";
 import { useTime, WordComp } from "./Word";
 import { loadFont } from "@remotion/google-fonts/Inter";
+import { safeSpaceBottom } from "../layout/get-layout";
 
 loadFont();
 
 const getFontSize = (height: number) => {
   if (height < 1000) {
-    return 36;
+    return 40;
   }
 
-  return 36;
+  return 40;
 };
 
 export const SegmentComp: React.FC<{
@@ -39,21 +40,39 @@ export const SegmentComp: React.FC<{
         display: "flex",
         // @ts-expect-error not yet available
         textWrap: "balance",
-        lineHeight: 1.1,
-        height: 100,
+        height: safeSpaceBottom - 20,
         bottom: 20,
+        lineHeight: 1.2,
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft: 50,
-        paddingRight: 50,
+        paddingLeft: 40,
+        paddingRight: 40,
       }}
     >
-      <div>
-        {segment.words.map((word) => {
-          return (
-            <WordComp key={word.start} trimStart={trimStart} word={word} />
-          );
-        })}
+      <div
+        style={{
+          display: "inline",
+        }}
+      >
+        <span
+          style={{
+            backdropFilter: "blur(10px)",
+            background: "white",
+            lineHeight: 1,
+            display: "inline",
+            boxDecorationBreak: "clone",
+            WebkitBoxDecorationBreak: "clone",
+            paddingLeft: 20,
+            paddingRight: 20,
+            borderRadius: 5,
+          }}
+        >
+          {segment.words.map((word) => {
+            return (
+              <WordComp key={word.start} trimStart={trimStart} word={word} />
+            );
+          })}
+        </span>
       </div>
     </AbsoluteFill>
   );
