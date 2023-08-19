@@ -96,6 +96,13 @@ export const webCamCSS = (
     };
   }
 
+  if (webcamPosition === "top-right") {
+    return {
+      top: 40,
+      right: 40,
+    };
+  }
+
   if (webcamPosition === "center") {
     return {
       justifyContent: "center",
