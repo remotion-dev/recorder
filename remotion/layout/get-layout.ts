@@ -7,7 +7,7 @@ import { getBottomSafeSpace } from "./get-safe-space";
 
 export const borderRadius = 20;
 
-type Layout = {
+export type Layout = {
   x: number;
   y: number;
   width: number;
@@ -229,7 +229,7 @@ export const getLayout = ({
   canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
   webcamPosition: WebcamPosition;
-}): { webcamLayout: Layout | null; displayLayout: Layout | null } => {
+}): { webcamLayout: Layout; displayLayout: Layout | null } => {
   const displayLayout = display
     ? wideLayout({
         videoWidth: display.width,
@@ -248,23 +248,20 @@ export const getLayout = ({
       })
     : { height: 0, width: 0 };
 
-  const webcamLayout = webcam
-    ? display
-      ? makeWebcamLayoutBasedOnWebcamPosition({
-          webcamPosition,
-          canvasSize,
-          canvasLayout,
-          webcamSize,
-        })
-      : wideLayout({
-          videoWidth: webcam.width,
-          videoHeight: webcam.height,
-          canvasSize,
-          webcamPosition,
-          canvasLayout,
-        })
-    : null;
-
+  const webcamLayout = display
+    ? makeWebcamLayoutBasedOnWebcamPosition({
+        webcamPosition,
+        canvasSize,
+        canvasLayout,
+        webcamSize,
+      })
+    : wideLayout({
+        videoWidth: webcam.width,
+        videoHeight: webcam.height,
+        canvasSize,
+        webcamPosition,
+        canvasLayout,
+      });
   return {
     displayLayout: displayLayout
       ? shiftDisplayLayoutBasedOnWebcamPosition({

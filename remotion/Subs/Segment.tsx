@@ -4,25 +4,89 @@ import type { Segment } from "../sub-types";
 import { useTime, WordComp } from "./Word";
 import { loadFont } from "@remotion/google-fonts/Inter";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
-import type { CanvasLayout } from "../configuration";
+import type {
+  CanvasLayout,
+  Dimensions,
+  WebcamPosition,
+} from "../configuration";
+import type { Layout } from "../layout/get-layout";
+import { safeSpace } from "../layout/get-layout";
 
 loadFont();
 
-const getFontSize = (height: number) => {
-  if (height < 1000) {
-    return 40;
+const getFontSize = (canvasLayout: CanvasLayout) => {
+  if (canvasLayout === "square") {
+    return 46;
   }
 
   return 40;
+};
+
+const getSubsLayout = ({
+  canvasLayout,
+  webcamLayout,
+  webcamPosition,
+  canvasSize,
+}: {
+  canvasLayout: CanvasLayout;
+  webcamLayout: Layout;
+  webcamPosition: WebcamPosition;
+  canvasSize: Dimensions;
+}): React.CSSProperties => {
+  if (canvasLayout === "wide") {
+    return {
+      height: getBottomSafeSpace(canvasLayout),
+      // @ts-expect-error not yet available
+      textWrap: "balance",
+      textAlign: "center",
+      paddingLeft: 40,
+      paddingRight: 40,
+      justifyContent: "center",
+      alignItems: "center",
+    };
+  }
+
+  if (canvasLayout === "square") {
+    return {
+      height: webcamLayout.height,
+      top: webcamLayout.y,
+      left:
+        webcamPosition === "bottom-left" || webcamPosition === "top-left"
+          ? webcamLayout.width + safeSpace * 2
+          : safeSpace,
+      width: canvasSize.width - webcamLayout.width - safeSpace * 3,
+      justifyContent: "center",
+    };
+  }
+
+  return {};
+};
+
+const inlineSubsLayout = (canvasLayout: CanvasLayout): React.CSSProperties => {
+  if (canvasLayout === "wide") {
+    return { paddingLeft: 20, paddingRight: 20 };
+  }
+
+  return {};
 };
 
 export const SegmentComp: React.FC<{
   segment: Segment;
   isLast: boolean;
   trimStart: number;
-  canvasSize: CanvasLayout;
-}> = ({ segment, isLast, trimStart, canvasSize }) => {
-  const { height } = useVideoConfig();
+  canvasLayout: CanvasLayout;
+  webcamPosition: WebcamPosition;
+  webcamLayout: Layout;
+  canvasSize: Dimensions;
+}> = ({
+  segment,
+  isLast,
+  trimStart,
+  canvasLayout,
+  webcamLayout,
+  webcamPosition,
+  canvasSize,
+}) => {
   const time = useTime(trimStart);
 
   if (time < segment.start) {
@@ -37,34 +101,27 @@ export const SegmentComp: React.FC<{
     <AbsoluteFill
       style={{
         top: "auto",
-        textAlign: "center",
-        fontSize: getFontSize(height),
+        fontSize: getFontSize(canvasLayout),
         display: "flex",
-        // @ts-expect-error not yet available
-        textWrap: "balance",
-        height: getBottomSafeSpace(canvasSize),
         lineHeight: 1.2,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingLeft: 40,
-        paddingRight: 40,
+        ...getSubsLayout({
+          canvasLayout,
+          webcamLayout,
+          webcamPosition,
+          canvasSize,
+        }),
       }}
     >
-      <div
-        style={{
-          display: "inline",
-        }}
-      >
+      <div style={{}}>
         <span
           style={{
-            background: "white",
+            backgroundColor: "white",
             lineHeight: 1,
             display: "inline",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
-            paddingLeft: 20,
-            paddingRight: 20,
             borderRadius: 5,
+            ...inlineSubsLayout(canvasLayout),
           }}
         >
           {segment.words.map((word) => {

@@ -26,7 +26,7 @@ export const All: React.FC<AllProps> = ({
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "white",
+        backgroundImage: "linear-gradient(to right, white, white)",
       }}
     >
       {scenes.map((scene, i) => {
