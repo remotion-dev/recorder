@@ -2,6 +2,9 @@ import React from "react";
 import { AbsoluteFill, useVideoConfig } from "remotion";
 import type { Segment } from "../sub-types";
 import { useTime, WordComp } from "./Word";
+import { loadFont } from "@remotion/google-fonts/Inter";
+
+loadFont();
 
 const getFontSize = (height: number) => {
   if (height < 1000) {
@@ -33,8 +36,6 @@ export const SegmentComp: React.FC<{
         top: "auto",
         textAlign: "center",
         fontSize: getFontSize(height),
-        fontFamily: "GT Planar",
-        fontWeight: 500,
         display: "flex",
         // @ts-expect-error not yet available
         textWrap: "balance",
