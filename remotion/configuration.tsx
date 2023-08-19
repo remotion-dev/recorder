@@ -3,7 +3,7 @@ import { getStaticFiles } from "remotion";
 import { z } from "zod";
 import { music } from "./layout/music";
 
-type Dimensions = {
+export type Dimensions = {
   width: number;
   height: number;
 };

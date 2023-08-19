@@ -128,6 +128,7 @@ export const Scene: React.FC<{
               position: "absolute",
               display: "flex",
               ...webCamCSS(conf.webcamPosition, canvasSize),
+              translate: `${webcamLayout.x}px ${webcamLayout.y}px`,
             }}
           >
             <div

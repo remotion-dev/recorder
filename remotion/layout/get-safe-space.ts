@@ -2,7 +2,7 @@ import type { CanvasSize } from "../configuration";
 
 export const getBottomSafeSpace = (canvasSize: CanvasSize) => {
   if (canvasSize === "wide") {
-    return 120;
+    return 140;
   }
 
   if (canvasSize === "square") {
