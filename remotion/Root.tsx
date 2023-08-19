@@ -12,9 +12,9 @@ export const Root = () => {
         component={Title}
         durationInFrames={100}
         fps={30}
-        height={1080}
-        width={1920}
         id="intro"
+        width={1920}
+        height={1080}
         defaultProps={{
           subtitle: "New in Remotion 4.0",
           title: "Render button",
@@ -24,11 +24,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="Day2"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           music: "none",
           prefix: "day2",
           scenes: [
@@ -108,11 +107,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="Day3"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           music: "none",
           prefix: "day3",
           scenes: [
@@ -131,11 +129,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="Day4"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           prefix: "day4",
           music: "none",
           scenes: [
@@ -310,11 +307,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="Day5"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           prefix: "day5",
           music: "none",
           scenes: [
@@ -459,11 +455,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="bts"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           prefix: "bts",
           music: "none",
           scenes: [
@@ -578,11 +573,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="asyncproblem"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           prefix: "asyncproblem",
           music: "none",
           scenes: [
@@ -632,11 +626,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="july"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           prefix: "july",
           music: "none",
           scenes: [
@@ -710,11 +703,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="saas-inflation"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           prefix: "saas-inflation",
           music: "none",
           scenes: [
@@ -848,11 +840,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="get-silent-parts"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           prefix: "get-silent-parts",
           music: "none",
           scenes: [
@@ -908,11 +899,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="lambda-setup"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           prefix: "lambda-setup",
           music: "none",
           scenes: [
@@ -1040,11 +1030,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="lambda-rendering"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           prefix: "lambda-rendering",
           music: "none",
           scenes: [
@@ -1142,11 +1131,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="lambda-debugging"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           prefix: "lambda-debugging",
           music: "none",
           scenes: [
@@ -1261,11 +1249,10 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={850}
-        width={1080}
         id="dvd"
         schema={videoConf}
         defaultProps={{
+          layout: "tall",
           prefix: "dvd",
           music: "dancelikemike" as const,
           scenes: [
@@ -1358,16 +1345,15 @@ export const Root = () => {
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
-      />{" "}
+      />
       <Composition
         component={All}
         fps={fps}
         durationInFrames={100}
-        height={1080}
-        width={1920}
         id="empty"
         schema={videoConf}
         defaultProps={{
+          layout: "wide",
           prefix: "empty",
           music: "none",
           scenes: [],

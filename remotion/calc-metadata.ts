@@ -61,6 +61,8 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
   return {
     durationInFrames: totalDuration,
+    width: props.layout === "wide" ? 1920 : 1080,
+    height: props.layout === "wide" || props.layout === "square" ? 1080 : 1920,
     props: {
       ...props,
       pairs,
