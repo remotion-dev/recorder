@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, useVideoConfig } from "remotion";
+import { AbsoluteFill } from "remotion";
 import type { Segment } from "../sub-types";
 import { useTime, WordComp } from "./Word";
 import { loadFont } from "@remotion/google-fonts/Inter";
