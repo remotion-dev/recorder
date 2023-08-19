@@ -42,8 +42,7 @@ export const SegmentComp: React.FC<{
         display: "flex",
         // @ts-expect-error not yet available
         textWrap: "balance",
-        height: getBottomSafeSpace(canvasSize) - 20,
-        bottom: 20,
+        height: getBottomSafeSpace(canvasSize),
         lineHeight: 1.2,
         justifyContent: "center",
         alignItems: "center",

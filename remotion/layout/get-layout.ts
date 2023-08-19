@@ -2,7 +2,6 @@ import type React from "react";
 import type { CanvasSize, WebcamPosition } from "../configuration";
 import { getBottomSafeSpace } from "./get-safe-space";
 
-export const frameWidth = 0;
 export const borderRadius = 10;
 
 type Layout = {
@@ -11,6 +10,11 @@ type Layout = {
   width: number;
   height: number;
 };
+
+export const frameWidth = 0;
+
+const webcamWidth = 350;
+const webcamHeight = 400;
 
 const wideLayout = ({
   videoWidth,
@@ -41,7 +45,7 @@ const wideLayout = ({
   const newHeight = (videoHeight + frameWidth * 2) * ratio;
 
   const x = (canvasWidth - newWidth) / 2;
-  const y = (canvasHeight - newHeight - bottomSafeSpace) / 2;
+  const y = (canvasHeight - newHeight - bottomSafeSpace) / 2 + safeSpace / 2;
 
   return {
     x,
@@ -51,12 +55,34 @@ const wideLayout = ({
   };
 };
 
+const shiftLayoutBasedOnWebcamPosition = (
+  layout: Layout,
+  webcamPosition: WebcamPosition
+): Layout => {
+  if (webcamPosition === "bottom-right") {
+    return {
+      ...layout,
+      x: layout.x - webcamWidth / 2,
+    };
+  }
+
+  if (webcamPosition === "bottom-left") {
+    return {
+      ...layout,
+      x: layout.x + webcamWidth / 2,
+    };
+  }
+
+  return layout;
+};
+
 export const getLayout = ({
   display,
   webcam,
   canvasHeight,
   canvasWidth,
   canvasSize,
+  webcamPosition,
 }: {
   display: {
     width: number;
@@ -69,20 +95,24 @@ export const getLayout = ({
   canvasWidth: number;
   canvasHeight: number;
   canvasSize: CanvasSize;
+  webcamPosition: WebcamPosition;
 }): { webcamLayout: Layout | null; displayLayout: Layout | null } => {
   const displayLayout = display
-    ? wideLayout({
-        videoWidth: display.width,
-        videoHeight: display.height,
-        canvasWidth,
-        canvasHeight,
-        canvasSize,
-      })
+    ? shiftLayoutBasedOnWebcamPosition(
+        wideLayout({
+          videoWidth: display.width,
+          videoHeight: display.height,
+          canvasWidth,
+          canvasHeight,
+          canvasSize,
+        }),
+        webcamPosition
+      )
     : null;
 
   const webcamLayout = webcam
     ? display
-      ? { width: 350, height: 400, x: 0, y: 0 }
+      ? { width: webcamWidth, height: webcamHeight, x: 0, y: 0 }
       : wideLayout({
           videoWidth: webcam.width,
           videoHeight: webcam.height,
@@ -102,14 +132,14 @@ export const webCamCSS = (
   if (webcamPosition === "bottom-left") {
     return {
       left: 40,
-      bottom: 40 + getBottomSafeSpace(canvasSize),
+      bottom: getBottomSafeSpace(canvasSize),
     };
   }
 
   if (webcamPosition === "bottom-right") {
     return {
       right: 40,
-      bottom: 40 + getBottomSafeSpace(canvasSize),
+      bottom: getBottomSafeSpace(canvasSize),
     };
   }
 
