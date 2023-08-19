@@ -1,6 +1,6 @@
-import type { CanvasSize } from "../configuration";
+import type { CanvasLayout } from "../configuration";
 
-export const getBottomSafeSpace = (canvasSize: CanvasSize) => {
+export const getBottomSafeSpace = (canvasSize: CanvasLayout) => {
   if (canvasSize === "wide") {
     return 140;
   }
