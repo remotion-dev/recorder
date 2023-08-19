@@ -1,5 +1,5 @@
 import type React from "react";
-import type { CanvasSize, WebcamPosition } from "../configuration";
+import type { CanvasSize, Dimensions, WebcamPosition } from "../configuration";
 import { getBottomSafeSpace } from "./get-safe-space";
 
 export const borderRadius = 10;
@@ -13,8 +13,9 @@ type Layout = {
 
 export const frameWidth = 0;
 
-const webcamWidth = 350;
-const webcamHeight = 400;
+const webcamRatio = 400 / 350;
+
+export const safeSpace = 10;
 
 const wideLayout = ({
   videoWidth,
@@ -29,8 +30,6 @@ const wideLayout = ({
   canvasHeight: number;
   canvasSize: CanvasSize;
 }): Layout => {
-  const safeSpace = 10;
-
   const bottomSafeSpace = getBottomSafeSpace(canvasSize);
 
   const maxHeight = canvasHeight - bottomSafeSpace - safeSpace;
@@ -55,25 +54,70 @@ const wideLayout = ({
   };
 };
 
-const shiftLayoutBasedOnWebcamPosition = (
-  layout: Layout,
-  webcamPosition: WebcamPosition
-): Layout => {
-  if (webcamPosition === "bottom-right") {
+const shiftDisplayLayoutBasedOnWebcamPosition = ({
+  layout,
+  webcamPosition,
+  webcamSize,
+}: {
+  layout: Layout;
+  webcamPosition: WebcamPosition;
+  webcamSize: Dimensions;
+}): Layout => {
+  if (webcamPosition === "bottom-right" || webcamPosition === "top-right") {
     return {
       ...layout,
-      x: layout.x - webcamWidth / 2,
+      x: layout.x - webcamSize.width / 2 - safeSpace / 2,
     };
   }
 
-  if (webcamPosition === "bottom-left") {
+  if (webcamPosition === "bottom-left" || webcamPosition === "top-left") {
     return {
       ...layout,
-      x: layout.x + webcamWidth / 2,
+      x: layout.x + webcamSize.width / 2 + safeSpace / 2,
     };
   }
 
   return layout;
+};
+
+const shiftWebcamLayoutBasedOnWebcamPosition = ({
+  layout,
+  webcamPosition,
+}: {
+  layout: Layout;
+  webcamPosition: WebcamPosition;
+}): Layout => {
+  if (webcamPosition === "bottom-right" || webcamPosition === "top-right") {
+    return {
+      ...layout,
+      x: layout.x + safeSpace * 3,
+    };
+  }
+
+  if (webcamPosition === "bottom-left" || webcamPosition === "top-left") {
+    return {
+      ...layout,
+      x: layout.x - safeSpace * 3,
+    };
+  }
+
+  return layout;
+};
+
+const getWebcamSize = ({
+  displayLayout,
+  canvasWidth,
+}: {
+  displayLayout: Layout;
+  canvasWidth: number;
+}): Dimensions => {
+  const remainingWidth = canvasWidth - displayLayout.width - safeSpace * 3;
+  const height = webcamRatio * remainingWidth;
+
+  return {
+    width: remainingWidth,
+    height,
+  };
 };
 
 export const getLayout = ({
@@ -84,35 +128,41 @@ export const getLayout = ({
   canvasSize,
   webcamPosition,
 }: {
-  display: {
-    width: number;
-    height: number;
-  } | null;
-  webcam: {
-    width: number;
-    height: number;
-  } | null;
+  display: Dimensions | null;
+  webcam: Dimensions | null;
   canvasWidth: number;
   canvasHeight: number;
   canvasSize: CanvasSize;
   webcamPosition: WebcamPosition;
 }): { webcamLayout: Layout | null; displayLayout: Layout | null } => {
   const displayLayout = display
-    ? shiftLayoutBasedOnWebcamPosition(
-        wideLayout({
-          videoWidth: display.width,
-          videoHeight: display.height,
-          canvasWidth,
-          canvasHeight,
-          canvasSize,
-        }),
-        webcamPosition
-      )
+    ? wideLayout({
+        videoWidth: display.width,
+        videoHeight: display.height,
+        canvasWidth,
+        canvasHeight,
+        canvasSize,
+      })
     : null;
+
+  const webcamSize: Dimensions = displayLayout
+    ? getWebcamSize({
+        canvasWidth,
+        displayLayout,
+      })
+    : { height: 0, width: 0 };
 
   const webcamLayout = webcam
     ? display
-      ? { width: webcamWidth, height: webcamHeight, x: 0, y: 0 }
+      ? shiftWebcamLayoutBasedOnWebcamPosition({
+          webcamPosition,
+          layout: {
+            width: webcamSize.width,
+            height: webcamSize.height,
+            x: 0,
+            y: 0,
+          },
+        })
       : wideLayout({
           videoWidth: webcam.width,
           videoHeight: webcam.height,
@@ -122,7 +172,16 @@ export const getLayout = ({
         })
     : null;
 
-  return { displayLayout, webcamLayout };
+  return {
+    displayLayout: displayLayout
+      ? shiftDisplayLayoutBasedOnWebcamPosition({
+          layout: displayLayout,
+          webcamPosition,
+          webcamSize,
+        })
+      : null,
+    webcamLayout,
+  };
 };
 
 export const webCamCSS = (
