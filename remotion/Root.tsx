@@ -1258,7 +1258,7 @@ export const Root = () => {
           scenes: [
             {
               type: "scene" as const,
-              webcamPosition: "bottom-right" as const,
+              webcamPosition: "top-right" as const,
               trimStart: 0,
               duration: 120,
             },
