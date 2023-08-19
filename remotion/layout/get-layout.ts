@@ -12,12 +12,17 @@ type Layout = {
   height: number;
 };
 
-const wideLayout = (
-  width: number,
-  height: number,
-  canvasWidth: number,
-  canvasHeight: number
-): Layout => {
+const wideLayout = ({
+  videoWidth: width,
+  videoHeight: height,
+  canvasWidth,
+  canvasHeight,
+}: {
+  videoWidth: number;
+  videoHeight: number;
+  canvasWidth: number;
+  canvasHeight: number;
+}): Layout => {
   const safeSpace = 50;
 
   const maxHeight = canvasHeight - safeSpaceBottom - safeSpace;
@@ -60,13 +65,23 @@ export const getLayout = ({
   canvasHeight: number;
 }): { webcamLayout: Layout | null; displayLayout: Layout | null } => {
   const displayLayout = display
-    ? wideLayout(display.width, display.height, canvasWidth, canvasHeight)
+    ? wideLayout({
+        videoWidth: display.width,
+        videoHeight: display.height,
+        canvasWidth,
+        canvasHeight,
+      })
     : null;
 
   const webcamLayout = webcam
     ? display
       ? { width: 350, height: 400, x: 0, y: 0 }
-      : wideLayout(webcam.width, webcam.height, canvasWidth, canvasHeight)
+      : wideLayout({
+          videoWidth: webcam.width,
+          videoHeight: webcam.height,
+          canvasWidth,
+          canvasHeight,
+        })
     : null;
 
   return { displayLayout, webcamLayout };

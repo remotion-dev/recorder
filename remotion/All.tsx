@@ -5,6 +5,7 @@ import type { Pair, SceneMetadata, videoConf } from "./configuration";
 import { titleDuration } from "./configuration";
 import { Title } from "./Title";
 import { Scene } from "./Scene";
+import { getAudioSource } from "./layout/music";
 
 export type AllProps = z.infer<typeof videoConf> & {
   metadata: SceneMetadata[];
@@ -57,9 +58,7 @@ export const All: React.FC<AllProps> = ({ pairs, metadata, scenes, music }) => {
           />
         );
       })}
-      {music && (
-        <Audio src={staticFile("sounds/dancelikemike.mp3")} volume={0.08} />
-      )}
+      {music !== "none" && <Audio src={getAudioSource(music)} volume={0.08} />}
     </AbsoluteFill>
   );
 };
