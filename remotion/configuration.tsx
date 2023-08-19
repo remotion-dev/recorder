@@ -38,12 +38,12 @@ export const configuration = z.discriminatedUnion("type", [
   }),
 ]);
 
-export const canvasSize = z.enum(["wide", "tall", "square"]);
-export type CanvasSize = z.infer<typeof canvasSize>;
+export const canvasLayout = z.enum(["wide", "tall", "square"]);
+export type CanvasLayout = z.infer<typeof canvasLayout>;
 
 export const videoConf = z.object({
   music,
-  layout: canvasSize,
+  layout: canvasLayout,
   scenes: z.array(configuration),
 });
 

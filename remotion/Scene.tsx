@@ -10,7 +10,7 @@ import {
 } from "remotion";
 import type { z } from "zod";
 import type {
-  CanvasSize,
+  CanvasLayout,
   configuration,
   Pair,
   SceneMetadata,
@@ -25,7 +25,7 @@ export const Scene: React.FC<{
   start: number;
   index: number;
   prevWasTitle: boolean;
-  canvasSize: CanvasSize;
+  canvasSize: CanvasLayout;
 }> = ({ metadata, pair, conf, start, index, prevWasTitle, canvasSize }) => {
   const { fps, height, width } = useVideoConfig();
   const frame = useCurrentFrame();

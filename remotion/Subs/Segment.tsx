@@ -4,7 +4,7 @@ import type { Segment } from "../sub-types";
 import { useTime, WordComp } from "./Word";
 import { loadFont } from "@remotion/google-fonts/Inter";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
-import type { CanvasSize } from "../configuration";
+import type { CanvasLayout } from "../configuration";
 
 loadFont();
 
@@ -20,7 +20,7 @@ export const SegmentComp: React.FC<{
   segment: Segment;
   isLast: boolean;
   trimStart: number;
-  canvasSize: CanvasSize;
+  canvasSize: CanvasLayout;
 }> = ({ segment, isLast, trimStart, canvasSize }) => {
   const { height } = useVideoConfig();
   const time = useTime(trimStart);
