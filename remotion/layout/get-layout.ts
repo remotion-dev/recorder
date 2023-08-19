@@ -23,7 +23,7 @@ const wideLayout = ({
   canvasWidth: number;
   canvasHeight: number;
 }): Layout => {
-  const safeSpace = 50;
+  const safeSpace = 10;
 
   const maxHeight = canvasHeight - safeSpaceBottom - safeSpace;
   const maxWidth = canvasWidth - safeSpace * 2;
