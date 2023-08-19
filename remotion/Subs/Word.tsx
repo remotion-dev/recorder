@@ -33,8 +33,10 @@ export const WordComp: React.FC<{
       style={{
         ...style,
         opacity,
-        color: monospace && appeared ? "#0b84f3" : "black",
-        fontWeight: 500,
+        fontFamily: monospace ? "GT Planar" : "Inter",
+        color: monospace && appeared ? "#3B82EB" : "black",
+        borderRadius: 5,
+        fontWeight: monospace ? 500 : 600,
       }}
     >
       {withoutBackticks}
