@@ -15,6 +15,7 @@ import {
   frameWidth,
   getLayout,
   safeSpaceBottom,
+  webCamCSS,
 } from "./layout/get-layout";
 import { Subs } from "./Subs/Subs";
 
@@ -53,41 +54,6 @@ export const Scene: React.FC<{
   if (conf.type !== "scene") {
     throw new Error("Not a scene");
   }
-
-  const videoStyle = (() => {
-    if (conf.webcamPosition === "bottom-left") {
-      return {
-        justifyContent: "flex-end",
-        alignItems: "flex-start",
-      };
-    }
-
-    if (conf.webcamPosition === "bottom-right") {
-      return {
-        justifyContent: "flex-end",
-        alignItems: "flex-end",
-      };
-    }
-
-    if (conf.webcamPosition === "top-left") {
-      return {
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-      };
-    }
-
-    if (conf.webcamPosition === "center") {
-      return {
-        justifyContent: "center",
-        alignItems: "center",
-      };
-    }
-
-    return {
-      justifyContent: "flex-start",
-      alignItems: "flex-end",
-    };
-  })();
 
   const startFrom = conf.trimStart ?? 0;
   const endAt = conf.duration ? startFrom + conf.duration : undefined;
@@ -150,12 +116,11 @@ export const Scene: React.FC<{
         ) : null}
 
         {webcamLayout ? (
-          <AbsoluteFill
+          <div
             style={{
-              ...videoStyle,
-              padding: 40,
-              paddingBottom: safeSpaceBottom,
-              translate: "0 " + interpolate(enter, [0, 1], [height, 0]) + "px",
+              position: "absolute",
+              display: "flex",
+              ...webCamCSS(conf.webcamPosition),
             }}
           >
             <div
@@ -167,6 +132,8 @@ export const Scene: React.FC<{
                 width: webcamLayout.width,
                 height: webcamLayout.height,
                 position: "relative",
+                translate:
+                  "0 " + interpolate(enter, [0, 1], [height, 0]) + "px",
               }}
             >
               <OffthreadVideo
@@ -183,7 +150,7 @@ export const Scene: React.FC<{
                 src={pair.webcam.src}
               />
             </div>
-          </AbsoluteFill>
+          </div>
         ) : null}
       </AbsoluteFill>
       {pair.sub ? <Subs trimStart={startFrom} file={pair.sub} /> : null}

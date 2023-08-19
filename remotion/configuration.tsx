@@ -13,16 +13,20 @@ export type SceneMetadata = {
   display: Dimensions | null;
 };
 
+const webcamPosition = z.enum([
+  "top-left",
+  "top-right",
+  "bottom-left",
+  "bottom-right",
+  "center",
+]);
+
+export type WebcamPosition = z.infer<typeof webcamPosition>;
+
 export const configuration = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("scene"),
-    webcamPosition: z.enum([
-      "top-left",
-      "top-right",
-      "bottom-left",
-      "bottom-right",
-      "center",
-    ]),
+    webcamPosition,
     trimStart: z.number(),
     duration: z.number().nullable().default(null),
   }),
