@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import type { StaticFile } from "remotion";
+import { useVideoConfig } from "remotion";
 import { delayRender, continueRender } from "remotion";
 import { AbsoluteFill } from "remotion";
-import type { CanvasLayout } from "../configuration";
+import type { CanvasLayout, WebcamPosition } from "../configuration";
+import type { Layout } from "../layout/get-layout";
 import type { SubTypes } from "../sub-types";
 import { SegmentComp } from "./Segment";
 
 export const Subs: React.FC<{
   file: StaticFile;
   trimStart: number;
-  canvasSize: CanvasLayout;
-}> = ({ file, trimStart, canvasSize }) => {
+  canvasLayout: CanvasLayout;
+  webcamPosition: WebcamPosition;
+  webcamLayout: Layout;
+}> = ({ file, trimStart, canvasLayout, webcamPosition, webcamLayout }) => {
   const [data, setData] = useState<SubTypes | null>(null);
+  const { width, height } = useVideoConfig();
   const [handle] = useState(() => delayRender());
 
   useEffect(() => {
@@ -33,10 +38,13 @@ export const Subs: React.FC<{
         return (
           <SegmentComp
             key={segment.id}
+            webcamPosition={webcamPosition}
             isLast={index === data.segments.length - 1}
             segment={segment}
             trimStart={trimStart}
-            canvasSize={canvasSize}
+            canvasLayout={canvasLayout}
+            webcamLayout={webcamLayout}
+            canvasSize={{ width, height }}
           />
         );
       })}

@@ -1252,7 +1252,7 @@ export const Root = () => {
         id="dvd"
         schema={videoConf}
         defaultProps={{
-          layout: "square" as const,
+          layout: "wide" as const,
           prefix: "dvd",
           music: "dancelikemike" as const,
           scenes: [

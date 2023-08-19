@@ -123,47 +123,50 @@ export const Scene: React.FC<{
           </div>
         ) : null}
 
-        {webcamLayout ? (
+        <div
+          style={{
+            position: "absolute",
+            display: "flex",
+          }}
+        >
           <div
             style={{
-              position: "absolute",
-              display: "flex",
+              borderRadius: borderRadius + frameWidth,
+              overflow: "hidden",
+              padding: frameWidth,
+              // backgroundColor: "black",
+              width: webcamLayout.width,
+              height: webcamLayout.height,
+              left: webcamLayout.x,
+              top: webcamLayout.y,
+              position: "relative",
+              translate: "0 " + interpolate(enter, [0, 1], [height, 0]) + "px",
             }}
           >
-            <div
+            <OffthreadVideo
+              startFrom={startFrom}
+              endAt={endAt}
               style={{
-                borderRadius: borderRadius + frameWidth,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+                borderRadius,
                 overflow: "hidden",
-                padding: frameWidth,
-                // backgroundColor: "black",
-                width: webcamLayout.width,
-                height: webcamLayout.height,
-                left: webcamLayout.x,
-                top: webcamLayout.y,
-                position: "relative",
-                translate:
-                  "0 " + interpolate(enter, [0, 1], [height, 0]) + "px",
               }}
-            >
-              <OffthreadVideo
-                startFrom={startFrom}
-                endAt={endAt}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  display: "block",
-                  borderRadius,
-                  overflow: "hidden",
-                }}
-                src={pair.webcam.src}
-              />
-            </div>
+              src={pair.webcam.src}
+            />
           </div>
-        ) : null}
+        </div>
       </AbsoluteFill>
       {pair.sub ? (
-        <Subs canvasSize={canvasSize} trimStart={startFrom} file={pair.sub} />
+        <Subs
+          webcamPosition={conf.webcamPosition}
+          canvasLayout={canvasSize}
+          trimStart={startFrom}
+          file={pair.sub}
+          webcamLayout={webcamLayout}
+        />
       ) : null}
     </Sequence>
   );
