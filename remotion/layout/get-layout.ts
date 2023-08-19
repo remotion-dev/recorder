@@ -1,3 +1,6 @@
+import type React from "react";
+import type { WebcamPosition } from "../configuration";
+
 export const safeSpaceBottom = 120;
 export const frameWidth = 10;
 export const borderRadius = 10;
@@ -67,4 +70,47 @@ export const getLayout = ({
     : null;
 
   return { displayLayout, webcamLayout };
+};
+
+export const webCamCSS = (
+  webcamPosition: WebcamPosition
+): React.CSSProperties => {
+  if (webcamPosition === "bottom-left") {
+    return {
+      left: 40,
+      bottom: 40 + safeSpaceBottom,
+    };
+  }
+
+  if (webcamPosition === "bottom-right") {
+    return {
+      right: 40,
+      bottom: 40 + safeSpaceBottom,
+    };
+  }
+
+  if (webcamPosition === "top-left") {
+    return {
+      top: 40,
+      left: 40,
+    };
+  }
+
+  if (webcamPosition === "center") {
+    return {
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 40,
+      width: "100%",
+      height: "100%",
+      paddingBottom: safeSpaceBottom,
+    };
+  }
+
+  return {
+    justifyContent: "flex-start",
+    alignItems: "flex-end",
+    padding: 40,
+    paddingBottom: safeSpaceBottom,
+  };
 };
