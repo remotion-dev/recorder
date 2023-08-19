@@ -15,12 +15,7 @@ import type {
   Pair,
   SceneMetadata,
 } from "./configuration";
-import {
-  borderRadius,
-  frameWidth,
-  getLayout,
-  webCamCSS,
-} from "./layout/get-layout";
+import { borderRadius, frameWidth, getLayout } from "./layout/get-layout";
 import { Subs } from "./Subs/Subs";
 
 export const Scene: React.FC<{
@@ -127,8 +122,6 @@ export const Scene: React.FC<{
             style={{
               position: "absolute",
               display: "flex",
-              ...webCamCSS(conf.webcamPosition, canvasSize),
-              translate: `${webcamLayout.x}px ${webcamLayout.y}px`,
             }}
           >
             <div
@@ -139,6 +132,8 @@ export const Scene: React.FC<{
                 // backgroundColor: "black",
                 width: webcamLayout.width,
                 height: webcamLayout.height,
+                left: webcamLayout.x,
+                top: webcamLayout.y,
                 position: "relative",
                 translate:
                   "0 " + interpolate(enter, [0, 1], [height, 0]) + "px",
