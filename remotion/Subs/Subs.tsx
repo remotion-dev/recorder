@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { StaticFile } from "remotion";
+import { interpolate } from "remotion";
 import { useVideoConfig } from "remotion";
 import { delayRender, continueRender } from "remotion";
 import { AbsoluteFill } from "remotion";
@@ -16,6 +17,7 @@ export const Subs: React.FC<{
   displayLayout: Layout | null;
   webcamPosition: WebcamPosition;
   webcamLayout: Layout;
+  enter: number;
 }> = ({
   file,
   trimStart,
@@ -23,6 +25,7 @@ export const Subs: React.FC<{
   displayLayout,
   webcamPosition,
   webcamLayout,
+  enter,
 }) => {
   const [data, setData] = useState<SubTypes | null>(null);
   const { width, height } = useVideoConfig();
@@ -42,7 +45,11 @@ export const Subs: React.FC<{
   }
 
   return (
-    <AbsoluteFill>
+    <AbsoluteFill
+      style={{
+        transform: `translateY(${interpolate(enter, [0, 1], [height, 0])}px)`,
+      }}
+    >
       {data.segments.map((segment, index) => {
         return (
           <SegmentComp
