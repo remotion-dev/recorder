@@ -1,5 +1,6 @@
 import React from "react";
-import { useCurrentFrame, useVideoConfig } from "remotion";
+import { spring, useCurrentFrame, useVideoConfig } from "remotion";
+import type { CanvasLayout } from "../configuration";
 import type { Word } from "../sub-types";
 
 const style: React.CSSProperties = {
@@ -17,28 +18,61 @@ export const useTime = (trimStart: number) => {
 export const WordComp: React.FC<{
   word: Word;
   trimStart: number;
-}> = ({ word, trimStart }) => {
+  canvasLayout: CanvasLayout;
+  isLast: boolean;
+}> = ({ word, trimStart, canvasLayout, isLast }) => {
   const time = useTime(trimStart);
+  const { fps } = useVideoConfig();
+  const frame = useCurrentFrame();
+
+  const scale = spring({
+    fps,
+    frame,
+    delay: word.start * fps - trimStart,
+    config: {
+      damping: 200,
+    },
+    durationInFrames: 5,
+  });
 
   const appeared = word.start <= time;
   const opacity = appeared ? 1 : 0.3;
+
+  const active = word.start <= time && (word.end > time || isLast);
 
   const monospace =
     word.word.trimStart().startsWith("`") && word.word.endsWith("`");
 
   const withoutBackticks = word.word.replace(/`/g, "");
 
+  const wordColor = monospace && appeared ? "#3B82EB" : "black";
+  const backgroundColor = active
+    ? monospace
+      ? "#3B82EB"
+      : "#222"
+    : "transparent";
+
+  const startsWithSpace = withoutBackticks.startsWith(" ");
+
   return (
-    <span
-      style={{
-        ...style,
-        opacity,
-        fontFamily: monospace ? "GT Planar" : "Inter",
-        color: monospace && appeared ? "#3B82EB" : "black",
-        fontWeight: monospace ? 500 : 600,
-      }}
-    >
-      {withoutBackticks}
-    </span>
+    <>
+      <span>{startsWithSpace && " "}</span>
+      <span
+        style={{
+          ...style,
+          opacity,
+          fontFamily: monospace ? "GT Planar" : "Inter",
+          color: active ? "white" : wordColor,
+          fontWeight: monospace ? 500 : 600,
+          backgroundColor,
+          outline: active ? "10px solid " + backgroundColor : "none",
+          borderRadius: 10,
+          scale: String(scale),
+          display: "inline-block",
+        }}
+      >
+        {withoutBackticks.trim()}
+      </span>
+    </>
   );
 };
