@@ -106,7 +106,6 @@ export const Scene: React.FC<{
               left: displayLayout.x,
               top: displayLayout.y,
               position: "absolute",
-              // backgroundColor: "black",
               padding: frameWidth,
               borderRadius: borderRadius + frameWidth,
               translate: interpolate(enter, [0, 1], [width, 0]) + "px 0",
@@ -140,6 +139,7 @@ export const Scene: React.FC<{
           file={pair.sub}
           webcamLayout={webcamLayout}
           displayLayout={displayLayout}
+          enter={enter}
         />
       ) : null}
     </Sequence>

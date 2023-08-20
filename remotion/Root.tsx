@@ -1411,7 +1411,7 @@ export const Root = () => {
         id="dvd"
         schema={videoConf}
         defaultProps={{
-          layout: "wide" as const,
+          layout: "square" as const,
           prefix: "dvd",
           music: "dancelikemike" as const,
           scenes: [
@@ -1421,6 +1421,11 @@ export const Root = () => {
               trimStart: 0,
               zoomInAtStart: true,
               duration: 120,
+            },
+            {
+              type: "title" as const,
+              title: "DVD animation",
+              subtitle: "Remotion tutorials",
             },
             {
               type: "scene" as const,
