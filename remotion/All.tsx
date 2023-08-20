@@ -1,7 +1,12 @@
 import React from "react";
 import { AbsoluteFill, Audio, Sequence } from "remotion";
 import type { z } from "zod";
-import type { Pair, SceneMetadata, videoConf } from "./configuration";
+import type {
+  Pair,
+  SceneMetadata,
+  videoConf,
+  SceneType,
+} from "./configuration";
 import { titleHideDuration } from "./configuration";
 import { titleDuration } from "./configuration";
 import { Title } from "./Title";
@@ -12,6 +17,22 @@ export type AllProps = z.infer<typeof videoConf> & {
   metadata: SceneMetadata[];
   pairs: Pair[];
   prefix: string;
+};
+
+export const shouldEnter = (index: number, scenes: SceneType[]) => {
+  if (index === 0) {
+    return false;
+  }
+
+  return scenes[index - 1].type === "title";
+};
+
+export const shouldExit = (index: number, scenes: SceneType[]) => {
+  if (index === scenes.length - 1) {
+    return false;
+  }
+
+  return scenes[index + 1].type === "title";
 };
 
 export const All: React.FC<AllProps> = ({
@@ -67,8 +88,9 @@ export const All: React.FC<AllProps> = ({
             conf={scenes[i]}
             metadata={metadataForScene}
             index={videoCounter}
-            prevWasTitle={i === 0 ? false : scenes[i - 1].type === "title"}
+            shouldEnter={shouldEnter(i, scenes)}
             canvasSize={layout}
+            shouldExit={shouldExit(i, scenes)}
           />
         );
       })}

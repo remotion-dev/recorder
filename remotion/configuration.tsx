@@ -44,10 +44,13 @@ export const configuration = z.discriminatedUnion("type", [
 export const canvasLayout = z.enum(["wide", "tall", "square"]);
 export type CanvasLayout = z.infer<typeof canvasLayout>;
 
+const scenes = z.array(configuration);
+export type SceneType = z.infer<typeof configuration>;
+
 export const videoConf = z.object({
   music,
   layout: canvasLayout,
-  scenes: z.array(configuration),
+  scenes,
 });
 
 export const getPairs = (prefix: string) => {

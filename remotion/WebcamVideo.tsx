@@ -13,12 +13,13 @@ import { borderRadius, frameWidth } from "./layout/get-layout";
 export const WebcamVideo: React.FC<{
   webcamLayout: Layout;
   enter: number;
+  exit: number;
   startFrom: number;
   endAt: number | undefined;
   pair: Pair;
   zoomInAtStart: boolean;
-}> = ({ webcamLayout, enter, zoomInAtStart, startFrom, endAt, pair }) => {
-  const { height, fps } = useVideoConfig();
+}> = ({ webcamLayout, enter, exit, zoomInAtStart, startFrom, endAt, pair }) => {
+  const { height, width, fps } = useVideoConfig();
   const frame = useCurrentFrame();
 
   const zoomIn = zoomInAtStart
@@ -50,7 +51,11 @@ export const WebcamVideo: React.FC<{
           left: webcamLayout.x,
           top: webcamLayout.y,
           position: "relative",
-          translate: "0 " + interpolate(enter, [0, 1], [height, 0]) + "px",
+          translate: `${interpolate(exit, [0, 1], [0, -width])}px ${interpolate(
+            enter,
+            [0, 1],
+            [height, 0]
+          )}px`,
         }}
       >
         <OffthreadVideo
