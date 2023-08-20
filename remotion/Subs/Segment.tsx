@@ -80,9 +80,10 @@ const getSubsLayout = ({
       (displayLayout?.height ?? 0) +
       safeSpace(canvasLayout) +
       Number(tallLayoutVerticalSafeSpace),
-    justifyContent: "center",
     paddingLeft: safeSpace(canvasLayout),
     paddingRight: safeSpace(canvasLayout),
+    justifyContent: "center",
+    textAlign: "center",
   };
 };
 
