@@ -18,7 +18,8 @@ export const frameWidth = 0;
 
 const webcamRatio = 400 / 350;
 
-export const safeSpace = 20;
+export const safeSpace = (canvasLayout: CanvasLayout) =>
+  canvasLayout ? 30 : 20;
 export const tallLayoutVerticalSafeSpace = 150;
 
 const overrideYForAltLayouts = ({
@@ -43,19 +44,19 @@ const overrideYForAltLayouts = ({
   }
 
   if (webcamPosition === "top-left") {
-    return canvasSize.height - newHeight - safeSpace;
+    return canvasSize.height - newHeight - safeSpace(canvasLayout);
   }
 
   if (webcamPosition === "top-right") {
-    return canvasSize.height - newHeight - safeSpace;
+    return canvasSize.height - newHeight - safeSpace(canvasLayout);
   }
 
   if (webcamPosition === "bottom-left") {
-    return safeSpace;
+    return safeSpace(canvasLayout);
   }
 
   if (webcamPosition === "bottom-right") {
-    return safeSpace;
+    return safeSpace(canvasLayout);
   }
 
   return y;
@@ -76,8 +77,9 @@ const wideLayout = ({
 }): Layout => {
   const bottomSafeSpace = getBottomSafeSpace(canvasLayout);
 
-  const maxHeight = canvasSize.height - bottomSafeSpace - safeSpace;
-  const maxWidth = canvasSize.width - safeSpace * 2;
+  const maxHeight =
+    canvasSize.height - bottomSafeSpace - safeSpace(canvasLayout);
+  const maxWidth = canvasSize.width - safeSpace(canvasLayout) * 2;
 
   const heightRatio = maxHeight / (videoHeight + frameWidth * 2);
   const widthRatio = maxWidth / (videoWidth + frameWidth * 2);
@@ -89,9 +91,8 @@ const wideLayout = ({
 
   const x = (canvasSize.width - newWidth) / 2;
   const y =
-    (canvasSize.height - newHeight - bottomSafeSpace) / 2 + safeSpace / 2;
-
-  console.log({ y });
+    (canvasSize.height - newHeight - bottomSafeSpace) / 2 +
+    safeSpace(canvasLayout) / 2;
 
   return {
     x,
@@ -125,14 +126,14 @@ const shiftDisplayLayoutBasedOnWebcamPosition = ({
   if (webcamPosition === "bottom-right" || webcamPosition === "top-right") {
     return {
       ...layout,
-      x: layout.x - webcamSize.width / 2 - safeSpace / 2,
+      x: layout.x - webcamSize.width / 2 - safeSpace(canvasLayout) / 2,
     };
   }
 
   if (webcamPosition === "bottom-left" || webcamPosition === "top-left") {
     return {
       ...layout,
-      x: layout.x + webcamSize.width / 2 + safeSpace / 2,
+      x: layout.x + webcamSize.width / 2 + safeSpace(canvasLayout) / 2,
     };
   }
 
@@ -154,13 +155,13 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
 }): Layout => {
   if (canvasLayout === "tall") {
     const ratio = webcamVideoDimensions.height / webcamVideoDimensions.width;
-    const width = canvasSize.width - safeSpace * 2;
+    const width = canvasSize.width - safeSpace(canvasLayout) * 2;
     const height = width * ratio;
 
     return {
       width,
       height,
-      x: safeSpace,
+      x: safeSpace(canvasLayout),
       y: canvasSize.height - height - tallLayoutVerticalSafeSpace,
     };
   }
@@ -168,7 +169,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
   if (webcamPosition === "bottom-right") {
     return {
       ...webcamSize,
-      x: canvasSize.width - webcamSize.width - safeSpace,
+      x: canvasSize.width - webcamSize.width - safeSpace(canvasLayout),
       y:
         canvasSize.height -
         webcamSize.height -
@@ -179,7 +180,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
   if (webcamPosition === "bottom-left") {
     return {
       ...webcamSize,
-      x: safeSpace,
+      x: safeSpace(canvasLayout),
       y:
         canvasSize.height -
         webcamSize.height -
@@ -190,16 +191,16 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
   if (webcamPosition === "top-left") {
     return {
       ...webcamSize,
-      x: safeSpace,
-      y: safeSpace,
+      x: safeSpace(canvasLayout),
+      y: safeSpace(canvasLayout),
     };
   }
 
   if (webcamPosition === "top-right") {
     return {
       ...webcamSize,
-      x: canvasSize.width - webcamSize.width - safeSpace,
-      y: safeSpace,
+      x: canvasSize.width - webcamSize.width - safeSpace(canvasLayout),
+      y: safeSpace(canvasLayout),
     };
   }
 
@@ -222,7 +223,7 @@ const getWebcamSize = ({
 }): Dimensions => {
   if (canvasLayout === "square") {
     const remainingHeight =
-      canvasSize.height - displayLayout.height - safeSpace * 3;
+      canvasSize.height - displayLayout.height - safeSpace(canvasLayout) * 3;
 
     return {
       height: remainingHeight,
@@ -230,7 +231,8 @@ const getWebcamSize = ({
     };
   }
 
-  const remainingWidth = canvasSize.width - displayLayout.width - safeSpace * 3;
+  const remainingWidth =
+    canvasSize.width - displayLayout.width - safeSpace(canvasLayout) * 3;
   const height = webcamRatio * remainingWidth;
 
   return {
