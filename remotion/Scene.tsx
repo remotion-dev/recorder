@@ -16,9 +16,124 @@ import type {
   SceneMetadata,
 } from "./configuration";
 import { titleHideDuration } from "./configuration";
+import type { Layout } from "./layout/get-layout";
 import { borderRadius, frameWidth, getLayout } from "./layout/get-layout";
 import { Subs } from "./Subs/Subs";
 import { WebcamVideo } from "./WebcamVideo";
+
+const Inner: React.FC<{
+  pair: Pair;
+  startFrom: number;
+  endAt: number | undefined;
+  shouldEnter: boolean;
+  shouldExit: boolean;
+  conf: z.infer<typeof configuration>;
+  displayLayout: Layout | null;
+  webcamLayout: Layout;
+  canvasLayout: CanvasLayout;
+}> = ({
+  displayLayout,
+  endAt,
+  shouldEnter,
+  shouldExit,
+  pair,
+  startFrom,
+  webcamLayout,
+  conf,
+  canvasLayout,
+}) => {
+  const { fps, width, durationInFrames } = useVideoConfig();
+  const frame = useCurrentFrame();
+
+  const enter = (() => {
+    if (shouldEnter) {
+      const spr = spring({
+        fps,
+        frame,
+        durationInFrames: titleHideDuration,
+        config: {
+          damping: 200,
+        },
+      });
+      return spr;
+    }
+
+    return 1;
+  })();
+
+  const exit = (() => {
+    if (shouldExit) {
+      const spr = spring({
+        fps,
+        frame,
+        durationInFrames: titleHideDuration,
+        config: {
+          damping: 200,
+        },
+        delay: durationInFrames - titleHideDuration,
+      });
+      return spr;
+    }
+
+    return 0;
+  })();
+
+  if (conf.type !== "scene") {
+    throw new Error("Not a scene");
+  }
+
+  return (
+    <>
+      <AbsoluteFill>
+        {displayLayout && pair.display ? (
+          <div
+            style={{
+              width: displayLayout.width,
+              height: displayLayout.height,
+              left: displayLayout.x,
+              top: displayLayout.y,
+              position: "absolute",
+              padding: frameWidth,
+              borderRadius: borderRadius + frameWidth,
+              translate: interpolate(enter, [0, 1], [width, 0]) + "px 0",
+            }}
+          >
+            <OffthreadVideo
+              startFrom={startFrom}
+              endAt={endAt}
+              src={pair.display.src}
+              style={{
+                maxWidth: "100%",
+                borderRadius,
+              }}
+            />
+          </div>
+        ) : null}
+        <WebcamVideo
+          endAt={endAt}
+          enter={enter}
+          exit={exit}
+          pair={pair}
+          zoomInAtStart={conf.zoomInAtStart ?? false}
+          startFrom={startFrom}
+          webcamLayout={webcamLayout}
+        />
+      </AbsoluteFill>
+      {pair.sub ? (
+        <Subs
+          webcamPosition={conf.webcamPosition}
+          canvasLayout={canvasLayout}
+          trimStart={startFrom}
+          file={pair.sub}
+          webcamLayout={webcamLayout}
+          displayLayout={displayLayout}
+          enter={enter}
+          exit={exit}
+        />
+      ) : null}
+    </>
+  );
+};
 
 export const Scene: React.FC<{
   metadata: SceneMetadata;
@@ -26,11 +141,20 @@ export const Scene: React.FC<{
   conf: z.infer<typeof configuration> | undefined;
   start: number;
   index: number;
-  prevWasTitle: boolean;
+  shouldEnter: boolean;
+  shouldExit: boolean;
   canvasSize: CanvasLayout;
-}> = ({ metadata, pair, conf, start, index, prevWasTitle, canvasSize }) => {
-  const { fps, height, width } = useVideoConfig();
-  const frame = useCurrentFrame();
+}> = ({
+  metadata,
+  pair,
+  conf,
+  start,
+  index,
+  shouldEnter,
+  shouldExit,
+  canvasSize,
+}) => {
+  const { height, width } = useVideoConfig();
 
   const from = start;
 
@@ -75,74 +199,23 @@ export const Scene: React.FC<{
     webcamPosition: conf.webcamPosition,
   });
 
-  const enter = (() => {
-    if (prevWasTitle) {
-      const spr = spring({
-        fps,
-        frame,
-        durationInFrames: titleHideDuration,
-        config: {
-          damping: 200,
-        },
-        delay: from,
-      });
-      return spr;
-    }
-
-    return 1;
-  })();
-
   return (
     <Sequence
       name={`Scene ${index}`}
       from={from}
       durationInFrames={Math.max(1, metadata.durationInFrames)}
     >
-      <AbsoluteFill>
-        {displayLayout && pair.display ? (
-          <div
-            style={{
-              width: displayLayout.width,
-              height: displayLayout.height,
-              left: displayLayout.x,
-              top: displayLayout.y,
-              position: "absolute",
-              padding: frameWidth,
-              borderRadius: borderRadius + frameWidth,
-              translate: interpolate(enter, [0, 1], [width, 0]) + "px 0",
-            }}
-          >
-            <OffthreadVideo
-              startFrom={startFrom}
-              endAt={endAt}
-              src={pair.display.src}
-              style={{
-                maxWidth: "100%",
-                borderRadius,
-              }}
-            />
-          </div>
-        ) : null}
-        <WebcamVideo
-          endAt={endAt}
-          enter={enter}
-          pair={pair}
-          zoomInAtStart={conf.zoomInAtStart ?? false}
-          startFrom={startFrom}
-          webcamLayout={webcamLayout}
-        />
-      </AbsoluteFill>
-      {pair.sub ? (
-        <Subs
-          webcamPosition={conf.webcamPosition}
-          canvasLayout={canvasSize}
-          trimStart={startFrom}
-          file={pair.sub}
-          webcamLayout={webcamLayout}
-          displayLayout={displayLayout}
-          enter={enter}
-        />
-      ) : null}
+      <Inner
+        canvasLayout={canvasSize}
+        conf={conf}
+        displayLayout={displayLayout}
+        endAt={endAt}
+        pair={pair}
+        shouldEnter={shouldEnter}
+        shouldExit={shouldExit}
+        startFrom={startFrom}
+        webcamLayout={webcamLayout}
+      />
     </Sequence>
   );
 };

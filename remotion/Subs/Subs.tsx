@@ -18,6 +18,7 @@ export const Subs: React.FC<{
   webcamPosition: WebcamPosition;
   webcamLayout: Layout;
   enter: number;
+  exit: number;
 }> = ({
   file,
   trimStart,
@@ -26,6 +27,7 @@ export const Subs: React.FC<{
   webcamPosition,
   webcamLayout,
   enter,
+  exit,
 }) => {
   const [data, setData] = useState<SubTypes | null>(null);
   const { width, height } = useVideoConfig();
@@ -47,7 +49,11 @@ export const Subs: React.FC<{
   return (
     <AbsoluteFill
       style={{
-        transform: `translateY(${interpolate(enter, [0, 1], [height, 0])}px)`,
+        transform: `translateX(${interpolate(
+          exit,
+          [0, 1],
+          [0, -width]
+        )}px) translateY(${interpolate(enter, [0, 1], [height, 0])}px)`,
       }}
     >
       {data.segments.map((segment, index) => {
