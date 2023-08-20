@@ -20,7 +20,7 @@ const webcamRatio = 400 / 350;
 
 export const safeSpace = 20;
 
-const overrideYForSquareLayout = ({
+const overrideYForAltLayouts = ({
   y,
   webcamPosition,
   canvasLayout,
@@ -33,7 +33,7 @@ const overrideYForSquareLayout = ({
   canvasSize: Dimensions;
   newHeight: number;
 }): number => {
-  if (canvasLayout !== "square") {
+  if (canvasLayout === "wide") {
     return y;
   }
 
@@ -88,7 +88,7 @@ const wideLayout = ({
 
   return {
     x,
-    y: overrideYForSquareLayout({
+    y: overrideYForAltLayouts({
       y,
       webcamPosition,
       canvasLayout,
