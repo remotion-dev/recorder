@@ -17,6 +17,7 @@ import type {
 } from "./configuration";
 import { borderRadius, frameWidth, getLayout } from "./layout/get-layout";
 import { Subs } from "./Subs/Subs";
+import { WebcamVideo } from "./WebcamVideo";
 
 export const Scene: React.FC<{
   metadata: SceneMetadata;
@@ -96,7 +97,7 @@ export const Scene: React.FC<{
       from={from}
       durationInFrames={Math.max(1, metadata.durationInFrames)}
     >
-      <AbsoluteFill style={{}}>
+      <AbsoluteFill>
         {displayLayout && pair.display ? (
           <div
             style={{
@@ -122,42 +123,14 @@ export const Scene: React.FC<{
             />
           </div>
         ) : null}
-
-        <div
-          style={{
-            position: "absolute",
-            display: "flex",
-          }}
-        >
-          <div
-            style={{
-              borderRadius: borderRadius + frameWidth,
-              overflow: "hidden",
-              padding: frameWidth,
-              // backgroundColor: "black",
-              width: webcamLayout.width,
-              height: webcamLayout.height,
-              left: webcamLayout.x,
-              top: webcamLayout.y,
-              position: "relative",
-              translate: "0 " + interpolate(enter, [0, 1], [height, 0]) + "px",
-            }}
-          >
-            <OffthreadVideo
-              startFrom={startFrom}
-              endAt={endAt}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                display: "block",
-                borderRadius,
-                overflow: "hidden",
-              }}
-              src={pair.webcam.src}
-            />
-          </div>
-        </div>
+        <WebcamVideo
+          endAt={endAt}
+          enter={enter}
+          pair={pair}
+          zoomInAtStart={conf.zoomInAtStart ?? false}
+          startFrom={startFrom}
+          webcamLayout={webcamLayout}
+        />
       </AbsoluteFill>
       {pair.sub ? (
         <Subs
