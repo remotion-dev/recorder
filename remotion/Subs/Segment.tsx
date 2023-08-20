@@ -59,9 +59,10 @@ const getSubsLayout = ({
       top: webcamLayout.y,
       left:
         webcamPosition === "bottom-left" || webcamPosition === "top-left"
-          ? webcamLayout.width + safeSpace * 2
-          : safeSpace,
-      width: canvasSize.width - webcamLayout.width - safeSpace * 3,
+          ? webcamLayout.width + safeSpace(canvasLayout) * 2
+          : safeSpace(canvasLayout),
+      width:
+        canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
       justifyContent: "center",
     };
   }
@@ -70,16 +71,18 @@ const getSubsLayout = ({
     canvasSize.height -
     (webcamLayout.height +
       (displayLayout?.height ?? 0) +
-      safeSpace * 2 +
+      safeSpace(canvasLayout) * 2 +
       tallLayoutVerticalSafeSpace * 2);
 
   return {
     height: remainingHeight,
     top:
       (displayLayout?.height ?? 0) +
-      safeSpace +
+      safeSpace(canvasLayout) +
       Number(tallLayoutVerticalSafeSpace),
     justifyContent: "center",
+    paddingLeft: safeSpace(canvasLayout),
+    paddingRight: safeSpace(canvasLayout),
   };
 };
 
@@ -140,11 +143,10 @@ export const SegmentComp: React.FC<{
         <span
           style={{
             backgroundColor: "white",
-            lineHeight: 1,
+            lineHeight: 1.2,
             display: "inline-block",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
-            borderRadius: 5,
             ...inlineSubsLayout(canvasLayout),
           }}
         >

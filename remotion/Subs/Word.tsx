@@ -3,8 +3,7 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 import type { Word } from "../sub-types";
 
 const style: React.CSSProperties = {
-  whiteSpace: "pre-wrap",
-  display: "inline-block",
+  display: "inline",
 };
 
 export const useTime = (trimStart: number) => {
