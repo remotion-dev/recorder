@@ -6,6 +6,7 @@ import { AbsoluteFill } from "remotion";
 import type { CanvasLayout, WebcamPosition } from "../configuration";
 import type { Layout } from "../layout/get-layout";
 import type { SubTypes } from "../sub-types";
+import { postprocessSubtitles } from "./postprocess-subs";
 import { SegmentComp } from "./Segment";
 
 export const Subs: React.FC<{
@@ -24,7 +25,7 @@ export const Subs: React.FC<{
       .then((res) => res.json())
       .then((d) => {
         continueRender(handle);
-        setData(d);
+        setData(postprocessSubtitles(d));
       });
   }, [file.src, handle]);
 

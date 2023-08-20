@@ -112,12 +112,12 @@ export const SegmentComp: React.FC<{
         }),
       }}
     >
-      <div style={{}}>
+      <div>
         <span
           style={{
             backgroundColor: "white",
             lineHeight: 1,
-            display: "inline",
+            display: "inline-block",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
             borderRadius: 5,
