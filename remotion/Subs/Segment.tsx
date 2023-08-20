@@ -150,9 +150,15 @@ export const SegmentComp: React.FC<{
             ...inlineSubsLayout(canvasLayout),
           }}
         >
-          {segment.words.map((word) => {
+          {segment.words.map((word, index) => {
             return (
-              <WordComp key={word.start} trimStart={trimStart} word={word} />
+              <WordComp
+                key={word.start}
+                isLast={index === segment.words.length - 1}
+                trimStart={trimStart}
+                word={word}
+                canvasLayout={canvasLayout}
+              />
             );
           })}
         </span>
