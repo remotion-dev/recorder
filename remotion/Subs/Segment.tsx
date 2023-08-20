@@ -72,7 +72,7 @@ const getSubsLayout = ({
     (webcamLayout.height +
       (displayLayout?.height ?? 0) +
       safeSpace(canvasLayout) * 2 +
-      tallLayoutVerticalSafeSpace * 2);
+      tallLayoutVerticalSafeSpace);
 
   return {
     height: remainingHeight,
