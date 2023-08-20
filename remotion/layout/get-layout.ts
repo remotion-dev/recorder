@@ -20,7 +20,7 @@ const webcamRatio = 400 / 350;
 
 export const safeSpace = (canvasLayout: CanvasLayout) =>
   canvasLayout ? 30 : 20;
-export const tallLayoutVerticalSafeSpace = 150;
+export const tallLayoutVerticalSafeSpace = 300;
 
 const overrideYForAltLayouts = ({
   y,
@@ -162,7 +162,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
       width,
       height,
       x: safeSpace(canvasLayout),
-      y: canvasSize.height - height - tallLayoutVerticalSafeSpace,
+      y: canvasSize.height - height - safeSpace(canvasLayout),
     };
   }
 
