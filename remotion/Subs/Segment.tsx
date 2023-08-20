@@ -10,6 +10,7 @@ import type {
   WebcamPosition,
 } from "../configuration";
 import type { Layout } from "../layout/get-layout";
+import { tallLayoutVerticalSafeSpace } from "../layout/get-layout";
 import { safeSpace } from "../layout/get-layout";
 
 loadFont();
@@ -17,6 +18,10 @@ loadFont();
 const getFontSize = (canvasLayout: CanvasLayout) => {
   if (canvasLayout === "square") {
     return 46;
+  }
+
+  if (canvasLayout === "tall") {
+    return 70;
   }
 
   return 40;
@@ -27,9 +32,11 @@ const getSubsLayout = ({
   webcamLayout,
   webcamPosition,
   canvasSize,
+  displayLayout,
 }: {
   canvasLayout: CanvasLayout;
   webcamLayout: Layout;
+  displayLayout: Layout | null;
   webcamPosition: WebcamPosition;
   canvasSize: Dimensions;
 }): React.CSSProperties => {
@@ -59,7 +66,21 @@ const getSubsLayout = ({
     };
   }
 
-  return {};
+  const remainingHeight =
+    canvasSize.height -
+    (webcamLayout.height +
+      (displayLayout?.height ?? 0) +
+      safeSpace * 2 +
+      tallLayoutVerticalSafeSpace * 2);
+
+  return {
+    height: remainingHeight,
+    top:
+      (displayLayout?.height ?? 0) +
+      safeSpace +
+      Number(tallLayoutVerticalSafeSpace),
+    justifyContent: "center",
+  };
 };
 
 const inlineSubsLayout = (canvasLayout: CanvasLayout): React.CSSProperties => {
@@ -78,6 +99,7 @@ export const SegmentComp: React.FC<{
   webcamPosition: WebcamPosition;
   webcamLayout: Layout;
   canvasSize: Dimensions;
+  displayLayout: Layout | null;
 }> = ({
   segment,
   isLast,
@@ -86,6 +108,7 @@ export const SegmentComp: React.FC<{
   webcamLayout,
   webcamPosition,
   canvasSize,
+  displayLayout,
 }) => {
   const time = useTime(trimStart);
 
@@ -109,6 +132,7 @@ export const SegmentComp: React.FC<{
           webcamLayout,
           webcamPosition,
           canvasSize,
+          displayLayout,
         }),
       }}
     >

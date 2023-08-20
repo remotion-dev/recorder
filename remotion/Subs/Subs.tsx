@@ -13,9 +13,17 @@ export const Subs: React.FC<{
   file: StaticFile;
   trimStart: number;
   canvasLayout: CanvasLayout;
+  displayLayout: Layout | null;
   webcamPosition: WebcamPosition;
   webcamLayout: Layout;
-}> = ({ file, trimStart, canvasLayout, webcamPosition, webcamLayout }) => {
+}> = ({
+  file,
+  trimStart,
+  canvasLayout,
+  displayLayout,
+  webcamPosition,
+  webcamLayout,
+}) => {
   const [data, setData] = useState<SubTypes | null>(null);
   const { width, height } = useVideoConfig();
   const [handle] = useState(() => delayRender());
@@ -46,6 +54,7 @@ export const Subs: React.FC<{
             canvasLayout={canvasLayout}
             webcamLayout={webcamLayout}
             canvasSize={{ width, height }}
+            displayLayout={displayLayout}
           />
         );
       })}
