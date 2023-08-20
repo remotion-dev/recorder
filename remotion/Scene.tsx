@@ -15,6 +15,7 @@ import type {
   Pair,
   SceneMetadata,
 } from "./configuration";
+import { titleHideDuration } from "./configuration";
 import { borderRadius, frameWidth, getLayout } from "./layout/get-layout";
 import { Subs } from "./Subs/Subs";
 import { WebcamVideo } from "./WebcamVideo";
@@ -79,7 +80,7 @@ export const Scene: React.FC<{
       const spr = spring({
         fps,
         frame,
-        durationInFrames: 20,
+        durationInFrames: titleHideDuration,
         config: {
           damping: 200,
         },

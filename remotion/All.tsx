@@ -2,6 +2,7 @@ import React from "react";
 import { AbsoluteFill, Audio, Sequence } from "remotion";
 import type { z } from "zod";
 import type { Pair, SceneMetadata, videoConf } from "./configuration";
+import { titleHideDuration } from "./configuration";
 import { titleDuration } from "./configuration";
 import { Title } from "./Title";
 import { Scene } from "./Scene";
@@ -38,12 +39,18 @@ export const All: React.FC<AllProps> = ({
         const yo = addedUpDurations;
         addedUpDurations += metadataForScene.durationInFrames;
 
+        const isFirstScene = i === 0;
+
         if (scene.type === "title") {
           return (
             <Sequence
               key={scene.title}
-              from={yo}
-              durationInFrames={titleDuration + 20}
+              from={yo - (isFirstScene ? 0 : titleHideDuration)}
+              durationInFrames={
+                titleDuration +
+                titleHideDuration +
+                (isFirstScene ? 0 : titleHideDuration)
+              }
             >
               <Title subtitle={scene.subtitle} title={scene.title} />
             </Sequence>
