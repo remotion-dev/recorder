@@ -95,7 +95,10 @@ const Inner: React.FC<{
               position: "absolute",
               padding: frameWidth,
               borderRadius: borderRadius + frameWidth,
-              translate: interpolate(enter, [0, 1], [width, 0]) + "px 0",
+              translate:
+                interpolate(enter, [0, 1], [width, 0]) +
+                interpolate(exit, [0, 1], [0, -width]) +
+                "px 0",
             }}
           >
             <OffthreadVideo
