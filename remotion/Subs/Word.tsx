@@ -27,28 +27,30 @@ export const WordComp: React.FC<{
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
 
+  const monospace =
+    word.word.trimStart().startsWith("`") && word.word.endsWith("`");
+
   const scale =
-    word.start > time
-      ? 1
-      : spring({
-          fps,
-          frame,
-          delay: word.start * fps - trimStart,
-          config: {
-            damping: 200,
-          },
-          durationInFrames: 5,
-        }) *
-          0.05 +
-        0.95;
+    canvasLayout === "tall" || monospace
+      ? word.start > time
+        ? 1
+        : spring({
+            fps,
+            frame,
+            delay: word.start * fps - trimStart,
+            config: {
+              damping: 200,
+            },
+            durationInFrames: 5,
+          }) *
+            0.05 +
+          0.95
+      : 1;
 
   const appeared = word.start <= time;
   const opacity = appeared ? 1 : 0.3;
 
   const active = word.start <= time && (word.end > time || isLast);
-
-  const monospace =
-    word.word.trimStart().startsWith("`") && word.word.endsWith("`");
 
   const withoutBackticks = word.word.replace(/`/g, "");
 
