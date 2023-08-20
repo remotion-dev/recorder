@@ -15,6 +15,8 @@ export const useTime = (trimStart: number) => {
   return time;
 };
 
+const BLUE = "#3B82EB";
+
 export const WordComp: React.FC<{
   word: Word;
   trimStart: number;
@@ -25,15 +27,20 @@ export const WordComp: React.FC<{
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
 
-  const scale = spring({
-    fps,
-    frame,
-    delay: word.start * fps - trimStart,
-    config: {
-      damping: 200,
-    },
-    durationInFrames: 5,
-  });
+  const scale =
+    word.start > time
+      ? 1
+      : spring({
+          fps,
+          frame,
+          delay: word.start * fps - trimStart,
+          config: {
+            damping: 200,
+          },
+          durationInFrames: 5,
+        }) *
+          0.05 +
+        0.95;
 
   const appeared = word.start <= time;
   const opacity = appeared ? 1 : 0.3;
@@ -45,11 +52,11 @@ export const WordComp: React.FC<{
 
   const withoutBackticks = word.word.replace(/`/g, "");
 
-  const wordColor = monospace && appeared ? "#3B82EB" : "black";
+  const wordColor = monospace && appeared ? BLUE : "black";
   const backgroundColor = active
     ? monospace
-      ? "#3B82EB"
-      : "#222"
+      ? BLUE
+      : "transparent"
     : "transparent";
 
   const startsWithSpace = withoutBackticks.startsWith(" ");
@@ -62,10 +69,10 @@ export const WordComp: React.FC<{
           ...style,
           opacity,
           fontFamily: monospace ? "GT Planar" : "Inter",
-          color: active ? "white" : wordColor,
+          color: backgroundColor === BLUE ? "white" : wordColor,
           fontWeight: monospace ? 500 : 600,
           backgroundColor,
-          outline: active ? "10px solid " + backgroundColor : "none",
+          outline: active ? "5px solid " + backgroundColor : "none",
           borderRadius: 10,
           scale: String(scale),
           display: "inline-block",
