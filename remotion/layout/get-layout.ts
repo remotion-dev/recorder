@@ -19,6 +19,7 @@ export const frameWidth = 0;
 const webcamRatio = 400 / 350;
 
 export const safeSpace = 20;
+export const tallLayoutVerticalSafeSpace = 150;
 
 const overrideYForAltLayouts = ({
   y,
@@ -35,6 +36,10 @@ const overrideYForAltLayouts = ({
 }): number => {
   if (canvasLayout === "wide") {
     return y;
+  }
+
+  if (canvasLayout === "tall") {
+    return tallLayoutVerticalSafeSpace;
   }
 
   if (webcamPosition === "top-left") {
@@ -85,6 +90,8 @@ const wideLayout = ({
   const x = (canvasSize.width - newWidth) / 2;
   const y =
     (canvasSize.height - newHeight - bottomSafeSpace) / 2 + safeSpace / 2;
+
+  console.log({ y });
 
   return {
     x,
@@ -154,7 +161,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
       width,
       height,
       x: safeSpace,
-      y: canvasSize.height - height - safeSpace,
+      y: canvasSize.height - height - tallLayoutVerticalSafeSpace,
     };
   }
 
@@ -278,6 +285,9 @@ export const getLayout = ({
         webcamPosition,
         canvasLayout,
       });
+
+  console.log({ webcamLayout, displayLayout });
+
   return {
     displayLayout: displayLayout
       ? shiftDisplayLayoutBasedOnWebcamPosition({

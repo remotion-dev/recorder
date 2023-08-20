@@ -166,6 +166,7 @@ export const Scene: React.FC<{
           trimStart={startFrom}
           file={pair.sub}
           webcamLayout={webcamLayout}
+          displayLayout={displayLayout}
         />
       ) : null}
     </Sequence>
