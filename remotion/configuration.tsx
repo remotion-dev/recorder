@@ -85,5 +85,6 @@ export type Pair = {
   sub: StaticFile | null;
 };
 
-export const titleDuration = 50;
+export const titleDuration = 40;
+export const titleHideDuration = 10;
 export const fps = 30;

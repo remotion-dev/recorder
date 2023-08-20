@@ -2,6 +2,7 @@ import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import type { AllProps } from "./All";
 import type { SceneMetadata } from "./configuration";
+import { titleHideDuration } from "./configuration";
 import { fps, getPairs, titleDuration } from "./configuration";
 import { truthy } from "./truthy";
 
@@ -14,11 +15,15 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
   const metadata = (
     await Promise.all(
-      props.scenes.map(async (scene): Promise<SceneMetadata | null> => {
+      props.scenes.map(async (scene, i): Promise<SceneMetadata | null> => {
+        const isFirstScene = i === 0;
+
         if (scene.type === "title") {
           return {
             videos: null,
-            durationInFrames: titleDuration,
+            durationInFrames: isFirstScene
+              ? titleDuration
+              : titleDuration - titleHideDuration,
           };
         }
 
@@ -33,6 +38,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           height: webcamHeight,
           width: webcamWidth,
         } = await getVideoMetadata(p.webcam.src);
+
         const dim = p.display ? await getVideoMetadata(p.display.src) : null;
         const durationInFrames = Math.round(durationInSeconds * fps);
 

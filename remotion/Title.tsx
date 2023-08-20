@@ -6,7 +6,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { titleDuration } from "./configuration";
+import { titleDuration, titleHideDuration } from "./configuration";
 
 export const Title: React.FC<{
   title: string;
@@ -19,7 +19,7 @@ export const Title: React.FC<{
     spring({
       fps,
       frame,
-      durationInFrames: 15,
+      durationInFrames: titleHideDuration,
       config: {
         damping: 200,
       },
@@ -29,7 +29,7 @@ export const Title: React.FC<{
   const hide = spring({
     fps,
     frame,
-    durationInFrames: 20,
+    durationInFrames: titleHideDuration,
     config: {
       damping: 200,
     },
