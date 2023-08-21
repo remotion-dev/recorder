@@ -1528,6 +1528,243 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
+        id="dvd-2"
+        schema={videoConf}
+        defaultProps={{
+          layout: "wide" as const,
+          prefix: "dvd-2",
+          music: "none" as const,
+          scenes: [
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+          ],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="million"
+        schema={videoConf}
+        defaultProps={{
+          layout: "wide" as const,
+          prefix: "million",
+          music: "none" as const,
+          scenes: [
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+          ],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />{" "}
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
         id="empty"
         schema={videoConf}
         defaultProps={{
@@ -1540,100 +1777,6 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       />{" "}
-      <Composition
-        component={All}
-        fps={fps}
-        durationInFrames={100}
-        id="dvd-2"
-        schema={videoConf}
-        defaultProps={{
-          layout: "wide" as const,
-          prefix: "dvd-2",
-          music: "none" as const,
-          scenes: [
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: 142,
-              zoomInAtStart: false,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: 135,
-              zoomInAtStart: false,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: 125,
-              zoomInAtStart: false,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: 60,
-              zoomInAtStart: false,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: 190,
-              zoomInAtStart: false,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: 148,
-              zoomInAtStart: false,
-            },
-          ],
-          metadata: [],
-          pairs: [],
-        }}
-        calculateMetadata={calcMetadata}
-      />
     </>
   );
 };
