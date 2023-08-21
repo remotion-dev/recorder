@@ -1531,9 +1531,9 @@ export const Root = () => {
         id="dvd-2"
         schema={videoConf}
         defaultProps={{
-          layout: "wide" as const,
+          layout: "square" as const,
           prefix: "dvd-2",
-          music: "none" as const,
+          music: "dancelikemike" as const,
           scenes: [
             {
               type: "scene" as const,
@@ -1625,9 +1625,9 @@ export const Root = () => {
         id="million"
         schema={videoConf}
         defaultProps={{
-          layout: "wide" as const,
+          layout: "square" as const,
           prefix: "million",
-          music: "none" as const,
+          music: "weird" as const,
           scenes: [
             {
               type: "scene" as const,
