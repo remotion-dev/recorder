@@ -94,7 +94,7 @@ export const All: React.FC<AllProps> = ({
           />
         );
       })}
-      {music !== "none" && <Audio src={getAudioSource(music)} volume={0.08} />}
+      {music !== "none" && <Audio src={getAudioSource(music)} volume={0.05} />}
     </AbsoluteFill>
   );
 };
