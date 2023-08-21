@@ -12,6 +12,10 @@ const wordsTogether = (words: Word[]) => {
       lastAddedWord.word += word.word;
       lastAddedWord.end = word.end;
     } else {
+      if (word.word === " remotion") {
+        word.word = " Remotion";
+      }
+
       newWords.push(word);
     }
   }
