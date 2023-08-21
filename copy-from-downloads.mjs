@@ -3,7 +3,7 @@ import path from "path";
 import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "child_process";
 
-const prefix = "dvd";
+const prefix = "dvd-2";
 
 const downloadsDir =
   process.platform === "win32"
@@ -38,7 +38,7 @@ const { audibleParts } = await getSilentParts({
   minDurationInSeconds: 0.3,
 });
 
-const padding = 0.3;
+const padding = 0.25;
 
 const ffmpegTrim =
   audibleParts.length > 0
