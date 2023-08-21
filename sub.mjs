@@ -4,7 +4,7 @@ import path from "path";
 
 const subFile = (file) => {
   execSync(
-    `whisper --language=English --model=base.en --word_timestamps True --output_format=json --output_dir=${path.dirname(
+    `whisper --language=English --model=small.en --word_timestamps True --output_format=json --output_dir=${path.dirname(
       file
     )} ${file}`,
     {
