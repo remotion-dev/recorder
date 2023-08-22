@@ -8,14 +8,14 @@ import type {
   SceneType,
 } from "./configuration";
 import { transitionDuration } from "./configuration";
-import { Title } from "./Title";
-import { Scene } from "./Scene";
+import { Title } from "./scenes/Title";
+import { CameraScene } from "./scenes/CameraScene";
 import { getAudioSource } from "./layout/music";
 import {
   getIsTransitioningIn,
   getIsTransitioningOut,
 } from "./animations/transitions";
-import { TitleCard } from "./TitleCard";
+import { TitleCard } from "./scenes/TitleCard";
 
 export type AllProps = z.infer<typeof videoConf> & {
   metadata: SceneMetadata[];
@@ -102,7 +102,7 @@ export const All: React.FC<AllProps> = ({
         videoCounter += 1;
         const pair = pairs[videoCounter];
         return (
-          <Scene
+          <CameraScene
             key={videoCounter}
             start={from}
             pair={pair}

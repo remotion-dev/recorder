@@ -14,12 +14,12 @@ import type {
   configuration,
   Pair,
   SceneMetadata,
-} from "./configuration";
-import { transitionDuration } from "./configuration";
-import type { Layout } from "./layout/get-layout";
-import { borderRadius, frameWidth, getLayout } from "./layout/get-layout";
-import { Subs } from "./Subs/Subs";
-import { WebcamVideo } from "./WebcamVideo";
+} from "../configuration";
+import { transitionDuration } from "../configuration";
+import type { Layout } from "../layout/get-layout";
+import { borderRadius, frameWidth, getLayout } from "../layout/get-layout";
+import { Subs } from "../Subs/Subs";
+import { WebcamVideo } from "../WebcamVideo";
 
 const Inner: React.FC<{
   pair: Pair;
@@ -138,7 +138,7 @@ const Inner: React.FC<{
   );
 };
 
-export const Scene: React.FC<{
+export const CameraScene: React.FC<{
   metadata: SceneMetadata;
   pair: Pair;
   conf: z.infer<typeof configuration> | undefined;
