@@ -55,6 +55,7 @@ export const Subs: React.FC<{
     height,
     webcamPosition,
     width,
+    canvasLayout,
   });
 
   return (

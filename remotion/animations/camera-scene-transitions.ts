@@ -239,21 +239,35 @@ export const getSubtitleTranslation = ({
   width,
   height,
   webcamPosition,
+  canvasLayout,
 }: {
   enter: number;
   exit: number;
   width: number;
   height: number;
   webcamPosition: WebcamPosition;
+  canvasLayout: CanvasLayout;
+  previousWebcamPosition: WebcamPosition | null;
+  nextWebcamPosition: WebcamPosition | null;
 }) => {
-  const initialPosition =
-    webcamPosition === "top-left" ||
-    webcamPosition === "top-right" ||
-    webcamPosition === "center"
-      ? -height
-      : height;
-
   const translationX = interpolate(exit, [0, 1], [0, -width]);
-  const translationY = interpolate(enter, [0, 1], [initialPosition, 0]);
-  return { translationX, translationY };
+
+  if (canvasLayout === "wide") {
+    return { translationX, translationY: 0 };
+  }
+
+  if (canvasLayout === "square") {
+    const initialPosition =
+      webcamPosition === "top-left" ||
+      webcamPosition === "top-right" ||
+      webcamPosition === "center"
+        ? -height
+        : height;
+    return {
+      translationX,
+      translationY: interpolate(enter, [0, 1], [initialPosition, 0]),
+    };
+  }
+
+  return { translationX, translationY: 0 };
 };
