@@ -22,6 +22,10 @@ export const WebcamVideo: React.FC<{
   zoomInAtEnd: boolean;
   webcamPosition: WebcamPosition;
   shouldExit: boolean;
+  nextLayout: Layout | null;
+  previousLayout: Layout | null;
+  previousWebcamPosition: WebcamPosition | null;
+  nextWebcamPosition: WebcamPosition | null;
 }> = ({
   webcamLayout,
   enter,
@@ -33,6 +37,10 @@ export const WebcamVideo: React.FC<{
   pair,
   webcamPosition,
   shouldExit,
+  nextLayout,
+  previousLayout,
+  nextWebcamPosition,
+  previousWebcamPosition,
 }) => {
   const { height, width, fps, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -62,6 +70,11 @@ export const WebcamVideo: React.FC<{
     height,
     width,
     webcamPosition,
+    currentLayout: webcamLayout,
+    nextLayout,
+    previousLayout,
+    nextWebcamPosition,
+    previousWebcamPosition,
   });
 
   return (

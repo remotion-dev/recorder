@@ -2088,7 +2088,7 @@ export const Root = () => {
               duration: null,
               zoomInAtStart: false,
               zoomInAtEnd: false,
-              transitionToNextScene: true,
+              transitionToNextScene: false,
             },
             {
               type: "scene" as const,
