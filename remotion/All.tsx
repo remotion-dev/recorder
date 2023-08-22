@@ -5,6 +5,7 @@ import {
   getIsTransitioningIn,
   getIsTransitioningOut,
 } from "./animations/transitions";
+import { AudioTrack } from "./AudioTrack";
 import type {
   Pair,
   SceneMetadata,
@@ -122,6 +123,7 @@ export const All: React.FC<AllProps> = ({
           />
         );
       })}
+      <AudioTrack metadata={metadata} scenes={scenes} />
     </AbsoluteFill>
   );
 };
