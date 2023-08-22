@@ -18,6 +18,7 @@ export const frameWidth = 0;
 
 const webcamRatio = 400 / 350;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const safeSpace = (_canvasLayout: CanvasLayout) => 30;
 export const tallLayoutVerticalSafeSpace = 300;
 
