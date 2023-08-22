@@ -256,6 +256,11 @@ const getWebcamSize = ({
   };
 };
 
+export type CameraSceneLayout = {
+  webcamLayout: Layout;
+  displayLayout: Layout | null;
+};
+
 export const getLayout = ({
   display,
   webcam,
@@ -268,7 +273,7 @@ export const getLayout = ({
   canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
   webcamPosition: WebcamPosition;
-}): { webcamLayout: Layout; displayLayout: Layout | null } => {
+}): CameraSceneLayout => {
   const displayLayout = display
     ? wideLayout({
         videoWidth: display.width,
