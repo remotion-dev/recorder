@@ -47,15 +47,15 @@ export const TitleCard: React.FC<{
       <div
         style={{
           fontFamily: "GT Planar",
-          fontSize: 130,
-          color: "#fff",
+          fontSize: 60,
+          color: "#000",
           lineHeight: 1.1,
           fontWeight: "bolder",
           border: "10px solid black",
           borderRadius: 20,
           padding: "15px 40px",
           display: "inline",
-          background: "#0B84F3",
+          background: "#fff",
           position: "absolute",
           translate: interpolate(show(0), [0, 1], [width, 0]) + "px",
         }}
