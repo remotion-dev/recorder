@@ -233,6 +233,42 @@ export const getWebcamTranslation = ({
   return { translationX: exitX + enterX, translationY: enterY + exitY };
 };
 
+const getSubtitleExit = ({
+  exit,
+  width,
+  height,
+  webcamPosition,
+  canvasLayout,
+  nextWebcamPosition,
+}: {
+  exit: number;
+  width: number;
+  height: number;
+  webcamPosition: WebcamPosition;
+  canvasLayout: CanvasLayout;
+  nextWebcamPosition: WebcamPosition | null;
+}) => {
+  return { translationX: 0, translationY: 0 };
+};
+
+const getSubtitleEnter = ({
+  enter,
+  width,
+  height,
+  webcamPosition,
+  canvasLayout,
+  prevWebcamPosition,
+}: {
+  enter: number;
+  width: number;
+  height: number;
+  webcamPosition: WebcamPosition;
+  canvasLayout: CanvasLayout;
+  prevWebcamPosition: WebcamPosition | null;
+}) => {
+  return { translationX: 0, translationY: 0 };
+};
+
 export const getSubtitleTranslation = ({
   enter,
   exit,
@@ -240,6 +276,8 @@ export const getSubtitleTranslation = ({
   height,
   webcamPosition,
   canvasLayout,
+  nextWebcamPosition,
+  prevWebcamPosition,
 }: {
   enter: number;
   exit: number;
@@ -247,27 +285,28 @@ export const getSubtitleTranslation = ({
   height: number;
   webcamPosition: WebcamPosition;
   canvasLayout: CanvasLayout;
-  previousWebcamPosition: WebcamPosition | null;
+  prevWebcamPosition: WebcamPosition | null;
   nextWebcamPosition: WebcamPosition | null;
 }) => {
-  const translationX = interpolate(exit, [0, 1], [0, -width]);
+  const _enter = getSubtitleEnter({
+    canvasLayout,
+    enter,
+    height,
+    prevWebcamPosition,
+    webcamPosition,
+    width,
+  });
+  const _exit = getSubtitleExit({
+    canvasLayout,
+    exit,
+    height,
+    nextWebcamPosition,
+    webcamPosition,
+    width,
+  });
 
-  if (canvasLayout === "wide") {
-    return { translationX, translationY: 0 };
-  }
-
-  if (canvasLayout === "square") {
-    const initialPosition =
-      webcamPosition === "top-left" ||
-      webcamPosition === "top-right" ||
-      webcamPosition === "center"
-        ? -height
-        : height;
-    return {
-      translationX,
-      translationY: interpolate(enter, [0, 1], [initialPosition, 0]),
-    };
-  }
-
-  return { translationX, translationY: 0 };
+  return {
+    translationX: _enter.translationX + _exit.translationX,
+    translationY: _enter.translationY + _exit.translationY,
+  };
 };
