@@ -1666,9 +1666,7 @@ export const Root = () => {
               zoomInAtStart: false,
             },
             {
-              type: "title" as const,
-              title: "Is Million.js legit?",
-              subtitle: null,
+              type: "titlecard" as const,
               durationInFrames: 50,
             },
             {

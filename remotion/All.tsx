@@ -60,20 +60,18 @@ export const All: React.FC<AllProps> = ({
           return null;
         }
 
-        const yo = addedUpDurations;
-        addedUpDurations += metadataForScene.durationInFrames;
-
         const isFirstScene = i === 0;
+        const durationSubtraction = isFirstScene ? 0 : titleHideDuration;
+        const from = addedUpDurations;
+        addedUpDurations += metadataForScene.durationInFrames;
 
         if (scene.type === "title") {
           return (
             <Sequence
               key={scene.title}
-              from={yo - (isFirstScene ? 0 : titleHideDuration)}
+              from={from - durationSubtraction}
               durationInFrames={
-                scene.durationInFrames +
-                titleHideDuration +
-                (isFirstScene ? 0 : titleHideDuration)
+                scene.durationInFrames + titleHideDuration + durationSubtraction
               }
             >
               <Title
@@ -90,7 +88,7 @@ export const All: React.FC<AllProps> = ({
         return (
           <Scene
             key={videoCounter}
-            start={yo}
+            start={from}
             pair={pair}
             conf={scenes[i]}
             metadata={metadataForScene}
