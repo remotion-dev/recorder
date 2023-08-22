@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 import { onVideo } from "./on-video";
 
-let duration = 0;
 let endDate = 0;
 
 const mediaRecorderOptions: MediaRecorderOptions = {
@@ -159,7 +158,6 @@ const App = () => {
     }
 
     endDate = Date.now();
-    duration = endDate - (recording as number);
     setRecording(false);
   };
 
