@@ -1667,7 +1667,8 @@ export const Root = () => {
             },
             {
               type: "titlecard" as const,
-              durationInFrames: 50,
+              durationInFrames: 100,
+              title: "Is Million.js legit?",
             },
             {
               type: "scene" as const,

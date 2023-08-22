@@ -43,6 +43,7 @@ export const configuration = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("titlecard"),
     durationInFrames: z.number().int().default(100),
+    title: z.string(),
   }),
   z.object({
     type: z.literal("endcard"),
@@ -97,5 +98,5 @@ export type Pair = {
   sub: StaticFile | null;
 };
 
-export const titleHideDuration = 10;
+export const transitionDuration = 10;
 export const fps = 30;

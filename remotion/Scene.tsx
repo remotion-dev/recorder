@@ -15,7 +15,7 @@ import type {
   Pair,
   SceneMetadata,
 } from "./configuration";
-import { titleHideDuration } from "./configuration";
+import { transitionDuration } from "./configuration";
 import type { Layout } from "./layout/get-layout";
 import { borderRadius, frameWidth, getLayout } from "./layout/get-layout";
 import { Subs } from "./Subs/Subs";
@@ -50,7 +50,7 @@ const Inner: React.FC<{
       const spr = spring({
         fps,
         frame,
-        durationInFrames: titleHideDuration,
+        durationInFrames: transitionDuration,
         config: {
           damping: 200,
         },
@@ -66,11 +66,11 @@ const Inner: React.FC<{
       const spr = spring({
         fps,
         frame,
-        durationInFrames: titleHideDuration,
+        durationInFrames: transitionDuration,
         config: {
           damping: 200,
         },
-        delay: durationInFrames - titleHideDuration,
+        delay: durationInFrames - transitionDuration,
       });
       return spr;
     }

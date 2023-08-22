@@ -7,10 +7,15 @@ import type {
   videoConf,
   SceneType,
 } from "./configuration";
-import { titleHideDuration } from "./configuration";
+import { transitionDuration } from "./configuration";
 import { Title } from "./Title";
 import { Scene } from "./Scene";
 import { getAudioSource } from "./layout/music";
+import {
+  getIsTransitioningIn,
+  getIsTransitioningOut,
+} from "./animations/transitions";
+import { TitleCard } from "./TitleCard";
 
 export type AllProps = z.infer<typeof videoConf> & {
   metadata: SceneMetadata[];
@@ -60,23 +65,42 @@ export const All: React.FC<AllProps> = ({
           return null;
         }
 
-        const isFirstScene = i === 0;
-        const durationSubtraction = isFirstScene ? 0 : titleHideDuration;
-        const from = addedUpDurations;
+        const isTransitioningIn = getIsTransitioningIn(scenes, i);
+        const isTransitioningOut = getIsTransitioningOut(scenes, i);
+
+        const from =
+          addedUpDurations - (isTransitioningIn ? transitionDuration : 0);
+        const extraDuration =
+          (isTransitioningIn ? transitionDuration : 0) +
+          (isTransitioningOut ? transitionDuration : 0);
         addedUpDurations += metadataForScene.durationInFrames;
 
         if (scene.type === "title") {
           return (
             <Sequence
               key={scene.title}
-              from={from - durationSubtraction}
-              durationInFrames={
-                scene.durationInFrames + titleHideDuration + durationSubtraction
-              }
+              from={from}
+              durationInFrames={scene.durationInFrames + extraDuration}
             >
               <Title
                 durationInFrames={scene.durationInFrames}
                 subtitle={scene.subtitle}
+                title={scene.title}
+              />
+            </Sequence>
+          );
+        }
+
+        if (scene.type === "titlecard") {
+          return (
+            <Sequence
+              // eslint-disable-next-line react/no-array-index-key
+              key={i}
+              from={from}
+              durationInFrames={scene.durationInFrames + extraDuration}
+            >
+              <TitleCard
+                durationInFrames={scene.durationInFrames}
                 title={scene.title}
               />
             </Sequence>
