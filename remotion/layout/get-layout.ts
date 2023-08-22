@@ -18,8 +18,7 @@ export const frameWidth = 0;
 
 const webcamRatio = 400 / 350;
 
-export const safeSpace = (canvasLayout: CanvasLayout) =>
-  canvasLayout ? 30 : 20;
+export const safeSpace = (_canvasLayout: CanvasLayout) => 30;
 export const tallLayoutVerticalSafeSpace = 300;
 
 const overrideYForAltLayouts = ({
@@ -63,17 +62,11 @@ const overrideYForAltLayouts = ({
 };
 
 const fullscreenLayout = ({
-  videoWidth,
-  videoHeight,
   canvasSize,
   canvasLayout,
-  webcamPosition,
 }: {
-  videoWidth: number;
-  videoHeight: number;
   canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
-  webcamPosition: WebcamPosition;
 }) => {
   return {
     x: safeSpace(canvasLayout),
@@ -302,10 +295,7 @@ export const getLayout = ({
         webcamVideoDimensions: webcam,
       })
     : fullscreenLayout({
-        videoWidth: webcam.width,
-        videoHeight: webcam.height,
         canvasSize,
-        webcamPosition,
         canvasLayout,
       });
 

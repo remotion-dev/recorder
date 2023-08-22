@@ -10,6 +10,7 @@ import type {
   WebcamPosition,
 } from "../configuration";
 import type { Layout } from "../layout/get-layout";
+import { borderRadius } from "../layout/get-layout";
 import { tallLayoutVerticalSafeSpace } from "../layout/get-layout";
 import { safeSpace } from "../layout/get-layout";
 
@@ -101,7 +102,18 @@ const getSubsLayout = ({
   };
 };
 
-const inlineSubsLayout = (canvasLayout: CanvasLayout): React.CSSProperties => {
+const inlineSubsLayout = (
+  canvasLayout: CanvasLayout,
+  displayLayout: Layout | null
+): React.CSSProperties => {
+  if (displayLayout === null) {
+    return {
+      paddingLeft: 20,
+      paddingRight: 20,
+      borderRadius: borderRadius - safeSpace("tall") / 4,
+    };
+  }
+
   if (canvasLayout === "wide") {
     return { paddingLeft: 20, paddingRight: 20 };
   }
@@ -157,12 +169,14 @@ export const SegmentComp: React.FC<{
       <div>
         <span
           style={{
-            backgroundColor: "white",
+            backgroundColor:
+              displayLayout === null ? "rgba(0, 0, 0, 0.15)" : "white",
             lineHeight: 1.2,
             display: "inline-block",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
-            ...inlineSubsLayout(canvasLayout),
+            backdropFilter: "blur(5px)",
+            ...inlineSubsLayout(canvasLayout, displayLayout),
           }}
         >
           {segment.words.map((word, index) => {
@@ -173,6 +187,7 @@ export const SegmentComp: React.FC<{
                 trimStart={trimStart}
                 word={word}
                 canvasLayout={canvasLayout}
+                displayLayout={displayLayout}
               />
             );
           })}
