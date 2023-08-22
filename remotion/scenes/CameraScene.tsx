@@ -29,9 +29,9 @@ const Inner: React.FC<{
   shouldExit: boolean;
   canvasLayout: CanvasLayout;
   scene: SceneType;
-  nextScene: { scene: SceneType; metadata: SceneMetadata } | null;
-  previousScene: { scene: SceneType; metadata: SceneMetadata } | null;
   layout: CameraSceneLayout;
+  previousLayout: CameraSceneLayout | null;
+  nextLayout: CameraSceneLayout | null;
 }> = ({
   endAt,
   shouldEnter,
@@ -40,11 +40,11 @@ const Inner: React.FC<{
   startFrom,
   scene,
   canvasLayout,
-  nextScene,
-  previousScene,
   layout,
+  nextLayout,
+  previousLayout,
 }) => {
-  const { fps, width, durationInFrames, height } = useVideoConfig();
+  const { fps, width, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
 
   const enter = (() => {
@@ -88,11 +88,9 @@ const Inner: React.FC<{
     enter,
     exit,
     width,
-    next: nextScene,
-    previous: previousScene,
-    canvasLayout,
-    canvasSize: { width, height },
-    currentLayout: layout,
+    nextLayout: nextLayout?.displayLayout ?? null,
+    previousLayout: previousLayout?.displayLayout ?? null,
+    currentLayout: layout.displayLayout,
   });
 
   return (
@@ -259,8 +257,8 @@ export const CameraScene: React.FC<{
         startFrom={startFrom}
         layout={layout}
         scene={scene}
-        nextScene={nextScene}
-        previousScene={previousScene}
+        nextLayout={nextLayout}
+        previousLayout={prevLayout}
       />
     </Sequence>
   );

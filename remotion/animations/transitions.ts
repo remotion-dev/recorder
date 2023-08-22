@@ -20,7 +20,11 @@ export const getIsTransitioningOut = (scenes: SceneType[], index: number) => {
     return true;
   }
 
-  if (nextScene.type === "scene" && nextScene.transitionToNextScene) {
+  if (
+    scene.type === "scene" &&
+    nextScene.type === "scene" &&
+    scene.transitionToNextScene
+  ) {
     return true;
   }
 

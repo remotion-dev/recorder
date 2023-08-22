@@ -43,7 +43,7 @@ export const WebcamVideo: React.FC<{
         frame,
         config: { damping: 200 },
         durationInFrames: 10,
-        delay: durationInFrames - 10 - (shouldExit ? transitionDuration : 0),
+        delay: durationInFrames - 15 - (shouldExit ? transitionDuration : 0),
       })
     : zoomInAtStart
     ? spring({
