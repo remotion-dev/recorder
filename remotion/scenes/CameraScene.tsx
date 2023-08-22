@@ -1,7 +1,6 @@
 import React from "react";
 import {
   AbsoluteFill,
-  interpolate,
   OffthreadVideo,
   Sequence,
   spring,
@@ -9,6 +8,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import type { z } from "zod";
+import { getDisplayTranslation } from "../animations/camera-scene-transitions";
 import type {
   CanvasLayout,
   configuration,
@@ -82,6 +82,8 @@ const Inner: React.FC<{
     throw new Error("Not a scene");
   }
 
+  const displayTranslation = getDisplayTranslation({ enter, exit, width });
+
   return (
     <>
       <AbsoluteFill>
@@ -95,10 +97,7 @@ const Inner: React.FC<{
               position: "absolute",
               padding: frameWidth,
               borderRadius: borderRadius + frameWidth,
-              translate:
-                interpolate(enter, [0, 1], [width, 0]) +
-                interpolate(exit, [0, 1], [0, -width]) +
-                "px 0",
+              translate: `${displayTranslation.translationX}px ${displayTranslation.translationY}px`,
             }}
           >
             <OffthreadVideo

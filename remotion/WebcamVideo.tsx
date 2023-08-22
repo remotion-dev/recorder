@@ -1,11 +1,11 @@
 import React from "react";
 import {
-  interpolate,
   OffthreadVideo,
   spring,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { getWebcamTranslation } from "./animations/camera-scene-transitions";
 import type { Pair } from "./configuration";
 import type { Layout } from "./layout/get-layout";
 import { borderRadius, frameWidth } from "./layout/get-layout";
@@ -33,6 +33,13 @@ export const WebcamVideo: React.FC<{
       })
     : 0;
 
+  const webcamTranslation = getWebcamTranslation({
+    enter,
+    exit,
+    height,
+    width,
+  });
+
   return (
     <div
       style={{
@@ -45,17 +52,12 @@ export const WebcamVideo: React.FC<{
           borderRadius: borderRadius + frameWidth,
           overflow: "hidden",
           padding: frameWidth,
-          // backgroundColor: "black",
           width: webcamLayout.width,
           height: webcamLayout.height,
           left: webcamLayout.x,
           top: webcamLayout.y,
           position: "relative",
-          translate: `${interpolate(exit, [0, 1], [0, -width])}px ${interpolate(
-            enter,
-            [0, 1],
-            [height, 0]
-          )}px`,
+          translate: `${webcamTranslation.translationX}px ${webcamTranslation.translationY}px`,
         }}
       >
         <OffthreadVideo
