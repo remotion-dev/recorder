@@ -141,6 +141,7 @@ const Inner: React.FC<{
           previousLayout={previousLayout?.webcamLayout ?? null}
           nextWebcamPosition={nextWebcamPosition}
           previousWebcamPosition={previousWebcamPosition}
+          canvasLayout={canvasLayout}
         />
       </AbsoluteFill>
       {pair.sub ? (

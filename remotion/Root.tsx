@@ -2009,7 +2009,7 @@ export const Root = () => {
         id="million"
         schema={videoConf}
         defaultProps={{
-          layout: "square" as const,
+          layout: "wide" as const,
           prefix: "million",
           music: "weird" as const,
           scenes: [
@@ -2088,20 +2088,20 @@ export const Root = () => {
               duration: null,
               zoomInAtStart: false,
               zoomInAtEnd: false,
-              transitionToNextScene: false,
+              transitionToNextScene: true,
             },
             {
               type: "scene" as const,
-              webcamPosition: "top-left" as const,
+              webcamPosition: "bottom-left" as const,
               trimStart: 0,
               duration: null,
               zoomInAtStart: false,
               zoomInAtEnd: false,
-              transitionToNextScene: false,
+              transitionToNextScene: true,
             },
             {
               type: "scene" as const,
-              webcamPosition: "top-left" as const,
+              webcamPosition: "top-right" as const,
               trimStart: 0,
               duration: null,
               zoomInAtStart: false,

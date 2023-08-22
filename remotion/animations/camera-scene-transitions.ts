@@ -1,5 +1,5 @@
 import { interpolate } from "remotion";
-import type { WebcamPosition } from "../configuration";
+import type { CanvasLayout, WebcamPosition } from "../configuration";
 import type { Layout } from "../layout/get-layout";
 
 export const getDisplayTranslation = ({
@@ -55,6 +55,131 @@ const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
   return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
 };
 
+const isWebCamRight = (webcamPosition: WebcamPosition) => {
+  return webcamPosition === "top-right" || webcamPosition === "bottom-right";
+};
+
+const getWebcamEndOffset = ({
+  nextLayout,
+  nextWebcamPosition,
+  webcamPosition,
+  currentLayout,
+  width,
+  height,
+  canvasLayout,
+}: {
+  nextLayout: Layout | null;
+  nextWebcamPosition: WebcamPosition | null;
+  webcamPosition: WebcamPosition;
+  currentLayout: Layout;
+  width: number;
+  height: number;
+  canvasLayout: CanvasLayout;
+}): { endX: number; endY: number } => {
+  if (!nextLayout || !nextWebcamPosition) {
+    return {
+      endX: -width,
+      endY: 0,
+    };
+  }
+
+  const samePositionHorizontal =
+    isWebCamAtBottom(nextWebcamPosition) === isWebCamAtBottom(webcamPosition);
+  const isSamePositionVertical =
+    isWebCamRight(nextWebcamPosition) === isWebCamRight(webcamPosition);
+
+  if (canvasLayout === "wide") {
+    if (!isSamePositionVertical) {
+      return {
+        endX: isWebCamRight(webcamPosition) ? width : -width,
+        endY: 0,
+      };
+    }
+
+    if (!samePositionHorizontal) {
+      return {
+        endX: 0,
+        endY: nextLayout.y - currentLayout.y,
+      };
+    }
+
+    return {
+      endX: -width,
+      endY: 0,
+    };
+  }
+
+  return {
+    endX: samePositionHorizontal ? nextLayout.x - currentLayout.x : 0,
+    endY: samePositionHorizontal
+      ? 0
+      : isWebCamAtBottom(webcamPosition)
+      ? height
+      : -height,
+  };
+};
+
+const getWebCamStartOffset = ({
+  previousLayout,
+  previousWebcamPosition,
+  webcamPosition,
+  currentLayout,
+  width,
+  height,
+  canvasLayout,
+}: {
+  previousLayout: Layout | null;
+  previousWebcamPosition: WebcamPosition | null;
+  webcamPosition: WebcamPosition;
+  currentLayout: Layout;
+  width: number;
+  height: number;
+  canvasLayout: CanvasLayout;
+}): { startX: number; startY: number } => {
+  if (!previousLayout || !previousWebcamPosition) {
+    return {
+      startX: width,
+      startY: 0,
+    };
+  }
+
+  const samePositionHorizontal =
+    isWebCamAtBottom(previousWebcamPosition) ===
+    isWebCamAtBottom(webcamPosition);
+  const isSamePositionVertical =
+    isWebCamRight(previousWebcamPosition) === isWebCamRight(webcamPosition);
+
+  if (canvasLayout === "wide") {
+    if (!isSamePositionVertical) {
+      return {
+        startX: isWebCamRight(webcamPosition) ? width : -width,
+        startY: 0,
+      };
+    }
+
+    if (!samePositionHorizontal) {
+      return {
+        startX: 0,
+        startY: previousLayout.y - currentLayout.y,
+      };
+    }
+
+    return {
+      startX: width,
+      startY: 0,
+    };
+  }
+
+  return {
+    startX: samePositionHorizontal ? previousLayout.x - currentLayout.x : 0,
+    startY: samePositionHorizontal
+      ? 0
+      : isWebCamAtBottom(webcamPosition)
+      ? height
+      : -height,
+  };
+};
+
 export const getWebcamTranslation = ({
   enter,
   exit,
@@ -66,6 +191,7 @@ export const getWebcamTranslation = ({
   previousLayout,
   nextWebcamPosition,
   previousWebcamPosition,
+  canvasLayout,
 }: {
   enter: number;
   exit: number;
@@ -77,41 +203,27 @@ export const getWebcamTranslation = ({
   nextLayout: Layout | null;
   nextWebcamPosition: WebcamPosition | null;
   currentLayout: Layout;
+  canvasLayout: CanvasLayout;
 }) => {
-  const startX =
-    previousLayout && previousWebcamPosition
-      ? isWebCamAtBottom(previousWebcamPosition) ===
-        isWebCamAtBottom(webcamPosition)
-        ? previousLayout.x - currentLayout.x
-        : 0
-      : width;
+  const { startX, startY } = getWebCamStartOffset({
+    previousLayout,
+    previousWebcamPosition,
+    webcamPosition,
+    currentLayout,
+    width,
+    height,
+    canvasLayout,
+  });
 
-  const startY =
-    previousLayout &&
-    previousWebcamPosition &&
-    isWebCamAtBottom(previousWebcamPosition) ===
-      isWebCamAtBottom(webcamPosition)
-      ? 0
-      : isWebCamAtBottom(webcamPosition)
-      ? height
-      : -height;
-
-  const endX =
-    nextLayout && nextWebcamPosition
-      ? isWebCamAtBottom(nextWebcamPosition) ===
-        isWebCamAtBottom(webcamPosition)
-        ? nextLayout.x - currentLayout.x
-        : 0
-      : -width;
-
-  const endY =
-    nextLayout &&
-    nextWebcamPosition &&
-    isWebCamAtBottom(nextWebcamPosition) === isWebCamAtBottom(webcamPosition)
-      ? 0
-      : isWebCamAtBottom(webcamPosition)
-      ? height
-      : -height;
+  const { endX, endY } = getWebcamEndOffset({
+    nextLayout,
+    nextWebcamPosition,
+    webcamPosition,
+    currentLayout,
+    width,
+    height,
+    canvasLayout,
+  });
 
   const enterX = interpolate(enter, [0, 1], [startX, 0]);
   const enterY = interpolate(enter, [0, 1], [startY, 0]);
