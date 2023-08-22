@@ -1,18 +1,20 @@
+import { loadFont } from "@remotion/google-fonts/Inter";
 import React from "react";
 import { AbsoluteFill } from "remotion";
-import type { Segment } from "../sub-types";
-import { useTime, WordComp } from "./Word";
-import { loadFont } from "@remotion/google-fonts/Inter";
-import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type {
   CanvasLayout,
   Dimensions,
   WebcamPosition,
 } from "../configuration";
 import type { Layout } from "../layout/get-layout";
-import { borderRadius } from "../layout/get-layout";
-import { tallLayoutVerticalSafeSpace } from "../layout/get-layout";
-import { safeSpace } from "../layout/get-layout";
+import {
+  borderRadius,
+  safeSpace,
+  tallLayoutVerticalSafeSpace,
+} from "../layout/get-layout";
+import { getBottomSafeSpace } from "../layout/get-safe-space";
+import type { Segment } from "../sub-types";
+import { useTime, WordComp } from "./Word";
 
 loadFont();
 
@@ -146,7 +148,7 @@ export const SegmentComp: React.FC<{
     return null;
   }
 
-  if (time > segment.end && !isLast) {
+  if (time >= segment.end && !isLast) {
     return null;
   }
 
