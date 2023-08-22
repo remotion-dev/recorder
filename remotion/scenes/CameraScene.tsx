@@ -120,6 +120,7 @@ const Inner: React.FC<{
           startFrom={startFrom}
           webcamLayout={webcamLayout}
           webcamPosition={conf.webcamPosition}
+          zoomInAtEnd={conf.zoomInAtEnd}
         />
       </AbsoluteFill>
       {pair.sub ? (

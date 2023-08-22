@@ -34,6 +34,7 @@ export const configuration = z.discriminatedUnion("type", [
     trimStart: z.number(),
     duration: z.number().nullable().default(null),
     zoomInAtStart: z.boolean().default(false),
+    zoomInAtEnd: z.boolean().default(false),
   }),
   z.object({
     type: z.literal("title"),

@@ -18,21 +18,31 @@ export const WebcamVideo: React.FC<{
   endAt: number | undefined;
   pair: Pair;
   zoomInAtStart: boolean;
+  zoomInAtEnd: boolean;
   webcamPosition: WebcamPosition;
 }> = ({
   webcamLayout,
   enter,
   exit,
   zoomInAtStart,
+  zoomInAtEnd,
   startFrom,
   endAt,
   pair,
   webcamPosition,
 }) => {
-  const { height, width, fps } = useVideoConfig();
+  const { height, width, fps, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
 
-  const zoomIn = zoomInAtStart
+  const zoomIn = zoomInAtEnd
+    ? spring({
+        fps,
+        frame,
+        config: { damping: 200 },
+        durationInFrames: 20,
+        delay: durationInFrames - 20,
+      })
+    : zoomInAtStart
     ? spring({
         fps,
         frame,
