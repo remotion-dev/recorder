@@ -2,7 +2,7 @@ import React from "react";
 import { Composition } from "remotion";
 import { fps, videoConf } from "./configuration";
 import { All } from "./All";
-import { Title } from "./Title";
+import { Title } from "./scenes/Title";
 import { calcMetadata } from "./calc-metadata";
 
 export const Root = () => {
