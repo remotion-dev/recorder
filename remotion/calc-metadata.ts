@@ -2,7 +2,7 @@ import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import type { AllProps } from "./All";
 import type { SceneMetadata } from "./configuration";
-import { titleHideDuration } from "./configuration";
+import { transitionDuration } from "./configuration";
 import { fps, getPairs } from "./configuration";
 import { truthy } from "./truthy";
 
@@ -27,7 +27,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
             videos: null,
             durationInFrames: isFirstScene
               ? scene.durationInFrames
-              : scene.durationInFrames - titleHideDuration,
+              : scene.durationInFrames - transitionDuration,
           };
         }
 
