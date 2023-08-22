@@ -1,6 +1,6 @@
 import { loadFont } from "@remotion/google-fonts/Inter";
 import React from "react";
-import { AbsoluteFill } from "remotion";
+import { AbsoluteFill, interpolate } from "remotion";
 import type {
   CanvasLayout,
   Dimensions,
@@ -152,6 +152,12 @@ export const SegmentComp: React.FC<{
     return null;
   }
 
+  const opacity = interpolate(
+    time,
+    [segment.start, segment.start + 0.2, segment.end - 0.1, segment.end],
+    [0, 1, 1, 0]
+  );
+
   return (
     <AbsoluteFill
       style={{
@@ -159,6 +165,7 @@ export const SegmentComp: React.FC<{
         fontSize: getFontSize(canvasLayout),
         display: "flex",
         lineHeight: 1.2,
+        opacity,
         ...getSubsLayout({
           canvasLayout,
           webcamLayout,

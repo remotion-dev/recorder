@@ -22,6 +22,8 @@ export const Subs: React.FC<{
   webcamLayout: Layout;
   enter: number;
   exit: number;
+  prevWebcamPosition: WebcamPosition | null;
+  nextWebcamPosition: WebcamPosition | null;
 }> = ({
   file,
   trimStart,
@@ -31,6 +33,8 @@ export const Subs: React.FC<{
   webcamLayout,
   enter,
   exit,
+  nextWebcamPosition,
+  prevWebcamPosition,
 }) => {
   const [data, setData] = useState<SubTypes | null>(null);
   const { width, height } = useVideoConfig();
@@ -56,6 +60,8 @@ export const Subs: React.FC<{
     webcamPosition,
     width,
     canvasLayout,
+    nextWebcamPosition,
+    prevWebcamPosition,
   });
 
   return (
