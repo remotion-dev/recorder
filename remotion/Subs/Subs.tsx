@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import type { StaticFile } from "remotion";
-import { interpolate } from "remotion";
-import { useVideoConfig } from "remotion";
-import { delayRender, continueRender } from "remotion";
-import { AbsoluteFill } from "remotion";
+import {
+  AbsoluteFill,
+  continueRender,
+  delayRender,
+  useVideoConfig,
+} from "remotion";
 import { getSubtitleTranslation } from "../animations/camera-scene-transitions";
 import type { CanvasLayout, WebcamPosition } from "../configuration";
 import type { Layout } from "../layout/get-layout";
