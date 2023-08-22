@@ -1,6 +1,7 @@
 import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import type { AllProps } from "./All";
+import { getIsTransitioningIn } from "./animations/transitions";
 import type { SceneMetadata } from "./configuration";
 import { transitionDuration } from "./configuration";
 import { fps, getPairs } from "./configuration";
@@ -16,8 +17,6 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   const metadata = (
     await Promise.all(
       props.scenes.map(async (scene, i): Promise<SceneMetadata | null> => {
-        const isFirstScene = i === 0;
-
         if (
           scene.type === "title" ||
           scene.type === "titlecard" ||
@@ -25,9 +24,10 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
         ) {
           return {
             videos: null,
-            durationInFrames: isFirstScene
-              ? scene.durationInFrames
-              : scene.durationInFrames - transitionDuration,
+            durationInFrames: scene.durationInFrames,
+            sumUpDuration: getIsTransitioningIn(props.scenes, i)
+              ? scene.durationInFrames - transitionDuration
+              : scene.durationInFrames,
           };
         }
 
@@ -53,6 +53,9 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
         return {
           durationInFrames: duration,
+          sumUpDuration: getIsTransitioningIn(props.scenes, i)
+            ? duration - transitionDuration
+            : duration,
           videos: {
             display: dim,
             webcam: {
@@ -67,7 +70,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
   const totalDuration = Math.max(
     1,
-    metadata.reduce((a, b) => a + b.durationInFrames, 0)
+    metadata.reduce((a, b) => a + b.sumUpDuration, 0)
   );
 
   return {

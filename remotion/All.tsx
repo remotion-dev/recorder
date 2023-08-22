@@ -60,19 +60,19 @@ export const All: React.FC<AllProps> = ({
         const isTransitioningIn = getIsTransitioningIn(scenes, i);
         const isTransitioningOut = getIsTransitioningOut(scenes, i);
 
-        const from =
-          addedUpDurations - (isTransitioningIn ? transitionDuration : 0);
-        const extraDuration =
-          (isTransitioningIn ? transitionDuration : 0) +
-          (isTransitioningOut ? transitionDuration : 0);
+        const from = addedUpDurations;
         addedUpDurations += metadataForScene.durationInFrames;
+        if (isTransitioningOut) {
+          console.log({ scene });
+          addedUpDurations -= transitionDuration;
+        }
 
         if (scene.type === "title") {
           return (
             <Sequence
               key={scene.title}
               from={from}
-              durationInFrames={scene.durationInFrames + extraDuration}
+              durationInFrames={scene.durationInFrames}
             >
               <Title
                 durationInFrames={scene.durationInFrames}
@@ -89,7 +89,7 @@ export const All: React.FC<AllProps> = ({
               // eslint-disable-next-line react/no-array-index-key
               key={i}
               from={from}
-              durationInFrames={scene.durationInFrames + extraDuration}
+              durationInFrames={scene.durationInFrames}
             >
               <TitleCard
                 durationInFrames={scene.durationInFrames}
