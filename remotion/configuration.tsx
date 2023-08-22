@@ -36,21 +36,25 @@ export const configuration = z.discriminatedUnion("type", [
     zoomInAtStart: z.boolean().default(false),
     zoomInAtEnd: z.boolean().default(false),
     transitionToNextScene: z.boolean().default(false),
+    music,
   }),
   z.object({
     type: z.literal("title"),
     title: z.string(),
     subtitle: z.string().nullable(),
     durationInFrames: z.number().int().default(50),
+    music,
   }),
   z.object({
     type: z.literal("titlecard"),
     durationInFrames: z.number().int().default(100),
     title: z.string(),
+    music,
   }),
   z.object({
     type: z.literal("endcard"),
     durationInFrames: z.number().int().default(100),
+    music,
   }),
 ]);
 
@@ -61,7 +65,6 @@ const scenes = z.array(configuration);
 export type SceneType = z.infer<typeof configuration>;
 
 export const videoConf = z.object({
-  music,
   layout: canvasLayout,
   scenes,
 });
