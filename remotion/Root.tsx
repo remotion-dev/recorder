@@ -2322,7 +2322,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "previous" as const,
+              music: "weird" as const,
             },
             {
               type: "scene" as const,
@@ -2372,7 +2372,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "previous" as const,
+              music: "soft" as const,
             },
             {
               type: "scene" as const,
