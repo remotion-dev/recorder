@@ -110,6 +110,7 @@ export const WebcamVideo: React.FC<{
             display: "block",
             borderRadius,
             overflow: "hidden",
+            transformOrigin: "50% 0%",
             scale: String(zoomIn * 0.4 + 1),
           }}
           src={pair.webcam.src}
