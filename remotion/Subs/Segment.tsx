@@ -40,6 +40,20 @@ const getSubsLayout = ({
   webcamPosition: WebcamPosition;
   canvasSize: Dimensions;
 }): React.CSSProperties => {
+  if (displayLayout === null) {
+    return {
+      height: getBottomSafeSpace("square") * 2,
+      bottom: getBottomSafeSpace("square") * 3,
+      // @ts-expect-error not yet available
+      textWrap: "balance",
+      textAlign: "center",
+      paddingLeft: safeSpace(canvasLayout) * 2,
+      paddingRight: safeSpace(canvasLayout) * 2,
+      justifyContent: "center",
+      alignItems: "center",
+    };
+  }
+
   if (canvasLayout === "wide") {
     return {
       height: getBottomSafeSpace(canvasLayout),
