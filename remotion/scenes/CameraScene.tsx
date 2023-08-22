@@ -15,7 +15,7 @@ import type {
   SceneType,
 } from "../configuration";
 import { transitionDuration } from "../configuration";
-import type { Layout } from "../layout/get-layout";
+import type { CameraSceneLayout } from "../layout/get-layout";
 import { borderRadius, frameWidth, getLayout } from "../layout/get-layout";
 import { Subs } from "../Subs/Subs";
 import { WebcamVideo } from "../WebcamVideo";
@@ -26,26 +26,22 @@ const Inner: React.FC<{
   endAt: number | undefined;
   shouldEnter: boolean;
   shouldExit: boolean;
-  displayLayout: Layout | null;
-  webcamLayout: Layout;
   canvasLayout: CanvasLayout;
   scene: SceneType;
-  sceneMetadata: SceneMetadata;
   nextScene: { scene: SceneType; metadata: SceneMetadata } | null;
   previousScene: { scene: SceneType; metadata: SceneMetadata } | null;
+  layout: CameraSceneLayout;
 }> = ({
-  displayLayout,
   endAt,
   shouldEnter,
   shouldExit,
   pair,
   startFrom,
-  webcamLayout,
   scene,
   canvasLayout,
   nextScene,
   previousScene,
-  sceneMetadata,
+  layout,
 }) => {
   const { fps, width, durationInFrames, height } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -95,22 +91,19 @@ const Inner: React.FC<{
     previous: previousScene,
     canvasLayout,
     canvasSize: { width, height },
-    scene: {
-      scene,
-      metadata: sceneMetadata,
-    },
+    currentLayout: layout,
   });
 
   return (
     <>
       <AbsoluteFill>
-        {displayLayout && pair.display ? (
+        {layout.displayLayout && pair.display ? (
           <div
             style={{
-              width: displayLayout.width,
-              height: displayLayout.height,
-              left: displayLayout.x,
-              top: displayLayout.y,
+              width: layout.displayLayout.width,
+              height: layout.displayLayout.height,
+              left: layout.displayLayout.x,
+              top: layout.displayLayout.y,
               position: "absolute",
               padding: frameWidth,
               borderRadius: borderRadius + frameWidth,
@@ -136,7 +129,7 @@ const Inner: React.FC<{
           pair={pair}
           zoomInAtStart={scene.zoomInAtStart ?? false}
           startFrom={startFrom}
-          webcamLayout={webcamLayout}
+          webcamLayout={layout.webcamLayout}
           webcamPosition={scene.webcamPosition}
           zoomInAtEnd={scene.zoomInAtEnd}
           shouldExit={shouldExit}
@@ -148,8 +141,8 @@ const Inner: React.FC<{
           canvasLayout={canvasLayout}
           trimStart={startFrom}
           file={pair.sub}
-          webcamLayout={webcamLayout}
-          displayLayout={displayLayout}
+          webcamLayout={layout.webcamLayout}
+          displayLayout={layout.displayLayout}
           enter={enter}
           exit={exit}
         />
@@ -215,7 +208,7 @@ export const CameraScene: React.FC<{
   const startFrom = scene.trimStart ?? 0;
   const endAt = scene.duration ? startFrom + scene.duration : undefined;
 
-  const { displayLayout, webcamLayout } = getLayout({
+  const layout = getLayout({
     display: metadata.videos.display,
     webcam: metadata.videos.webcam,
     canvasSize: {
@@ -234,17 +227,15 @@ export const CameraScene: React.FC<{
     >
       <Inner
         canvasLayout={canvasSize}
-        displayLayout={displayLayout}
         endAt={endAt}
         pair={pair}
         shouldEnter={shouldEnter}
         shouldExit={shouldExit}
         startFrom={startFrom}
-        webcamLayout={webcamLayout}
+        layout={layout}
         scene={scene}
         nextScene={nextScene}
         previousScene={previousScene}
-        sceneMetadata={metadata}
       />
     </Sequence>
   );
