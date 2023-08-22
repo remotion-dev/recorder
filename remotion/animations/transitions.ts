@@ -12,7 +12,15 @@ export const getIsTransitioningOut = (scenes: SceneType[], index: number) => {
   }
 
   const nextScene = scenes[index + 1];
-  if (nextScene && isATextCard(nextScene)) {
+  if (!nextScene) {
+    return false;
+  }
+
+  if (isATextCard(nextScene)) {
+    return true;
+  }
+
+  if (nextScene.type === "scene" && nextScene.transitionToNextScene) {
     return true;
   }
 
