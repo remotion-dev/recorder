@@ -2009,7 +2009,7 @@ export const Root = () => {
         id="million"
         schema={videoConf}
         defaultProps={{
-          layout: "wide" as const,
+          layout: "square" as const,
           prefix: "million",
           music: "weird" as const,
           scenes: [
