@@ -1,5 +1,5 @@
 import React from "react";
-import { spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import type { CanvasLayout } from "../configuration";
 import type { Layout } from "../layout/get-layout";
 import type { Word } from "../sub-types";
@@ -65,7 +65,13 @@ export const WordComp: React.FC<{
       : 1;
 
   const appeared = word.start <= time;
-  const opacity = appeared ? 1 : 0.3;
+  const opacity = appeared
+    ? monospace
+      ? 1
+      : interpolate(time, [word.start, word.start + 0.1], [0.3, 1], {
+          extrapolateRight: "clamp",
+        })
+    : 0.3;
 
   const active = word.start <= time && (word.end > time || isLast);
 
