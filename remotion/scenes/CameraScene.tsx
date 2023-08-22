@@ -154,6 +154,8 @@ const Inner: React.FC<{
           displayLayout={layout.displayLayout}
           enter={enter}
           exit={exit}
+          nextWebcamPosition={nextWebcamPosition}
+          prevWebcamPosition={previousWebcamPosition}
         />
       ) : null}
     </>

@@ -248,6 +248,40 @@ const getSubtitleExit = ({
   canvasLayout: CanvasLayout;
   nextWebcamPosition: WebcamPosition | null;
 }) => {
+  if (nextWebcamPosition === null) {
+    return {
+      translationX: interpolate(exit, [0, 1], [0, -width]),
+      translationY: 0,
+    };
+  }
+
+  const isSamePositionVertical =
+    isWebCamRight(nextWebcamPosition) === isWebCamRight(webcamPosition);
+  const isSamePositionHorizontal =
+    isWebCamAtBottom(nextWebcamPosition) === isWebCamAtBottom(webcamPosition);
+
+  if (!isSamePositionHorizontal && canvasLayout === "square") {
+    return {
+      translationX: 0,
+      translationY: interpolate(
+        exit,
+        [0, 1],
+        [0, isWebCamAtBottom(webcamPosition) ? height : -height]
+      ),
+    };
+  }
+
+  if (!isSamePositionVertical && canvasLayout === "square") {
+    return {
+      translationX: interpolate(
+        exit,
+        [0, 1],
+        [0, isWebCamRight(webcamPosition) ? -width : width]
+      ),
+      translationY: 0,
+    };
+  }
+
   return { translationX: 0, translationY: 0 };
 };
 
@@ -266,6 +300,51 @@ const getSubtitleEnter = ({
   canvasLayout: CanvasLayout;
   prevWebcamPosition: WebcamPosition | null;
 }) => {
+  if (prevWebcamPosition === null) {
+    if (canvasLayout === "wide") {
+      return {
+        translationX: 0,
+        translationY: interpolate(enter, [0, 1], [height, 0]),
+      };
+    }
+
+    if (canvasLayout === "square") {
+      return {
+        translationX: interpolate(enter, [0, 1], [width, 0]),
+        translationY: 0,
+      };
+    }
+
+    throw new Error("Invalid canvas layout");
+  }
+
+  const isSamePositionVertical =
+    isWebCamRight(prevWebcamPosition) === isWebCamRight(webcamPosition);
+  const isSamePositionHorizontal =
+    isWebCamAtBottom(prevWebcamPosition) === isWebCamAtBottom(webcamPosition);
+
+  if (!isSamePositionHorizontal && canvasLayout === "square") {
+    return {
+      translationX: 0,
+      translationY: interpolate(
+        enter,
+        [0, 1],
+        [isWebCamAtBottom(webcamPosition) ? height : -height, 0]
+      ),
+    };
+  }
+
+  if (!isSamePositionVertical && canvasLayout === "square") {
+    return {
+      translationX: interpolate(
+        enter,
+        [0, 1],
+        [isWebCamRight(webcamPosition) ? -width : width, 0]
+      ),
+      translationY: 0,
+    };
+  }
+
   return { translationX: 0, translationY: 0 };
 };
 
