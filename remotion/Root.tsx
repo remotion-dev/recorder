@@ -1469,6 +1469,7 @@ export const Root = () => {
               zoomInAtStart: false,
               duration: null,
             },
+
             {
               type: "scene" as const,
               webcamPosition: "bottom-right" as const,
@@ -1649,6 +1650,11 @@ export const Root = () => {
               trimStart: 0,
               duration: null,
               zoomInAtStart: false,
+            },
+            {
+              type: "title" as const,
+              title: "Is Million.js legit?",
+              subtitle: null,
             },
             {
               type: "scene" as const,
