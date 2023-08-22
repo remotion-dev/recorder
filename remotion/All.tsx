@@ -35,14 +35,6 @@ export const shouldEnter = (index: number, scenes: SceneType[]) => {
   return isATextCard(scenes[index - 1]);
 };
 
-export const shouldExit = (index: number, scenes: SceneType[]) => {
-  if (index === scenes.length - 1) {
-    return false;
-  }
-
-  return isATextCard(scenes[index + 1]);
-};
-
 export const All: React.FC<AllProps> = ({
   pairs,
   metadata,
@@ -117,9 +109,9 @@ export const All: React.FC<AllProps> = ({
             conf={scenes[i]}
             metadata={metadataForScene}
             index={videoCounter}
-            shouldEnter={shouldEnter(i, scenes)}
+            shouldEnter={isTransitioningIn}
             canvasSize={layout}
-            shouldExit={shouldExit(i, scenes)}
+            shouldExit={isTransitioningOut}
           />
         );
       })}
