@@ -24,16 +24,5 @@ export const getIsTransitioningIn = (scenes: SceneType[], index: number) => {
     return false;
   }
 
-  const scene = scenes[index];
-
-  if (isATextCard(scene)) {
-    return true;
-  }
-
-  const previousScene = scenes[index - 1];
-  if (previousScene && isATextCard(previousScene)) {
-    return true;
-  }
-
-  return false;
+  return getIsTransitioningOut(scenes, index - 1);
 };

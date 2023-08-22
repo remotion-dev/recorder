@@ -10,6 +10,7 @@ export type Dimensions = {
 
 export type SceneMetadata = {
   durationInFrames: number;
+  sumUpDuration: number;
   videos: {
     webcam: Dimensions;
     display: Dimensions | null;

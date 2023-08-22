@@ -1,4 +1,5 @@
 import { interpolate } from "remotion";
+import type { WebcamPosition } from "../configuration";
 
 export const getDisplayTranslation = ({
   enter,
@@ -23,13 +24,22 @@ export const getWebcamTranslation = ({
   exit,
   width,
   height,
+  webcamPosition,
 }: {
   enter: number;
   exit: number;
   width: number;
   height: number;
+  webcamPosition: WebcamPosition;
 }) => {
+  const initialPosition =
+    webcamPosition === "top-left" ||
+    webcamPosition === "top-right" ||
+    webcamPosition === "center"
+      ? -height
+      : height;
+
   const translationX = interpolate(exit, [0, 1], [0, -width]);
-  const translationY = interpolate(enter, [0, 1], [height, 0]);
+  const translationY = interpolate(enter, [0, 1], [initialPosition, 0]);
   return { translationX, translationY };
 };

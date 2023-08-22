@@ -6,7 +6,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { getWebcamTranslation } from "./animations/camera-scene-transitions";
-import type { Pair } from "./configuration";
+import type { Pair, WebcamPosition } from "./configuration";
 import type { Layout } from "./layout/get-layout";
 import { borderRadius, frameWidth } from "./layout/get-layout";
 
@@ -18,7 +18,17 @@ export const WebcamVideo: React.FC<{
   endAt: number | undefined;
   pair: Pair;
   zoomInAtStart: boolean;
-}> = ({ webcamLayout, enter, exit, zoomInAtStart, startFrom, endAt, pair }) => {
+  webcamPosition: WebcamPosition;
+}> = ({
+  webcamLayout,
+  enter,
+  exit,
+  zoomInAtStart,
+  startFrom,
+  endAt,
+  pair,
+  webcamPosition,
+}) => {
   const { height, width, fps } = useVideoConfig();
   const frame = useCurrentFrame();
 
@@ -38,6 +48,7 @@ export const WebcamVideo: React.FC<{
     exit,
     height,
     width,
+    webcamPosition,
   });
 
   return (
