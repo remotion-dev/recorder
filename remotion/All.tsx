@@ -1,20 +1,20 @@
 import React from "react";
 import { AbsoluteFill, Audio, Sequence } from "remotion";
 import type { z } from "zod";
-import type {
-  Pair,
-  SceneMetadata,
-  videoConf,
-  SceneType,
-} from "./configuration";
-import { transitionDuration } from "./configuration";
-import { Title } from "./scenes/Title";
-import { CameraScene } from "./scenes/CameraScene";
-import { getAudioSource } from "./layout/music";
 import {
   getIsTransitioningIn,
   getIsTransitioningOut,
 } from "./animations/transitions";
+import type {
+  Pair,
+  SceneMetadata,
+  SceneType,
+  videoConf,
+} from "./configuration";
+import { transitionDuration } from "./configuration";
+import { getAudioSource } from "./layout/music";
+import { CameraScene } from "./scenes/CameraScene";
+import { Title } from "./scenes/Title";
 import { TitleCard } from "./scenes/TitleCard";
 
 export type AllProps = z.infer<typeof videoConf> & {
@@ -108,7 +108,7 @@ export const All: React.FC<AllProps> = ({
             pair={pair}
             conf={scenes[i]}
             metadata={metadataForScene}
-            index={videoCounter}
+            index={i}
             shouldEnter={isTransitioningIn}
             canvasSize={layout}
             shouldExit={isTransitioningOut}
