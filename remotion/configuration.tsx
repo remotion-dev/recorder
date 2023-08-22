@@ -35,6 +35,7 @@ export const configuration = z.discriminatedUnion("type", [
     duration: z.number().nullable().default(null),
     zoomInAtStart: z.boolean().default(false),
     zoomInAtEnd: z.boolean().default(false),
+    transitionToNextScene: z.boolean().default(false),
   }),
   z.object({
     type: z.literal("title"),
