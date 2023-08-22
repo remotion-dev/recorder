@@ -1,9 +1,11 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Audio,
   OffthreadVideo,
   Sequence,
   spring,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
@@ -157,6 +159,9 @@ const Inner: React.FC<{
           nextWebcamPosition={nextWebcamPosition}
           prevWebcamPosition={previousWebcamPosition}
         />
+      ) : null}
+      {shouldEnter ? (
+        <Audio src={staticFile("sounds/whipwhoosh.mp3")} volume={0.1} />
       ) : null}
     </>
   );
