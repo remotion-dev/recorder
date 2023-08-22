@@ -62,6 +62,27 @@ const overrideYForAltLayouts = ({
   return y;
 };
 
+const fullscreenLayout = ({
+  videoWidth,
+  videoHeight,
+  canvasSize,
+  canvasLayout,
+  webcamPosition,
+}: {
+  videoWidth: number;
+  videoHeight: number;
+  canvasSize: Dimensions;
+  canvasLayout: CanvasLayout;
+  webcamPosition: WebcamPosition;
+}) => {
+  return {
+    x: safeSpace(canvasLayout),
+    y: safeSpace(canvasLayout),
+    width: canvasSize.width - safeSpace(canvasLayout) * 2,
+    height: canvasSize.height - safeSpace(canvasLayout) * 2,
+  };
+};
+
 const wideLayout = ({
   videoWidth,
   videoHeight,
@@ -280,7 +301,7 @@ export const getLayout = ({
         webcamSize,
         webcamVideoDimensions: webcam,
       })
-    : wideLayout({
+    : fullscreenLayout({
         videoWidth: webcam.width,
         videoHeight: webcam.height,
         canvasSize,
