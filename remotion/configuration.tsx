@@ -38,7 +38,7 @@ export const configuration = z.discriminatedUnion("type", [
     type: z.literal("title"),
     title: z.string(),
     subtitle: z.string().nullable(),
-    durationInFrames: z.number().int(),
+    durationInFrames: z.number().int().default(50),
   }),
 ]);
 
