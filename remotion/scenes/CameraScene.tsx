@@ -114,6 +114,7 @@ const Inner: React.FC<{
               position: "absolute",
               padding: frameWidth,
               borderRadius: borderRadius + frameWidth,
+              opacity: displayTranslation.opacity,
               translate: `${displayTranslation.translationX}px ${displayTranslation.translationY}px`,
             }}
           >
