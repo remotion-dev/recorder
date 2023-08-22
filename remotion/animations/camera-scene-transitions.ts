@@ -51,29 +51,74 @@ export const getDisplayTranslation = ({
   };
 };
 
+const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
+  return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
+};
+
 export const getWebcamTranslation = ({
   enter,
   exit,
   width,
   height,
   webcamPosition,
+  currentLayout,
+  nextLayout,
+  previousLayout,
+  nextWebcamPosition,
+  previousWebcamPosition,
 }: {
   enter: number;
   exit: number;
   width: number;
   height: number;
   webcamPosition: WebcamPosition;
+  previousWebcamPosition: WebcamPosition | null;
+  previousLayout: Layout | null;
+  nextLayout: Layout | null;
+  nextWebcamPosition: WebcamPosition | null;
+  currentLayout: Layout;
 }) => {
-  const initialPosition =
-    webcamPosition === "top-left" ||
-    webcamPosition === "top-right" ||
-    webcamPosition === "center"
-      ? -height
-      : height;
+  const startX =
+    previousLayout && previousWebcamPosition
+      ? isWebCamAtBottom(previousWebcamPosition) ===
+        isWebCamAtBottom(webcamPosition)
+        ? previousLayout.x - currentLayout.x
+        : 0
+      : width;
 
-  const translationX = interpolate(exit, [0, 1], [0, -width]);
-  const translationY = interpolate(enter, [0, 1], [initialPosition, 0]);
-  return { translationX, translationY };
+  const startY =
+    previousLayout &&
+    previousWebcamPosition &&
+    isWebCamAtBottom(previousWebcamPosition) ===
+      isWebCamAtBottom(webcamPosition)
+      ? 0
+      : isWebCamAtBottom(webcamPosition)
+      ? height
+      : -height;
+
+  const endX =
+    nextLayout && nextWebcamPosition
+      ? isWebCamAtBottom(nextWebcamPosition) ===
+        isWebCamAtBottom(webcamPosition)
+        ? nextLayout.x - currentLayout.x
+        : 0
+      : -width;
+
+  const endY =
+    nextLayout &&
+    nextWebcamPosition &&
+    isWebCamAtBottom(nextWebcamPosition) === isWebCamAtBottom(webcamPosition)
+      ? 0
+      : isWebCamAtBottom(webcamPosition)
+      ? height
+      : -height;
+
+  const enterX = interpolate(enter, [0, 1], [startX, 0]);
+  const enterY = interpolate(enter, [0, 1], [startY, 0]);
+  const exitX = interpolate(exit, [0, 1], [0, endX]);
+  const exitY = interpolate(exit, [0, 1], [0, endY]);
+
+  return { translationX: exitX + enterX, translationY: enterY + exitY };
 };
 
 export const getSubtitleTranslation = ({

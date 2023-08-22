@@ -14,6 +14,7 @@ import type {
   Pair,
   SceneMetadata,
   SceneType,
+  WebcamPosition,
 } from "../configuration";
 import { transitionDuration } from "../configuration";
 import type { CameraSceneLayout } from "../layout/get-layout";
@@ -32,6 +33,8 @@ const Inner: React.FC<{
   layout: CameraSceneLayout;
   previousLayout: CameraSceneLayout | null;
   nextLayout: CameraSceneLayout | null;
+  previousWebcamPosition: WebcamPosition | null;
+  nextWebcamPosition: WebcamPosition | null;
 }> = ({
   endAt,
   shouldEnter,
@@ -43,6 +46,8 @@ const Inner: React.FC<{
   layout,
   nextLayout,
   previousLayout,
+  nextWebcamPosition,
+  previousWebcamPosition,
 }) => {
   const { fps, width, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -132,6 +137,10 @@ const Inner: React.FC<{
           webcamPosition={scene.webcamPosition}
           zoomInAtEnd={scene.zoomInAtEnd}
           shouldExit={shouldExit}
+          nextLayout={nextLayout?.webcamLayout ?? null}
+          previousLayout={previousLayout?.webcamLayout ?? null}
+          nextWebcamPosition={nextWebcamPosition}
+          previousWebcamPosition={previousWebcamPosition}
         />
       </AbsoluteFill>
       {pair.sub ? (
@@ -242,6 +251,13 @@ export const CameraScene: React.FC<{
         })
       : null;
 
+  const prevWebcamPosition =
+    previousScene?.scene.type === "scene"
+      ? previousScene?.scene.webcamPosition
+      : null;
+  const nextWebcamPosition =
+    nextScene?.scene.type === "scene" ? nextScene?.scene.webcamPosition : null;
+
   return (
     <Sequence
       name={`Scene ${index}`}
@@ -259,6 +275,8 @@ export const CameraScene: React.FC<{
         scene={scene}
         nextLayout={nextLayout}
         previousLayout={prevLayout}
+        nextWebcamPosition={nextWebcamPosition}
+        previousWebcamPosition={prevWebcamPosition}
       />
     </Sequence>
   );
