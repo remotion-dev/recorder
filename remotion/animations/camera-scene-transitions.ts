@@ -1,74 +1,35 @@
 import { interpolate } from "remotion";
-import type {
-  CanvasLayout,
-  Dimensions,
-  SceneMetadata,
-  SceneType,
-  WebcamPosition,
-} from "../configuration";
-import type { CameraSceneLayout, Layout } from "../layout/get-layout";
-import { getLayout } from "../layout/get-layout";
+import type { WebcamPosition } from "../configuration";
+import type { Layout } from "../layout/get-layout";
 
 export const getDisplayTranslation = ({
   enter,
   exit,
   width,
-  next,
-  previous,
-  canvasSize,
-  canvasLayout,
+  nextLayout,
+  previousLayout,
   currentLayout,
 }: {
   enter: number;
   exit: number;
   width: number;
-  previous: { scene: SceneType; metadata: SceneMetadata } | null;
-  next: { scene: SceneType; metadata: SceneMetadata } | null;
-  currentLayout: CameraSceneLayout | null;
-  canvasSize: Dimensions;
-  canvasLayout: CanvasLayout;
+  previousLayout: Layout | null;
+  nextLayout: Layout | null;
+  currentLayout: Layout | null;
 }) => {
-  const previousLayout =
-    previous?.scene.type === "scene"
-      ? getLayout({
-          canvasLayout,
-          canvasSize,
-          display: previous.metadata.videos?.display as Dimensions,
-          webcam: previous.metadata.videos?.webcam as Dimensions,
-          webcamPosition: previous.scene.webcamPosition,
-        }).displayLayout
-      : null;
-
-  const nextLayout =
-    next?.scene?.type === "scene"
-      ? (getLayout({
-          canvasLayout,
-          canvasSize,
-          display: next.metadata.videos?.display as Dimensions,
-          webcam: next.metadata.videos?.webcam as Dimensions,
-          webcamPosition: next.scene.webcamPosition,
-        }).displayLayout as Layout)
-      : null;
-
   const enterStartX =
-    currentLayout?.displayLayout && previousLayout
-      ? previousLayout.x - currentLayout.displayLayout.x
+    currentLayout && previousLayout
+      ? previousLayout.x - currentLayout.x
       : width;
 
   const enterStartY =
-    currentLayout?.displayLayout && previousLayout
-      ? previousLayout.y - currentLayout.displayLayout.y
-      : width;
+    currentLayout && previousLayout ? previousLayout.y - currentLayout.y : 0;
 
   const exitEndX =
-    currentLayout?.displayLayout && nextLayout
-      ? nextLayout.x - currentLayout.displayLayout.x
-      : -width;
+    currentLayout && nextLayout ? nextLayout.x - currentLayout.x : -width;
 
   const exitEndY =
-    currentLayout?.displayLayout && nextLayout
-      ? nextLayout.y - currentLayout.displayLayout.y
-      : 0;
+    currentLayout && nextLayout ? nextLayout.y - currentLayout.y : 0;
 
   const startOpacity = currentLayout && previousLayout ? 0 : 1;
 
@@ -83,7 +44,11 @@ export const getDisplayTranslation = ({
   const translationX = enterX + exitX;
   const translationY = enterY + exitY;
 
-  return { translationX, translationY, opacity };
+  return {
+    translationX: Math.round(translationX),
+    translationY: Math.round(translationY),
+    opacity,
+  };
 };
 
 export const getWebcamTranslation = ({
