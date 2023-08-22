@@ -18,12 +18,16 @@ export type AllProps = z.infer<typeof videoConf> & {
   prefix: string;
 };
 
+const isATextCard = (scene: SceneType) => {
+  return scene.type === "title" || scene.type === "titlecard";
+};
+
 export const shouldEnter = (index: number, scenes: SceneType[]) => {
   if (index === 0) {
     return false;
   }
 
-  return scenes[index - 1].type === "title";
+  return isATextCard(scenes[index - 1]);
 };
 
 export const shouldExit = (index: number, scenes: SceneType[]) => {
@@ -31,7 +35,7 @@ export const shouldExit = (index: number, scenes: SceneType[]) => {
     return false;
   }
 
-  return scenes[index + 1].type === "title";
+  return isATextCard(scenes[index + 1]);
 };
 
 export const All: React.FC<AllProps> = ({
