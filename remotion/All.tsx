@@ -63,7 +63,6 @@ export const All: React.FC<AllProps> = ({
         const from = addedUpDurations;
         addedUpDurations += metadataForScene.durationInFrames;
         if (isTransitioningOut) {
-          console.log({ scene });
           addedUpDurations -= transitionDuration;
         }
 
@@ -109,10 +108,10 @@ export const All: React.FC<AllProps> = ({
             metadata={metadataForScene}
             index={i}
             shouldEnter={isTransitioningIn}
-            canvasSize={layout}
+            canvasLayout={layout}
             shouldExit={isTransitioningOut}
             nextScene={
-              scenes[i + 1]
+              scenes[i + 1] && metadata[i + 1]
                 ? { scene: scenes[i + 1], metadata: metadata[i + 1] }
                 : null
             }

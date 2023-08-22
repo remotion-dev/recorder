@@ -10,6 +10,7 @@ import {
 import { getDisplayTranslation } from "../animations/camera-scene-transitions";
 import type {
   CanvasLayout,
+  Dimensions,
   Pair,
   SceneMetadata,
   SceneType,
@@ -158,7 +159,7 @@ export const CameraScene: React.FC<{
   index: number;
   shouldEnter: boolean;
   shouldExit: boolean;
-  canvasSize: CanvasLayout;
+  canvasLayout: CanvasLayout;
   scene: SceneType | undefined;
   nextScene: { scene: SceneType; metadata: SceneMetadata } | null;
   previousScene: { scene: SceneType; metadata: SceneMetadata } | null;
@@ -169,7 +170,7 @@ export const CameraScene: React.FC<{
   index,
   shouldEnter,
   shouldExit,
-  canvasSize,
+  canvasLayout,
   scene,
   nextScene,
   previousScene,
@@ -208,16 +209,40 @@ export const CameraScene: React.FC<{
   const startFrom = scene.trimStart ?? 0;
   const endAt = scene.duration ? startFrom + scene.duration : undefined;
 
+  const canvasSize = {
+    width,
+    height,
+  };
+
   const layout = getLayout({
     display: metadata.videos.display,
     webcam: metadata.videos.webcam,
-    canvasSize: {
-      width,
-      height,
-    },
-    canvasLayout: canvasSize,
+    canvasSize,
+    canvasLayout,
     webcamPosition: scene.webcamPosition,
   });
+
+  const prevLayout =
+    previousScene && previousScene.scene.type === "scene"
+      ? getLayout({
+          display: previousScene.metadata.videos?.display ?? null,
+          webcam: previousScene.metadata.videos?.webcam as Dimensions,
+          canvasSize,
+          canvasLayout,
+          webcamPosition: previousScene.scene.webcamPosition,
+        })
+      : null;
+
+  const nextLayout =
+    nextScene && nextScene.scene.type === "scene"
+      ? getLayout({
+          display: nextScene.metadata.videos?.display ?? null,
+          webcam: nextScene.metadata.videos?.webcam as Dimensions,
+          canvasSize,
+          canvasLayout,
+          webcamPosition: nextScene.scene.webcamPosition,
+        })
+      : null;
 
   return (
     <Sequence
@@ -226,7 +251,7 @@ export const CameraScene: React.FC<{
       durationInFrames={Math.max(1, metadata.durationInFrames)}
     >
       <Inner
-        canvasLayout={canvasSize}
+        canvasLayout={canvasLayout}
         endAt={endAt}
         pair={pair}
         shouldEnter={shouldEnter}

@@ -305,8 +305,6 @@ export const getLayout = ({
         canvasLayout,
       });
 
-  console.log({ webcamLayout, displayLayout });
-
   return {
     displayLayout: displayLayout
       ? shiftDisplayLayoutBasedOnWebcamPosition({
