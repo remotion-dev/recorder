@@ -18,6 +18,7 @@ export const Root = () => {
         defaultProps={{
           subtitle: "New in Remotion 4.0",
           title: "Render button",
+          durationInFrames: 50,
         }}
       />
       <Composition
@@ -42,6 +43,7 @@ export const Root = () => {
               type: "title",
               subtitle: "New in Remotion 4.0",
               title: "Visual editing",
+              durationInFrames: 50,
             },
             {
               type: "scene",
@@ -127,6 +129,7 @@ export const Root = () => {
               type: "title",
               subtitle: "New in Remotion 4.0",
               title: "Render Button",
+              durationInFrames: 50,
             },
           ],
           metadata: [],
@@ -149,6 +152,7 @@ export const Root = () => {
               type: "title",
               title: "Data-driven videos",
               subtitle: "New in Remotion 4.0",
+              durationInFrames: 50,
             },
             {
               type: "scene",
@@ -353,6 +357,7 @@ export const Root = () => {
               type: "title",
               title: "Last but not least",
               subtitle: "New in Remotion 4.0",
+              durationInFrames: 50,
             },
             {
               webcamPosition: "bottom-left" as const,
@@ -365,6 +370,7 @@ export const Root = () => {
               type: "title",
               title: "PDF and WebP export",
               subtitle: null,
+              durationInFrames: 50,
             },
             {
               webcamPosition: "top-right" as const,
@@ -398,6 +404,7 @@ export const Root = () => {
               type: "title",
               title: "Better debug logging",
               subtitle: null,
+              durationInFrames: 50,
             },
             {
               webcamPosition: "bottom-right" as const,
@@ -417,6 +424,7 @@ export const Root = () => {
               type: "title",
               title: "Smaller and built-in FFmpeg",
               subtitle: null,
+              durationInFrames: 50,
             },
             {
               webcamPosition: "bottom-right" as const,
@@ -450,6 +458,7 @@ export const Root = () => {
               type: "title",
               title: "selectComposition()",
               subtitle: null,
+              durationInFrames: 50,
             },
             {
               webcamPosition: "top-left" as const,
@@ -469,6 +478,7 @@ export const Root = () => {
               type: "title",
               title: "Updated TTS template",
               subtitle: null,
+              durationInFrames: 50,
             },
             {
               webcamPosition: "top-left" as const,
@@ -481,6 +491,7 @@ export const Root = () => {
               type: "title",
               title: "DX Polish",
               subtitle: null,
+              durationInFrames: 50,
             },
             {
               webcamPosition: "bottom-right" as const,
@@ -517,6 +528,7 @@ export const Root = () => {
               type: "title",
               title: "Behind the scenes",
               subtitle: "Remotion 4.0 Launch Week",
+              durationInFrames: 50,
             },
             {
               webcamPosition: "top-left" as const,
@@ -1299,6 +1311,7 @@ export const Root = () => {
               type: "title" as const,
               title: "Errors to look out for",
               subtitle: "Debugging",
+              durationInFrames: 50,
             },
             {
               type: "scene" as const,
@@ -1426,6 +1439,7 @@ export const Root = () => {
               type: "title" as const,
               title: "DVD animation",
               subtitle: "Remotion tutorials",
+              durationInFrames: 50,
             },
             {
               type: "scene" as const,
@@ -1655,6 +1669,7 @@ export const Root = () => {
               type: "title" as const,
               title: "Is Million.js legit?",
               subtitle: null,
+              durationInFrames: 50,
             },
             {
               type: "scene" as const,
