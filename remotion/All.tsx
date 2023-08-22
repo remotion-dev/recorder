@@ -8,7 +8,6 @@ import type {
   SceneType,
 } from "./configuration";
 import { titleHideDuration } from "./configuration";
-import { titleDuration } from "./configuration";
 import { Title } from "./Title";
 import { Scene } from "./Scene";
 import { getAudioSource } from "./layout/music";
@@ -68,12 +67,16 @@ export const All: React.FC<AllProps> = ({
               key={scene.title}
               from={yo - (isFirstScene ? 0 : titleHideDuration)}
               durationInFrames={
-                titleDuration +
+                scene.durationInFrames +
                 titleHideDuration +
                 (isFirstScene ? 0 : titleHideDuration)
               }
             >
-              <Title subtitle={scene.subtitle} title={scene.title} />
+              <Title
+                durationInFrames={scene.durationInFrames}
+                subtitle={scene.subtitle}
+                title={scene.title}
+              />
             </Sequence>
           );
         }

@@ -6,12 +6,13 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { titleDuration, titleHideDuration } from "./configuration";
+import { titleHideDuration } from "./configuration";
 
 export const Title: React.FC<{
   title: string;
   subtitle: string | null;
-}> = ({ subtitle, title }) => {
+  durationInFrames: number;
+}> = ({ subtitle, title, durationInFrames }) => {
   const { fps, width } = useVideoConfig();
   const frame = useCurrentFrame();
 
@@ -33,7 +34,7 @@ export const Title: React.FC<{
     config: {
       damping: 200,
     },
-    delay: titleDuration,
+    delay: durationInFrames,
   });
 
   return (

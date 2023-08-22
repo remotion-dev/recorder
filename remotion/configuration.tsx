@@ -38,6 +38,7 @@ export const configuration = z.discriminatedUnion("type", [
     type: z.literal("title"),
     title: z.string(),
     subtitle: z.string().nullable(),
+    durationInFrames: z.number().int(),
   }),
 ]);
 
@@ -88,6 +89,5 @@ export type Pair = {
   sub: StaticFile | null;
 };
 
-export const titleDuration = 50;
 export const titleHideDuration = 10;
 export const fps = 30;
