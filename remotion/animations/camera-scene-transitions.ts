@@ -15,7 +15,7 @@ export const getDisplayTranslation = ({
   width,
   scene,
   next,
-  previousScene,
+  previous,
   canvasSize,
   canvasLayout,
 }: {
@@ -28,7 +28,16 @@ export const getDisplayTranslation = ({
   canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
 }) => {
-  const enterX = interpolate(enter, [0, 1], [width, 0]);
+  const previousLayout =
+    previous?.scene.type === "scene"
+      ? getLayout({
+          canvasLayout,
+          canvasSize,
+          display: previous.metadata.videos?.display as Dimensions,
+          webcam: previous.metadata.videos?.webcam as Dimensions,
+          webcamPosition: previous.scene.webcamPosition,
+        }).displayLayout
+      : null;
 
   const currentLayout =
     scene.scene.type === "scene"
@@ -52,19 +61,36 @@ export const getDisplayTranslation = ({
         }).displayLayout as Layout)
       : null;
 
+  const enterStartX =
+    currentLayout && previousLayout
+      ? previousLayout.x - currentLayout.x
+      : width;
+
+  const enterStartY =
+    currentLayout && previousLayout
+      ? previousLayout.y - currentLayout.y
+      : width;
+
   const exitEndX =
     currentLayout && nextLayout ? nextLayout.x - currentLayout.x : -width;
 
   const exitEndY =
     currentLayout && nextLayout ? nextLayout.y - currentLayout.y : 0;
 
+  const startOpacity = currentLayout && previousLayout ? 0 : 1;
+
+  const enterX = interpolate(enter, [0, 1], [enterStartX, 0]);
+  const enterY = interpolate(enter, [0, 1], [enterStartY, 0]);
+
   const exitX = interpolate(exit, [0, 1], [0, exitEndX]);
   const exitY = interpolate(exit, [0, 1], [0, exitEndY]);
 
-  const translationX = enterX + exitX;
-  const translationY = exitY;
+  const opacity = interpolate(enter, [0, 0.5], [startOpacity, 1]);
 
-  return { translationX, translationY };
+  const translationX = enterX + exitX;
+  const translationY = enterY + exitY;
+
+  return { translationX, translationY, opacity };
 };
 
 export const getWebcamTranslation = ({
