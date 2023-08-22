@@ -7,13 +7,12 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { z } from "zod";
 import { getDisplayTranslation } from "../animations/camera-scene-transitions";
 import type {
   CanvasLayout,
-  configuration,
   Pair,
   SceneMetadata,
+  SceneType,
 } from "../configuration";
 import { transitionDuration } from "../configuration";
 import type { Layout } from "../layout/get-layout";
@@ -27,10 +26,13 @@ const Inner: React.FC<{
   endAt: number | undefined;
   shouldEnter: boolean;
   shouldExit: boolean;
-  conf: z.infer<typeof configuration>;
   displayLayout: Layout | null;
   webcamLayout: Layout;
   canvasLayout: CanvasLayout;
+  scene: SceneType;
+  sceneMetadata: SceneMetadata;
+  nextScene: { scene: SceneType; metadata: SceneMetadata } | null;
+  previousScene: { scene: SceneType; metadata: SceneMetadata } | null;
 }> = ({
   displayLayout,
   endAt,
@@ -39,10 +41,13 @@ const Inner: React.FC<{
   pair,
   startFrom,
   webcamLayout,
-  conf,
+  scene,
   canvasLayout,
+  nextScene,
+  previousScene,
+  sceneMetadata,
 }) => {
-  const { fps, width, durationInFrames } = useVideoConfig();
+  const { fps, width, durationInFrames, height } = useVideoConfig();
   const frame = useCurrentFrame();
 
   const enter = (() => {
@@ -78,11 +83,23 @@ const Inner: React.FC<{
     return 0;
   })();
 
-  if (conf.type !== "scene") {
-    throw new Error("Not a scene");
+  if (scene.type !== "scene") {
+    throw new Error("Not a camera scene");
   }
 
-  const displayTranslation = getDisplayTranslation({ enter, exit, width });
+  const displayTranslation = getDisplayTranslation({
+    enter,
+    exit,
+    width,
+    next: nextScene,
+    previous: previousScene,
+    canvasLayout,
+    canvasSize: { width, height },
+    scene: {
+      scene,
+      metadata: sceneMetadata,
+    },
+  });
 
   return (
     <>
@@ -116,17 +133,17 @@ const Inner: React.FC<{
           enter={enter}
           exit={exit}
           pair={pair}
-          zoomInAtStart={conf.zoomInAtStart ?? false}
+          zoomInAtStart={scene.zoomInAtStart ?? false}
           startFrom={startFrom}
           webcamLayout={webcamLayout}
-          webcamPosition={conf.webcamPosition}
-          zoomInAtEnd={conf.zoomInAtEnd}
+          webcamPosition={scene.webcamPosition}
+          zoomInAtEnd={scene.zoomInAtEnd}
           shouldExit={shouldExit}
         />
       </AbsoluteFill>
       {pair.sub ? (
         <Subs
-          webcamPosition={conf.webcamPosition}
+          webcamPosition={scene.webcamPosition}
           canvasLayout={canvasLayout}
           trimStart={startFrom}
           file={pair.sub}
@@ -143,27 +160,31 @@ const Inner: React.FC<{
 export const CameraScene: React.FC<{
   metadata: SceneMetadata;
   pair: Pair;
-  conf: z.infer<typeof configuration> | undefined;
   start: number;
   index: number;
   shouldEnter: boolean;
   shouldExit: boolean;
   canvasSize: CanvasLayout;
+  scene: SceneType | undefined;
+  nextScene: { scene: SceneType; metadata: SceneMetadata } | null;
+  previousScene: { scene: SceneType; metadata: SceneMetadata } | null;
 }> = ({
   metadata,
   pair,
-  conf,
   start,
   index,
   shouldEnter,
   shouldExit,
   canvasSize,
+  scene,
+  nextScene,
+  previousScene,
 }) => {
   const { height, width } = useVideoConfig();
 
   const from = start;
 
-  if (conf === undefined) {
+  if (scene === undefined) {
     return (
       <Sequence
         from={from}
@@ -182,16 +203,16 @@ export const CameraScene: React.FC<{
     );
   }
 
-  if (conf.type !== "scene") {
-    throw new Error("Not a scene");
+  if (scene.type !== "scene") {
+    throw new Error("Not a camera scene");
   }
 
   if (metadata.videos === null) {
     throw new Error("No videos");
   }
 
-  const startFrom = conf.trimStart ?? 0;
-  const endAt = conf.duration ? startFrom + conf.duration : undefined;
+  const startFrom = scene.trimStart ?? 0;
+  const endAt = scene.duration ? startFrom + scene.duration : undefined;
 
   const { displayLayout, webcamLayout } = getLayout({
     display: metadata.videos.display,
@@ -201,7 +222,7 @@ export const CameraScene: React.FC<{
       height,
     },
     canvasLayout: canvasSize,
-    webcamPosition: conf.webcamPosition,
+    webcamPosition: scene.webcamPosition,
   });
 
   return (
@@ -212,7 +233,6 @@ export const CameraScene: React.FC<{
     >
       <Inner
         canvasLayout={canvasSize}
-        conf={conf}
         displayLayout={displayLayout}
         endAt={endAt}
         pair={pair}
@@ -220,6 +240,10 @@ export const CameraScene: React.FC<{
         shouldExit={shouldExit}
         startFrom={startFrom}
         webcamLayout={webcamLayout}
+        scene={scene}
+        nextScene={nextScene}
+        previousScene={previousScene}
+        sceneMetadata={metadata}
       />
     </Sequence>
   );

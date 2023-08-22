@@ -106,12 +106,22 @@ export const All: React.FC<AllProps> = ({
             key={videoCounter}
             start={from}
             pair={pair}
-            conf={scenes[i]}
             metadata={metadataForScene}
             index={i}
             shouldEnter={isTransitioningIn}
             canvasSize={layout}
             shouldExit={isTransitioningOut}
+            nextScene={
+              scenes[i + 1]
+                ? { scene: scenes[i + 1], metadata: metadata[i + 1] }
+                : null
+            }
+            previousScene={
+              scenes[i - 1]
+                ? { scene: scenes[i - 1], metadata: metadata[i - 1] }
+                : null
+            }
+            scene={scene}
           />
         );
       })}
