@@ -1,6 +1,7 @@
 import React from "react";
 import { spring, useCurrentFrame, useVideoConfig } from "remotion";
 import type { CanvasLayout } from "../configuration";
+import type { Layout } from "../layout/get-layout";
 import type { Word } from "../sub-types";
 
 const style: React.CSSProperties = {
@@ -17,12 +18,28 @@ export const useTime = (trimStart: number) => {
 
 const BLUE = "#3B82EB";
 
+const getWordColor = ({
+  displayLayout,
+  appeared,
+  monospace,
+}: {
+  displayLayout: Layout | null;
+  monospace: boolean;
+  appeared: boolean;
+}) => {
+  const normalWordColor = displayLayout === null ? "white" : "black";
+
+  const wordColor = monospace && appeared ? BLUE : normalWordColor;
+  return wordColor;
+};
+
 export const WordComp: React.FC<{
   word: Word;
   trimStart: number;
   canvasLayout: CanvasLayout;
   isLast: boolean;
-}> = ({ word, trimStart, canvasLayout, isLast }) => {
+  displayLayout: Layout | null;
+}> = ({ word, trimStart, canvasLayout, isLast, displayLayout }) => {
   const time = useTime(trimStart);
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -54,7 +71,7 @@ export const WordComp: React.FC<{
 
   const withoutBackticks = word.word.replace(/`/g, "");
 
-  const wordColor = monospace && appeared ? BLUE : "black";
+  const wordColor = getWordColor({ appeared, displayLayout, monospace });
   const backgroundColor = active
     ? monospace
       ? BLUE
