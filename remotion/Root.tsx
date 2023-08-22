@@ -28,7 +28,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           layout: "wide",
-          music: "none",
+
           prefix: "day2",
           scenes: [
             {
@@ -38,6 +38,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 800,
             },
             {
@@ -45,6 +46,7 @@ export const Root = () => {
               subtitle: "New in Remotion 4.0",
               title: "Visual editing",
               durationInFrames: 50,
+              music: "previous",
             },
             {
               type: "scene",
@@ -53,6 +55,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 840,
             },
             {
@@ -62,6 +65,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1922,
             },
             {
@@ -71,6 +75,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1160,
             },
             {
@@ -80,6 +85,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 524,
             },
             {
@@ -89,6 +95,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1286,
             },
             {
@@ -99,6 +106,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene",
@@ -107,6 +115,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1520,
             },
             {
@@ -116,6 +125,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1381,
             },
             {
@@ -125,6 +135,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1930,
             },
           ],
@@ -141,7 +152,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           layout: "wide",
-          music: "none",
+
           prefix: "day3",
           scenes: [
             {
@@ -149,6 +160,7 @@ export const Root = () => {
               subtitle: "New in Remotion 4.0",
               title: "Render Button",
               durationInFrames: 50,
+              music: "previous",
             },
           ],
           metadata: [],
@@ -165,13 +177,14 @@ export const Root = () => {
         defaultProps={{
           layout: "wide",
           prefix: "day4",
-          music: "none",
+
           scenes: [
             {
               type: "title",
               title: "Data-driven videos",
               subtitle: "New in Remotion 4.0",
               durationInFrames: 50,
+              music: "previous",
             },
             {
               type: "scene",
@@ -180,6 +193,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -188,6 +202,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1064,
               type: "scene",
             },
@@ -197,6 +212,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1348,
               type: "scene",
             },
@@ -206,6 +222,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 833,
               type: "scene",
             },
@@ -215,6 +232,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 567,
               type: "scene",
             },
@@ -224,6 +242,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 971,
               type: "scene",
             },
@@ -233,6 +252,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 453,
               type: "scene",
             },
@@ -242,6 +262,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 610,
               type: "scene",
             },
@@ -251,6 +272,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1387,
               type: "scene",
             },
@@ -260,6 +282,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 790,
               type: "scene",
             },
@@ -269,6 +292,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 2176,
               type: "scene",
             },
@@ -278,6 +302,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1353,
               type: "scene",
             },
@@ -287,6 +312,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 530,
               type: "scene",
             },
@@ -296,6 +322,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1810,
               type: "scene",
             },
@@ -305,6 +332,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 471,
               type: "scene",
             },
@@ -314,6 +342,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1390,
               type: "scene",
             },
@@ -323,6 +352,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 2555,
               type: "scene",
             },
@@ -332,6 +362,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1195,
               type: "scene",
             },
@@ -341,6 +372,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1005,
               type: "scene",
             },
@@ -350,6 +382,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 442,
               type: "scene",
             },
@@ -359,6 +392,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 842,
               type: "scene",
             },
@@ -368,6 +402,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1700,
               type: "scene",
             },
@@ -377,6 +412,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 574,
               type: "scene",
             },
@@ -386,6 +422,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1229,
               type: "scene",
             },
@@ -395,6 +432,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 500,
               type: "scene",
             },
@@ -404,6 +442,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 993,
               type: "scene",
             },
@@ -422,13 +461,14 @@ export const Root = () => {
         defaultProps={{
           layout: "wide",
           prefix: "day5",
-          music: "none",
+
           scenes: [
             {
               type: "title",
               title: "Last but not least",
               subtitle: "New in Remotion 4.0",
               durationInFrames: 50,
+              music: "previous",
             },
             {
               webcamPosition: "bottom-left" as const,
@@ -436,6 +476,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 530,
               type: "scene",
             },
@@ -444,6 +485,7 @@ export const Root = () => {
               title: "PDF and WebP export",
               subtitle: null,
               durationInFrames: 50,
+              music: "previous",
             },
             {
               webcamPosition: "top-right" as const,
@@ -451,6 +493,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 830,
               type: "scene",
             },
@@ -460,6 +503,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1020,
               type: "scene",
             },
@@ -469,6 +513,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 124,
               type: "scene",
             },
@@ -478,6 +523,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 531,
               type: "scene",
             },
@@ -486,6 +532,7 @@ export const Root = () => {
               title: "Better debug logging",
               subtitle: null,
               durationInFrames: 50,
+              music: "previous",
             },
             {
               webcamPosition: "bottom-right" as const,
@@ -493,6 +540,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 997,
               type: "scene",
             },
@@ -502,6 +550,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 450,
               type: "scene",
             },
@@ -510,6 +559,7 @@ export const Root = () => {
               title: "Smaller and built-in FFmpeg",
               subtitle: null,
               durationInFrames: 50,
+              music: "previous",
             },
             {
               webcamPosition: "bottom-right" as const,
@@ -517,6 +567,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1703,
               type: "scene",
             },
@@ -526,6 +577,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1522,
               type: "scene",
             },
@@ -535,6 +587,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 816,
               type: "scene",
             },
@@ -544,6 +597,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 280,
               type: "scene",
             },
@@ -552,6 +606,7 @@ export const Root = () => {
               title: "selectComposition()",
               subtitle: null,
               durationInFrames: 50,
+              music: "previous",
             },
             {
               webcamPosition: "top-left" as const,
@@ -559,6 +614,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 810,
               type: "scene",
             },
@@ -568,6 +624,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1460,
               type: "scene",
             },
@@ -576,6 +633,7 @@ export const Root = () => {
               title: "Updated TTS template",
               subtitle: null,
               durationInFrames: 50,
+              music: "previous",
             },
             {
               webcamPosition: "top-left" as const,
@@ -583,6 +641,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1750,
               type: "scene",
             },
@@ -591,6 +650,7 @@ export const Root = () => {
               title: "DX Polish",
               subtitle: null,
               durationInFrames: 50,
+              music: "previous",
             },
             {
               webcamPosition: "bottom-right" as const,
@@ -598,6 +658,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1864,
               type: "scene",
             },
@@ -607,6 +668,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 834,
               type: "scene",
             },
@@ -625,13 +687,14 @@ export const Root = () => {
         defaultProps={{
           layout: "wide",
           prefix: "bts",
-          music: "none",
+
           scenes: [
             {
               type: "title",
               title: "Behind the scenes",
               subtitle: "Remotion 4.0 Launch Week",
               durationInFrames: 50,
+              music: "previous",
             },
             {
               webcamPosition: "top-left" as const,
@@ -639,6 +702,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 2619,
               type: "scene",
             },
@@ -648,6 +712,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 2949,
               type: "scene",
             },
@@ -657,6 +722,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 3310,
               type: "scene",
             },
@@ -666,6 +732,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1657,
               type: "scene",
             },
@@ -675,6 +742,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1795,
               type: "scene",
             },
@@ -684,6 +752,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 3416,
               type: "scene",
             },
@@ -693,6 +762,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 580,
               type: "scene",
             },
@@ -702,6 +772,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 702,
               type: "scene",
             },
@@ -711,6 +782,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 661,
               type: "scene",
             },
@@ -720,6 +792,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
               type: "scene",
             },
@@ -729,6 +802,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
               type: "scene",
             },
@@ -738,6 +812,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
               type: "scene",
             },
@@ -747,6 +822,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
               type: "scene",
             },
@@ -756,6 +832,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
               type: "scene",
             },
@@ -765,6 +842,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
               type: "scene",
             },
@@ -774,6 +852,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
               type: "scene",
             },
@@ -792,7 +871,7 @@ export const Root = () => {
         defaultProps={{
           layout: "wide",
           prefix: "asyncproblem",
-          music: "none",
+
           scenes: [
             {
               webcamPosition: "center" as const,
@@ -800,6 +879,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 609,
               type: "scene",
             },
@@ -809,6 +889,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 2871,
               type: "scene",
             },
@@ -818,6 +899,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1743,
               type: "scene",
             },
@@ -827,6 +909,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1980,
               type: "scene",
             },
@@ -836,6 +919,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1460,
               type: "scene",
             },
@@ -845,6 +929,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 263,
               type: "scene",
             },
@@ -863,7 +948,7 @@ export const Root = () => {
         defaultProps={{
           layout: "wide",
           prefix: "july",
-          music: "none",
+
           scenes: [
             {
               webcamPosition: "center" as const,
@@ -871,6 +956,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 290,
               type: "scene",
             },
@@ -880,6 +966,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 550,
               type: "scene",
             },
@@ -889,6 +976,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1776,
               type: "scene",
             },
@@ -898,6 +986,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 748,
               type: "scene",
             },
@@ -907,6 +996,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 200,
               type: "scene",
             },
@@ -916,6 +1006,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1305,
               type: "scene",
             },
@@ -925,6 +1016,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 670,
               type: "scene",
             },
@@ -934,6 +1026,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1534,
               type: "scene",
             },
@@ -943,6 +1036,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 2244,
               type: "scene",
             },
@@ -952,6 +1046,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 551,
               type: "scene",
             },
@@ -970,7 +1065,7 @@ export const Root = () => {
         defaultProps={{
           layout: "wide",
           prefix: "saas-inflation",
-          music: "none",
+
           scenes: [
             {
               webcamPosition: "center" as const,
@@ -978,6 +1073,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 677,
               type: "scene",
             },
@@ -987,6 +1083,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 528,
               type: "scene",
             },
@@ -996,6 +1093,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1444,
               type: "scene",
             },
@@ -1005,6 +1103,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 913,
               type: "scene",
             },
@@ -1014,6 +1113,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 841,
               type: "scene",
             },
@@ -1023,6 +1123,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 174,
               type: "scene",
             },
@@ -1032,6 +1133,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 2371,
               type: "scene",
             },
@@ -1041,6 +1143,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1150,
               type: "scene",
             },
@@ -1050,6 +1153,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1305,
               type: "scene",
             },
@@ -1059,6 +1163,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 247,
               type: "scene",
             },
@@ -1068,6 +1173,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 688,
               type: "scene",
             },
@@ -1077,6 +1183,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 664,
               type: "scene",
             },
@@ -1086,6 +1193,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 2034,
               type: "scene",
             },
@@ -1095,6 +1203,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 666,
               type: "scene",
             },
@@ -1104,6 +1213,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1314,
               type: "scene",
             },
@@ -1113,6 +1223,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 510,
               type: "scene",
             },
@@ -1122,6 +1233,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 362,
               type: "scene",
             },
@@ -1131,6 +1243,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1280,
               type: "scene",
             },
@@ -1140,6 +1253,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 530,
               type: "scene",
             },
@@ -1149,6 +1263,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 635,
               type: "scene",
             },
@@ -1167,7 +1282,7 @@ export const Root = () => {
         defaultProps={{
           layout: "wide",
           prefix: "get-silent-parts",
-          music: "none",
+
           scenes: [
             {
               type: "scene" as const,
@@ -1176,6 +1291,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 165,
             },
             {
@@ -1185,6 +1301,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 350,
             },
             {
@@ -1194,6 +1311,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 795,
             },
             {
@@ -1203,6 +1321,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 931,
             },
             {
@@ -1212,6 +1331,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 302,
             },
             {
@@ -1221,6 +1341,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 609,
             },
             {
@@ -1230,6 +1351,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 429,
             },
           ],
@@ -1247,7 +1369,7 @@ export const Root = () => {
         defaultProps={{
           layout: "wide",
           prefix: "lambda-setup",
-          music: "none",
+
           scenes: [
             {
               type: "scene" as const,
@@ -1256,6 +1378,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1265,6 +1388,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 952,
             },
             {
@@ -1274,6 +1398,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1565,
             },
             {
@@ -1283,6 +1408,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 2331,
             },
             {
@@ -1292,6 +1418,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1301,6 +1428,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1310,6 +1438,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1319,6 +1448,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1328,6 +1458,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1337,6 +1468,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1346,6 +1478,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1355,6 +1488,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1364,6 +1498,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1373,6 +1508,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1382,6 +1518,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 1657,
             },
             {
@@ -1391,6 +1528,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1400,6 +1538,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1409,6 +1548,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1418,6 +1558,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
           ],
@@ -1435,7 +1576,7 @@ export const Root = () => {
         defaultProps={{
           layout: "wide",
           prefix: "lambda-rendering",
-          music: "none",
+
           scenes: [
             {
               type: "scene" as const,
@@ -1444,6 +1585,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1453,6 +1595,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1462,6 +1605,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1471,6 +1615,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1480,6 +1625,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1489,6 +1635,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1498,6 +1645,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1507,6 +1655,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1516,6 +1665,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1525,6 +1675,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1534,6 +1685,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1543,6 +1695,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1552,6 +1705,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1561,6 +1715,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
           ],
@@ -1578,7 +1733,7 @@ export const Root = () => {
         defaultProps={{
           layout: "wide",
           prefix: "lambda-debugging",
-          music: "none",
+
           scenes: [
             {
               type: "scene" as const,
@@ -1587,6 +1742,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1596,6 +1752,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1603,6 +1760,7 @@ export const Root = () => {
               title: "Errors to look out for",
               subtitle: "Debugging",
               durationInFrames: 50,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -1611,6 +1769,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1620,6 +1779,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1629,6 +1789,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1638,6 +1799,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1647,6 +1809,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1656,6 +1819,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1665,6 +1829,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1674,6 +1839,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1683,6 +1849,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1692,6 +1859,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1701,6 +1869,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1710,6 +1879,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 413,
             },
             {
@@ -1719,6 +1889,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1728,6 +1899,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
           ],
@@ -1745,7 +1917,6 @@ export const Root = () => {
         defaultProps={{
           layout: "square" as const,
           prefix: "dvd",
-          music: "dancelikemike" as const,
           scenes: [
             {
               type: "scene" as const,
@@ -1755,12 +1926,14 @@ export const Root = () => {
               duration: 120,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "dancelikemike" as const,
             },
             {
               type: "title" as const,
               title: "DVD animation",
               subtitle: "Remotion tutorials",
               durationInFrames: 50,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -1769,6 +1942,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1778,6 +1952,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1787,6 +1962,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1796,6 +1972,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1805,6 +1982,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 120,
             },
             {
@@ -1814,6 +1992,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
 
@@ -1824,6 +2003,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: 115,
             },
             {
@@ -1833,6 +2013,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1842,6 +2023,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1851,6 +2033,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1860,6 +2043,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1869,6 +2053,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
             {
@@ -1878,6 +2063,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
               duration: null,
             },
           ],
@@ -1895,7 +2081,6 @@ export const Root = () => {
         defaultProps={{
           layout: "square" as const,
           prefix: "dvd-2",
-          music: "dancelikemike" as const,
           scenes: [
             {
               type: "scene" as const,
@@ -1905,6 +2090,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "dancelikemike" as const,
             },
             {
               type: "scene" as const,
@@ -1914,6 +2100,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -1923,6 +2110,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -1932,6 +2120,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -1941,6 +2130,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -1950,6 +2140,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -1959,6 +2150,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -1968,6 +2160,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -1977,6 +2170,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -1986,6 +2180,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -1995,6 +2190,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
           ],
           metadata: [],
@@ -2011,7 +2207,6 @@ export const Root = () => {
         defaultProps={{
           layout: "square" as const,
           prefix: "million",
-          music: "weird" as const,
           scenes: [
             {
               type: "scene" as const,
@@ -2021,6 +2216,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2030,6 +2226,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2039,11 +2236,13 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: true,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "titlecard" as const,
               durationInFrames: 100,
               title: "Is Million.js legit?",
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2053,6 +2252,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2062,6 +2262,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2071,6 +2272,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2080,6 +2282,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: true,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2089,6 +2292,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: true,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2098,6 +2302,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: true,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2107,6 +2312,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2116,6 +2322,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2125,6 +2332,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2134,6 +2342,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2143,6 +2352,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2152,6 +2362,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2161,6 +2372,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2170,6 +2382,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2179,6 +2392,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2188,6 +2402,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
             {
               type: "scene" as const,
@@ -2197,6 +2412,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "previous",
             },
           ],
           metadata: [],
@@ -2213,7 +2429,7 @@ export const Root = () => {
         defaultProps={{
           layout: "wide",
           prefix: "empty",
-          music: "none",
+
           scenes: [],
           metadata: [],
           pairs: [],

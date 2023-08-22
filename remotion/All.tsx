@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, Audio, Sequence } from "remotion";
+import { AbsoluteFill, Sequence } from "remotion";
 import type { z } from "zod";
 import {
   getIsTransitioningIn,
@@ -12,7 +12,6 @@ import type {
   videoConf,
 } from "./configuration";
 import { transitionDuration } from "./configuration";
-import { getAudioSource } from "./layout/music";
 import { CameraScene } from "./scenes/CameraScene";
 import { Title } from "./scenes/Title";
 import { TitleCard } from "./scenes/TitleCard";
@@ -39,7 +38,6 @@ export const All: React.FC<AllProps> = ({
   pairs,
   metadata,
   scenes,
-  music,
   layout,
 }) => {
   let addedUpDurations = 0;
@@ -124,7 +122,6 @@ export const All: React.FC<AllProps> = ({
           />
         );
       })}
-      {music !== "none" && <Audio src={getAudioSource(music)} volume={0.05} />}
     </AbsoluteFill>
   );
 };

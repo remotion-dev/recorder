@@ -1,7 +1,13 @@
 import { staticFile } from "remotion";
 import { z } from "zod";
 
-export const music = z.enum(["none", "dancelikemike", "soft", "weird"]);
+export const music = z.enum([
+  "previous",
+  "none",
+  "dancelikemike",
+  "soft",
+  "weird",
+]);
 export type Music = z.infer<typeof music>;
 
 export const getAudioSource = (track: Music) => {
