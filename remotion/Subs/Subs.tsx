@@ -4,6 +4,7 @@ import { interpolate } from "remotion";
 import { useVideoConfig } from "remotion";
 import { delayRender, continueRender } from "remotion";
 import { AbsoluteFill } from "remotion";
+import { getSubtitleTranslation } from "../animations/camera-scene-transitions";
 import type { CanvasLayout, WebcamPosition } from "../configuration";
 import type { Layout } from "../layout/get-layout";
 import type { SubTypes } from "../sub-types";
@@ -46,14 +47,18 @@ export const Subs: React.FC<{
     return null;
   }
 
+  const subtitleTranslation = getSubtitleTranslation({
+    enter,
+    exit,
+    height,
+    webcamPosition,
+    width,
+  });
+
   return (
     <AbsoluteFill
       style={{
-        transform: `translateX(${interpolate(
-          exit,
-          [0, 1],
-          [0, -width]
-        )}px) translateY(${interpolate(enter, [0, 1], [height, 0])}px)`,
+        transform: `translateX(${subtitleTranslation.translationX}px) translateY(${subtitleTranslation.translationY}px)`,
       }}
     >
       {data.segments.map((segment, index) => {
