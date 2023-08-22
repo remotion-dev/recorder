@@ -18,7 +18,11 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
       props.scenes.map(async (scene, i): Promise<SceneMetadata | null> => {
         const isFirstScene = i === 0;
 
-        if (scene.type === "title") {
+        if (
+          scene.type === "title" ||
+          scene.type === "titlecard" ||
+          scene.type === "endcard"
+        ) {
           return {
             videos: null,
             durationInFrames: isFirstScene

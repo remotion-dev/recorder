@@ -40,6 +40,14 @@ export const configuration = z.discriminatedUnion("type", [
     subtitle: z.string().nullable(),
     durationInFrames: z.number().int().default(50),
   }),
+  z.object({
+    type: z.literal("titlecard"),
+    durationInFrames: z.number().int().default(100),
+  }),
+  z.object({
+    type: z.literal("endcard"),
+    durationInFrames: z.number().int().default(100),
+  }),
 ]);
 
 export const canvasLayout = z.enum(["wide", "tall", "square"]);
