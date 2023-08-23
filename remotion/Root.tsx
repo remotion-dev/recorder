@@ -2194,7 +2194,7 @@ export const Root = () => {
             },
             {
               type: "endcard" as const,
-              durationInFrames: 100,
+              durationInFrames: 200,
               music: "previous" as const,
               channel: "remotion" as const,
             },
