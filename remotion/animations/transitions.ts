@@ -1,7 +1,11 @@
 import type { SceneType } from "../configuration";
 
 export const isATextCard = (scene: SceneType) => {
-  return scene.type === "title" || scene.type === "titlecard";
+  return (
+    scene.type === "title" ||
+    scene.type === "titlecard" ||
+    scene.type === "endcard"
+  );
 };
 
 export const getIsTransitioningOut = (scenes: SceneType[], index: number) => {

@@ -27,6 +27,9 @@ const webcamPosition = z.enum([
 
 export type WebcamPosition = z.infer<typeof webcamPosition>;
 
+export const channel = z.enum(["jonny", "remotion"]);
+export type Channel = z.infer<typeof channel>;
+
 export const configuration = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("scene"),
@@ -55,6 +58,7 @@ export const configuration = z.discriminatedUnion("type", [
     type: z.literal("endcard"),
     durationInFrames: z.number().int().default(100),
     music,
+    channel,
   }),
 ]);
 

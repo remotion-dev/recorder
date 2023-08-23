@@ -6,14 +6,10 @@ import {
   getIsTransitioningOut,
 } from "./animations/transitions";
 import { AudioTrack } from "./AudioTrack";
-import type {
-  Pair,
-  SceneMetadata,
-  SceneType,
-  videoConf,
-} from "./configuration";
+import type { Pair, SceneMetadata, videoConf } from "./configuration";
 import { transitionDuration } from "./configuration";
 import { CameraScene } from "./scenes/CameraScene";
+import { EndCard } from "./scenes/EndCard";
 import { Title } from "./scenes/Title";
 import { TitleCard } from "./scenes/TitleCard";
 
@@ -21,18 +17,6 @@ export type AllProps = z.infer<typeof videoConf> & {
   metadata: SceneMetadata[];
   pairs: Pair[];
   prefix: string;
-};
-
-const isATextCard = (scene: SceneType) => {
-  return scene.type === "title" || scene.type === "titlecard";
-};
-
-export const shouldEnter = (index: number, scenes: SceneType[]) => {
-  if (index === 0) {
-    return false;
-  }
-
-  return isATextCard(scenes[index - 1]);
 };
 
 export const All: React.FC<AllProps> = ({
@@ -93,6 +77,19 @@ export const All: React.FC<AllProps> = ({
                 durationInFrames={scene.durationInFrames}
                 title={scene.title}
               />
+            </Sequence>
+          );
+        }
+
+        if (scene.type === "endcard") {
+          return (
+            <Sequence
+              // eslint-disable-next-line react/no-array-index-key
+              key={i}
+              from={from}
+              durationInFrames={scene.durationInFrames}
+            >
+              <EndCard channel={scene.channel} />
             </Sequence>
           );
         }

@@ -1,7 +1,7 @@
 import { Composition } from "remotion";
 import { All } from "./All";
 import { calcMetadata } from "./calc-metadata";
-import { fps, videoConf } from "./configuration";
+import { fps,videoConf } from "./configuration";
 import { Title } from "./scenes/Title";
 
 export const Root = () => {
@@ -2192,6 +2192,12 @@ export const Root = () => {
               transitionToNextScene: false,
               music: "previous" as const,
             },
+            {
+              type: "endcard" as const,
+              durationInFrames: 100,
+              music: "previous" as const,
+              channel: "remotion" as const,
+            },
           ],
           metadata: [],
           pairs: [],
@@ -2205,7 +2211,7 @@ export const Root = () => {
         id="million"
         schema={videoConf}
         defaultProps={{
-          layout: "square" as const,
+          layout: "wide" as const,
           prefix: "million",
           scenes: [
             {
@@ -2252,7 +2258,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "weird" as const,
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2292,7 +2298,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "weird" as const,
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2375,44 +2381,10 @@ export const Root = () => {
               music: "soft" as const,
             },
             {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
+              type: "endcard" as const,
+              durationInFrames: 200,
               music: "previous" as const,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
-              music: "previous" as const,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
-              music: "previous" as const,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
-              music: "previous" as const,
+              channel: "jonny",
             },
           ],
           metadata: [],
