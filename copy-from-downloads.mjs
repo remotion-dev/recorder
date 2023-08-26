@@ -3,7 +3,7 @@ import path from "path";
 import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "child_process";
 
-const prefix = "million";
+const prefix = "scope";
 
 const downloadsDir =
   process.platform === "win32"
