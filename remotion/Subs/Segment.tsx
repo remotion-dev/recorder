@@ -1,17 +1,20 @@
-import React from "react";
-import { AbsoluteFill } from "remotion";
-import type { Segment } from "../sub-types";
-import { useTime, WordComp } from "./Word";
 import { loadFont } from "@remotion/google-fonts/Inter";
-import { getBottomSafeSpace } from "../layout/get-safe-space";
+import React from "react";
+import { AbsoluteFill, interpolate } from "remotion";
 import type {
   CanvasLayout,
   Dimensions,
   WebcamPosition,
 } from "../configuration";
 import type { Layout } from "../layout/get-layout";
-import { tallLayoutVerticalSafeSpace } from "../layout/get-layout";
-import { safeSpace } from "../layout/get-layout";
+import {
+  borderRadius,
+  safeSpace,
+  tallLayoutVerticalSafeSpace,
+} from "../layout/get-layout";
+import { getBottomSafeSpace } from "../layout/get-safe-space";
+import type { Segment } from "../sub-types";
+import { useTime, WordComp } from "./Word";
 
 loadFont();
 
@@ -40,6 +43,20 @@ const getSubsLayout = ({
   webcamPosition: WebcamPosition;
   canvasSize: Dimensions;
 }): React.CSSProperties => {
+  if (displayLayout === null) {
+    return {
+      height: getBottomSafeSpace("square") * 2,
+      bottom: getBottomSafeSpace("square") * 3,
+      // @ts-expect-error not yet available
+      textWrap: "balance",
+      textAlign: "center",
+      paddingLeft: safeSpace(canvasLayout) * 2,
+      paddingRight: safeSpace(canvasLayout) * 2,
+      justifyContent: "center",
+      alignItems: "center",
+    };
+  }
+
   if (canvasLayout === "wide") {
     return {
       height: getBottomSafeSpace(canvasLayout),
@@ -87,7 +104,18 @@ const getSubsLayout = ({
   };
 };
 
-const inlineSubsLayout = (canvasLayout: CanvasLayout): React.CSSProperties => {
+const inlineSubsLayout = (
+  canvasLayout: CanvasLayout,
+  displayLayout: Layout | null
+): React.CSSProperties => {
+  if (displayLayout === null) {
+    return {
+      paddingLeft: 20,
+      paddingRight: 20,
+      borderRadius: borderRadius - safeSpace("tall") / 4,
+    };
+  }
+
   if (canvasLayout === "wide") {
     return { paddingLeft: 20, paddingRight: 20 };
   }
@@ -120,9 +148,15 @@ export const SegmentComp: React.FC<{
     return null;
   }
 
-  if (time > segment.end && !isLast) {
+  if (time >= segment.end && !isLast) {
     return null;
   }
+
+  const opacity = interpolate(
+    time,
+    [segment.start, segment.start + 0.2, segment.end - 0.1, segment.end],
+    [0, 1, 1, 0]
+  );
 
   return (
     <AbsoluteFill
@@ -131,6 +165,7 @@ export const SegmentComp: React.FC<{
         fontSize: getFontSize(canvasLayout),
         display: "flex",
         lineHeight: 1.2,
+        opacity,
         ...getSubsLayout({
           canvasLayout,
           webcamLayout,
@@ -143,12 +178,14 @@ export const SegmentComp: React.FC<{
       <div>
         <span
           style={{
-            backgroundColor: "white",
+            backgroundColor:
+              displayLayout === null ? "rgba(0, 0, 0, 0.15)" : "white",
             lineHeight: 1.2,
             display: "inline-block",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
-            ...inlineSubsLayout(canvasLayout),
+            backdropFilter: "blur(5px)",
+            ...inlineSubsLayout(canvasLayout, displayLayout),
           }}
         >
           {segment.words.map((word, index) => {
@@ -159,6 +196,7 @@ export const SegmentComp: React.FC<{
                 trimStart={trimStart}
                 word={word}
                 canvasLayout={canvasLayout}
+                displayLayout={displayLayout}
               />
             );
           })}
