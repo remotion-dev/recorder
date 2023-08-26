@@ -1791,6 +1791,163 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       />{" "}
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="scope"
+        schema={videoConf}
+        defaultProps={{
+          layout: "wide" as const,
+          prefix: "scope",
+          music: "none" as const,
+          scenes: [
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: 1590,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+            },
+          ],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />{" "}
     </>
   );
 };
