@@ -1,9 +1,4 @@
-export const onVideo = (
-  data: Blob,
-  duration: number,
-  endDate: number,
-  prefix: string
-) => {
+export const onVideo = (data: Blob, endDate: number, prefix: string) => {
   let webcamchunks: Blob[] = [];
 
   if (data.size > 0) {

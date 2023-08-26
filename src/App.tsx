@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 import { onVideo } from "./on-video";
 
-let duration = 0;
 let endDate = 0;
 
 const mediaRecorderOptions: MediaRecorderOptions = {
@@ -111,7 +110,7 @@ const App = () => {
       const displayRecorder = new MediaRecorder(display, mediaRecorderOptions);
       setMediaDisplayRecorder(displayRecorder);
       displayRecorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, duration, endDate, "display");
+        onVideo(data, endDate, "display");
       });
       toStart.push(() => displayRecorder.start());
     } else {
@@ -122,7 +121,7 @@ const App = () => {
       const webcamRecorder = new MediaRecorder(webcam, mediaRecorderOptions);
       setWebcamDisplayRecorder(webcamRecorder);
       webcamRecorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, duration, endDate, "webcam");
+        onVideo(data, endDate, "webcam");
       });
 
       toStart.push(() => webcamRecorder.start());
@@ -134,7 +133,7 @@ const App = () => {
       const recorder = new MediaRecorder(virtualScreen, mediaRecorderOptions);
       setVirtualScreenRecorder(recorder);
       recorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, duration, endDate, "display");
+        onVideo(data, endDate, "display");
       });
 
       toStart.push(() => recorder.start());
@@ -159,7 +158,6 @@ const App = () => {
     }
 
     endDate = Date.now();
-    duration = endDate - (recording as number);
     setRecording(false);
   };
 

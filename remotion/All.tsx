@@ -1,17 +1,17 @@
 import React from "react";
-import { AbsoluteFill, Audio, Sequence } from "remotion";
+import { AbsoluteFill, Sequence } from "remotion";
 import type { z } from "zod";
-import type {
-  Pair,
-  SceneMetadata,
-  videoConf,
-  SceneType,
-} from "./configuration";
-import { titleHideDuration } from "./configuration";
-import { titleDuration } from "./configuration";
-import { Title } from "./Title";
-import { Scene } from "./Scene";
-import { getAudioSource } from "./layout/music";
+import {
+  getIsTransitioningIn,
+  getIsTransitioningOut,
+} from "./animations/transitions";
+import { AudioTrack } from "./AudioTrack";
+import type { Pair, SceneMetadata, videoConf } from "./configuration";
+import { transitionDuration } from "./configuration";
+import { CameraScene } from "./scenes/CameraScene";
+import { EndCard } from "./scenes/EndCard";
+import { Title } from "./scenes/Title";
+import { TitleCard } from "./scenes/TitleCard";
 
 export type AllProps = z.infer<typeof videoConf> & {
   metadata: SceneMetadata[];
@@ -19,27 +19,10 @@ export type AllProps = z.infer<typeof videoConf> & {
   prefix: string;
 };
 
-export const shouldEnter = (index: number, scenes: SceneType[]) => {
-  if (index === 0) {
-    return false;
-  }
-
-  return scenes[index - 1].type === "title";
-};
-
-export const shouldExit = (index: number, scenes: SceneType[]) => {
-  if (index === scenes.length - 1) {
-    return false;
-  }
-
-  return scenes[index + 1].type === "title";
-};
-
 export const All: React.FC<AllProps> = ({
   pairs,
   metadata,
   scenes,
-  music,
   layout,
 }) => {
   let addedUpDurations = 0;
@@ -57,23 +40,56 @@ export const All: React.FC<AllProps> = ({
           return null;
         }
 
-        const yo = addedUpDurations;
-        addedUpDurations += metadataForScene.durationInFrames;
+        const isTransitioningIn = getIsTransitioningIn(scenes, i);
+        const isTransitioningOut = getIsTransitioningOut(scenes, i);
 
-        const isFirstScene = i === 0;
+        const from = addedUpDurations;
+        addedUpDurations += metadataForScene.durationInFrames;
+        if (isTransitioningOut) {
+          addedUpDurations -= transitionDuration;
+        }
 
         if (scene.type === "title") {
           return (
             <Sequence
               key={scene.title}
-              from={yo - (isFirstScene ? 0 : titleHideDuration)}
-              durationInFrames={
-                titleDuration +
-                titleHideDuration +
-                (isFirstScene ? 0 : titleHideDuration)
-              }
+              from={from}
+              durationInFrames={scene.durationInFrames}
             >
-              <Title subtitle={scene.subtitle} title={scene.title} />
+              <Title
+                durationInFrames={scene.durationInFrames}
+                subtitle={scene.subtitle}
+                title={scene.title}
+              />
+            </Sequence>
+          );
+        }
+
+        if (scene.type === "titlecard") {
+          return (
+            <Sequence
+              // eslint-disable-next-line react/no-array-index-key
+              key={i}
+              from={from}
+              durationInFrames={scene.durationInFrames}
+            >
+              <TitleCard
+                durationInFrames={scene.durationInFrames}
+                title={scene.title}
+              />
+            </Sequence>
+          );
+        }
+
+        if (scene.type === "endcard") {
+          return (
+            <Sequence
+              // eslint-disable-next-line react/no-array-index-key
+              key={i}
+              from={from}
+              durationInFrames={scene.durationInFrames}
+            >
+              <EndCard channel={scene.channel} />
             </Sequence>
           );
         }
@@ -81,20 +97,30 @@ export const All: React.FC<AllProps> = ({
         videoCounter += 1;
         const pair = pairs[videoCounter];
         return (
-          <Scene
+          <CameraScene
             key={videoCounter}
-            start={yo}
+            start={from}
             pair={pair}
-            conf={scenes[i]}
             metadata={metadataForScene}
-            index={videoCounter}
-            shouldEnter={shouldEnter(i, scenes)}
-            canvasSize={layout}
-            shouldExit={shouldExit(i, scenes)}
+            index={i}
+            shouldEnter={isTransitioningIn}
+            canvasLayout={layout}
+            shouldExit={isTransitioningOut}
+            nextScene={
+              scenes[i + 1] && metadata[i + 1]
+                ? { scene: scenes[i + 1], metadata: metadata[i + 1] }
+                : null
+            }
+            previousScene={
+              scenes[i - 1]
+                ? { scene: scenes[i - 1], metadata: metadata[i - 1] }
+                : null
+            }
+            scene={scene}
           />
         );
       })}
-      {music !== "none" && <Audio src={getAudioSource(music)} volume={0.08} />}
+      <AudioTrack metadata={metadata} scenes={scenes} />
     </AbsoluteFill>
   );
 };

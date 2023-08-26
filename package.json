@@ -15,6 +15,7 @@
     "@remotion/zod-types": "^4.0.19",
     "eslint": "^8.44.0",
     "prettier": "^2.8.8",
+    "prettier-plugin-organize-imports": "^3.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "zod": "^3.21.4"
@@ -22,8 +23,8 @@
   "devDependencies": {
     "@jonny/eslint-config": "^3.0.275",
     "@remotion/cli": "4.0.19",
-    "@remotion/media-utils": "4.0.19",
     "@remotion/google-fonts": "4.0.19",
+    "@remotion/media-utils": "4.0.19",
     "@remotion/renderer": "4.0.19",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",

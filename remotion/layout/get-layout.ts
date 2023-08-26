@@ -18,8 +18,8 @@ export const frameWidth = 0;
 
 const webcamRatio = 400 / 350;
 
-export const safeSpace = (canvasLayout: CanvasLayout) =>
-  canvasLayout ? 30 : 20;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const safeSpace = (_canvasLayout: CanvasLayout) => 30;
 export const tallLayoutVerticalSafeSpace = 300;
 
 const overrideYForAltLayouts = ({
@@ -60,6 +60,21 @@ const overrideYForAltLayouts = ({
   }
 
   return y;
+};
+
+const fullscreenLayout = ({
+  canvasSize,
+  canvasLayout,
+}: {
+  canvasSize: Dimensions;
+  canvasLayout: CanvasLayout;
+}) => {
+  return {
+    x: safeSpace(canvasLayout),
+    y: safeSpace(canvasLayout),
+    width: canvasSize.width - safeSpace(canvasLayout) * 2,
+    height: canvasSize.height - safeSpace(canvasLayout) * 2,
+  };
 };
 
 const wideLayout = ({
@@ -241,6 +256,11 @@ const getWebcamSize = ({
   };
 };
 
+export type CameraSceneLayout = {
+  webcamLayout: Layout;
+  displayLayout: Layout | null;
+};
+
 export const getLayout = ({
   display,
   webcam,
@@ -253,7 +273,7 @@ export const getLayout = ({
   canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
   webcamPosition: WebcamPosition;
-}): { webcamLayout: Layout; displayLayout: Layout | null } => {
+}): CameraSceneLayout => {
   const displayLayout = display
     ? wideLayout({
         videoWidth: display.width,
@@ -280,15 +300,10 @@ export const getLayout = ({
         webcamSize,
         webcamVideoDimensions: webcam,
       })
-    : wideLayout({
-        videoWidth: webcam.width,
-        videoHeight: webcam.height,
+    : fullscreenLayout({
         canvasSize,
-        webcamPosition,
         canvasLayout,
       });
-
-  console.log({ webcamLayout, displayLayout });
 
   return {
     displayLayout: displayLayout

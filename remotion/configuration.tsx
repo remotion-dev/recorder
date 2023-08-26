@@ -10,6 +10,7 @@ export type Dimensions = {
 
 export type SceneMetadata = {
   durationInFrames: number;
+  sumUpDuration: number;
   videos: {
     webcam: Dimensions;
     display: Dimensions | null;
@@ -26,6 +27,9 @@ const webcamPosition = z.enum([
 
 export type WebcamPosition = z.infer<typeof webcamPosition>;
 
+export const channel = z.enum(["jonny", "remotion"]);
+export type Channel = z.infer<typeof channel>;
+
 export const configuration = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("scene"),
@@ -33,11 +37,28 @@ export const configuration = z.discriminatedUnion("type", [
     trimStart: z.number(),
     duration: z.number().nullable().default(null),
     zoomInAtStart: z.boolean().default(false),
+    zoomInAtEnd: z.boolean().default(false),
+    transitionToNextScene: z.boolean().default(false),
+    music,
   }),
   z.object({
     type: z.literal("title"),
     title: z.string(),
     subtitle: z.string().nullable(),
+    durationInFrames: z.number().int().default(50),
+    music,
+  }),
+  z.object({
+    type: z.literal("titlecard"),
+    durationInFrames: z.number().int().default(100),
+    title: z.string(),
+    music,
+  }),
+  z.object({
+    type: z.literal("endcard"),
+    durationInFrames: z.number().int().default(100),
+    music,
+    channel,
   }),
 ]);
 
@@ -48,7 +69,6 @@ const scenes = z.array(configuration);
 export type SceneType = z.infer<typeof configuration>;
 
 export const videoConf = z.object({
-  music,
   layout: canvasLayout,
   scenes,
 });
@@ -88,6 +108,5 @@ export type Pair = {
   sub: StaticFile | null;
 };
 
-export const titleDuration = 50;
-export const titleHideDuration = 10;
+export const transitionDuration = 10;
 export const fps = 30;
