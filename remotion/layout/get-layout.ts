@@ -1,3 +1,4 @@
+import { getDimensionsForLayout } from "../calc-metadata";
 import type {
   CanvasLayout,
   Dimensions,
@@ -132,8 +133,12 @@ const shiftLayoutIfTallMode = ({
 
   return {
     ...layout,
-    y: layout.y + (1920 - 1080) / 2,
-    height: layout.height - tallLayoutVerticalSafeSpace,
+    y:
+      layout.y +
+      (getDimensionsForLayout("tall").height -
+        getDimensionsForLayout("square").height) /
+        2,
+    height: layout.height,
   };
 };
 
@@ -300,6 +305,8 @@ export const getLayout = ({
         canvasSize,
         canvasLayout,
       });
+
+  console.log({ webcamLayout });
 
   return {
     displayLayout: displayLayout
