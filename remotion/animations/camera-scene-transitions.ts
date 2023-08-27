@@ -315,6 +315,13 @@ const getSubtitleEnter = ({
       };
     }
 
+    if (canvasLayout === "tall") {
+      return {
+        translationX: 0,
+        translationY: 0,
+      };
+    }
+
     throw new Error("Invalid canvas layout");
   }
 

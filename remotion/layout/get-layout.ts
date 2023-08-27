@@ -40,7 +40,7 @@ const overrideYForAltLayouts = ({
   }
 
   if (canvasLayout === "tall") {
-    return tallLayoutVerticalSafeSpace;
+    return tallLayoutVerticalSafeSpace / 2;
   }
 
   if (webcamPosition === "top-left") {
@@ -177,7 +177,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
       width,
       height,
       x: safeSpace(canvasLayout),
-      y: canvasSize.height - height - safeSpace(canvasLayout),
+      y: canvasSize.height - height - tallLayoutVerticalSafeSpace / 2,
     };
   }
 

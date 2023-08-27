@@ -10,13 +10,15 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import type { CanvasLayout } from "../configuration";
 import { transitionDuration } from "../configuration";
 import { borderRadius, safeSpace } from "../layout/get-layout";
 
 export const TitleCard: React.FC<{
   title: string;
   durationInFrames: number;
-}> = ({ title, durationInFrames }) => {
+  canvasLayout: CanvasLayout;
+}> = ({ title, durationInFrames, canvasLayout }) => {
   const { fps, width, height } = useVideoConfig();
   const frame = useCurrentFrame();
 
@@ -57,12 +59,16 @@ export const TitleCard: React.FC<{
           "px 0",
       }}
     >
-      <Sequence from={6}>
-        <Audio src={staticFile("sounds/whipwhoosh2.mp3")} volume={0.5} />
-      </Sequence>
-      <Sequence from={20}>
-        <Audio src={staticFile("sounds/whipwhoosh.mp3")} volume={0.5} />
-      </Sequence>
+      {canvasLayout === "tall" ? null : (
+        <Sequence from={6}>
+          <Audio src={staticFile("sounds/whipwhoosh2.mp3")} volume={0.5} />
+        </Sequence>
+      )}
+      {canvasLayout === "tall" ? null : (
+        <Sequence from={20}>
+          <Audio src={staticFile("sounds/whipwhoosh.mp3")} volume={0.5} />
+        </Sequence>
+      )}
       <AbsoluteFill
         style={{
           justifyContent: "center",
