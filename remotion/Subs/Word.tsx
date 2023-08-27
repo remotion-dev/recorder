@@ -1,6 +1,5 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import type { CanvasLayout } from "../configuration";
 import type { Layout } from "../layout/get-layout";
 import type { Word } from "../sub-types";
 
@@ -36,10 +35,9 @@ const getWordColor = ({
 export const WordComp: React.FC<{
   word: Word;
   trimStart: number;
-  canvasLayout: CanvasLayout;
   isLast: boolean;
   displayLayout: Layout | null;
-}> = ({ word, trimStart, canvasLayout, isLast, displayLayout }) => {
+}> = ({ word, trimStart, isLast, displayLayout }) => {
   const time = useTime(trimStart);
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -47,22 +45,21 @@ export const WordComp: React.FC<{
   const monospace =
     word.word.trimStart().startsWith("`") && word.word.endsWith("`");
 
-  const scale =
-    canvasLayout === "tall" || monospace
-      ? word.start > time
-        ? 1
-        : spring({
-            fps,
-            frame,
-            delay: word.start * fps - trimStart,
-            config: {
-              damping: 200,
-            },
-            durationInFrames: 5,
-          }) *
-            0.05 +
-          0.95
-      : 1;
+  const scale = monospace
+    ? word.start > time
+      ? 1
+      : spring({
+          fps,
+          frame,
+          delay: word.start * fps - trimStart,
+          config: {
+            damping: 200,
+          },
+          durationInFrames: 5,
+        }) *
+          0.05 +
+        0.95
+    : 1;
 
   const appeared = word.start <= time;
   const opacity = appeared

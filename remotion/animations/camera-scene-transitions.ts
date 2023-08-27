@@ -308,16 +308,9 @@ const getSubtitleEnter = ({
       };
     }
 
-    if (canvasLayout === "square") {
+    if (canvasLayout === "square" || canvasLayout === "tall") {
       return {
         translationX: interpolate(enter, [0, 1], [width, 0]),
-        translationY: 0,
-      };
-    }
-
-    if (canvasLayout === "tall") {
-      return {
-        translationX: 0,
         translationY: 0,
       };
     }
@@ -330,7 +323,10 @@ const getSubtitleEnter = ({
   const isSamePositionHorizontal =
     isWebCamAtBottom(prevWebcamPosition) === isWebCamAtBottom(webcamPosition);
 
-  if (!isSamePositionHorizontal && canvasLayout === "square") {
+  if (
+    !isSamePositionHorizontal &&
+    (canvasLayout === "square" || canvasLayout === "tall")
+  ) {
     return {
       translationX: 0,
       translationY: interpolate(
@@ -341,7 +337,10 @@ const getSubtitleEnter = ({
     };
   }
 
-  if (!isSamePositionVertical && canvasLayout === "square") {
+  if (
+    !isSamePositionVertical &&
+    (canvasLayout === "square" || canvasLayout === "tall")
+  ) {
     return {
       translationX: interpolate(
         enter,

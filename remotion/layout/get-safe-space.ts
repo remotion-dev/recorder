@@ -6,9 +6,5 @@ export const getBottomSafeSpace = (canvasLayout: CanvasLayout) => {
     return 140;
   }
 
-  if (canvasLayout === "square") {
-    return safeSpace(canvasLayout);
-  }
-
-  return 120;
+  return safeSpace(canvasLayout);
 };
