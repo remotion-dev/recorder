@@ -1,4 +1,5 @@
 import type { SubTypes, Word } from "../sub-types";
+import { truthy } from "../truthy";
 
 const wordsTogether = (words: Word[]) => {
   const newWords: Word[] = [];
@@ -27,8 +28,44 @@ const wordsTogether = (words: Word[]) => {
   return newWords;
 };
 
-export const postprocessSubtitles = (subTypes: SubTypes): SubTypes => {
+const maxWordsPerSegment = 15;
+
+const ensureMaxWords = (subTypes: SubTypes): SubTypes => {
   return {
+    ...subTypes,
+    segments: subTypes.segments
+      .map((segment) => {
+        const { words } = segment;
+
+        if (words.length > maxWordsPerSegment) {
+          const middle = Math.round(words.length / 2);
+          const firstHalf = words.slice(0, middle);
+          const secondHalf = words.slice(middle);
+          return [
+            {
+              ...segment,
+              start: firstHalf[0].start,
+              end: firstHalf[firstHalf.length - 1].end,
+              words: firstHalf,
+            },
+            {
+              ...segment,
+              start: secondHalf[0].start,
+              end: secondHalf[secondHalf.length - 1].end,
+              words: secondHalf,
+            },
+          ];
+        }
+
+        return [segment];
+      })
+      .filter(truthy)
+      .flat(1),
+  };
+};
+
+export const postprocessSubtitles = (subTypes: SubTypes): SubTypes => {
+  return ensureMaxWords({
     ...subTypes,
     segments: subTypes.segments.map((segment) => {
       const { words } = segment;
@@ -38,5 +75,5 @@ export const postprocessSubtitles = (subTypes: SubTypes): SubTypes => {
         words: wordsTogether(words),
       };
     }),
-  };
+  });
 };
