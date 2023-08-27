@@ -2079,7 +2079,7 @@ export const Root = () => {
         id="dvd-2"
         schema={videoConf}
         defaultProps={{
-          layout: "square" as const,
+          layout: "tall" as const,
           prefix: "dvd-2",
           scenes: [
             {
@@ -2191,12 +2191,6 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
-            },
-            {
-              type: "endcard" as const,
-              durationInFrames: 200,
-              music: "previous" as const,
-              channel: "remotion" as const,
             },
           ],
           metadata: [],
