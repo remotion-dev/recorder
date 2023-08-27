@@ -16,6 +16,10 @@ const wordsTogether = (words: Word[]) => {
         word.word = " Remotion";
       }
 
+      if (word.word === " github") {
+        word.word = " GitHub";
+      }
+
       newWords.push(word);
     }
   }
