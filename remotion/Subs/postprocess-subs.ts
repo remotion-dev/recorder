@@ -21,6 +21,10 @@ const wordsTogether = (words: Word[]) => {
         word.word = " GitHub";
       }
 
+      word.word = word.word.replace(" Algorra", " Algora");
+      word.word = word.word.replace(" remotion.", " Remotion.");
+      word.word = word.word.replace(" ReMotion", " Remotion");
+
       newWords.push(word);
     }
   }
