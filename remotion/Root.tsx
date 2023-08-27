@@ -1,7 +1,7 @@
 import { Composition } from "remotion";
 import { All } from "./All";
 import { calcMetadata } from "./calc-metadata";
-import { fps, videoConf } from "./configuration";
+import { fps,videoConf } from "./configuration";
 import { Title } from "./scenes/Title";
 
 export const Root = () => {
@@ -2399,7 +2399,7 @@ export const Root = () => {
         id="scope"
         schema={videoConf}
         defaultProps={{
-          layout: "wide" as const,
+          layout: "square" as const,
           prefix: "scope",
           scenes: [
             {
@@ -2410,7 +2410,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2420,7 +2420,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2430,7 +2430,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2440,7 +2440,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2450,7 +2450,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2460,7 +2460,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2470,7 +2470,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2480,7 +2480,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2490,7 +2490,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2500,7 +2500,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2510,7 +2510,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2520,7 +2520,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2530,7 +2530,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2540,7 +2540,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2550,7 +2550,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2560,7 +2560,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2570,7 +2570,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2580,7 +2580,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2590,7 +2590,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -2600,7 +2600,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "none",
+              music: "none" as const,
             },
           ],
           metadata: [],
@@ -2615,7 +2615,7 @@ export const Root = () => {
         id="uber-for-coding"
         schema={videoConf}
         defaultProps={{
-          layout: "wide" as const,
+          layout: "square" as const,
           prefix: "uber-for-coding",
           scenes: [
             {
@@ -2666,6 +2666,12 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
+              music: "epic" as const,
+            },
+            {
+              type: "titlecard" as const,
+              durationInFrames: 100,
+              title: "Uber for coding",
               music: "previous" as const,
             },
             {
@@ -2676,7 +2682,7 @@ export const Root = () => {
               zoomInAtStart: false,
               zoomInAtEnd: false,
               transitionToNextScene: false,
-              music: "previous" as const,
+              music: "none" as const,
             },
             {
               type: "scene" as const,
