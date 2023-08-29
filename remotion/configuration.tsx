@@ -52,6 +52,7 @@ export const configuration = z.discriminatedUnion("type", [
     type: z.literal("titlecard"),
     durationInFrames: z.number().int().default(100),
     title: z.string(),
+    image: z.string(),
     music,
   }),
   z.object({
