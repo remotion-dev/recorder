@@ -10,15 +10,14 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { CanvasLayout } from "../configuration";
 import { transitionDuration } from "../configuration";
 import { borderRadius, safeSpace } from "../layout/get-layout";
 
 export const TitleCard: React.FC<{
   title: string;
   durationInFrames: number;
-  canvasLayout: CanvasLayout;
-}> = ({ title, durationInFrames, canvasLayout }) => {
+  image: string;
+}> = ({ title, durationInFrames, image }) => {
   const { fps, width, height } = useVideoConfig();
   const frame = useCurrentFrame();
 
@@ -85,7 +84,7 @@ export const TitleCard: React.FC<{
                 show(6) + interpolate(frame, [0, 100], [0, 0.1])
               })`,
             }}
-            src={staticFile("thumbnails/ismillionjslegit.png")}
+            src={image}
           />
         </div>
       </AbsoluteFill>

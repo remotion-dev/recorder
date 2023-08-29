@@ -1,7 +1,7 @@
-import { Composition } from "remotion";
+import { Composition, staticFile } from "remotion";
 import { All } from "./All";
 import { calcMetadata } from "./calc-metadata";
-import { fps,videoConf } from "./configuration";
+import { fps, videoConf } from "./configuration";
 import { Title } from "./scenes/Title";
 
 export const Root = () => {
@@ -2243,6 +2243,7 @@ export const Root = () => {
               durationInFrames: 150,
               title: "Is Million.js legit?",
               music: "previous" as const,
+              image: staticFile("thumbnails/ismillionjslegit.png"),
             },
             {
               type: "scene" as const,
@@ -2663,6 +2664,7 @@ export const Root = () => {
               durationInFrames: 100,
               title: "Uber for coding",
               music: "previous" as const,
+              image: staticFile("thumbnails/uberforcoding.png"),
             },
             {
               type: "scene" as const,
