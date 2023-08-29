@@ -12,7 +12,6 @@ import {
 import { getDisplayTranslation } from "../animations/camera-scene-transitions";
 import type {
   CanvasLayout,
-  Dimensions,
   Pair,
   SceneMetadata,
   SceneType,
@@ -226,12 +225,11 @@ export const CameraScene: React.FC<{
 
   const canvasSize = {
     width,
-    height,
+    height: canvasLayout === "tall" ? 1080 : height,
   };
 
   const layout = getLayout({
     display: metadata.videos.display,
-    webcam: metadata.videos.webcam,
     canvasSize,
     canvasLayout,
     webcamPosition: scene.webcamPosition,
@@ -241,7 +239,6 @@ export const CameraScene: React.FC<{
     previousScene && previousScene.scene.type === "scene"
       ? getLayout({
           display: previousScene.metadata.videos?.display ?? null,
-          webcam: previousScene.metadata.videos?.webcam as Dimensions,
           canvasSize,
           canvasLayout,
           webcamPosition: previousScene.scene.webcamPosition,
@@ -252,7 +249,6 @@ export const CameraScene: React.FC<{
     nextScene && nextScene.scene.type === "scene"
       ? getLayout({
           display: nextScene.metadata.videos?.display ?? null,
-          webcam: nextScene.metadata.videos?.webcam as Dimensions,
           canvasSize,
           canvasLayout,
           webcamPosition: nextScene.scene.webcamPosition,

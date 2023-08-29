@@ -10,13 +10,15 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import type { CanvasLayout } from "../configuration";
 import { transitionDuration } from "../configuration";
 import { borderRadius, safeSpace } from "../layout/get-layout";
 
 export const TitleCard: React.FC<{
   title: string;
   durationInFrames: number;
-}> = ({ title, durationInFrames }) => {
+  canvasLayout: CanvasLayout;
+}> = ({ title, durationInFrames, canvasLayout }) => {
   const { fps, width, height } = useVideoConfig();
   const frame = useCurrentFrame();
 

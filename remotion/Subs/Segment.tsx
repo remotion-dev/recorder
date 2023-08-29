@@ -7,11 +7,7 @@ import type {
   WebcamPosition,
 } from "../configuration";
 import type { Layout } from "../layout/get-layout";
-import {
-  borderRadius,
-  safeSpace,
-  tallLayoutVerticalSafeSpace,
-} from "../layout/get-layout";
+import { borderRadius, safeSpace } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type { Segment } from "../sub-types";
 import { useTime, WordComp } from "./Word";
@@ -19,12 +15,8 @@ import { useTime, WordComp } from "./Word";
 loadFont();
 
 const getFontSize = (canvasLayout: CanvasLayout) => {
-  if (canvasLayout === "square") {
+  if (canvasLayout === "square" || canvasLayout === "tall") {
     return 46;
-  }
-
-  if (canvasLayout === "tall") {
-    return 70;
   }
 
   return 40;
@@ -70,37 +62,15 @@ const getSubsLayout = ({
     };
   }
 
-  if (canvasLayout === "square") {
-    return {
-      height: webcamLayout.height,
-      top: webcamLayout.y,
-      left:
-        webcamPosition === "bottom-left" || webcamPosition === "top-left"
-          ? webcamLayout.width + safeSpace(canvasLayout) * 2
-          : safeSpace(canvasLayout),
-      width:
-        canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
-      justifyContent: "center",
-    };
-  }
-
-  const remainingHeight =
-    canvasSize.height -
-    (webcamLayout.height +
-      (displayLayout?.height ?? 0) +
-      safeSpace(canvasLayout) * 2 +
-      tallLayoutVerticalSafeSpace);
-
   return {
-    height: remainingHeight,
-    top:
-      (displayLayout?.height ?? 0) +
-      safeSpace(canvasLayout) +
-      Number(tallLayoutVerticalSafeSpace),
-    paddingLeft: safeSpace(canvasLayout),
-    paddingRight: safeSpace(canvasLayout),
+    height: webcamLayout.height,
+    top: webcamLayout.y,
+    left:
+      webcamPosition === "bottom-left" || webcamPosition === "top-left"
+        ? webcamLayout.width + safeSpace(canvasLayout) * 2
+        : safeSpace(canvasLayout),
+    width: canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
     justifyContent: "center",
-    textAlign: "center",
   };
 };
 
@@ -195,7 +165,6 @@ export const SegmentComp: React.FC<{
                 isLast={index === segment.words.length - 1}
                 trimStart={trimStart}
                 word={word}
-                canvasLayout={canvasLayout}
                 displayLayout={displayLayout}
               />
             );

@@ -76,6 +76,7 @@ export const All: React.FC<AllProps> = ({
               <TitleCard
                 durationInFrames={scene.durationInFrames}
                 title={scene.title}
+                canvasLayout={layout}
               />
             </Sequence>
           );

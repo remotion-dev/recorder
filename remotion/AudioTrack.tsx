@@ -35,7 +35,7 @@ const AudioClip: React.FC<{
         const regularVolume = interpolate(
           f,
           [0, FADE, durationInFrames - FADE, durationInFrames - 1],
-          [0, 0.06, 0.06, 0],
+          [0, 0.04, 0.04, 0],
           {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",

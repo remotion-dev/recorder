@@ -1,3 +1,4 @@
+import { getDimensionsForLayout } from "../calc-metadata";
 import type {
   CanvasLayout,
   Dimensions,
@@ -37,10 +38,6 @@ const overrideYForAltLayouts = ({
 }): number => {
   if (canvasLayout === "wide") {
     return y;
-  }
-
-  if (canvasLayout === "tall") {
-    return tallLayoutVerticalSafeSpace;
   }
 
   if (webcamPosition === "top-left") {
@@ -123,6 +120,28 @@ const wideLayout = ({
   };
 };
 
+const shiftLayoutIfTallMode = ({
+  canvasLayout,
+  layout,
+}: {
+  layout: Layout;
+  canvasLayout: CanvasLayout;
+}) => {
+  if (canvasLayout !== "tall") {
+    return layout;
+  }
+
+  return {
+    ...layout,
+    y:
+      layout.y +
+      (getDimensionsForLayout("tall").height -
+        getDimensionsForLayout("square").height) /
+        2,
+    height: layout.height,
+  };
+};
+
 const shiftDisplayLayoutBasedOnWebcamPosition = ({
   layout,
   webcamPosition,
@@ -134,7 +153,7 @@ const shiftDisplayLayoutBasedOnWebcamPosition = ({
   webcamSize: Dimensions;
   canvasLayout: CanvasLayout;
 }): Layout => {
-  if (canvasLayout === "square") {
+  if (canvasLayout === "square" || canvasLayout === "tall") {
     return layout;
   }
 
@@ -160,27 +179,12 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
   webcamPosition,
   canvasLayout,
   canvasSize,
-  webcamVideoDimensions,
 }: {
   webcamSize: Dimensions;
   webcamPosition: WebcamPosition;
   canvasLayout: CanvasLayout;
   canvasSize: Dimensions;
-  webcamVideoDimensions: Dimensions;
 }): Layout => {
-  if (canvasLayout === "tall") {
-    const ratio = webcamVideoDimensions.height / webcamVideoDimensions.width;
-    const width = canvasSize.width - safeSpace(canvasLayout) * 2;
-    const height = width * ratio;
-
-    return {
-      width,
-      height,
-      x: safeSpace(canvasLayout),
-      y: canvasSize.height - height - safeSpace(canvasLayout),
-    };
-  }
-
   if (webcamPosition === "bottom-right") {
     return {
       ...webcamSize,
@@ -236,7 +240,7 @@ const getWebcamSize = ({
   canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
 }): Dimensions => {
-  if (canvasLayout === "square") {
+  if (canvasLayout === "square" || canvasLayout === "tall") {
     const remainingHeight =
       canvasSize.height - displayLayout.height - safeSpace(canvasLayout) * 3;
 
@@ -263,13 +267,11 @@ export type CameraSceneLayout = {
 
 export const getLayout = ({
   display,
-  webcam,
   canvasSize,
   canvasLayout,
   webcamPosition,
 }: {
   display: Dimensions | null;
-  webcam: Dimensions;
   canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
   webcamPosition: WebcamPosition;
@@ -298,22 +300,29 @@ export const getLayout = ({
         canvasSize,
         canvasLayout,
         webcamSize,
-        webcamVideoDimensions: webcam,
       })
     : fullscreenLayout({
         canvasSize,
         canvasLayout,
       });
 
+  console.log({ webcamLayout });
+
   return {
     displayLayout: displayLayout
-      ? shiftDisplayLayoutBasedOnWebcamPosition({
-          layout: displayLayout,
-          webcamPosition,
-          webcamSize,
+      ? shiftLayoutIfTallMode({
           canvasLayout,
+          layout: shiftDisplayLayoutBasedOnWebcamPosition({
+            layout: displayLayout,
+            webcamPosition,
+            webcamSize,
+            canvasLayout,
+          }),
         })
       : null,
-    webcamLayout,
+    webcamLayout: shiftLayoutIfTallMode({
+      canvasLayout,
+      layout: webcamLayout,
+    }),
   };
 };
