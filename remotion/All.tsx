@@ -77,6 +77,7 @@ export const All: React.FC<AllProps> = ({
                 durationInFrames={scene.durationInFrames}
                 title={scene.title}
                 image={scene.image}
+                youTubePlug={scene.youTubePlug}
               />
             </Sequence>
           );

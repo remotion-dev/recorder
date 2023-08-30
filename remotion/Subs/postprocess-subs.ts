@@ -25,6 +25,7 @@ const wordsTogether = (words: Word[]) => {
       word.word = word.word.replace(" remotion.", " Remotion.");
       word.word = word.word.replace(" ReMotion", " Remotion");
       word.word = word.word.replace(" Monorepo", " monorepo");
+      word.word = word.word.replace(" rust.", " Rust.");
 
       newWords.push(word);
     }

@@ -54,6 +54,7 @@ export const configuration = z.discriminatedUnion("type", [
     title: z.string(),
     image: z.string(),
     music,
+    youTubePlug: z.boolean().default(false),
   }),
   z.object({
     type: z.literal("endcard"),
