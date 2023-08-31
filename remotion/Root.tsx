@@ -2992,6 +2992,21 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       />{" "}
+       <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="karaoketeaser"
+        schema={videoConf}
+        defaultProps={{
+          layout: "wide",
+          prefix: "karaoketeaser",
+          scenes: [],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />{" "}
     </>
   );
 };
