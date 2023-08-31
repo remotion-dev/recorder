@@ -3,7 +3,7 @@ import path from "path";
 import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "child_process";
 
-const prefix = "rome";
+const prefix = "karaoketeaser";
 
 const downloadsDir =
   process.platform === "win32"
