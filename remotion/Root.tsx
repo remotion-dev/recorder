@@ -1,7 +1,7 @@
-import { Composition } from "remotion";
+import { Composition, staticFile } from "remotion";
 import { All } from "./All";
 import { calcMetadata } from "./calc-metadata";
-import { fps,videoConf } from "./configuration";
+import { fps, videoConf } from "./configuration";
 import { Title } from "./scenes/Title";
 
 export const Root = () => {
@@ -2243,6 +2243,8 @@ export const Root = () => {
               durationInFrames: 150,
               title: "Is Million.js legit?",
               music: "previous" as const,
+              image: staticFile("thumbnails/ismillionjslegit.png"),
+              youTubePlug: false,
             },
             {
               type: "scene" as const,
@@ -2663,6 +2665,8 @@ export const Root = () => {
               durationInFrames: 100,
               title: "Uber for coding",
               music: "previous" as const,
+              image: staticFile("thumbnails/uberforcoding.png"),
+              youTubePlug: false,
             },
             {
               type: "scene" as const,
@@ -2807,7 +2811,7 @@ export const Root = () => {
         id="rome"
         schema={videoConf}
         defaultProps={{
-          layout: "wide" as const,
+          layout: "square" as const,
           prefix: "rome",
           scenes: [
             {
@@ -2831,8 +2835,66 @@ export const Root = () => {
               music: "previous" as const,
             },
             {
+              type: "titlecard" as const,
+              durationInFrames: 100,
+              image: staticFile("thumbnails/rome.png"),
+              music: "previous" as const,
+              title: "R.I.P Rome",
+              youTubePlug: false,
+            },
+            {
               type: "scene" as const,
               webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+              zoomInAtEnd: false,
+              transitionToNextScene: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+              zoomInAtEnd: false,
+              transitionToNextScene: true,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "bottom-right" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+              zoomInAtEnd: false,
+              transitionToNextScene: true,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "bottom-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+              zoomInAtEnd: false,
+              transitionToNextScene: true,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+              zoomInAtEnd: false,
+              transitionToNextScene: true,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-right" as const,
               trimStart: 0,
               duration: null,
               zoomInAtStart: false,
@@ -2901,74 +2963,10 @@ export const Root = () => {
               music: "previous" as const,
             },
             {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
+              type: "endcard" as const,
+              durationInFrames: 100,
               music: "previous" as const,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
-              music: "previous" as const,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
-              music: "previous" as const,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
-              music: "previous" as const,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
-              music: "previous" as const,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
-              music: "previous" as const,
-            },
-            {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
-              music: "previous" as const,
+              channel: "jonny" as const,
             },
           ],
           metadata: [],
