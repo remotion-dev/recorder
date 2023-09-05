@@ -47,7 +47,7 @@ export const WideScreenChapters: React.FC<{
           damping: 200,
         },
         durationInFrames: 10,
-        delay: 60,
+        delay: durationInFrames - 10,
       })
     : 0;
 
@@ -65,6 +65,8 @@ export const WideScreenChapters: React.FC<{
     activeChapter > 0 &&
     chapters[activeChapter].start === startFrom &&
     !isLastChapterActive;
+  const shouldSlide =
+    activeChapter > 0 && chapters[activeChapter].start === startFrom;
   const shouldAnimateOut =
     startFrom + durationInFrames === chapters[activeChapter].end &&
     !isSecondToLastChapterActive &&
@@ -100,6 +102,7 @@ export const WideScreenChapters: React.FC<{
               lastIndex={shownChapters[shownChapters.length - 1].index}
               shouldAnimateIn={shouldAnimateIn}
               shouldAnimateOut={shouldAnimateOut}
+              shouldSlide={shouldSlide}
             />
           );
         })}
