@@ -8,6 +8,7 @@ import {
 } from "remotion";
 import { Chapter } from "./Chapter";
 import type { ChapterType } from "./generate";
+import { narrowDownChapters } from "./narrow-down";
 
 export const Chapters: React.FC<{
   chapters: ChapterType[];
@@ -35,7 +36,14 @@ export const Chapters: React.FC<{
     delay: 50,
   });
 
+  const absoluteFrame = frame + startFrom;
+
   const translateX = interpolate(jumpIn - jumpOut, [0, 1], [-width, 0]);
+
+  const activeChapter =
+    chapters.find((chapter) => {
+      return chapter.start <= absoluteFrame && chapter.end >= absoluteFrame;
+    })?.index ?? -1;
 
   return (
     <AbsoluteFill
@@ -54,9 +62,14 @@ export const Chapters: React.FC<{
           alignItems: "flex-start",
         }}
       >
-        {chapters.map((chapter) => {
+        {narrowDownChapters(chapters, activeChapter).map((chapter) => {
           return (
-            <Chapter key={chapter.id} startFrom={startFrom} chapter={chapter} />
+            <Chapter
+              key={chapter.id}
+              activeIndex={activeChapter}
+              startFrom={startFrom}
+              chapter={chapter}
+            />
           );
         })}
       </div>

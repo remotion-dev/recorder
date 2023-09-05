@@ -73,7 +73,8 @@ export const Subs: React.FC<{
       {data.segments.map((segment, index) => {
         return (
           <SegmentComp
-            key={segment.id}
+            // eslint-disable-next-line react/no-array-index-key
+            key={index}
             webcamPosition={webcamPosition}
             isLast={index === data.segments.length - 1}
             segment={segment}
