@@ -58,13 +58,19 @@ export const WideScreenChapters: React.FC<{
     return null;
   }
 
+  const isSecondToLastChapterActive = activeChapter === chapters.length - 2;
+  const isLastChapterActive = activeChapter === chapters.length - 1;
+
   const shouldAnimateIn =
-    activeChapter > 0 && chapters[activeChapter].start === startFrom;
+    activeChapter > 0 &&
+    chapters[activeChapter].start === startFrom &&
+    !isLastChapterActive;
   const shouldAnimateOut =
-    startFrom + durationInFrames === chapters[activeChapter].end;
+    startFrom + durationInFrames === chapters[activeChapter].end &&
+    !isSecondToLastChapterActive &&
+    !isLastChapterActive;
 
-  console.log({ shouldAnimateOut });
-
+  console.log(shownChapters);
   return (
     <AbsoluteFill
       style={{
