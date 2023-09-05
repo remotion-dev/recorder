@@ -12,6 +12,7 @@ export const WideLayoutChapter: React.FC<{
   firstIndex: number;
   shouldAnimateIn: boolean;
   shouldAnimateOut: boolean;
+  shouldSlide: boolean;
 }> = ({
   chapter,
   activeIndex,
@@ -19,6 +20,7 @@ export const WideLayoutChapter: React.FC<{
   shouldAnimateOut,
   firstIndex,
   shouldAnimateIn,
+  shouldSlide,
 }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
@@ -38,6 +40,15 @@ export const WideLayoutChapter: React.FC<{
       })
     : 1;
 
+  const slide = shouldSlide
+    ? spring({
+        frame,
+        fps,
+        config: { damping: 200 },
+        durationInFrames: 10,
+        delay: 10,
+      })
+    : 1;
   const translateY =
     activeIndex === 1
       ? 0
@@ -83,7 +94,7 @@ export const WideLayoutChapter: React.FC<{
     shouldAnimateOut,
   ]);
 
-  const wipePercentage = interpolate(animateIn, [0, 1], [0, 100]);
+  const wipePercentage = interpolate(slide, [0, 1], [0, 100]);
   const previousMaskImage = `linear-gradient(to bottom, transparent ${wipePercentage}%, black ${wipePercentage}%)`;
   const maskImage = `linear-gradient(to bottom, black ${wipePercentage}%, transparent ${wipePercentage}%)`;
 
