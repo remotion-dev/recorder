@@ -10,6 +10,8 @@ import {
   useVideoConfig,
 } from "remotion";
 import { getDisplayTranslation } from "../animations/camera-scene-transitions";
+import { Chapters } from "../chapters/Chapters";
+import type { ChapterType } from "../chapters/generate";
 import type {
   CanvasLayout,
   Pair,
@@ -177,6 +179,7 @@ export const CameraScene: React.FC<{
   scene: SceneType | undefined;
   nextScene: { scene: SceneType; metadata: SceneMetadata } | null;
   previousScene: { scene: SceneType; metadata: SceneMetadata } | null;
+  chapters: ChapterType[];
 }> = ({
   metadata,
   pair,
@@ -188,15 +191,14 @@ export const CameraScene: React.FC<{
   scene,
   nextScene,
   previousScene,
+  chapters,
 }) => {
   const { height, width } = useVideoConfig();
-
-  const from = start;
 
   if (scene === undefined) {
     return (
       <Sequence
-        from={from}
+        from={start}
         durationInFrames={Math.max(1, metadata.durationInFrames)}
       >
         <div>
@@ -265,7 +267,7 @@ export const CameraScene: React.FC<{
   return (
     <Sequence
       name={`Scene ${index}`}
-      from={from}
+      from={start}
       durationInFrames={Math.max(1, metadata.durationInFrames)}
     >
       <Inner
@@ -282,6 +284,9 @@ export const CameraScene: React.FC<{
         nextWebcamPosition={nextWebcamPosition}
         previousWebcamPosition={prevWebcamPosition}
       />
+      {scene.newChapter ? (
+        <Chapters startFrom={start} chapters={chapters} />
+      ) : null}
     </Sequence>
   );
 };

@@ -306,8 +306,6 @@ export const getLayout = ({
         canvasLayout,
       });
 
-  console.log({ webcamLayout });
-
   return {
     displayLayout: displayLayout
       ? shiftLayoutIfTallMode({

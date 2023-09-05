@@ -6,6 +6,7 @@ import {
   getIsTransitioningOut,
 } from "./animations/transitions";
 import { AudioTrack } from "./AudioTrack";
+import { generateChapters } from "./chapters/generate";
 import type { Pair, SceneMetadata, videoConf } from "./configuration";
 import { transitionDuration } from "./configuration";
 import { CameraScene } from "./scenes/CameraScene";
@@ -27,6 +28,8 @@ export const All: React.FC<AllProps> = ({
 }) => {
   let addedUpDurations = 0;
   let videoCounter = -1;
+
+  const chapters = generateChapters(scenes, metadata);
 
   return (
     <AbsoluteFill
@@ -119,6 +122,7 @@ export const All: React.FC<AllProps> = ({
                 : null
             }
             scene={scene}
+            chapters={chapters}
           />
         );
       })}
