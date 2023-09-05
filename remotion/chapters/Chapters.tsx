@@ -22,10 +22,20 @@ export const Chapters: React.FC<{
     config: {
       damping: 200,
     },
-    durationInFrames: 20,
+    durationInFrames: 15,
   });
 
-  const translateX = interpolate(jumpIn, [0, 1], [-width, 0]);
+  const jumpOut = spring({
+    fps,
+    frame,
+    config: {
+      damping: 200,
+    },
+    durationInFrames: 15,
+    delay: 50,
+  });
+
+  const translateX = interpolate(jumpIn - jumpOut, [0, 1], [-width, 0]);
 
   return (
     <AbsoluteFill
