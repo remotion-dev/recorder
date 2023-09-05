@@ -5,6 +5,7 @@ export type ChapterType = {
   start: number;
   end: number;
   id: number;
+  index: number;
 };
 
 export const generateChapters = (
@@ -28,6 +29,7 @@ export const generateChapters = (
         start: passedDuration,
         end: passedDuration + metadata.sumUpDuration,
         id: passedDuration,
+        index: chapters.length,
       };
 
       chapters.push(chapter);
