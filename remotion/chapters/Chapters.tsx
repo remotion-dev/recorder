@@ -22,11 +22,13 @@ export const WideScreenChapters: React.FC<{
 
   const activeChapter =
     chapters.find((chapter) => {
-      return chapter.start <= absoluteFrame && absoluteFrame < chapter.end;
+      return chapter.start <= startFrom && absoluteFrame < chapter.end;
     })?.index ?? -1;
 
   const shouldJumpIn = activeChapter === 0;
-  const shouldJumpOut = activeChapter === chapters.length - 1;
+  const shouldJumpOut =
+    activeChapter === chapters.length - 1 &&
+    chapters[activeChapter].end === startFrom + durationInFrames;
 
   const jumpIn = shouldJumpIn
     ? spring({
