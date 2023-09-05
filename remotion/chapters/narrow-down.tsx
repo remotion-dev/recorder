@@ -1,6 +1,6 @@
 import type { ChapterType } from "./generate";
 
-const maxOtherChapters = 4;
+const maxOtherChapters = 2;
 
 export const narrowDownChapters = (
   chapters: ChapterType[],
@@ -10,7 +10,7 @@ export const narrowDownChapters = (
     .filter((_, i) => {
       return i < activeChapterIndex;
     })
-    .slice(-2);
+    .slice(-1);
 
   const availableToTake = maxOtherChapters - chaptersBefore.length;
 
