@@ -1,7 +1,7 @@
-import { Composition, staticFile } from "remotion";
+import { Composition,staticFile } from "remotion";
 import { All } from "./All";
 import { calcMetadata } from "./calc-metadata";
-import { fps, videoConf } from "./configuration";
+import { fps,videoConf } from "./configuration";
 import { Title } from "./scenes/Title";
 
 export const Root = () => {
@@ -2996,7 +2996,7 @@ export const Root = () => {
         id="augustupdate"
         schema={videoConf}
         defaultProps={{
-          layout: "square" as const,
+          layout: "wide" as const,
           prefix: "augustupdate",
           scenes: [
             {
@@ -3029,6 +3029,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
+              newChapter: "Image sequences",
             },
             {
               type: "scene" as const,
@@ -3049,6 +3050,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
+              newChapter: "Copy stills to clipboard",
             },
             {
               type: "scene" as const,
@@ -3059,6 +3061,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
+              newChapter: "Title bar progress",
             },
             {
               type: "scene" as const,
@@ -3069,6 +3072,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
+              newChapter: "getRemotionEnvironment()",
             },
             {
               type: "scene" as const,
@@ -3079,6 +3083,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
+              newChapter: "getSilentParts()",
             },
             {
               type: "scene" as const,
@@ -3089,6 +3094,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
+              newChapter: "Get codec and colorspace",
             },
             {
               type: "scene" as const,
@@ -3099,6 +3105,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
+              newChapter: "x264 presets",
             },
             {
               type: "scene" as const,
@@ -3109,6 +3116,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
+              newChapter: "Auto-install Chrome",
             },
             {
               type: "scene" as const,
@@ -3119,6 +3127,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
+              newChapter: "Custom webhook data",
             },
             {
               type: "scene" as const,
@@ -3129,6 +3138,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
+              newChapter: "Lambda tutorial",
             },
             {
               type: "scene" as const,
@@ -3139,6 +3149,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
+              newChapter: "Cloud Run update",
             },
             {
               type: "scene" as const,
