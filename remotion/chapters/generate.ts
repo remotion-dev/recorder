@@ -1,4 +1,6 @@
+import { getIsTransitioningIn } from "../animations/transitions";
 import type { SceneMetadata, SceneType } from "../configuration";
+import { transitionDuration } from "../configuration";
 
 export type ChapterType = {
   title: string;
@@ -24,9 +26,14 @@ export const generateChapters = (
         throw new Error("expected metadata to be defined");
       }
 
+      let start = passedDuration;
+      if (getIsTransitioningIn(scenes, i)) {
+        start -= transitionDuration;
+      }
+
       const chapter: ChapterType = {
         title: scene.newChapter,
-        start: passedDuration,
+        start,
         end: passedDuration + metadata.sumUpDuration,
         id: passedDuration,
         index: chapters.length,

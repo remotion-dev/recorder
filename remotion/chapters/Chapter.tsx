@@ -5,32 +5,83 @@ import type { ChapterType } from "./generate";
 const CHAPTER_HEIGHT = 80;
 const CHAPTER_VERTICAL_MARGIN = 4;
 
-export const Chapter: React.FC<{
+export const WideLayoutChapter: React.FC<{
   chapter: ChapterType;
   activeIndex: number;
-}> = ({ chapter, activeIndex }) => {
+  lastIndex: number;
+  firstIndex: number;
+  shouldAnimateIn: boolean;
+  shouldAnimateOut: boolean;
+}> = ({
+  chapter,
+  activeIndex,
+  lastIndex,
+  shouldAnimateOut,
+  firstIndex,
+  shouldAnimateIn,
+}) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, durationInFrames } = useVideoConfig();
 
+  const isFirst = chapter.index === firstIndex;
+  const isLast = chapter.index === lastIndex;
   const isPrevious = chapter.index === activeIndex - 1;
   const isCurrent = chapter.index === activeIndex;
 
-  const animateIn =
-    activeIndex === 0
-      ? 1
-      : spring({
-          frame,
-          fps,
-          config: { damping: 200 },
-          durationInFrames: 10,
-          delay: 10,
-        });
+  const animateIn = shouldAnimateIn
+    ? spring({
+        frame,
+        fps,
+        config: { damping: 200 },
+        durationInFrames: 10,
+        delay: 10,
+      })
+    : 1;
 
-  const translateY = interpolate(
+  const translateY =
+    activeIndex === 1
+      ? 0
+      : interpolate(
+          animateIn,
+          [0, 1],
+          [CHAPTER_HEIGHT + CHAPTER_VERTICAL_MARGIN * 2, 0]
+        );
+
+  const opacity = useMemo(() => {
+    if (activeIndex === 0) {
+      return 1;
+    }
+
+    if (isFirst && shouldAnimateOut) {
+      const delay = durationInFrames - 10;
+
+      return spring({
+        fps,
+        frame,
+        config: { damping: 200 },
+        delay,
+        from: 1,
+        to: 0,
+        durationInFrames: 10,
+      });
+    }
+
+    if (isLast && activeIndex !== 1 && shouldAnimateIn) {
+      return animateIn;
+    }
+
+    return 1;
+  }, [
+    activeIndex,
     animateIn,
-    [0, 1],
-    [CHAPTER_HEIGHT + CHAPTER_VERTICAL_MARGIN * 2, 0]
-  );
+    durationInFrames,
+    fps,
+    frame,
+    isFirst,
+    isLast,
+    shouldAnimateIn,
+    shouldAnimateOut,
+  ]);
 
   const wipePercentage = interpolate(animateIn, [0, 1], [0, 100]);
   const previousMaskImage = `linear-gradient(to bottom, transparent ${wipePercentage}%, black ${wipePercentage}%)`;
@@ -63,6 +114,7 @@ export const Chapter: React.FC<{
         justifyContent: "center",
         alignItems: "center",
         transform: `translateY(${translateY}px)`,
+        opacity,
       }}
     >
       <div

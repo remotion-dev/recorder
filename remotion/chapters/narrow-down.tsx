@@ -1,3 +1,4 @@
+import { truthy } from "../truthy";
 import type { ChapterType } from "./generate";
 
 const maxOtherChapters = 2;
@@ -22,5 +23,5 @@ export const narrowDownChapters = (
 
   const activeChapter = chapters[activeChapterIndex];
 
-  return [...chaptersBefore, activeChapter, ...chaptersAfter];
+  return [...chaptersBefore, activeChapter, ...chaptersAfter].filter(truthy);
 };

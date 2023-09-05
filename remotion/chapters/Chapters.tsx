@@ -6,49 +6,68 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { Chapter } from "./Chapter";
+import type { CanvasLayout } from "../configuration";
+import { WideLayoutChapter } from "./Chapter";
 import type { ChapterType } from "./generate";
 import { narrowDownChapters } from "./narrow-down";
 
-export const Chapters: React.FC<{
+export const WideScreenChapters: React.FC<{
   chapters: ChapterType[];
   startFrom: number;
-}> = ({ chapters, startFrom }) => {
+  canvasLayout: CanvasLayout;
+}> = ({ chapters, startFrom, canvasLayout }) => {
   const frame = useCurrentFrame();
-  const { fps, width } = useVideoConfig();
-
-  const jumpIn = spring({
-    fps,
-    frame,
-    config: {
-      damping: 200,
-    },
-    durationInFrames: 10,
-  });
-
-  const jumpOut = spring({
-    fps,
-    frame,
-    config: {
-      damping: 200,
-    },
-    durationInFrames: 10,
-    delay: 90,
-  });
-
   const absoluteFrame = frame + startFrom;
-
-  const translateX = interpolate(jumpIn - jumpOut, [0, 1], [-width, 0]);
+  const { fps, width, durationInFrames } = useVideoConfig();
 
   const activeChapter =
     chapters.find((chapter) => {
-      return chapter.start <= absoluteFrame && chapter.end >= absoluteFrame;
+      return chapter.start <= absoluteFrame && absoluteFrame < chapter.end;
     })?.index ?? -1;
+
+  const shouldJumpIn = activeChapter === 0;
+  const shouldJumpOut = activeChapter === chapters.length - 1;
+
+  const jumpIn = shouldJumpIn
+    ? spring({
+        fps,
+        frame,
+        config: {
+          damping: 200,
+        },
+        durationInFrames: 10,
+      })
+    : 1;
+
+  const jumpOut = shouldJumpOut
+    ? spring({
+        fps,
+        frame,
+        config: {
+          damping: 200,
+        },
+        durationInFrames: 10,
+        delay: 60,
+      })
+    : 0;
+
+  const translateX = interpolate(jumpIn - jumpOut, [0, 1], [-width, 0]);
+  const shownChapters = narrowDownChapters(chapters, activeChapter);
+
+  if (activeChapter === -1) {
+    return null;
+  }
+
+  const shouldAnimateIn =
+    activeChapter > 0 && chapters[activeChapter].start === startFrom;
+  const shouldAnimateOut =
+    startFrom + durationInFrames === chapters[activeChapter].end;
+
+  console.log({ shouldAnimateOut });
 
   return (
     <AbsoluteFill
       style={{
-        justifyContent: "flex-end",
         alignItems: "flex-start",
         padding: 25,
         transform: `translateX(${translateX}px)`,
@@ -56,18 +75,25 @@ export const Chapters: React.FC<{
     >
       <div
         style={{
-          filter: "drop-shadow(0 0 200px rgba(0, 0, 0, 0.4))",
+          filter:
+            canvasLayout === "wide"
+              ? undefined
+              : "drop-shadow(0 0 200px rgba(0, 0, 0, 0.4))",
           display: "flex",
           flexDirection: "column",
           alignItems: "flex-start",
         }}
       >
-        {narrowDownChapters(chapters, activeChapter).map((chapter) => {
+        {shownChapters.map((chapter) => {
           return (
-            <Chapter
+            <WideLayoutChapter
               key={chapter.id}
               activeIndex={activeChapter}
               chapter={chapter}
+              firstIndex={shownChapters[0].index}
+              lastIndex={shownChapters[shownChapters.length - 1].index}
+              shouldAnimateIn={shouldAnimateIn}
+              shouldAnimateOut={shouldAnimateOut}
             />
           );
         })}
