@@ -64,17 +64,15 @@ export const WideLayoutChapter: React.FC<{
     }
 
     if (isFirst && shouldAnimateOut) {
-      const delay = durationInFrames - 10;
-
-      return spring({
-        fps,
+      return interpolate(
         frame,
-        config: { damping: 200 },
-        delay,
-        from: 1,
-        to: 0,
-        durationInFrames: 10,
-      });
+        [durationInFrames - 10, durationInFrames],
+        [1, 0],
+        {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        }
+      );
     }
 
     if (isLast && activeIndex !== 1 && shouldAnimateIn) {
@@ -86,7 +84,6 @@ export const WideLayoutChapter: React.FC<{
     activeIndex,
     animateIn,
     durationInFrames,
-    fps,
     frame,
     isFirst,
     isLast,
@@ -138,6 +135,9 @@ export const WideLayoutChapter: React.FC<{
           width: 65,
           textAlign: "center",
           height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+          display: "flex",
         }}
       >
         {chapter.index + 1}

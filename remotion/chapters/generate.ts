@@ -44,6 +44,10 @@ export const generateChapters = (
       chapters[chapters.length - 1].end += metadata?.sumUpDuration ?? 0;
     }
 
+    if (scene.type === "scene" && scene.stopChapteringAfterThis) {
+      break;
+    }
+
     if (metadata) {
       passedDuration += metadata.sumUpDuration;
     }
