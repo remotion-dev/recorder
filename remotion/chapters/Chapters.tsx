@@ -23,7 +23,7 @@ export const Chapters: React.FC<{
     config: {
       damping: 200,
     },
-    durationInFrames: 15,
+    durationInFrames: 10,
   });
 
   const jumpOut = spring({
@@ -32,8 +32,8 @@ export const Chapters: React.FC<{
     config: {
       damping: 200,
     },
-    durationInFrames: 15,
-    delay: 50,
+    durationInFrames: 10,
+    delay: 90,
   });
 
   const absoluteFrame = frame + startFrom;
@@ -67,7 +67,6 @@ export const Chapters: React.FC<{
             <Chapter
               key={chapter.id}
               activeIndex={activeChapter}
-              startFrom={startFrom}
               chapter={chapter}
             />
           );

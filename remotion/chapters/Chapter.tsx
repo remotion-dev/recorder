@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import type { ChapterType } from "./generate";
 
@@ -7,15 +7,13 @@ const CHAPTER_VERTICAL_MARGIN = 4;
 
 export const Chapter: React.FC<{
   chapter: ChapterType;
-  startFrom: number;
   activeIndex: number;
-}> = ({ chapter, startFrom, activeIndex }) => {
+}> = ({ chapter, activeIndex }) => {
   const frame = useCurrentFrame();
-  const absoluteFrame = frame + startFrom;
   const { fps } = useVideoConfig();
 
-  const isCurrent =
-    absoluteFrame >= chapter.start && absoluteFrame <= chapter.end;
+  const isPrevious = chapter.index === activeIndex - 1;
+  const isCurrent = chapter.index === activeIndex;
 
   const animateIn =
     activeIndex === 0
@@ -24,8 +22,8 @@ export const Chapter: React.FC<{
           frame,
           fps,
           config: { damping: 200 },
-          durationInFrames: 20,
-          delay: 20,
+          durationInFrames: 10,
+          delay: 10,
         });
 
   const translateY = interpolate(
@@ -33,6 +31,24 @@ export const Chapter: React.FC<{
     [0, 1],
     [CHAPTER_HEIGHT + CHAPTER_VERTICAL_MARGIN * 2, 0]
   );
+
+  const wipePercentage = interpolate(animateIn, [0, 1], [0, 100]);
+  const previousMaskImage = `linear-gradient(to bottom, transparent ${wipePercentage}%, black ${wipePercentage}%)`;
+  const maskImage = `linear-gradient(to bottom, black ${wipePercentage}%, transparent ${wipePercentage}%)`;
+
+  const textStyle: React.CSSProperties = useMemo(() => {
+    return {
+      padding: "0px 20px",
+      fontSize: 36,
+      fontFamily: "GT Planar",
+      fontWeight: "500",
+      height: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      right: 0,
+    };
+  }, []);
 
   return (
     <div
@@ -65,20 +81,42 @@ export const Chapter: React.FC<{
       </div>
       <div
         style={{
-          backgroundColor: isCurrent ? "#0b84f3" : "white",
+          ...textStyle,
+          backgroundColor: "white",
           padding: "0px 20px",
-          fontSize: 36,
-          fontFamily: "GT Planar",
-          fontWeight: "500",
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          color: isCurrent ? "white" : "black",
+          color: "black",
         }}
       >
         {chapter.title}
       </div>
+      {isCurrent ? (
+        <div
+          style={{
+            ...textStyle,
+            backgroundColor: "#0b84f3",
+            color: "white",
+            WebkitMaskImage: maskImage,
+            maskImage,
+            position: "absolute",
+          }}
+        >
+          {chapter.title}
+        </div>
+      ) : null}
+      {isPrevious ? (
+        <div
+          style={{
+            ...textStyle,
+            backgroundColor: "#0b84f3",
+            color: "white",
+            WebkitMaskImage: previousMaskImage,
+            maskImage: previousMaskImage,
+            position: "absolute",
+          }}
+        >
+          {chapter.title}
+        </div>
+      ) : null}
     </div>
   );
 };
