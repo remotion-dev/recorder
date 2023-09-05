@@ -2996,7 +2996,7 @@ export const Root = () => {
         id="augustupdate"
         schema={videoConf}
         defaultProps={{
-          layout: "square" as const,
+          layout: "wide" as const,
           prefix: "augustupdate",
           scenes: [
             {
@@ -3006,8 +3006,8 @@ export const Root = () => {
               duration: null,
               zoomInAtStart: false,
               zoomInAtEnd: false,
-              transitionToNextScene: false,
-              music: "previous" as const,
+              transitionToNextScene: true,
+              music: "soft" as const,
             },
             {
               type: "scene" as const,
@@ -3050,7 +3050,7 @@ export const Root = () => {
               zoomInAtEnd: false,
               transitionToNextScene: false,
               music: "previous" as const,
-              newChapter: "Copy stills to clipboard",
+              newChapter: "Stills to clipboard",
             },
             {
               type: "scene" as const,

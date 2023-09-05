@@ -10,7 +10,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { getDisplayTranslation } from "../animations/camera-scene-transitions";
-import { Chapters } from "../chapters/Chapters";
+import { WideScreenChapters } from "../chapters/Chapters";
 import type { ChapterType } from "../chapters/generate";
 import type {
   CanvasLayout,
@@ -284,8 +284,12 @@ export const CameraScene: React.FC<{
         nextWebcamPosition={nextWebcamPosition}
         previousWebcamPosition={prevWebcamPosition}
       />
-      {scene.newChapter ? (
-        <Chapters startFrom={start} chapters={chapters} />
+      {canvasLayout === "wide" ? (
+        <WideScreenChapters
+          canvasLayout={canvasLayout}
+          startFrom={start}
+          chapters={chapters}
+        />
       ) : null}
     </Sequence>
   );
