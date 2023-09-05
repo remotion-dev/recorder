@@ -40,6 +40,7 @@ export const configuration = z.discriminatedUnion("type", [
     zoomInAtEnd: z.boolean().default(false),
     transitionToNextScene: z.boolean().default(false),
     newChapter: z.string().optional(),
+    stopChapteringAfterThis: z.boolean().optional(),
     music,
   }),
   z.object({
