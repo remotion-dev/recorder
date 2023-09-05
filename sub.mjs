@@ -36,7 +36,6 @@ for (const folder of folders) {
       fileToTranscribe.replace(".mp4", ".json").replace("webcam", "subs")
     );
     if (isTranscribed) {
-      console.log("is transcribed");
       continue;
     }
 
