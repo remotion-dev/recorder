@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, Sequence, useCurrentFrame } from "remotion";
 import type { ChapterType } from "./make-chapters";
-import { narrowDownChapters } from "./narrow-down";
+import { makeChapterScences } from "./narrow-down";
 import { SelectedChapters } from "./SelectedChapters";
 
 export const WideScreenChapters: React.FC<{
@@ -18,29 +18,34 @@ export const WideScreenChapters: React.FC<{
     return null;
   }
 
+  const chapterScenes = makeChapterScences(chapters);
+
   return (
     <AbsoluteFill>
-      {chapters.map((chapter) => {
-        const shownChapters = narrowDownChapters(chapters, chapter.index);
-
+      {chapterScenes.map((chapterScene) => {
         return (
           <Sequence
-            key={chapter.id}
-            from={chapter.start}
-            durationInFrames={chapter.end - chapter.start}
+            key={chapterScene.chapterId}
+            from={chapterScene.start}
+            durationInFrames={chapterScene.end - chapterScene.start}
           >
             <SelectedChapters
-              shouldJumpIn={chapter.index === 0}
-              shownChapters={shownChapters}
-              shouldJumpOut={chapter.index === chapters.length - 1}
-              activeIndex={chapter.index}
+              shouldJumpIn={chapterScene.chapterIndex === 0}
+              shownChapters={chapterScene.shownChapters}
+              shouldJumpOut={chapterScene.chapterIndex === chapters.length - 1}
+              activeIndex={chapterScene.chapterIndex}
               shouldFadeFirstOut={
-                chapter.index > 0 && chapter.index < chapters.length - 2
+                chapterScene.chapterIndex > 0 &&
+                chapterScene.chapterIndex < chapters.length - 2
               }
               shouldFadeLastIn={
-                chapter.index > 1 && chapter.index < chapters.length - 1
+                chapterScene.chapterIndex > 1 &&
+                chapterScene.chapterIndex < chapters.length - 1
               }
-              slideY={chapter.index > 1 && chapter.index < chapters.length - 1}
+              slideY={
+                chapterScene.chapterIndex > 1 &&
+                chapterScene.chapterIndex < chapters.length - 1
+              }
             />
           </Sequence>
         );
