@@ -10,7 +10,7 @@ import { transitionDuration } from "../configuration";
 import type { CameraSceneLayout } from "../layout/get-layout";
 import { getLayout } from "../layout/get-layout";
 
-type WebcamInformtion = {
+export type WebcamInformtion = {
   webcamPosition: WebcamPosition;
   start: number;
   end: number;
