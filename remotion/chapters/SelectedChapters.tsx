@@ -6,25 +6,28 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { CanvasLayout } from "../configuration";
 import { WideLayoutChapter } from "./Chapter";
 import type { ChapterType } from "./generate";
-import { narrowDownChapters } from "./narrow-down";
 
-export const WideScreenChapters: React.FC<{
-  chapters: ChapterType[];
-  canvasLayout: CanvasLayout;
-}> = ({ chapters, canvasLayout }) => {
-  const frame = useCurrentFrame();
+export const SelectedChapters: React.FC<{
+  shouldJumpIn: boolean;
+  shouldJumpOut: boolean;
+  shownChapters: ChapterType[];
+  activeIndex: number;
+  shouldFadeFirstOut: boolean;
+  shouldFadeLastIn: boolean;
+  slideY: boolean;
+}> = ({
+  shouldJumpIn,
+  shouldJumpOut,
+  shownChapters,
+  activeIndex,
+  shouldFadeFirstOut,
+  shouldFadeLastIn,
+  slideY,
+}) => {
   const { fps, width, durationInFrames } = useVideoConfig();
-
-  const activeChapter =
-    chapters.find((chapter) => {
-      return chapter.start <= frame && frame < chapter.end;
-    })?.index ?? -1;
-
-  const shouldJumpIn = activeChapter === 0;
-  const shouldJumpOut = false;
+  const frame = useCurrentFrame();
 
   const jumpIn = shouldJumpIn
     ? spring({
@@ -50,11 +53,6 @@ export const WideScreenChapters: React.FC<{
     : 0;
 
   const translateX = interpolate(jumpIn - jumpOut, [0, 1], [-width, 0]);
-  const shownChapters = narrowDownChapters(chapters, activeChapter);
-
-  if (activeChapter === -1) {
-    return null;
-  }
 
   return (
     <AbsoluteFill
@@ -66,23 +64,21 @@ export const WideScreenChapters: React.FC<{
     >
       <div
         style={{
-          filter:
-            canvasLayout === "wide"
-              ? undefined
-              : "drop-shadow(0 0 200px rgba(0, 0, 0, 0.4))",
           display: "flex",
           flexDirection: "column",
           alignItems: "flex-start",
         }}
       >
-        {shownChapters.map((chapter) => {
+        {shownChapters.map((chapter, i) => {
           return (
             <WideLayoutChapter
               key={chapter.id}
-              activeIndex={activeChapter}
+              activeIndex={activeIndex}
               chapter={chapter}
-              shouldAnimateEnter={false}
-              shouldSlideFromPrevious={false}
+              slideY={slideY}
+              slideHighlight={activeIndex > 0}
+              fadeOut={i === 0 && shouldFadeFirstOut}
+              fadeIn={i === shownChapters.length - 1 && shouldFadeLastIn}
             />
           );
         })}

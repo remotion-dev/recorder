@@ -8,47 +8,33 @@ const CHAPTER_VERTICAL_MARGIN = 4;
 export const WideLayoutChapter: React.FC<{
   chapter: ChapterType;
   activeIndex: number;
-  shouldAnimateEnter: boolean;
-  shouldSlideFromPrevious: boolean;
-}> = ({
-  chapter,
-  activeIndex,
-  shouldAnimateEnter,
-  shouldSlideFromPrevious,
-}) => {
+  slideHighlight: boolean;
+  slideY: boolean;
+  fadeOut: boolean;
+  fadeIn: boolean;
+}> = ({ chapter, activeIndex, slideY, slideHighlight, fadeOut, fadeIn }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, durationInFrames } = useVideoConfig();
 
   const isPrevious = chapter.index === activeIndex - 1;
   const isCurrent = chapter.index === activeIndex;
 
-  const animateIn = shouldAnimateEnter
-    ? spring({
-        frame,
-        fps,
-        config: { damping: 200 },
-        durationInFrames: 10,
-        delay: 10,
-      })
-    : 1;
+  const animation = spring({
+    frame,
+    fps,
+    config: { damping: 200 },
+    durationInFrames: 10,
+    delay: 10,
+  });
 
-  const slide = shouldSlideFromPrevious
-    ? spring({
-        frame,
-        fps,
-        config: { damping: 200 },
-        durationInFrames: 10,
-        delay: 10,
-      })
-    : 1;
-  const translateY =
-    activeIndex === 1
-      ? 0
-      : interpolate(
-          animateIn,
-          [0, 1],
-          [CHAPTER_HEIGHT + CHAPTER_VERTICAL_MARGIN * 2, 0]
-        );
+  const slide = slideHighlight ? animation : 1;
+  const translateY = slideY
+    ? interpolate(
+        animation,
+        [0, 1],
+        [CHAPTER_HEIGHT + CHAPTER_VERTICAL_MARGIN * 2, 0]
+      )
+    : 0;
 
   const wipePercentage = interpolate(slide, [0, 1], [0, 100]);
   const previousMaskImage = `linear-gradient(to bottom, transparent ${wipePercentage}%, black ${wipePercentage}%)`;
@@ -68,6 +54,22 @@ export const WideLayoutChapter: React.FC<{
     };
   }, []);
 
+  const opacity = useMemo(() => {
+    if (fadeOut) {
+      return interpolate(
+        frame,
+        [durationInFrames - 5, durationInFrames],
+        [1, 0]
+      );
+    }
+
+    if (fadeIn) {
+      return interpolate(frame, [0, 5], [0, 1]);
+    }
+
+    return 1;
+  }, [durationInFrames, fadeIn, fadeOut, frame]);
+
   return (
     <div
       style={{
@@ -81,6 +83,7 @@ export const WideLayoutChapter: React.FC<{
         justifyContent: "center",
         alignItems: "center",
         transform: `translateY(${translateY}px)`,
+        opacity,
       }}
     >
       <div
