@@ -13,22 +13,18 @@ import { narrowDownChapters } from "./narrow-down";
 
 export const WideScreenChapters: React.FC<{
   chapters: ChapterType[];
-  startFrom: number;
   canvasLayout: CanvasLayout;
-}> = ({ chapters, startFrom, canvasLayout }) => {
+}> = ({ chapters, canvasLayout }) => {
   const frame = useCurrentFrame();
-  const absoluteFrame = frame + startFrom;
   const { fps, width, durationInFrames } = useVideoConfig();
 
   const activeChapter =
     chapters.find((chapter) => {
-      return chapter.start <= startFrom && absoluteFrame < chapter.end;
+      return chapter.start <= frame && frame < chapter.end;
     })?.index ?? -1;
 
   const shouldJumpIn = activeChapter === 0;
-  const shouldJumpOut =
-    activeChapter === chapters.length - 1 &&
-    chapters[activeChapter].end === startFrom + durationInFrames;
+  const shouldJumpOut = false;
 
   const jumpIn = shouldJumpIn
     ? spring({
@@ -85,6 +81,8 @@ export const WideScreenChapters: React.FC<{
               key={chapter.id}
               activeIndex={activeChapter}
               chapter={chapter}
+              shouldAnimateEnter={false}
+              shouldSlideFromPrevious={false}
             />
           );
         })}
