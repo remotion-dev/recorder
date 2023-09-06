@@ -7,12 +7,12 @@ import {
   useVideoConfig,
 } from "remotion";
 import { safeSpace } from "../layout/get-layout";
+import type { ChapterType } from "./generate";
 import {
   CHAPTER_HEIGHT,
   CHAPTER_VERTICAL_MARGIN,
   WideLayoutChapter,
-} from "./Chapter";
-import type { ChapterType } from "./generate";
+} from "./WideLayoutChapter";
 
 export const SelectedChapters: React.FC<{
   shouldJumpIn: boolean;
