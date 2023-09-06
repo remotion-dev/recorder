@@ -14,6 +14,7 @@ export const WideLayoutChapter: React.FC<{
   fadeIn: boolean;
   isFirst: boolean;
   isLast: boolean;
+  rightAligned: boolean;
 }> = ({
   chapter,
   activeIndex,
@@ -23,6 +24,7 @@ export const WideLayoutChapter: React.FC<{
   fadeIn,
   isLast,
   isFirst,
+  rightAligned,
 }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
@@ -61,9 +63,10 @@ export const WideLayoutChapter: React.FC<{
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      right: 0,
+      right: rightAligned ? undefined : 0,
+      left: rightAligned ? 0 : undefined,
     };
-  }, []);
+  }, [rightAligned]);
 
   const opacity = useMemo(() => {
     if (fadeOut) {
@@ -81,6 +84,26 @@ export const WideLayoutChapter: React.FC<{
     return 1;
   }, [durationInFrames, fadeIn, fadeOut, frame]);
 
+  const chapterContent = (
+    <div
+      style={{
+        backgroundColor: "black",
+        color: "white",
+        padding: "12px 0px",
+        fontSize: 32,
+        fontFamily: "GT Planar",
+        width: 65,
+        textAlign: "center",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        display: "flex",
+      }}
+    >
+      {chapter.index + 1}
+    </div>
+  );
+
   return (
     <div
       style={{
@@ -97,23 +120,7 @@ export const WideLayoutChapter: React.FC<{
         opacity,
       }}
     >
-      <div
-        style={{
-          backgroundColor: "black",
-          color: "white",
-          padding: "12px 0px",
-          fontSize: 32,
-          fontFamily: "GT Planar",
-          width: 65,
-          textAlign: "center",
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-          display: "flex",
-        }}
-      >
-        {chapter.index + 1}
-      </div>
+      {rightAligned ? null : chapterContent}
       <div
         style={{
           ...textStyle,
@@ -152,6 +159,7 @@ export const WideLayoutChapter: React.FC<{
           {chapter.title}
         </div>
       ) : null}
+      {rightAligned ? chapterContent : null}
     </div>
   );
 };

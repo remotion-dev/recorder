@@ -84,6 +84,10 @@ export const SelectedChapters: React.FC<{
     return pos;
   }, [activeIndex, frame, shownChapters]);
 
+  const rightAligned =
+    webcamInformation.webcamPosition === "top-right" ||
+    webcamInformation.webcamPosition === "bottom-right";
+
   const styles = useMemo((): React.CSSProperties => {
     const { layout, webcamPosition } = webcamInformation;
 
@@ -91,14 +95,16 @@ export const SelectedChapters: React.FC<{
       throw new Error("no subs in center layout");
     }
 
-    const rightAligned =
-      webcamPosition === "top-right" || webcamPosition === "bottom-right";
     const topAligned =
       webcamPosition === "top-left" || webcamPosition === "top-right";
 
-    const style = {
+    const style: React.CSSProperties = {
       ...(rightAligned
-        ? { paddingRight: safeSpace("wide"), alignSelf: "flex-end" }
+        ? {
+            paddingRight: safeSpace("wide"),
+            alignSelf: "flex-end",
+            alignItems: "flex-end",
+          }
         : { paddingLeft: safeSpace("wide") }),
       ...(topAligned
         ? {
@@ -110,7 +116,7 @@ export const SelectedChapters: React.FC<{
     };
 
     return style;
-  }, [height, webcamInformation]);
+  }, [height, rightAligned, webcamInformation]);
 
   return (
     <AbsoluteFill
@@ -139,6 +145,7 @@ export const SelectedChapters: React.FC<{
                 isFirst={i === 0}
                 isLast={i === shownChapters.length - 1}
                 fadeIn={i === shownChapters.length - 1 && shouldFadeLastIn}
+                rightAligned={rightAligned}
               />
             </div>
           );
