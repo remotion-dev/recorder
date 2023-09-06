@@ -1,7 +1,7 @@
-import { Composition,staticFile } from "remotion";
+import { Composition, staticFile } from "remotion";
 import { All } from "./All";
 import { calcMetadata } from "./calc-metadata";
-import { fps,videoConf } from "./configuration";
+import { fps, videoConf } from "./configuration";
 import { Title } from "./scenes/Title";
 
 export const Root = () => {
@@ -27,7 +27,7 @@ export const Root = () => {
         id="Day2"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
 
           prefix: "day2",
           scenes: [
@@ -151,7 +151,7 @@ export const Root = () => {
         id="Day3"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
 
           prefix: "day3",
           scenes: [
@@ -175,7 +175,7 @@ export const Root = () => {
         id="Day4"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "day4",
 
           scenes: [
@@ -459,7 +459,7 @@ export const Root = () => {
         id="Day5"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "day5",
 
           scenes: [
@@ -685,7 +685,7 @@ export const Root = () => {
         id="bts"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "bts",
 
           scenes: [
@@ -869,7 +869,7 @@ export const Root = () => {
         id="asyncproblem"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "asyncproblem",
 
           scenes: [
@@ -946,7 +946,7 @@ export const Root = () => {
         id="july"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "july",
 
           scenes: [
@@ -1063,7 +1063,7 @@ export const Root = () => {
         id="saas-inflation"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "saas-inflation",
 
           scenes: [
@@ -1280,7 +1280,7 @@ export const Root = () => {
         id="get-silent-parts"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "get-silent-parts",
 
           scenes: [
@@ -1367,7 +1367,7 @@ export const Root = () => {
         id="lambda-setup"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "lambda-setup",
 
           scenes: [
@@ -1574,7 +1574,7 @@ export const Root = () => {
         id="lambda-rendering"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "lambda-rendering",
 
           scenes: [
@@ -1731,7 +1731,7 @@ export const Root = () => {
         id="lambda-debugging"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "lambda-debugging",
 
           scenes: [
@@ -1915,7 +1915,7 @@ export const Root = () => {
         id="dvd"
         schema={videoConf}
         defaultProps={{
-          layout: "square" as const,
+          canvasLayout: "square" as const,
           prefix: "dvd",
           scenes: [
             {
@@ -2079,7 +2079,7 @@ export const Root = () => {
         id="dvd-2"
         schema={videoConf}
         defaultProps={{
-          layout: "tall" as const,
+          canvasLayout: "tall" as const,
           prefix: "dvd-2",
           scenes: [
             {
@@ -2205,7 +2205,7 @@ export const Root = () => {
         id="million"
         schema={videoConf}
         defaultProps={{
-          layout: "wide" as const,
+          canvasLayout: "wide" as const,
           prefix: "million",
           scenes: [
             {
@@ -2395,7 +2395,7 @@ export const Root = () => {
         id="scope"
         schema={videoConf}
         defaultProps={{
-          layout: "square" as const,
+          canvasLayout: "square" as const,
           prefix: "scope",
           scenes: [
             {
@@ -2607,7 +2607,7 @@ export const Root = () => {
         id="uber-for-coding"
         schema={videoConf}
         defaultProps={{
-          layout: "square" as const,
+          canvasLayout: "square" as const,
           prefix: "uber-for-coding",
           scenes: [
             {
@@ -2811,7 +2811,7 @@ export const Root = () => {
         id="rome"
         schema={videoConf}
         defaultProps={{
-          layout: "square" as const,
+          canvasLayout: "square" as const,
           prefix: "rome",
           scenes: [
             {
@@ -2981,7 +2981,7 @@ export const Root = () => {
         id="karaoketeaser"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "karaoketeaser",
           scenes: [],
           metadata: [],
@@ -2996,7 +2996,7 @@ export const Root = () => {
         id="augustupdate"
         schema={videoConf}
         defaultProps={{
-          layout: "wide" as const,
+          canvasLayout: "wide" as const,
           prefix: "augustupdate",
           scenes: [
             {
@@ -3181,7 +3181,7 @@ export const Root = () => {
         id="empty"
         schema={videoConf}
         defaultProps={{
-          layout: "wide",
+          canvasLayout: "wide",
           prefix: "empty",
 
           scenes: [],

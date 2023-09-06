@@ -267,15 +267,14 @@ export type CameraSceneLayout = {
 
 export const getLayout = ({
   display,
-  canvasSize,
   canvasLayout,
   webcamPosition,
 }: {
   display: Dimensions | null;
-  canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
   webcamPosition: WebcamPosition;
 }): CameraSceneLayout => {
+  const canvasSize = getDimensionsForLayout(canvasLayout);
   const displayLayout = display
     ? wideLayout({
         videoWidth: display.width,

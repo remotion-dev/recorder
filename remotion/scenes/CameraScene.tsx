@@ -191,8 +191,6 @@ export const CameraScene: React.FC<{
   nextScene,
   previousScene,
 }) => {
-  const { height, width } = useVideoConfig();
-
   if (scene === undefined) {
     return (
       <Sequence
@@ -223,14 +221,8 @@ export const CameraScene: React.FC<{
   const startFrom = scene.trimStart ?? 0;
   const endAt = scene.duration ? startFrom + scene.duration : undefined;
 
-  const canvasSize = {
-    width,
-    height: canvasLayout === "tall" ? 1080 : height,
-  };
-
   const layout = getLayout({
     display: metadata.videos.display,
-    canvasSize,
     canvasLayout,
     webcamPosition: scene.webcamPosition,
   });
@@ -239,7 +231,6 @@ export const CameraScene: React.FC<{
     previousScene && previousScene.scene.type === "scene"
       ? getLayout({
           display: previousScene.metadata.videos?.display ?? null,
-          canvasSize,
           canvasLayout,
           webcamPosition: previousScene.scene.webcamPosition,
         })
@@ -249,7 +240,6 @@ export const CameraScene: React.FC<{
     nextScene && nextScene.scene.type === "scene"
       ? getLayout({
           display: nextScene.metadata.videos?.display ?? null,
-          canvasSize,
           canvasLayout,
           webcamPosition: nextScene.scene.webcamPosition,
         })

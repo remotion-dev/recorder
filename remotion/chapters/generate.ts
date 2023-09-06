@@ -1,15 +1,20 @@
 import { getIsTransitioningIn } from "../animations/transitions";
 import type {
+  CanvasLayout,
   SceneMetadata,
   SceneType,
+  SceneVideos,
   WebcamPosition,
 } from "../configuration";
 import { transitionDuration } from "../configuration";
+import type { CameraSceneLayout } from "../layout/get-layout";
+import { getLayout } from "../layout/get-layout";
 
 type WebcamInformtion = {
   webcamPosition: WebcamPosition;
   start: number;
   end: number;
+  layout: CameraSceneLayout;
 };
 
 export type ChapterType = {
@@ -21,10 +26,15 @@ export type ChapterType = {
   webcamPositions: WebcamInformtion[];
 };
 
-export const generateChapters = (
-  scenes: SceneType[],
-  metadatas: (SceneMetadata | null)[]
-) => {
+export const generateChapters = ({
+  scenes,
+  metadatas,
+  canvasLayout,
+}: {
+  scenes: SceneType[];
+  metadatas: (SceneMetadata | null)[];
+  canvasLayout: CanvasLayout;
+}) => {
   let passedDuration = 0;
   const chapters: ChapterType[] = [];
 
@@ -43,6 +53,12 @@ export const generateChapters = (
       }
 
       const end = start + metadata.sumUpDuration;
+      const layout = getLayout({
+        canvasLayout,
+        display: (metadata.videos as SceneVideos).display,
+        webcamPosition: scene.webcamPosition,
+      });
+
       const chapter: ChapterType = {
         title: scene.newChapter,
         start,
@@ -54,6 +70,7 @@ export const generateChapters = (
             start,
             webcamPosition: scene.webcamPosition,
             end,
+            layout,
           },
         ],
       };
@@ -74,6 +91,11 @@ export const generateChapters = (
             start: lastChapter.end,
             end: lastChapter.end + (metadata?.sumUpDuration ?? 0),
             webcamPosition: scene.webcamPosition,
+            layout: getLayout({
+              canvasLayout,
+              display: (metadata?.videos as SceneVideos).display,
+              webcamPosition: scene.webcamPosition,
+            }),
           });
         }
       }

@@ -25,14 +25,14 @@ export const All: React.FC<AllProps> = ({
   pairs,
   metadata,
   scenes,
-  layout,
+  canvasLayout,
 }) => {
   let addedUpDurations = 0;
   let videoCounter = -1;
 
   const chapters = useMemo(() => {
-    return generateChapters(scenes, metadata);
-  }, [metadata, scenes]);
+    return generateChapters({ scenes, metadatas: metadata, canvasLayout });
+  }, [canvasLayout, metadata, scenes]);
 
   return (
     <AbsoluteFill
@@ -112,7 +112,7 @@ export const All: React.FC<AllProps> = ({
             metadata={metadataForScene}
             index={i}
             shouldEnter={isTransitioningIn}
-            canvasLayout={layout}
+            canvasLayout={canvasLayout}
             shouldExit={isTransitioningOut}
             nextScene={
               scenes[i + 1] && metadata[i + 1]
@@ -129,7 +129,9 @@ export const All: React.FC<AllProps> = ({
           />
         );
       })}
-      {layout === "wide" ? <WideScreenChapters chapters={chapters} /> : null}
+      {canvasLayout === "wide" ? (
+        <WideScreenChapters chapters={chapters} />
+      ) : null}
       <AudioTrack metadata={metadata} scenes={scenes} />
     </AbsoluteFill>
   );
