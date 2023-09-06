@@ -7,7 +7,10 @@ import {
   useVideoConfig,
 } from "remotion";
 import { safeSpace } from "../layout/get-layout";
-import type { ChapterType } from "./generate";
+import type {
+  ChapterType,
+  WebcamInformtion as WebcamInformation,
+} from "./generate";
 import {
   CHAPTER_HEIGHT,
   CHAPTER_VERTICAL_MARGIN,
@@ -63,13 +66,12 @@ export const SelectedChapters: React.FC<{
     (CHAPTER_HEIGHT + CHAPTER_VERTICAL_MARGIN * 2) * shownChapters.length -
     CHAPTER_VERTICAL_MARGIN * 2;
 
-  const styles = useMemo((): React.CSSProperties => {
+  const webcamInformation = useMemo((): WebcamInformation => {
     const selectedChapter = shownChapters.find((c) => c.index === activeIndex);
     if (!selectedChapter) {
       throw new Error("Could not find selected chapter");
     }
 
-    // TODO: Find correct position
     const pos = selectedChapter.webcamPositions.find(
       (p) =>
         p.start - selectedChapter.start <= frame &&
@@ -79,51 +81,36 @@ export const SelectedChapters: React.FC<{
       throw new Error("Could not find position");
     }
 
-    const { layout, webcamPosition } = pos;
-    console.log(webcamPosition);
-    if (webcamPosition === "top-left") {
-      return {
-        display: "flex",
-        paddingLeft: safeSpace("wide"),
-        paddingTop: safeSpace("wide") * 2 + layout.webcamLayout.height,
-        flex: 1,
-      };
+    return pos;
+  }, [activeIndex, frame, shownChapters]);
+
+  const styles = useMemo((): React.CSSProperties => {
+    const { layout, webcamPosition } = webcamInformation;
+
+    if (webcamPosition === "center") {
+      throw new Error("no subs in center layout");
     }
 
-    if (webcamPosition === "top-right") {
-      return {
-        display: "flex",
-        paddingRight: safeSpace("wide"),
-        alignSelf: "flex-end",
-        flex: 1,
-        paddingTop: safeSpace("wide") * 2 + layout.webcamLayout.height,
-      };
-    }
+    const rightAligned =
+      webcamPosition === "top-right" || webcamPosition === "bottom-right";
+    const topAligned =
+      webcamPosition === "top-left" || webcamPosition === "top-right";
 
-    if (webcamPosition === "bottom-left") {
-      return {
-        display: "flex",
-        paddingRight: safeSpace("wide"),
-        flex: 1,
-        paddingTop: layout.webcamLayout.y - height - safeSpace("wide"),
-        paddingLeft: safeSpace("wide"),
-      };
-    }
+    const style = {
+      ...(rightAligned
+        ? { paddingRight: safeSpace("wide"), alignSelf: "flex-end" }
+        : { paddingLeft: safeSpace("wide") }),
+      ...(topAligned
+        ? {
+            paddingTop: safeSpace("wide") * 2 + layout.webcamLayout.height,
+          }
+        : {
+            paddingTop: layout.webcamLayout.y - height - safeSpace("wide"),
+          }),
+    };
 
-    if (webcamPosition === "bottom-right") {
-      return {
-        display: "flex",
-        paddingRight: safeSpace("wide"),
-        flex: 1,
-        alignSelf: "flex-end",
-        paddingTop: layout.webcamLayout.y - height - safeSpace("wide"),
-      };
-    }
-
-    throw new Error(
-      'chapters for "wide" layout must have a webcam position, not center'
-    );
-  }, [activeIndex, frame, height, shownChapters]);
+    return style;
+  }, [height, webcamInformation]);
 
   return (
     <AbsoluteFill
@@ -136,6 +123,7 @@ export const SelectedChapters: React.FC<{
           display: "flex",
           flexDirection: "column",
           height,
+          flex: 1,
           ...styles,
         }}
       >
