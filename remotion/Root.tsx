@@ -3033,7 +3033,7 @@ export const Root = () => {
             },
             {
               type: "scene" as const,
-              webcamPosition: "top-left" as const,
+              webcamPosition: "top-right" as const,
               trimStart: 0,
               duration: null,
               zoomInAtStart: false,

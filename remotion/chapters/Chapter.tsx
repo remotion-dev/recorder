@@ -2,8 +2,8 @@ import React, { useMemo } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import type { ChapterType } from "./generate";
 
-const CHAPTER_HEIGHT = 80;
-const CHAPTER_VERTICAL_MARGIN = 4;
+export const CHAPTER_HEIGHT = 80;
+export const CHAPTER_VERTICAL_MARGIN = 4;
 
 export const WideLayoutChapter: React.FC<{
   chapter: ChapterType;
@@ -12,7 +12,18 @@ export const WideLayoutChapter: React.FC<{
   slideY: boolean;
   fadeOut: boolean;
   fadeIn: boolean;
-}> = ({ chapter, activeIndex, slideY, slideHighlight, fadeOut, fadeIn }) => {
+  isFirst: boolean;
+  isLast: boolean;
+}> = ({
+  chapter,
+  activeIndex,
+  slideY,
+  slideHighlight,
+  fadeOut,
+  fadeIn,
+  isLast,
+  isFirst,
+}) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
 
@@ -76,8 +87,8 @@ export const WideLayoutChapter: React.FC<{
         display: "inline-flex",
         borderRadius: 20,
         border: "5px solid black",
-        marginTop: CHAPTER_VERTICAL_MARGIN,
-        marginBottom: CHAPTER_VERTICAL_MARGIN,
+        marginTop: isFirst ? 0 : CHAPTER_VERTICAL_MARGIN,
+        marginBottom: isLast ? 0 : CHAPTER_VERTICAL_MARGIN,
         overflow: "hidden",
         height: CHAPTER_HEIGHT,
         justifyContent: "center",

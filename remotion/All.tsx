@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { AbsoluteFill, Sequence } from "remotion";
 import type { z } from "zod";
 import {
@@ -30,7 +30,9 @@ export const All: React.FC<AllProps> = ({
   let addedUpDurations = 0;
   let videoCounter = -1;
 
-  const chapters = generateChapters(scenes, metadata);
+  const chapters = useMemo(() => {
+    return generateChapters(scenes, metadata);
+  }, [metadata, scenes]);
 
   return (
     <AbsoluteFill

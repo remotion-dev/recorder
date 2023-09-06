@@ -6,13 +6,19 @@ import type {
 } from "../configuration";
 import { transitionDuration } from "../configuration";
 
+type WebcamInformtion = {
+  webcamPosition: WebcamPosition;
+  start: number;
+  end: number;
+};
+
 export type ChapterType = {
   title: string;
   start: number;
   end: number;
   id: number;
   index: number;
-  webcamPosition: WebcamPosition;
+  webcamPositions: WebcamInformtion[];
 };
 
 export const generateChapters = (
@@ -36,18 +42,43 @@ export const generateChapters = (
         start -= transitionDuration;
       }
 
+      const end = start + metadata.sumUpDuration;
       const chapter: ChapterType = {
         title: scene.newChapter,
         start,
-        end: passedDuration + metadata.sumUpDuration,
+        end,
         id: passedDuration,
         index: chapters.length,
-        webcamPosition: scene.webcamPosition,
+        webcamPositions: [
+          {
+            start,
+            webcamPosition: scene.webcamPosition,
+            end,
+          },
+        ],
       };
 
       chapters.push(chapter);
     } else if (chapters.length > 0) {
-      chapters[chapters.length - 1].end += metadata?.sumUpDuration ?? 0;
+      const lastChapter = chapters[chapters.length - 1];
+      if (scene.type === "scene") {
+        if (
+          scene.webcamPosition ===
+          lastChapter.webcamPositions[lastChapter.webcamPositions.length - 1]
+            .webcamPosition
+        ) {
+          lastChapter.end += metadata?.sumUpDuration ?? 0;
+          continue;
+        } else {
+          lastChapter.webcamPositions.push({
+            start: lastChapter.end,
+            end: lastChapter.end + (metadata?.sumUpDuration ?? 0),
+            webcamPosition: scene.webcamPosition,
+          });
+        }
+      }
+
+      lastChapter.end += metadata?.sumUpDuration ?? 0;
     }
 
     if (scene.type === "scene" && scene.stopChapteringAfterThis) {
