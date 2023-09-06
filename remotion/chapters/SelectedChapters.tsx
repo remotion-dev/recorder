@@ -1,16 +1,15 @@
 import React, { useMemo } from "react";
 import {
   AbsoluteFill,
-  interpolate,
   spring,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
 import { safeSpace } from "../layout/get-layout";
-import type {
-  ChapterType,
-  WebcamInformtion as WebcamInformation,
-} from "./make-chapters";
+import type { ChapterType } from "./make-chapters";
+import type { ChapterScene } from "./narrow-down";
+import type { InTransition, OutTransition } from "./transition";
+import { makeInTransition, makeOutTransition } from "./transition";
 import {
   CHAPTER_HEIGHT,
   CHAPTER_VERTICAL_MARGIN,
@@ -18,71 +17,73 @@ import {
 } from "./WideLayoutChapter";
 
 export const SelectedChapters: React.FC<{
-  shouldJumpIn: boolean;
-  shouldJumpOut: boolean;
+  inTransition: InTransition;
+  outTransition: OutTransition;
   shownChapters: ChapterType[];
+  chapterScene: ChapterScene;
   activeIndex: number;
   shouldFadeFirstOut: boolean;
-  shouldFadeLastIn: boolean;
-  slideY: boolean;
+  shouldSlideY: boolean;
 }> = ({
-  shouldJumpIn,
-  shouldJumpOut,
+  inTransition,
+  outTransition,
   shownChapters,
   activeIndex,
   shouldFadeFirstOut,
-  shouldFadeLastIn,
-  slideY,
+  shouldSlideY,
+  chapterScene,
 }) => {
-  const { fps, width, durationInFrames } = useVideoConfig();
+  const { fps, width, height, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
 
-  const jumpIn = shouldJumpIn
-    ? spring({
-        fps,
-        frame,
-        config: {
-          damping: 200,
-        },
-        durationInFrames: 10,
-      })
-    : 1;
+  console.log({ inTransition, outTransition, shownChapters });
+  const jumpIn =
+    inTransition === "none"
+      ? 1
+      : spring({
+          fps,
+          frame,
+          config: {
+            damping: 200,
+          },
+          durationInFrames: 10,
+        });
 
-  const jumpOut = shouldJumpOut
-    ? spring({
-        fps,
-        frame,
-        config: {
-          damping: 200,
-        },
-        durationInFrames: 10,
-        delay: durationInFrames - 10,
-      })
-    : 0;
+  const jumpOut =
+    outTransition === "none"
+      ? 1
+      : spring({
+          fps,
+          frame,
+          config: {
+            damping: 200,
+          },
+          durationInFrames: 10,
+          delay: durationInFrames - 10,
+        });
 
-  const translateX = interpolate(jumpIn - jumpOut, [0, 1], [-width, 0]);
+  const { x: xIn, y: yIn } = makeInTransition({
+    height,
+    inTransition,
+    progress: jumpIn,
+    width,
+  });
 
-  const height =
+  const { x: xOut, y: yOut } = makeOutTransition({
+    height,
+    outTransition,
+    progress: jumpOut,
+    width,
+  });
+
+  const translateX = xIn + xOut;
+  const translateY = yIn + yOut;
+
+  const tableOfContentHeight =
     (CHAPTER_HEIGHT + CHAPTER_VERTICAL_MARGIN * 2) * shownChapters.length -
     CHAPTER_VERTICAL_MARGIN * 2;
 
-  const webcamInformation = useMemo((): WebcamInformation => {
-    const selectedChapter = shownChapters.find((c) => c.index === activeIndex);
-    if (!selectedChapter) {
-      throw new Error("Could not find selected chapter");
-    }
-
-    const pos = selectedChapter.webcamPositions.find(
-      (p) =>
-        p.start - selectedChapter.start <= frame &&
-        p.end - selectedChapter.start > frame
-    );
-    if (!pos) {
-      throw new Error("Could not find position");
-    }
-
-    return pos;
-  }, [activeIndex, frame, shownChapters]);
+  const { webcamInformation } = chapterScene;
 
   const rightAligned =
     webcamInformation.webcamPosition === "top-right" ||
@@ -111,24 +112,25 @@ export const SelectedChapters: React.FC<{
             paddingTop: safeSpace("wide") * 2 + layout.webcamLayout.height,
           }
         : {
-            paddingTop: layout.webcamLayout.y - height - safeSpace("wide"),
+            paddingTop:
+              layout.webcamLayout.y - tableOfContentHeight - safeSpace("wide"),
           }),
     };
 
     return style;
-  }, [height, rightAligned, webcamInformation]);
+  }, [tableOfContentHeight, rightAligned, webcamInformation]);
 
   return (
     <AbsoluteFill
       style={{
-        transform: `translateX(${translateX}px)`,
+        transform: `translateX(${translateX}px) translateY(${translateY}px)`,
       }}
     >
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          height,
+          height: tableOfContentHeight,
           flex: 1,
           ...styles,
         }}
@@ -139,12 +141,12 @@ export const SelectedChapters: React.FC<{
               <WideLayoutChapter
                 activeIndex={activeIndex}
                 chapter={chapter}
-                slideY={slideY}
+                slideY={shouldSlideY}
                 slideHighlight={activeIndex > 0}
                 fadeOut={i === 0 && shouldFadeFirstOut}
                 isFirst={i === 0}
                 isLast={i === shownChapters.length - 1}
-                fadeIn={i === shownChapters.length - 1 && shouldFadeLastIn}
+                fadeIn={i === shownChapters.length - 1 && shouldSlideY}
                 rightAligned={rightAligned}
               />
             </div>

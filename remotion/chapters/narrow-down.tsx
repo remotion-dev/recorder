@@ -10,6 +10,7 @@ export type ChapterScene = {
   start: number;
   end: number;
   chapterIndex: number;
+  webcamIndex: number;
 };
 
 const narrowDownChapters = (
@@ -40,14 +41,15 @@ export const makeChapterScences = (chapters: ChapterType[]): ChapterScene[] => {
     .map((chapter, i) => {
       const shownChapters = narrowDownChapters(chapters, i);
 
-      return chapter.webcamPositions.map((webcamInformation) => {
+      return chapter.webcamPositions.map((webcamInformation, index) => {
         return {
           chapterId: chapter.id,
           webcamInformation,
           shownChapters,
-          start: chapter.start,
-          end: chapter.end,
+          start: webcamInformation.start,
+          end: webcamInformation.end,
           chapterIndex: chapter.index,
+          webcamIndex: index,
         };
       });
     })
