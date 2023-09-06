@@ -12,10 +12,16 @@ export type InTransition =
 export const transitionOut = ({
   currentWebcamPosition,
   nextWebcamPosition,
+  transitionToNextScene,
 }: {
   currentWebcamPosition: WebcamPosition;
   nextWebcamPosition: WebcamPosition | null;
+  transitionToNextScene: boolean;
 }): OutTransition => {
+  if (!transitionToNextScene) {
+    return "none";
+  }
+
   if (currentWebcamPosition === "center" || nextWebcamPosition === "center") {
     return "none";
   }
@@ -64,9 +70,11 @@ export const transitionOut = ({
 export const transitionIn = ({
   currentWebcamPosition,
   previousWebcamPosition,
+  previousTransitionToNextScene,
 }: {
   currentWebcamPosition: WebcamPosition;
   previousWebcamPosition: WebcamPosition | null;
+  previousTransitionToNextScene: boolean;
 }): InTransition => {
   if (previousWebcamPosition === null) {
     if (
@@ -82,6 +90,7 @@ export const transitionIn = ({
   const outTransition = transitionOut({
     currentWebcamPosition: previousWebcamPosition,
     nextWebcamPosition: currentWebcamPosition,
+    transitionToNextScene: previousTransitionToNextScene,
   });
 
   if (outTransition === "none") {

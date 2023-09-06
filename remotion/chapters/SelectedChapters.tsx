@@ -24,6 +24,7 @@ export const SelectedChapters: React.FC<{
   activeIndex: number;
   shouldFadeFirstOut: boolean;
   shouldSlideY: boolean;
+  shouldSlideHighlight: boolean;
 }> = ({
   inTransition,
   outTransition,
@@ -32,11 +33,11 @@ export const SelectedChapters: React.FC<{
   shouldFadeFirstOut,
   shouldSlideY,
   chapterScene,
+  shouldSlideHighlight,
 }) => {
   const { fps, width, height, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
 
-  console.log({ inTransition, outTransition, shownChapters });
   const jumpIn =
     inTransition === "none"
       ? 1
@@ -142,7 +143,7 @@ export const SelectedChapters: React.FC<{
                 activeIndex={activeIndex}
                 chapter={chapter}
                 slideY={shouldSlideY}
-                slideHighlight={activeIndex > 0}
+                slideHighlight={shouldSlideHighlight}
                 fadeOut={i === 0 && shouldFadeFirstOut}
                 isFirst={i === 0}
                 isLast={i === shownChapters.length - 1}

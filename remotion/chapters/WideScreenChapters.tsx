@@ -21,7 +21,6 @@ export const WideScreenChapters: React.FC<{
   }
 
   const chapterScenes = makeChapterScences(chapters);
-  console.log(chapterScenes);
 
   return (
     <AbsoluteFill>
@@ -35,6 +34,8 @@ export const WideScreenChapters: React.FC<{
           nextWebcamPosition: nextChapterScene
             ? nextChapterScene.webcamInformation.webcamPosition
             : null,
+          transitionToNextScene:
+            chapterScene.webcamInformation.transitionToNextScene,
         });
 
         const inTransition = transitionIn({
@@ -42,11 +43,33 @@ export const WideScreenChapters: React.FC<{
           previousWebcamPosition: previousScene
             ? previousScene.webcamInformation.webcamPosition
             : null,
+          previousTransitionToNextScene: previousScene
+            ? previousScene.webcamInformation.transitionToNextScene
+            : false,
         });
 
-        const slideY =
+        const isSameWebcamPositionAsBefore =
+          previousScene?.webcamInformation?.webcamPosition ===
+          chapterScene.webcamInformation.webcamPosition;
+
+        const isSameWebcamPostiionAsNext =
+          nextChapterScene?.webcamInformation?.webcamPosition ===
+          chapterScene.webcamInformation.webcamPosition;
+
+        const isDifferentChapterThanPrevious =
+          previousScene?.chapterId !== chapterScene.chapterId;
+
+        const shouldSlideY =
           chapterScene.chapterIndex > 1 &&
-          chapterScene.chapterIndex < chapters.length - 1;
+          chapterScene.chapterIndex < chapters.length - 1 &&
+          isDifferentChapterThanPrevious &&
+          inTransition === "none" &&
+          isSameWebcamPositionAsBefore;
+
+        const shouldSlideHighlight =
+          isDifferentChapterThanPrevious &&
+          inTransition === "none" &&
+          isSameWebcamPositionAsBefore;
 
         return (
           <Sequence
@@ -61,10 +84,13 @@ export const WideScreenChapters: React.FC<{
               activeIndex={chapterScene.chapterIndex}
               shouldFadeFirstOut={
                 chapterScene.chapterIndex > 0 &&
-                chapterScene.chapterIndex < chapters.length - 2
+                chapterScene.chapterIndex < chapters.length - 2 &&
+                inTransition === "none" &&
+                isSameWebcamPostiionAsNext
               }
               chapterScene={chapterScene}
-              shouldSlideY={slideY}
+              shouldSlideY={shouldSlideY}
+              shouldSlideHighlight={shouldSlideHighlight}
             />
           </Sequence>
         );

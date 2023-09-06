@@ -10,11 +10,12 @@ import { transitionDuration } from "../configuration";
 import type { CameraSceneLayout } from "../layout/get-layout";
 import { getLayout } from "../layout/get-layout";
 
-export type WebcamInformtion = {
+export type WebcamInformation = {
   webcamPosition: WebcamPosition;
   start: number;
   end: number;
   layout: CameraSceneLayout;
+  transitionToNextScene: boolean;
 };
 
 export type ChapterType = {
@@ -23,7 +24,7 @@ export type ChapterType = {
   end: number;
   id: number;
   index: number;
-  webcamPositions: WebcamInformtion[];
+  webcamPositions: WebcamInformation[];
 };
 
 export const generateChapters = ({
@@ -71,6 +72,7 @@ export const generateChapters = ({
             webcamPosition: scene.webcamPosition,
             end,
             layout,
+            transitionToNextScene: scene.transitionToNextScene,
           },
         ],
       };
@@ -96,6 +98,7 @@ export const generateChapters = ({
               display: (metadata?.videos as SceneVideos).display,
               webcamPosition: scene.webcamPosition,
             }),
+            transitionToNextScene: scene.transitionToNextScene,
           });
         }
       }
