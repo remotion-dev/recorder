@@ -125,6 +125,7 @@ export const AudioTrack: React.FC<{
             // eslint-disable-next-line react/no-array-index-key
             key={i}
             from={clip.from}
+            layout="none"
             durationInFrames={clip.duration}
           >
             <AudioClip
