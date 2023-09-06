@@ -8,29 +8,14 @@ const CHAPTER_VERTICAL_MARGIN = 4;
 export const WideLayoutChapter: React.FC<{
   chapter: ChapterType;
   activeIndex: number;
-  lastIndex: number;
-  firstIndex: number;
-  shouldAnimateIn: boolean;
-  shouldAnimateOut: boolean;
-  shouldSlide: boolean;
-}> = ({
-  chapter,
-  activeIndex,
-  lastIndex,
-  shouldAnimateOut,
-  firstIndex,
-  shouldAnimateIn,
-  shouldSlide,
-}) => {
+}> = ({ chapter, activeIndex }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps } = useVideoConfig();
 
-  const isFirst = chapter.index === firstIndex;
-  const isLast = chapter.index === lastIndex;
   const isPrevious = chapter.index === activeIndex - 1;
   const isCurrent = chapter.index === activeIndex;
 
-  const animateIn = shouldAnimateIn
+  const animateIn = chapter.shouldAnimateEnter
     ? spring({
         frame,
         fps,
@@ -40,7 +25,7 @@ export const WideLayoutChapter: React.FC<{
       })
     : 1;
 
-  const slide = shouldSlide
+  const slide = chapter.shouldSlideFromPrevious
     ? spring({
         frame,
         fps,
@@ -57,39 +42,6 @@ export const WideLayoutChapter: React.FC<{
           [0, 1],
           [CHAPTER_HEIGHT + CHAPTER_VERTICAL_MARGIN * 2, 0]
         );
-
-  const opacity = useMemo(() => {
-    if (activeIndex === 0) {
-      return 1;
-    }
-
-    if (isFirst && shouldAnimateOut) {
-      return interpolate(
-        frame,
-        [durationInFrames - 10, durationInFrames],
-        [1, 0],
-        {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        }
-      );
-    }
-
-    if (isLast && activeIndex !== 1 && shouldAnimateIn) {
-      return animateIn;
-    }
-
-    return 1;
-  }, [
-    activeIndex,
-    animateIn,
-    durationInFrames,
-    frame,
-    isFirst,
-    isLast,
-    shouldAnimateIn,
-    shouldAnimateOut,
-  ]);
 
   const wipePercentage = interpolate(slide, [0, 1], [0, 100]);
   const previousMaskImage = `linear-gradient(to bottom, transparent ${wipePercentage}%, black ${wipePercentage}%)`;
@@ -122,7 +74,6 @@ export const WideLayoutChapter: React.FC<{
         justifyContent: "center",
         alignItems: "center",
         transform: `translateY(${translateY}px)`,
-        opacity,
       }}
     >
       <div

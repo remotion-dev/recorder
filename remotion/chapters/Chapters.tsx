@@ -60,21 +60,6 @@ export const WideScreenChapters: React.FC<{
     return null;
   }
 
-  const isSecondToLastChapterActive = activeChapter === chapters.length - 2;
-  const isLastChapterActive = activeChapter === chapters.length - 1;
-
-  const shouldAnimateIn =
-    activeChapter > 0 &&
-    chapters[activeChapter].start === startFrom &&
-    !isLastChapterActive;
-  const shouldSlide =
-    activeChapter > 0 && chapters[activeChapter].start === startFrom;
-  const shouldAnimateOut =
-    startFrom + durationInFrames === chapters[activeChapter].end &&
-    !isSecondToLastChapterActive &&
-    !isLastChapterActive;
-
-  console.log(shownChapters);
   return (
     <AbsoluteFill
       style={{
@@ -100,11 +85,6 @@ export const WideScreenChapters: React.FC<{
               key={chapter.id}
               activeIndex={activeChapter}
               chapter={chapter}
-              firstIndex={shownChapters[0].index}
-              lastIndex={shownChapters[shownChapters.length - 1].index}
-              shouldAnimateIn={shouldAnimateIn}
-              shouldAnimateOut={shouldAnimateOut}
-              shouldSlide={shouldSlide}
             />
           );
         })}
