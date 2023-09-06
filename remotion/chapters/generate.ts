@@ -1,5 +1,9 @@
 import { getIsTransitioningIn } from "../animations/transitions";
-import type { SceneMetadata, SceneType } from "../configuration";
+import type {
+  SceneMetadata,
+  SceneType,
+  WebcamPosition,
+} from "../configuration";
 import { transitionDuration } from "../configuration";
 
 export type ChapterType = {
@@ -8,6 +12,7 @@ export type ChapterType = {
   end: number;
   id: number;
   index: number;
+  webcamPosition: WebcamPosition;
 };
 
 export const generateChapters = (
@@ -37,6 +42,7 @@ export const generateChapters = (
         end: passedDuration + metadata.sumUpDuration,
         id: passedDuration,
         index: chapters.length,
+        webcamPosition: scene.webcamPosition,
       };
 
       chapters.push(chapter);
