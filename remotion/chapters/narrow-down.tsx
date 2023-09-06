@@ -1,16 +1,17 @@
 import { truthy } from "../truthy";
-import type { ChapterType, WebcamInformtion } from "./make-chapters";
+import type { ChapterType, WebcamInformation } from "./make-chapters";
 
 const maxOtherChapters = 2;
 
 export type ChapterScene = {
   chapterId: number;
-  webcamInformation: WebcamInformtion;
+  webcamInformation: WebcamInformation;
   shownChapters: ChapterType[];
   start: number;
   end: number;
   chapterIndex: number;
   webcamIndex: number;
+  transitionToNextScene: boolean;
 };
 
 const narrowDownChapters = (
@@ -41,17 +42,20 @@ export const makeChapterScences = (chapters: ChapterType[]): ChapterScene[] => {
     .map((chapter, i) => {
       const shownChapters = narrowDownChapters(chapters, i);
 
-      return chapter.webcamPositions.map((webcamInformation, index) => {
-        return {
-          chapterId: chapter.id,
-          webcamInformation,
-          shownChapters,
-          start: webcamInformation.start,
-          end: webcamInformation.end,
-          chapterIndex: chapter.index,
-          webcamIndex: index,
-        };
-      });
+      return chapter.webcamPositions.map(
+        (webcamInformation, index): ChapterScene => {
+          return {
+            chapterId: chapter.id,
+            webcamInformation,
+            shownChapters,
+            start: webcamInformation.start,
+            end: webcamInformation.end,
+            chapterIndex: chapter.index,
+            webcamIndex: index,
+            transitionToNextScene: webcamInformation.transitionToNextScene,
+          };
+        }
+      );
     })
     .flat(1);
 };
