@@ -8,13 +8,15 @@ export type Dimensions = {
   height: number;
 };
 
+export type SceneVideos = {
+  webcam: Dimensions;
+  display: Dimensions | null;
+};
+
 export type SceneMetadata = {
   durationInFrames: number;
   sumUpDuration: number;
-  videos: {
-    webcam: Dimensions;
-    display: Dimensions | null;
-  } | null;
+  videos: SceneVideos | null;
 };
 
 const webcamPosition = z.enum([
@@ -73,7 +75,7 @@ const scenes = z.array(configuration);
 export type SceneType = z.infer<typeof configuration>;
 
 export const videoConf = z.object({
-  layout: canvasLayout,
+  canvasLayout,
   scenes,
 });
 

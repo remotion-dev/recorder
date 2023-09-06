@@ -97,7 +97,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
   return {
     durationInFrames: totalDuration,
-    ...getDimensionsForLayout(props.layout),
+    ...getDimensionsForLayout(props.canvasLayout),
     props: {
       ...props,
       pairs,
