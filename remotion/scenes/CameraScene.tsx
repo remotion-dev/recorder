@@ -11,6 +11,7 @@ import {
 } from "remotion";
 import { getDisplayTranslation } from "../animations/camera-scene-transitions";
 import type { ChapterType } from "../chapters/make-chapters";
+import { SquareChapter } from "../chapters/SquareChapter";
 import type {
   CanvasLayout,
   Pair,
@@ -158,6 +159,12 @@ const Inner: React.FC<{
           exit={exit}
           nextWebcamPosition={nextWebcamPosition}
           prevWebcamPosition={previousWebcamPosition}
+        />
+      ) : null}
+      {scene.newChapter ? (
+        <SquareChapter
+          webcamPosition={scene.webcamPosition}
+          title={scene.newChapter}
         />
       ) : null}
       {shouldEnter ? (
