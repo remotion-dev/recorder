@@ -48,11 +48,11 @@ export const generateChapters = ({
       }
 
       let start = passedDuration;
+      const end = start + metadata.sumUpDuration;
       if (getIsTransitioningIn(scenes, i)) {
         start -= transitionDuration;
       }
 
-      const end = start + metadata.sumUpDuration;
       const layout = getLayout({
         canvasLayout,
         display: (metadata.videos as SceneVideos).display,

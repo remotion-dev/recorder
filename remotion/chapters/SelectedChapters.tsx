@@ -10,7 +10,7 @@ import { safeSpace } from "../layout/get-layout";
 import type {
   ChapterType,
   WebcamInformtion as WebcamInformation,
-} from "./generate";
+} from "./make-chapters";
 import {
   CHAPTER_HEIGHT,
   CHAPTER_VERTICAL_MARGIN,

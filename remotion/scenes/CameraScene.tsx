@@ -10,7 +10,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { getDisplayTranslation } from "../animations/camera-scene-transitions";
-import type { ChapterType } from "../chapters/generate";
+import type { ChapterType } from "../chapters/make-chapters";
 import type {
   CanvasLayout,
   Pair,

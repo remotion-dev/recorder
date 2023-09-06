@@ -6,7 +6,7 @@ import {
   getIsTransitioningOut,
 } from "./animations/transitions";
 import { AudioTrack } from "./AudioTrack";
-import { generateChapters } from "./chapters/generate";
+import { generateChapters } from "./chapters/make-chapters";
 import { WideScreenChapters } from "./chapters/WideScreenChapters";
 import type { Pair, SceneMetadata, videoConf } from "./configuration";
 import { transitionDuration } from "./configuration";

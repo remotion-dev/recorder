@@ -1,5 +1,5 @@
 import { truthy } from "../truthy";
-import type { ChapterType } from "./generate";
+import type { ChapterType } from "./make-chapters";
 
 const maxOtherChapters = 2;
 

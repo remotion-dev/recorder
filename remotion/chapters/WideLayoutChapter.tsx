@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import type { ChapterType } from "./generate";
+import type { ChapterType } from "./make-chapters";
 
 export const CHAPTER_HEIGHT = 80;
 export const CHAPTER_VERTICAL_MARGIN = 4;
