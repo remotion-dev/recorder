@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Sequence, useCurrentFrame } from "remotion";
-import type { ChapterType } from "./generate";
+import type { ChapterType } from "./make-chapters";
 import { narrowDownChapters } from "./narrow-down";
 import { SelectedChapters } from "./SelectedChapters";
 
