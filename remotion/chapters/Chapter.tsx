@@ -8,14 +8,21 @@ const CHAPTER_VERTICAL_MARGIN = 4;
 export const WideLayoutChapter: React.FC<{
   chapter: ChapterType;
   activeIndex: number;
-}> = ({ chapter, activeIndex }) => {
+  shouldAnimateEnter: boolean;
+  shouldSlideFromPrevious: boolean;
+}> = ({
+  chapter,
+  activeIndex,
+  shouldAnimateEnter,
+  shouldSlideFromPrevious,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   const isPrevious = chapter.index === activeIndex - 1;
   const isCurrent = chapter.index === activeIndex;
 
-  const animateIn = chapter.shouldAnimateEnter
+  const animateIn = shouldAnimateEnter
     ? spring({
         frame,
         fps,
@@ -25,7 +32,7 @@ export const WideLayoutChapter: React.FC<{
       })
     : 1;
 
-  const slide = chapter.shouldSlideFromPrevious
+  const slide = shouldSlideFromPrevious
     ? spring({
         frame,
         fps,

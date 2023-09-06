@@ -6,6 +6,7 @@ import {
   getIsTransitioningOut,
 } from "./animations/transitions";
 import { AudioTrack } from "./AudioTrack";
+import { WideScreenChapters } from "./chapters/Chapters";
 import { generateChapters } from "./chapters/generate";
 import type { Pair, SceneMetadata, videoConf } from "./configuration";
 import { transitionDuration } from "./configuration";
@@ -126,6 +127,9 @@ export const All: React.FC<AllProps> = ({
           />
         );
       })}
+      {layout === "wide" ? (
+        <WideScreenChapters canvasLayout={layout} chapters={chapters} />
+      ) : null}
       <AudioTrack metadata={metadata} scenes={scenes} />
     </AbsoluteFill>
   );
