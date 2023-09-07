@@ -26,6 +26,7 @@
     "@remotion/google-fonts": "4.0.28",
     "@remotion/media-utils": "4.0.28",
     "@remotion/renderer": "4.0.28",
+    "@remotion/shapes": "4.0.28",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react-swc": "^3.0.0",
