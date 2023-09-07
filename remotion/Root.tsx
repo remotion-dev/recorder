@@ -1,12 +1,22 @@
-import { Composition,staticFile } from "remotion";
+import { Composition, staticFile } from "remotion";
 import { All } from "./All";
 import { calcMetadata } from "./calc-metadata";
-import { fps,videoConf } from "./configuration";
+import { fps, videoConf } from "./configuration";
 import { Title } from "./scenes/Title";
+import { UpdateScene } from "./scenes/UpdateScene";
 
 export const Root = () => {
   return (
     <>
+      <Composition
+        component={UpdateScene}
+        fps={fps}
+        durationInFrames={100}
+        id="Update"
+        height={1080}
+        width={1080}
+        defaultProps={{}}
+      />{" "}
       <Composition
         component={Title}
         durationInFrames={100}
