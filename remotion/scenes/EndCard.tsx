@@ -35,6 +35,7 @@ const iconRow: React.CSSProperties = {
   border: "6px solid black",
   borderRadius,
   overflow: "hidden",
+  maxWidth: 800,
 };
 
 const remotionRow: React.CSSProperties = {
