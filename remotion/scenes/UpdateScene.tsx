@@ -8,6 +8,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { transitionDuration } from "../configuration";
 
 const size = 180;
 const padding = 20;
@@ -142,8 +143,29 @@ const RandomPie: React.FC<{
 
 export const UpdateScene: React.FC = () => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
   const posterizedFrame = Math.floor(frame / 5) * 5;
+
+  const show = (delay: number) =>
+    spring({
+      fps,
+      frame,
+      durationInFrames: transitionDuration,
+      config: {
+        damping: 200,
+      },
+      delay,
+    });
+
+  const hide = spring({
+    fps,
+    frame,
+    durationInFrames: transitionDuration,
+    config: {
+      damping: 200,
+    },
+    delay: durationInFrames - transitionDuration,
+  });
 
   const prog = (delay: number) =>
     spring({
@@ -162,6 +184,10 @@ export const UpdateScene: React.FC = () => {
         backgroundColor: "white",
         justifyContent: "center",
         alignItems: "center",
+        translate:
+          interpolate(hide, [0, 1], [0, -width]) +
+          interpolate(show(0), [0, 1], [width, 0]) +
+          "px 0",
       }}
     >
       <div style={row}>

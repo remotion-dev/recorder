@@ -14,6 +14,7 @@ import { CameraScene } from "./scenes/CameraScene";
 import { EndCard } from "./scenes/EndCard";
 import { Title } from "./scenes/Title";
 import { TitleCard } from "./scenes/TitleCard";
+import { UpdateScene } from "./scenes/UpdateScene";
 
 export type AllProps = z.infer<typeof videoConf> & {
   metadata: SceneMetadata[];
@@ -71,6 +72,18 @@ export const All: React.FC<AllProps> = ({
           );
         }
 
+        if (scene.type === "remotionupdate") {
+          return (
+            <Sequence
+              key={"update"}
+              from={from}
+              durationInFrames={scene.durationInFrames}
+            >
+              <UpdateScene />
+            </Sequence>
+          );
+        }
+
         if (scene.type === "titlecard") {
           return (
             <Sequence
@@ -97,7 +110,7 @@ export const All: React.FC<AllProps> = ({
               from={from}
               durationInFrames={scene.durationInFrames}
             >
-              <EndCard channel={scene.channel} />
+              <EndCard canvasLayout={canvasLayout} channel={scene.channel} />
             </Sequence>
           );
         }

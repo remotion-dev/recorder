@@ -4,7 +4,8 @@ export const isATextCard = (scene: SceneType) => {
   return (
     scene.type === "title" ||
     scene.type === "titlecard" ||
-    scene.type === "endcard"
+    scene.type === "endcard" ||
+    scene.type === "remotionupdate"
   );
 };
 
