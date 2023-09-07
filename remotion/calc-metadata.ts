@@ -42,7 +42,8 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
         if (
           scene.type === "title" ||
           scene.type === "titlecard" ||
-          scene.type === "endcard"
+          scene.type === "endcard" ||
+          scene.type === "remotionupdate"
         ) {
           return {
             videos: null,

@@ -3020,6 +3020,11 @@ export const Root = () => {
               music: "soft" as const,
             },
             {
+              type: "remotionupdate" as const,
+              durationInFrames: 100,
+              music: "previous",
+            },
+            {
               type: "scene" as const,
               webcamPosition: "bottom-left" as const,
               trimStart: 0,
