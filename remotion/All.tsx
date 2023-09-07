@@ -110,7 +110,11 @@ export const All: React.FC<AllProps> = ({
               from={from}
               durationInFrames={scene.durationInFrames}
             >
-              <EndCard canvasLayout={canvasLayout} channel={scene.channel} />
+              <EndCard
+                platform={scene.platform}
+                canvasLayout={canvasLayout}
+                channel={scene.channel}
+              />
             </Sequence>
           );
         }

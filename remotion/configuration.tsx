@@ -27,6 +27,10 @@ const webcamPosition = z.enum([
   "center",
 ]);
 
+const platform = z.enum(["youtube", "linkedin", "instagram", "x"]);
+
+export type Platform = z.infer<typeof platform>;
+
 export type WebcamPosition = z.infer<typeof webcamPosition>;
 
 export const channel = z.enum(["jonny", "remotion"]);
@@ -70,6 +74,7 @@ export const configuration = z.discriminatedUnion("type", [
     durationInFrames: z.number().int().default(100),
     music,
     channel,
+    platform,
   }),
 ]);
 
