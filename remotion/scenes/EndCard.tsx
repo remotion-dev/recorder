@@ -78,7 +78,7 @@ const IconRow: React.FC<{
   const frame = useCurrentFrame();
   const { fps, height } = useVideoConfig();
 
-  const { path, viewBox, brandColor, cta } = platformData[platform];
+  const { path, viewBox, cta } = platformData[platform];
 
   const enterSpring = spring({
     fps,
