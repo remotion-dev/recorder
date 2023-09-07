@@ -28,7 +28,8 @@ export const getIsTransitioningOut = (scenes: SceneType[], index: number) => {
   if (
     scene.type === "scene" &&
     nextScene.type === "scene" &&
-    scene.transitionToNextScene
+    scene.transitionToNextScene &&
+    nextScene.webcamPosition !== scene.webcamPosition
   ) {
     return true;
   }

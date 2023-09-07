@@ -85,7 +85,7 @@ export const WideScreenChapters: React.FC<{
               shouldFadeFirstOut={
                 chapterScene.chapterIndex > 0 &&
                 chapterScene.chapterIndex < chapters.length - 2 &&
-                inTransition === "none" &&
+                outTransition === "none" &&
                 isSameWebcamPostiionAsNext
               }
               chapterScene={chapterScene}

@@ -1,5 +1,5 @@
 import { loadFont } from "@remotion/google-fonts/RobotoCondensed";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   AbsoluteFill,
   Img,
@@ -36,13 +36,6 @@ const iconRow: React.CSSProperties = {
   borderRadius,
   overflow: "hidden",
   maxWidth: 800,
-};
-
-const remotionRow: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "center",
 };
 
 const IconRow: React.FC<{
@@ -128,6 +121,16 @@ export const EndCard: React.FC<{
     durationInFrames: 20,
     delay: 40,
   });
+
+  const remotionRow: React.CSSProperties = useMemo(() => {
+    return {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: canvasLayout === "wide" ? "flex-start" : "center",
+    };
+  }, [canvasLayout]);
+
   return (
     <AbsoluteFill
       style={{
