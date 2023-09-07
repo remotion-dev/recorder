@@ -1,7 +1,7 @@
-import { Composition,staticFile } from "remotion";
+import { Composition, staticFile } from "remotion";
 import { All } from "./All";
 import { calcMetadata } from "./calc-metadata";
-import { fps,videoConf } from "./configuration";
+import { fps, videoConf } from "./configuration";
 import { Title } from "./scenes/Title";
 import { UpdateScene } from "./scenes/UpdateScene";
 
@@ -2391,6 +2391,7 @@ export const Root = () => {
               durationInFrames: 200,
               music: "previous" as const,
               channel: "jonny",
+              platform: "x" as const,
             },
           ],
           metadata: [],
@@ -2603,6 +2604,7 @@ export const Root = () => {
               durationInFrames: 300,
               music: "soft" as const,
               channel: "jonny" as const,
+              platform: "x" as const,
             },
           ],
           metadata: [],
@@ -2977,6 +2979,7 @@ export const Root = () => {
               durationInFrames: 100,
               music: "previous" as const,
               channel: "jonny" as const,
+              platform: "x" as const,
             },
           ],
           metadata: [],
@@ -3182,6 +3185,7 @@ export const Root = () => {
               durationInFrames: 200,
               music: "previous" as const,
               channel: "remotion" as const,
+              platform: "x" as const,
             },
           ],
           metadata: [],
@@ -3198,7 +3202,6 @@ export const Root = () => {
         defaultProps={{
           canvasLayout: "wide",
           prefix: "empty",
-
           scenes: [],
           metadata: [],
           pairs: [],
