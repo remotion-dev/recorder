@@ -1,7 +1,7 @@
-import { Composition, staticFile } from "remotion";
+import { Composition,staticFile } from "remotion";
 import { All } from "./All";
 import { calcMetadata } from "./calc-metadata";
-import { fps, videoConf } from "./configuration";
+import { fps,videoConf } from "./configuration";
 import { Title } from "./scenes/Title";
 import { UpdateScene } from "./scenes/UpdateScene";
 
@@ -3006,7 +3006,7 @@ export const Root = () => {
         id="augustupdate"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "wide" as const,
+          canvasLayout: "square" as const,
           prefix: "augustupdate",
           scenes: [
             {
@@ -3113,7 +3113,7 @@ export const Root = () => {
             },
             {
               type: "scene" as const,
-              webcamPosition: "top-left" as const,
+              webcamPosition: "bottom-right" as const,
               trimStart: 0,
               duration: null,
               zoomInAtStart: false,
