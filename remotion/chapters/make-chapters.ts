@@ -49,6 +49,7 @@ export const generateChapters = ({
       }
 
       let start = passedDuration;
+
       const end = start + metadata.sumUpDuration;
       if (getIsTransitioningIn(scenes, i)) {
         start -= transitionDuration;
@@ -86,8 +87,12 @@ export const generateChapters = ({
           lastChapter.webcamPositions[lastChapter.webcamPositions.length - 1]
             .webcamPosition
         ) {
-          lastChapter.end += metadata?.sumUpDuration ?? 0;
-          continue;
+          lastChapter.webcamPositions[
+            lastChapter.webcamPositions.length - 1
+          ].transitionToNextScene = scene.transitionToNextScene;
+          lastChapter.webcamPositions[
+            lastChapter.webcamPositions.length - 1
+          ].end += metadata?.sumUpDuration ?? 0;
         } else {
           lastChapter.webcamPositions.push({
             start: lastChapter.end,
