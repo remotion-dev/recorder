@@ -1,9 +1,9 @@
-import { Composition, staticFile } from "remotion";
-import { All } from "./All";
-import { calcMetadata } from "./calc-metadata";
-import { fps, videoConf } from "./configuration";
-import { Title } from "./scenes/Title";
-import { UpdateScene } from "./scenes/UpdateScene";
+import { Composition,staticFile } from "remotion";
+import { All } from "./All";
+import { calcMetadata } from "./calc-metadata";
+import { fps,videoConf } from "./configuration";
+import { Title } from "./scenes/Title";
+import { UpdateScene } from "./scenes/UpdateScene";
 
 export const Root = () => {
   return (
@@ -3203,6 +3203,34 @@ export const Root = () => {
           canvasLayout: "wide",
           prefix: "empty",
           scenes: [],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />{" "}
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="bunbun"
+        schema={videoConf}
+        defaultProps={{
+          canvasLayout: "wide" as const,
+          prefix: "bunbun",
+          scenes: [
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              zoomInAtStart: false,
+              zoomInAtEnd: false,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+          ],
           metadata: [],
           pairs: [],
         }}
