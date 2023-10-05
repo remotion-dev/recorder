@@ -164,12 +164,11 @@ export const SegmentComp: React.FC<{
         <span
           style={{
             backgroundColor:
-              displayLayout === null ? "rgba(0, 0, 0, 0.15)" : "white",
+              displayLayout === null ? "rgba(0, 0, 0, 0.4)" : "white",
             lineHeight: 1.2,
             display: "inline-block",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
-            backdropFilter: displayLayout === null ? "blur(5px)" : undefined,
             ...inlineSubsLayout(canvasLayout, displayLayout),
           }}
         >

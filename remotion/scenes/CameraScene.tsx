@@ -21,7 +21,7 @@ import type {
 } from "../configuration";
 import { transitionDuration } from "../configuration";
 import type { CameraSceneLayout } from "../layout/get-layout";
-import { borderRadius, frameWidth, getLayout } from "../layout/get-layout";
+import { borderRadius, getLayout } from "../layout/get-layout";
 import { Subs } from "../Subs/Subs";
 import { WebcamVideo } from "../WebcamVideo";
 
@@ -112,8 +112,7 @@ const Inner: React.FC<{
               left: layout.displayLayout.x,
               top: layout.displayLayout.y,
               position: "absolute",
-              padding: frameWidth,
-              borderRadius: borderRadius + frameWidth,
+              borderRadius,
               opacity: displayTranslation.opacity,
               translate: `${displayTranslation.translationX}px ${displayTranslation.translationY}px`,
             }}

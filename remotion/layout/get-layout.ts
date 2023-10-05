@@ -15,8 +15,6 @@ export type Layout = {
   height: number;
 };
 
-export const frameWidth = 0;
-
 const webcamRatio = 400 / 350;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -93,13 +91,13 @@ const wideLayout = ({
     canvasSize.height - bottomSafeSpace - safeSpace(canvasLayout);
   const maxWidth = canvasSize.width - safeSpace(canvasLayout) * 2;
 
-  const heightRatio = maxHeight / (videoHeight + frameWidth * 2);
-  const widthRatio = maxWidth / (videoWidth + frameWidth * 2);
+  const heightRatio = maxHeight / videoHeight;
+  const widthRatio = maxWidth / videoWidth;
 
   const ratio = Math.min(heightRatio, widthRatio);
 
-  const newWidth = (videoWidth + frameWidth * 2) * ratio;
-  const newHeight = (videoHeight + frameWidth * 2) * ratio;
+  const newWidth = videoWidth * ratio;
+  const newHeight = videoHeight * ratio;
 
   const x = (canvasSize.width - newWidth) / 2;
   const y =

@@ -3520,7 +3520,7 @@ export const Root = () => {
         id="september"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "square" as const,
+          canvasLayout: "wide" as const,
           prefix: "september",
           scenes: [
             {
@@ -3583,8 +3583,8 @@ export const Root = () => {
               duration: null,
               zoomInAtStart: false,
               zoomInAtEnd: false,
-              transitionToNextScene: false,
-              newChapter: "",
+              transitionToNextScene: true,
+              newChapter: "Auto-clean S3 bucket",
               stopChapteringAfterThis: false,
               music: "previous" as const,
             },
@@ -3595,8 +3595,8 @@ export const Root = () => {
               duration: null,
               zoomInAtStart: false,
               zoomInAtEnd: false,
-              transitionToNextScene: false,
-              newChapter: "",
+              transitionToNextScene: true,
+              newChapter: "Important SSR fixes",
               stopChapteringAfterThis: false,
               music: "previous" as const,
             },
@@ -3607,9 +3607,9 @@ export const Root = () => {
               duration: null,
               zoomInAtStart: false,
               zoomInAtEnd: false,
-              transitionToNextScene: false,
-              newChapter: "",
-              stopChapteringAfterThis: false,
+              transitionToNextScene: true,
+              newChapter: "Hacktoberfest",
+              stopChapteringAfterThis: true,
               music: "previous" as const,
             },
             {
