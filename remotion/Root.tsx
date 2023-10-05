@@ -3520,7 +3520,7 @@ export const Root = () => {
         id="september"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "wide" as const,
+          canvasLayout: "square" as const,
           prefix: "september",
           scenes: [
             {
