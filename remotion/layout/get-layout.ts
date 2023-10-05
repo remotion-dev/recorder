@@ -13,6 +13,7 @@ export type Layout = {
   y: number;
   width: number;
   height: number;
+  borderRadius: number;
 };
 
 const webcamRatio = 400 / 350;
@@ -59,16 +60,15 @@ const overrideYForAltLayouts = ({
 
 const fullscreenLayout = ({
   canvasSize,
-  canvasLayout,
 }: {
   canvasSize: Dimensions;
-  canvasLayout: CanvasLayout;
-}) => {
+}): Layout => {
   return {
-    x: safeSpace(canvasLayout),
-    y: safeSpace(canvasLayout),
-    width: canvasSize.width - safeSpace(canvasLayout) * 2,
-    height: canvasSize.height - safeSpace(canvasLayout) * 2,
+    x: 0,
+    y: 0,
+    width: canvasSize.width,
+    height: canvasSize.height,
+    borderRadius: 0,
   };
 };
 
@@ -115,6 +115,7 @@ const wideLayout = ({
     }),
     width: newWidth,
     height: newHeight,
+    borderRadius,
   };
 };
 
@@ -191,6 +192,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
         canvasSize.height -
         webcamSize.height -
         getBottomSafeSpace(canvasLayout),
+      borderRadius,
     };
   }
 
@@ -202,6 +204,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
         canvasSize.height -
         webcamSize.height -
         getBottomSafeSpace(canvasLayout),
+      borderRadius,
     };
   }
 
@@ -210,6 +213,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
       ...webcamSize,
       x: safeSpace(canvasLayout),
       y: safeSpace(canvasLayout),
+      borderRadius,
     };
   }
 
@@ -218,6 +222,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
       ...webcamSize,
       x: canvasSize.width - webcamSize.width - safeSpace(canvasLayout),
       y: safeSpace(canvasLayout),
+      borderRadius,
     };
   }
 
@@ -226,6 +231,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
     width: webcamSize.width,
     x: 0,
     y: 0,
+    borderRadius,
   };
 };
 
@@ -300,7 +306,6 @@ export const getLayout = ({
       })
     : fullscreenLayout({
         canvasSize,
-        canvasLayout,
       });
 
   return {
