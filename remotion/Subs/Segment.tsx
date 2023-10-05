@@ -70,7 +70,7 @@ const getSubsLayout = ({
         ? webcamLayout.width + safeSpace(canvasLayout) * 2
         : safeSpace(canvasLayout),
     width: canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
-    justifyContent: "center",
+    paddingTop: safeSpace(canvasLayout),
   };
 };
 
