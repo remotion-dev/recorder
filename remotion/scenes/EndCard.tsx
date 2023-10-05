@@ -74,7 +74,8 @@ const IconRow: React.FC<{
   handle: string;
   delay: number;
   active: boolean;
-}> = ({ handle, delay, platform, active }) => {
+  isTransitioningIn: boolean;
+}> = ({ handle, delay, platform, active, isTransitioningIn }) => {
   const frame = useCurrentFrame();
   const { fps, height } = useVideoConfig();
 
@@ -86,7 +87,7 @@ const IconRow: React.FC<{
     config: {
       damping: 200,
     },
-    delay,
+    delay: delay + (isTransitioningIn ? transitionDuration : 0),
   });
 
   return (
@@ -96,7 +97,7 @@ const IconRow: React.FC<{
         transform: `translateY(${interpolate(
           enterSpring,
           [0, 1],
-          [height, 0]
+          [height, 0],
         )}px)`,
         border: "6px solid black",
         backgroundColor: active ? "#0b84f3" : "white",
@@ -131,18 +132,10 @@ export const EndCard: React.FC<{
   channel: Channel;
   canvasLayout: CanvasLayout;
   platform: Platform;
-}> = ({ channel, canvasLayout, platform }) => {
-  const { fps, width } = useVideoConfig();
+  isTransitioningIn: boolean;
+}> = ({ channel, canvasLayout, platform, isTransitioningIn }) => {
+  const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
-
-  const enter = spring({
-    fps,
-    frame,
-    config: {
-      damping: 200,
-    },
-    durationInFrames: transitionDuration,
-  });
 
   const fadeIn = spring({
     fps,
@@ -151,7 +144,7 @@ export const EndCard: React.FC<{
       damping: 200,
     },
     durationInFrames: 20,
-    delay: 40,
+    delay: 40 + (isTransitioningIn ? transitionDuration : 0),
   });
 
   const remotionRow: React.CSSProperties = useMemo(() => {
@@ -166,11 +159,11 @@ export const EndCard: React.FC<{
   return (
     <AbsoluteFill
       style={{
-        transform: `translateX(${interpolate(enter, [0, 1], [width, 0])}px)`,
         padding: safeSpace(canvasLayout),
       }}
     >
       <IconRow
+        isTransitioningIn={isTransitioningIn}
         platform="x"
         delay={0}
         active={platform === "x"}
@@ -178,6 +171,7 @@ export const EndCard: React.FC<{
       />
       <div style={{ height: safeSpace(canvasLayout) }} />
       <IconRow
+        isTransitioningIn={isTransitioningIn}
         platform="youtube"
         delay={10}
         active={platform === "youtube"}
@@ -185,6 +179,7 @@ export const EndCard: React.FC<{
       />
       <div style={{ height: safeSpace(canvasLayout) }} />
       <IconRow
+        isTransitioningIn={isTransitioningIn}
         platform="linkedin"
         delay={20}
         active={platform === "linkedin"}
@@ -193,6 +188,7 @@ export const EndCard: React.FC<{
       <div style={{ height: safeSpace(canvasLayout) }} />
       {channel === "remotion" ? (
         <IconRow
+          isTransitioningIn={isTransitioningIn}
           active={platform === "instagram"}
           platform="instagram"
           delay={30}
