@@ -38,6 +38,12 @@ const getWordColor = ({
   return wordColor;
 };
 
+export const regularFontWeight = 600;
+export const regularFont = "Inter";
+
+export const monospaceFontWeight = 500;
+export const monospaceFont = "GT Planar";
+
 export const WordComp: React.FC<{
   word: Word;
   trimStart: number;
@@ -96,9 +102,9 @@ export const WordComp: React.FC<{
         style={{
           ...style,
           opacity,
-          fontFamily: monospace ? "GT Planar" : "Inter",
+          fontFamily: monospace ? monospaceFont : regularFont,
           color: backgroundColor === BLUE ? "white" : wordColor,
-          fontWeight: monospace ? 500 : 600,
+          fontWeight: monospace ? monospaceFontWeight : regularFontWeight,
           backgroundColor,
           outline: active ? "5px solid " + backgroundColor : "none",
           borderRadius: 10,

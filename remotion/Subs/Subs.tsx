@@ -11,7 +11,7 @@ import type { CanvasLayout, WebcamPosition } from "../configuration";
 import type { Layout } from "../layout/get-layout";
 import type { SubTypes } from "../sub-types";
 import { postprocessSubtitles } from "./postprocess-subs";
-import { SegmentComp } from "./Segment";
+import { getFontSize, getSubsBox, SegmentComp } from "./Segment";
 
 export const Subs: React.FC<{
   file: StaticFile;
@@ -73,9 +73,24 @@ export const Subs: React.FC<{
     width,
   ]);
 
+  const subsLayout = getSubsBox({
+    canvasLayout,
+    webcamLayout,
+    webcamPosition,
+    canvasSize: { height, width },
+    displayLayout,
+  });
+
   const postprocessed = useMemo(() => {
-    return data ? postprocessSubtitles(data) : null;
-  }, [data]);
+    return data
+      ? postprocessSubtitles(
+          data,
+          subsLayout.width,
+          4,
+          getFontSize(canvasLayout),
+        )
+      : null;
+  }, [canvasLayout, data, subsLayout.width]);
 
   if (!postprocessed) {
     return null;
@@ -92,15 +107,13 @@ export const Subs: React.FC<{
           <SegmentComp
             // eslint-disable-next-line react/no-array-index-key
             key={index}
-            webcamPosition={webcamPosition}
             isLast={index === postprocessed.segments.length - 1}
             segment={segment}
             trimStart={trimStart}
             canvasLayout={canvasLayout}
-            webcamLayout={webcamLayout}
-            canvasSize={{ width, height }}
             displayLayout={displayLayout}
             shouldExit={shouldExit}
+            subsBox={subsLayout}
           />
         );
       })}

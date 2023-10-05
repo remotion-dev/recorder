@@ -4,6 +4,7 @@ type Word = {
   text: string;
   fontFamily: string;
   fontWeight: string | number;
+  fontSize: number;
 };
 
 export const fillTextBox = ({
@@ -13,42 +14,57 @@ export const fillTextBox = ({
   maxBoxWidth: number;
   maxLines: number;
 }) => {
-  const lines: Word[][] = new Array(maxLines).fill([] as string[]);
+  const lines: Word[][] = new Array(maxLines).fill(0).map(() => [] as Word[]);
 
   return {
     add: ({
       text,
       fontFamily,
       fontWeight,
+      fontSize,
     }: {
       text: string;
       fontFamily: string;
       fontWeight: string | number;
+      fontSize: number;
     }): {
       exceedsBox: boolean;
       newLine: boolean;
     } => {
       const lastLineIndex = lines.findLastIndex((l) => l.length > 0);
-      const currentlyAt = lastLineIndex === -1 ? 0 : lastLineIndex + 1;
+      const currentlyAt = lastLineIndex === -1 ? 0 : lastLineIndex;
+      console.log({ currentlyAt, lines: JSON.stringify(lines), text });
       const lineToUse = lines[currentlyAt];
 
       const lineWithWord: Word[] = [
         ...lineToUse,
-        { text, fontFamily, fontWeight },
+        { text, fontFamily, fontWeight, fontSize },
       ];
 
-      const widths = lineWithWord.map((w) => measureWordWidth(w));
+      const widths = lineWithWord.map((w) => {
+        return measureWordWidth(w);
+      });
       const lineWidthWithWordAdded = widths.reduce((a, b) => a + b, 0);
 
       if (lineWidthWithWordAdded <= maxBoxWidth) {
+        lines[currentlyAt].push({
+          text: lines[currentlyAt].length === 0 ? text.trimStart() : text,
+          fontFamily,
+          fontWeight,
+          fontSize,
+        });
+
         return { exceedsBox: false, newLine: false };
       }
 
       if (currentlyAt === maxLines - 1) {
+        console.log("exceeded");
         return { exceedsBox: true, newLine: false };
       }
 
-      lines[currentlyAt + 1] = [{ text, fontFamily, fontWeight }];
+      lines[currentlyAt + 1] = [
+        { text: text.trimStart(), fontFamily, fontWeight, fontSize },
+      ];
       return { exceedsBox: false, newLine: true };
     },
   };
