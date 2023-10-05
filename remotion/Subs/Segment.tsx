@@ -1,11 +1,12 @@
 import { loadFont } from "@remotion/google-fonts/Inter";
 import React from "react";
-import { AbsoluteFill, interpolate } from "remotion";
+import { AbsoluteFill, interpolate, useVideoConfig } from "remotion";
 import type {
   CanvasLayout,
   Dimensions,
   WebcamPosition,
 } from "../configuration";
+import { transitionDuration } from "../configuration";
 import type { Layout } from "../layout/get-layout";
 import { borderRadius, safeSpace } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
@@ -102,6 +103,7 @@ export const SegmentComp: React.FC<{
   webcamLayout: Layout;
   canvasSize: Dimensions;
   displayLayout: Layout | null;
+  shouldExit: boolean;
 }> = ({
   segment,
   isLast,
@@ -111,9 +113,11 @@ export const SegmentComp: React.FC<{
   webcamPosition,
   canvasSize,
   displayLayout,
+  shouldExit,
 }) => {
   const time = useTime(trimStart);
   const duration = useSequenceDuration(trimStart);
+  const { fps } = useVideoConfig();
 
   if (time < segment.start) {
     return null;
@@ -125,13 +129,16 @@ export const SegmentComp: React.FC<{
 
   const end = isLast ? duration : segment.end;
 
+  const fadeOutAt =
+    end - 0.1 - (shouldExit && isLast ? transitionDuration / fps : 0);
+
   const opacity = interpolate(
     time,
     [
       segment.start,
-      Math.min(segment.start + 0.2, end - 0.1 - 0.000000001),
-      end - 0.1,
-      end,
+      Math.min(segment.start + 0.2, fadeOutAt - 0.000000001),
+      fadeOutAt,
+      fadeOutAt + 0.1,
     ],
     [0, 1, 1, 0],
   );
