@@ -7,8 +7,9 @@ import {
   writeFileSync,
 } from "node:fs";
 import path from "path";
+import * as prettier from "prettier";
 
-const subFile = (file) => {
+const subFile = async (file) => {
   execSync(
     `whisper --language=English --model=small.en --word_timestamps True --output_format=json --output_dir=${path.dirname(
       file
@@ -19,9 +20,10 @@ const subFile = (file) => {
   );
 
   const output = file.replace(".mp4", ".json");
-  const json = JSON.parse(readFileSync(output), "utf8");
-  const formatting = JSON.stringify(json, null, 2);
-  writeFileSync(output.replace("webcam", "subs"), formatting);
+  const json = readFileSync(output, "utf8");
+  const options = await prettier.resolveConfig(".");
+  const formatted = await prettier.format(json, { ...options, parser: "json" });
+  writeFileSync(output.replace("webcam", "subs"), formatted);
   rmSync(output);
 };
 
@@ -49,7 +51,7 @@ for (const folder of folders) {
     }
 
     console.log(fileToTranscribe);
-    subFile(fileToTranscribe);
+    await subFile(fileToTranscribe);
   }
 }
 
