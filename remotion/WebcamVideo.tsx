@@ -9,7 +9,7 @@ import { getWebcamTranslation } from "./animations/camera-scene-transitions";
 import type { CanvasLayout, Pair, WebcamPosition } from "./configuration";
 import { transitionDuration } from "./configuration";
 import type { Layout } from "./layout/get-layout";
-import { borderRadius, frameWidth } from "./layout/get-layout";
+import { borderRadius } from "./layout/get-layout";
 
 export const WebcamVideo: React.FC<{
   webcamLayout: Layout;
@@ -89,9 +89,8 @@ export const WebcamVideo: React.FC<{
     >
       <div
         style={{
-          borderRadius: borderRadius + frameWidth,
+          borderRadius,
           overflow: "hidden",
-          padding: frameWidth,
           width: webcamLayout.width,
           height: webcamLayout.height,
           left: webcamLayout.x,

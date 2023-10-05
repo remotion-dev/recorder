@@ -110,7 +110,6 @@ export const postprocessSubtitles = (subTypes: SubTypes): SubTypes => {
       };
     }),
   };
-  console.log(mappedSubTypes);
 
   return ensureMaxWords({
     subTypes: mappedSubTypes,
@@ -124,7 +123,6 @@ declare global {
   interface Array<T> {
     findLastIndex(
       predicate: (value: T, index: number, obj: T[]) => unknown,
-      thisArg?: any,
     ): number;
   }
 }

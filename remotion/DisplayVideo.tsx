@@ -2,7 +2,7 @@ import type { StaticFile } from "remotion";
 import { interpolate, OffthreadVideo, useVideoConfig } from "remotion";
 import type { Pair } from "./configuration";
 import type { Layout } from "./layout/get-layout";
-import { borderRadius, frameWidth } from "./layout/get-layout";
+import { borderRadius } from "./layout/get-layout";
 
 export const DisplayVideo: React.FC<{
   displayLayout: Layout;
@@ -21,8 +21,7 @@ export const DisplayVideo: React.FC<{
         left: displayLayout.x,
         top: displayLayout.y,
         position: "absolute",
-        padding: frameWidth,
-        borderRadius: borderRadius + frameWidth,
+        borderRadius,
         translate: interpolate(enter, [0, 1], [width, 0]) + "px 0",
       }}
     >
