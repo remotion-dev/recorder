@@ -15,7 +15,7 @@ import { useSequenceDuration, useTime, WordComp } from "./Word";
 
 loadFont();
 
-const getFontSize = (canvasLayout: CanvasLayout) => {
+export const getFontSize = (canvasLayout: CanvasLayout) => {
   if (canvasLayout === "square" || canvasLayout === "tall") {
     return 56;
   }
@@ -23,7 +23,7 @@ const getFontSize = (canvasLayout: CanvasLayout) => {
   return 40;
 };
 
-const getSubsBox = ({
+export const getSubsBox = ({
   displayLayout,
   canvasLayout,
   canvasSize,
@@ -72,24 +72,13 @@ const getSubsBox = ({
 
 const getSubsLayout = ({
   canvasLayout,
-  webcamLayout,
-  webcamPosition,
-  canvasSize,
   displayLayout,
+  subsBox,
 }: {
   canvasLayout: CanvasLayout;
-  webcamLayout: Layout;
   displayLayout: Layout | null;
-  webcamPosition: WebcamPosition;
-  canvasSize: Dimensions;
+  subsBox: Layout;
 }): React.CSSProperties => {
-  const subsBox = getSubsBox({
-    canvasLayout,
-    webcamLayout,
-    webcamPosition,
-    canvasSize,
-    displayLayout,
-  });
   if (displayLayout === null) {
     return {
       left: subsBox.x,
@@ -153,19 +142,15 @@ export const SegmentComp: React.FC<{
   isLast: boolean;
   trimStart: number;
   canvasLayout: CanvasLayout;
-  webcamPosition: WebcamPosition;
-  webcamLayout: Layout;
-  canvasSize: Dimensions;
   displayLayout: Layout | null;
   shouldExit: boolean;
+  subsBox: Layout;
 }> = ({
   segment,
   isLast,
   trimStart,
   canvasLayout,
-  webcamLayout,
-  webcamPosition,
-  canvasSize,
+  subsBox,
   displayLayout,
   shouldExit,
 }) => {
@@ -207,9 +192,7 @@ export const SegmentComp: React.FC<{
         opacity,
         ...getSubsLayout({
           canvasLayout,
-          webcamLayout,
-          webcamPosition,
-          canvasSize,
+          subsBox,
           displayLayout,
         }),
       }}

@@ -1,4 +1,6 @@
+import { fillTextBox } from "../layout/measure/fill-layout";
 import type { Segment, SubTypes, Word } from "../sub-types";
+import { regularFont, regularFontWeight } from "./Word";
 
 const wordsTogether = (words: Word[]) => {
   const newWords: Word[] = [];
@@ -37,18 +39,41 @@ const wordsTogether = (words: Word[]) => {
   return newWords;
 };
 
-const cutWords = (segment: Segment, maxCharsPerScene: number): Segment[] => {
-  const chars = segment.words.map((w) => w.word).join(" ").length;
+const cutWords = ({
+  segment,
+  maxCharsPerScene,
+  boxWidth,
+  maxLines,
+  fontSize,
+}: {
+  segment: Segment;
+  maxCharsPerScene: number;
+  boxWidth: number;
+  maxLines: number;
+  fontSize: number;
+}): Segment[] => {
+  const { add } = fillTextBox({ maxBoxWidth: boxWidth, maxLines });
+  let wordsToUse = 0;
+  for (const word of segment.words) {
+    const { exceedsBox } = add({
+      text: word.word,
+      fontFamily: regularFont,
+      fontWeight: regularFontWeight,
+      fontSize,
+    });
 
-  if (chars <= maxCharsPerScene) {
+    if (exceedsBox) {
+      break;
+    } else {
+      wordsToUse++;
+    }
+  }
+
+  if (wordsToUse === segment.words.length) {
     return [segment];
   }
 
-  let bestCut = segment.words.findLastIndex((_, i) => {
-    const wordsSoFar = segment.words.slice(0, i);
-    const charsSoFar = wordsSoFar.map((w) => w.word).join(" ").length;
-    return charsSoFar < maxCharsPerScene;
-  });
+  let bestCut = wordsToUse;
   for (let i = 1; i < 4; i++) {
     const index = bestCut - i;
     const word = segment.words[index].word.trim();
@@ -68,24 +93,33 @@ const cutWords = (segment: Segment, maxCharsPerScene: number): Segment[] => {
       end: firstHalf[firstHalf.length - 1].end,
       words: firstHalf,
     },
-    ...cutWords(
-      {
+    ...cutWords({
+      segment: {
         ...segment,
         start: secondHalf[0].start,
         end: secondHalf[secondHalf.length - 1].end,
         words: secondHalf,
       },
       maxCharsPerScene,
-    ),
+      boxWidth,
+      maxLines,
+      fontSize,
+    }),
   ];
 };
 
 export const ensureMaxWords = ({
   subTypes,
   maxCharsPerScene,
+  maxLines,
+  boxWidth,
+  fontSize,
 }: {
   subTypes: SubTypes;
   maxCharsPerScene: number;
+  maxLines: number;
+  boxWidth: number;
+  fontSize: number;
 }): SubTypes => {
   const masterSegment: Segment = {
     id: subTypes.segments[0].id,
@@ -96,11 +130,22 @@ export const ensureMaxWords = ({
 
   return {
     ...subTypes,
-    segments: cutWords(masterSegment, maxCharsPerScene),
+    segments: cutWords({
+      segment: masterSegment,
+      maxCharsPerScene,
+      boxWidth,
+      maxLines,
+      fontSize,
+    }),
   };
 };
 
-export const postprocessSubtitles = (subTypes: SubTypes): SubTypes => {
+export const postprocessSubtitles = (
+  subTypes: SubTypes,
+  boxWidth: number,
+  maxLines: number,
+  fontSize: number,
+): SubTypes => {
   const mappedSubTypes: SubTypes = {
     ...subTypes,
     segments: subTypes.segments.map((segment) => {
@@ -114,6 +159,9 @@ export const postprocessSubtitles = (subTypes: SubTypes): SubTypes => {
   return ensureMaxWords({
     subTypes: mappedSubTypes,
     maxCharsPerScene: 100,
+    boxWidth,
+    maxLines,
+    fontSize,
   });
 };
 

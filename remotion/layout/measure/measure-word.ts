@@ -4,10 +4,12 @@ export const measureWordWidth = ({
   text,
   fontFamily,
   fontWeight,
+  fontSize,
 }: {
   text: string;
   fontFamily: string;
   fontWeight: number | string;
+  fontSize: number;
 }) => {
   if (wordCache.has(text)) {
     return wordCache.get(text) as number;
@@ -21,6 +23,7 @@ export const measureWordWidth = ({
   node.style.top = `-10000px`;
   node.style.whiteSpace = "pre";
   node.style.fontWeight = fontWeight.toString();
+  node.style.fontSize = `${fontSize}px`;
   node.innerText = text;
 
   document.body.appendChild(node);
