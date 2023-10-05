@@ -38,7 +38,7 @@ const wordsTogether = (words: Word[]) => {
   return newWords;
 };
 
-const maxWordsPerSegment = 15;
+const MAX_CHARS_PER_SCENE = 100;
 
 const ensureMaxWords = (subTypes: SubTypes): SubTypes => {
   return {
@@ -47,7 +47,9 @@ const ensureMaxWords = (subTypes: SubTypes): SubTypes => {
       .map((segment) => {
         const { words } = segment;
 
-        if (words.length > maxWordsPerSegment) {
+        const chars = words.map((w) => w.word).join(" ").length;
+
+        if (chars > MAX_CHARS_PER_SCENE) {
           const middle = Math.round(words.length / 2);
           const firstHalf = words.slice(0, middle);
           const secondHalf = words.slice(middle);

@@ -16,7 +16,7 @@ loadFont();
 
 const getFontSize = (canvasLayout: CanvasLayout) => {
   if (canvasLayout === "square" || canvasLayout === "tall") {
-    return 46;
+    return 56;
   }
 
   return 40;
@@ -76,7 +76,7 @@ const getSubsLayout = ({
 
 const inlineSubsLayout = (
   canvasLayout: CanvasLayout,
-  displayLayout: Layout | null
+  displayLayout: Layout | null,
 ): React.CSSProperties => {
   if (displayLayout === null) {
     return {
@@ -125,7 +125,7 @@ export const SegmentComp: React.FC<{
   const opacity = interpolate(
     time,
     [segment.start, segment.start + 0.2, segment.end - 0.1, segment.end],
-    [0, 1, 1, 0]
+    [0, 1, 1, 0],
   );
 
   return (
@@ -154,7 +154,7 @@ export const SegmentComp: React.FC<{
             display: "inline-block",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
-            backdropFilter: displayLayout === null ?  "blur(5px)" : undefined,
+            backdropFilter: displayLayout === null ? "blur(5px)" : undefined,
             ...inlineSubsLayout(canvasLayout, displayLayout),
           }}
         >
