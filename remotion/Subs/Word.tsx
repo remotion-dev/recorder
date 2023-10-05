@@ -15,6 +15,12 @@ export const useTime = (trimStart: number) => {
   return time;
 };
 
+export const useSequenceDuration = (trimStart: number) => {
+  const { durationInFrames, fps } = useVideoConfig();
+  const sequenceDuration = (durationInFrames - trimStart) / fps;
+  return sequenceDuration;
+};
+
 const BLUE = "#3B82EB";
 
 const getWordColor = ({

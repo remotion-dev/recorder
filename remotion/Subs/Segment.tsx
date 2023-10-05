@@ -10,7 +10,7 @@ import type { Layout } from "../layout/get-layout";
 import { borderRadius, safeSpace } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type { Segment } from "../sub-types";
-import { useTime, WordComp } from "./Word";
+import { useSequenceDuration, useTime, WordComp } from "./Word";
 
 loadFont();
 
@@ -113,6 +113,7 @@ export const SegmentComp: React.FC<{
   displayLayout,
 }) => {
   const time = useTime(trimStart);
+  const duration = useSequenceDuration(trimStart);
 
   if (time < segment.start) {
     return null;
@@ -122,13 +123,15 @@ export const SegmentComp: React.FC<{
     return null;
   }
 
+  const end = isLast ? duration : segment.end;
+
   const opacity = interpolate(
     time,
     [
       segment.start,
-      Math.min(segment.start + 0.2, segment.end - 0.1 - 0.000000001),
-      segment.end - 0.1,
-      segment.end,
+      Math.min(segment.start + 0.2, end - 0.1 - 0.000000001),
+      end - 0.1,
+      end,
     ],
     [0, 1, 1, 0],
   );
