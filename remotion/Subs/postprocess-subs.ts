@@ -13,10 +13,6 @@ const wordsTogether = (words: Word[]) => {
       lastAddedWord.word += word.word;
       lastAddedWord.end = word.end;
     } else {
-      if (word.word === " remotion") {
-        word.word = " Remotion";
-      }
-
       if (word.word === " github") {
         word.word = " GitHub";
       }
