@@ -124,7 +124,12 @@ export const SegmentComp: React.FC<{
 
   const opacity = interpolate(
     time,
-    [segment.start, segment.start + 0.2, segment.end - 0.1, segment.end],
+    [
+      segment.start,
+      Math.min(segment.start + 0.2, segment.end - 0.1 - 0.000000001),
+      segment.end - 0.1,
+      segment.end,
+    ],
     [0, 1, 1, 0],
   );
 

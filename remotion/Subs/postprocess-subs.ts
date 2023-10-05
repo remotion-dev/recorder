@@ -1,5 +1,4 @@
 import type { Segment, SubTypes, Word } from "../sub-types";
-import { truthy } from "../truthy";
 
 const wordsTogether = (words: Word[]) => {
   const newWords: Word[] = [];
@@ -45,10 +44,13 @@ const cutWords = (segment: Segment, maxCharsPerScene: number): Segment[] => {
     return [segment];
   }
 
-  const middle = Math.round(segment.words.length / 2);
-  let bestCut = middle;
+  let bestCut = segment.words.findLastIndex((_, i) => {
+    const wordsSoFar = segment.words.slice(0, i);
+    const charsSoFar = wordsSoFar.map((w) => w.word).join(" ").length;
+    return charsSoFar < maxCharsPerScene;
+  });
   for (let i = 1; i < 4; i++) {
-    const index = middle - i;
+    const index = bestCut - i;
     const word = segment.words[index].word.trim();
     if (word.endsWith(",") || word.endsWith(".")) {
       bestCut = index + 1;
@@ -85,14 +87,16 @@ export const ensureMaxWords = ({
   subTypes: SubTypes;
   maxCharsPerScene: number;
 }): SubTypes => {
+  const masterSegment: Segment = {
+    id: subTypes.segments[0].id,
+    start: subTypes.segments[0].start,
+    end: subTypes.segments[subTypes.segments.length - 1].end,
+    words: subTypes.segments.flatMap((s) => s.words),
+  };
+
   return {
     ...subTypes,
-    segments: subTypes.segments
-      .map((segment) => {
-        return cutWords(segment, maxCharsPerScene);
-      })
-      .filter(truthy)
-      .flat(1),
+    segments: cutWords(masterSegment, maxCharsPerScene),
   };
 };
 
@@ -106,9 +110,21 @@ export const postprocessSubtitles = (subTypes: SubTypes): SubTypes => {
       };
     }),
   };
+  console.log(mappedSubTypes);
 
   return ensureMaxWords({
     subTypes: mappedSubTypes,
     maxCharsPerScene: 100,
   });
 };
+
+export {};
+
+declare global {
+  interface Array<T> {
+    findLastIndex(
+      predicate: (value: T, index: number, obj: T[]) => unknown,
+      thisArg?: any,
+    ): number;
+  }
+}
