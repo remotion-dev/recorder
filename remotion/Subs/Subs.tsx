@@ -47,7 +47,7 @@ export const Subs: React.FC<{
       .then((res) => res.json())
       .then((d) => {
         continueRender(handle);
-        setData(postprocessSubtitles(d));
+        setData(d);
       });
   }, [file.src, handle]);
 

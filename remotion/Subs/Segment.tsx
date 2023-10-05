@@ -23,6 +23,53 @@ const getFontSize = (canvasLayout: CanvasLayout) => {
   return 40;
 };
 
+const getSubsBox = ({
+  displayLayout,
+  canvasLayout,
+  canvasSize,
+  webcamLayout,
+  webcamPosition,
+}: {
+  displayLayout: Layout | null;
+  canvasLayout: CanvasLayout;
+  canvasSize: Dimensions;
+  webcamLayout: Layout;
+  webcamPosition: WebcamPosition;
+}): Layout => {
+  if (displayLayout === null) {
+    const height = getBottomSafeSpace("square") * 2;
+    return {
+      height,
+      y: canvasSize.height - getBottomSafeSpace("square") * 3 - height,
+      borderRadius: 0,
+      width: canvasSize.width - safeSpace(canvasLayout) * 4,
+      x: safeSpace(canvasLayout) * 2,
+    };
+  }
+
+  if (canvasLayout === "wide") {
+    const height = getBottomSafeSpace(canvasLayout);
+    return {
+      height,
+      x: 40,
+      y: canvasSize.height - height,
+      width: canvasSize.width - 80,
+      borderRadius: 0,
+    };
+  }
+
+  return {
+    height: webcamLayout.height,
+    y: webcamLayout.y,
+    x:
+      webcamPosition === "bottom-left" || webcamPosition === "top-left"
+        ? webcamLayout.width + safeSpace(canvasLayout) * 2
+        : safeSpace(canvasLayout),
+    width: canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
+    borderRadius: 0,
+  };
+};
+
 const getSubsLayout = ({
   canvasLayout,
   webcamLayout,
@@ -36,10 +83,19 @@ const getSubsLayout = ({
   webcamPosition: WebcamPosition;
   canvasSize: Dimensions;
 }): React.CSSProperties => {
+  const subsBox = getSubsBox({
+    canvasLayout,
+    webcamLayout,
+    webcamPosition,
+    canvasSize,
+    displayLayout,
+  });
   if (displayLayout === null) {
     return {
-      height: getBottomSafeSpace("square") * 2,
-      bottom: getBottomSafeSpace("square") * 3,
+      left: subsBox.x,
+      top: subsBox.y,
+      width: subsBox.width,
+      height: subsBox.height,
       // @ts-expect-error not yet available
       textWrap: "balance",
       textAlign: "center",
@@ -52,25 +108,23 @@ const getSubsLayout = ({
 
   if (canvasLayout === "wide") {
     return {
-      height: getBottomSafeSpace(canvasLayout),
+      left: subsBox.x,
+      top: subsBox.y,
+      width: subsBox.width,
+      height: subsBox.height,
       // @ts-expect-error not yet available
       textWrap: "balance",
       textAlign: "center",
-      paddingLeft: 40,
-      paddingRight: 40,
       justifyContent: "center",
       alignItems: "center",
     };
   }
 
   return {
-    height: webcamLayout.height,
-    top: webcamLayout.y,
-    left:
-      webcamPosition === "bottom-left" || webcamPosition === "top-left"
-        ? webcamLayout.width + safeSpace(canvasLayout) * 2
-        : safeSpace(canvasLayout),
-    width: canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
+    left: subsBox.x,
+    top: subsBox.y,
+    width: subsBox.width,
+    height: subsBox.height,
     paddingTop: safeSpace(canvasLayout),
   };
 };
