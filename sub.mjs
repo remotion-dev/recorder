@@ -1,5 +1,11 @@
 import { execSync } from "node:child_process";
-import { existsSync, readdirSync, renameSync } from "node:fs";
+import {
+  existsSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import path from "path";
 
 const subFile = (file) => {
@@ -13,7 +19,10 @@ const subFile = (file) => {
   );
 
   const output = file.replace(".mp4", ".json");
-  renameSync(output, output.replace("webcam", "subs"));
+  const json = JSON.parse(readFileSync(output), "utf8");
+  const formatting = JSON.stringify(json, null, 2);
+  writeFileSync(output.replace("webcam", "subs"), formatting);
+  rmSync(output);
 };
 
 const folders = readdirSync("public").filter((f) => f !== ".DS_Store");

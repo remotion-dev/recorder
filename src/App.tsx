@@ -8,7 +8,7 @@ let endDate = 0;
 const mediaRecorderOptions: MediaRecorderOptions = {
   audioBitsPerSecond: 128000,
   mimeType: "video/webm;codecs=vp8,opus",
-  videoBitsPerSecond: 4000000,
+  videoBitsPerSecond: 8 * 4000000,
 };
 
 const App = () => {
