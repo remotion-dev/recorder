@@ -154,7 +154,7 @@ export const SegmentComp: React.FC<{
             display: "inline-block",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
-            backdropFilter: "blur(5px)",
+            backdropFilter: displayLayout === null ?  "blur(5px)" : undefined,
             ...inlineSubsLayout(canvasLayout, displayLayout),
           }}
         >
