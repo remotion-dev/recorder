@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { StaticFile } from "remotion";
 import {
   AbsoluteFill,
@@ -49,20 +49,35 @@ export const Subs: React.FC<{
       });
   }, [file.src, handle]);
 
-  if (!data) {
-    return null;
-  }
-
-  const subtitleTranslation = getSubtitleTranslation({
+  const subtitleTranslation = useMemo(() => {
+    return getSubtitleTranslation({
+      enter,
+      exit,
+      height,
+      webcamPosition,
+      width,
+      canvasLayout,
+      nextWebcamPosition,
+      prevWebcamPosition,
+    });
+  }, [
+    canvasLayout,
     enter,
     exit,
     height,
-    webcamPosition,
-    width,
-    canvasLayout,
     nextWebcamPosition,
     prevWebcamPosition,
-  });
+    webcamPosition,
+    width,
+  ]);
+
+  const postprocessed = useMemo(() => {
+    return data ? postprocessSubtitles(data) : null;
+  }, [data]);
+
+  if (!postprocessed) {
+    return null;
+  }
 
   return (
     <AbsoluteFill
@@ -70,13 +85,13 @@ export const Subs: React.FC<{
         transform: `translateX(${subtitleTranslation.translationX}px) translateY(${subtitleTranslation.translationY}px)`,
       }}
     >
-      {data.segments.map((segment, index) => {
+      {postprocessed.segments.map((segment, index) => {
         return (
           <SegmentComp
             // eslint-disable-next-line react/no-array-index-key
             key={index}
             webcamPosition={webcamPosition}
-            isLast={index === data.segments.length - 1}
+            isLast={index === postprocessed.segments.length - 1}
             segment={segment}
             trimStart={trimStart}
             canvasLayout={canvasLayout}
