@@ -3607,7 +3607,7 @@ export const Root = () => {
               duration: null,
               zoomInAtStart: false,
               zoomInAtEnd: false,
-              transitionToNextScene: true,
+              transitionToNextScene: false,
               newChapter: "Hacktoberfest",
               stopChapteringAfterThis: true,
               music: "previous" as const,
