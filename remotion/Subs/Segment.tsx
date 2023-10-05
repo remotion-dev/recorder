@@ -164,7 +164,7 @@ export const SegmentComp: React.FC<{
         <span
           style={{
             backgroundColor:
-              displayLayout === null ? "rgba(0, 0, 0, 0.4)" : "white",
+              displayLayout === null ? "rgba(0, 0, 0, 0.7)" : "white",
             lineHeight: 1.2,
             display: "inline-block",
             boxDecorationBreak: "clone",
