@@ -212,7 +212,8 @@ export const SegmentComp: React.FC<{
           {segment.words.map((word, index) => {
             return (
               <WordComp
-                key={word.start}
+                // eslint-disable-next-line react/no-array-index-key
+                key={word.start + word.word + index}
                 isLast={index === segment.words.length - 1}
                 trimStart={trimStart}
                 word={word}
