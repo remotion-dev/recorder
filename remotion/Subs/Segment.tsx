@@ -196,14 +196,11 @@ export const SegmentComp: React.FC<{
   const fadeOutAt =
     end - 0.1 - (shouldExit && isLast ? transitionDuration / fps : 0);
 
+  const start = Math.min(segment.start + 0.2, fadeOutAt - 0.000000001);
+
   const opacity = interpolate(
     time,
-    [
-      segment.start,
-      Math.min(segment.start + 0.2, fadeOutAt - 0.000000001),
-      fadeOutAt,
-      fadeOutAt + 0.1,
-    ],
+    [start - 0.2, Math.min(start), fadeOutAt, fadeOutAt + 0.1],
     [0, 1, 1, 0],
   );
 
