@@ -40,6 +40,10 @@ export const getSubtitlesFontSize = (subtitleType: SubtitleType) => {
     return 56;
   }
 
+  if (subtitleType === "overlayed-center") {
+    return 48;
+  }
+
   return 40;
 };
 
@@ -225,8 +229,10 @@ export const SegmentComp: React.FC<{
       <div>
         <span
           style={{
-            backgroundColor:
-              displayLayout === null ? "rgba(0, 0, 0, 0.7)" : "white",
+            textShadow:
+              displayLayout === null
+                ? "0px 0px 30px rgba(0, 0, 0, 0.5)"
+                : undefined,
             lineHeight: 1.2,
             display: "inline-block",
             boxDecorationBreak: "clone",

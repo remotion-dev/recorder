@@ -3550,7 +3550,7 @@ export const Root = () => {
               transitionToNextScene: true,
               newChapter: "Asset previews",
               stopChapteringAfterThis: false,
-              music: "none" as const,
+              music: "previous" as const,
             },
             {
               type: "scene" as const,

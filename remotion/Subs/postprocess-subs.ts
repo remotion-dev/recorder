@@ -65,6 +65,12 @@ const cutWords = ({
   }
 
   let bestCut = wordsToUse;
+
+  if (wordsToUse / segment.words.length > 0.9) {
+    // Prevent a few hanging words at the end
+    bestCut = Math.round(segment.words.length / 2);
+  }
+
   for (let i = 1; i < 4; i++) {
     const index = bestCut - i;
     const word = segment.words[index].word.trim();
