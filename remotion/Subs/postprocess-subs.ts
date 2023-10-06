@@ -1,7 +1,12 @@
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { fillTextBox } from "../layout/measure/fill-layout";
 import type { Segment, SubTypes, Word } from "../sub-types";
-import { regularFont, regularFontWeight } from "./Word";
+import {
+  monospaceFont,
+  monospaceFontWeight,
+  regularFont,
+  regularFontWeight,
+} from "./Word";
 
 const wordsTogether = (words: Word[]) => {
   const newWords: Word[] = [];
@@ -59,8 +64,8 @@ const cutWords = ({
   for (const word of segment.words) {
     const { exceedsBox } = add({
       text: word.word,
-      fontFamily: regularFont,
-      fontWeight: regularFontWeight,
+      fontFamily: word.monospace ? monospaceFont : regularFont,
+      fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
       fontSize,
     });
 
