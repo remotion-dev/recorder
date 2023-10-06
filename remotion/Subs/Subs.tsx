@@ -83,12 +83,12 @@ export const Subs: React.FC<{
 
   const postprocessed = useMemo(() => {
     return data
-      ? postprocessSubtitles(
-          data,
-          subsLayout.width,
-          4,
-          getFontSize(canvasLayout),
-        )
+      ? postprocessSubtitles({
+          subTypes: data,
+          boxWidth: subsLayout.width,
+          maxLines: 4,
+          fontSize: getFontSize(canvasLayout),
+        })
       : null;
   }, [canvasLayout, data, subsLayout.width]);
 

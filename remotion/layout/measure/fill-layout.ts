@@ -57,7 +57,6 @@ export const fillTextBox = ({
       }
 
       if (currentlyAt === maxLines - 1) {
-        console.log("Exceeds box", { lines });
         return { exceedsBox: true, newLine: false };
       }
 

@@ -134,12 +134,17 @@ export const ensureMaxWords = ({
   };
 };
 
-export const postprocessSubtitles = (
-  subTypes: SubTypes,
-  boxWidth: number,
-  maxLines: number,
-  fontSize: number,
-): SubTypes => {
+export const postprocessSubtitles = ({
+  subTypes,
+  boxWidth,
+  maxLines,
+  fontSize,
+}: {
+  subTypes: SubTypes;
+  boxWidth: number;
+  maxLines: number;
+  fontSize: number;
+}): SubTypes => {
   const mappedSubTypes: SubTypes = {
     ...subTypes,
     segments: subTypes.segments.map((segment) => {
@@ -162,8 +167,6 @@ export const postprocessSubtitles = (
     fontSize,
   });
 };
-
-export {};
 
 declare global {
   interface Array<T> {
