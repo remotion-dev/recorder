@@ -54,10 +54,7 @@ export const WordComp: React.FC<{
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
 
-  const monospace =
-    word.word.trimStart().startsWith("`") && word.word.endsWith("`");
-
-  const scale = monospace
+  const scale = word.monospace
     ? word.start > time
       ? 1
       : spring({
@@ -75,7 +72,7 @@ export const WordComp: React.FC<{
 
   const appeared = word.start <= time;
   const opacity = appeared
-    ? monospace
+    ? word.monospace
       ? 1
       : interpolate(time, [word.start, word.start + 0.1], [0.3, 1], {
           extrapolateRight: "clamp",
@@ -86,9 +83,13 @@ export const WordComp: React.FC<{
 
   const withoutBackticks = word.word.replace(/`/g, "");
 
-  const wordColor = getWordColor({ appeared, displayLayout, monospace });
+  const wordColor = getWordColor({
+    appeared,
+    displayLayout,
+    monospace: word.monospace ?? false,
+  });
   const backgroundColor = active
-    ? monospace
+    ? word.monospace
       ? BLUE
       : "transparent"
     : "transparent";
@@ -102,9 +103,9 @@ export const WordComp: React.FC<{
         style={{
           ...style,
           opacity,
-          fontFamily: monospace ? monospaceFont : regularFont,
+          fontFamily: word.monospace ? monospaceFont : regularFont,
           color: backgroundColor === BLUE ? "white" : wordColor,
-          fontWeight: monospace ? monospaceFontWeight : regularFontWeight,
+          fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
           backgroundColor,
           outline: active ? "5px solid " + backgroundColor : "none",
           borderRadius: 10,

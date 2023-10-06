@@ -33,7 +33,6 @@ export const fillTextBox = ({
     } => {
       const lastLineIndex = lines.findLastIndex((l) => l.length > 0);
       const currentlyAt = lastLineIndex === -1 ? 0 : lastLineIndex;
-      console.log({ currentlyAt, lines: JSON.stringify(lines), text });
       const lineToUse = lines[currentlyAt];
 
       const lineWithWord: Word[] = [
@@ -58,7 +57,7 @@ export const fillTextBox = ({
       }
 
       if (currentlyAt === maxLines - 1) {
-        console.log("exceeded");
+        console.log("Exceeds box", { lines });
         return { exceedsBox: true, newLine: false };
       }
 
