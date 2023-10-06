@@ -3538,7 +3538,7 @@ export const Root = () => {
             {
               type: "remotionupdate" as const,
               durationInFrames: 100,
-              music: "previous" as const,
+              music: "dancelikemike" as const,
             },
             {
               type: "scene" as const,
@@ -3550,7 +3550,7 @@ export const Root = () => {
               transitionToNextScene: true,
               newChapter: "Asset previews",
               stopChapteringAfterThis: false,
-              music: "previous" as const,
+              music: "none" as const,
             },
             {
               type: "scene" as const,
