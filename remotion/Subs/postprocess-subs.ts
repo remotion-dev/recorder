@@ -1,3 +1,4 @@
+import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { fillTextBox } from "../layout/measure/fill-layout";
 import type { Segment, SubTypes, Word } from "../sub-types";
 import { regularFont, regularFontWeight } from "./Word";
@@ -54,6 +55,7 @@ const cutWords = ({
 }): Segment[] => {
   const { add } = fillTextBox({ maxBoxWidth: boxWidth, maxLines });
   let wordsToUse = 0;
+
   for (const word of segment.words) {
     const { exceedsBox } = add({
       text: word.word,
@@ -151,7 +153,9 @@ export const postprocessSubtitles = (
     segments: subTypes.segments.map((segment) => {
       return {
         ...segment,
-        words: wordsTogether(segment.words),
+        words: wordsTogether(segment.words)
+          .map((word) => splitWordIntoMonospaceSegment(word))
+          .flat(1),
       };
     }),
   };
