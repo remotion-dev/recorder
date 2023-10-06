@@ -22,5 +22,10 @@ export const wordsTogether = (words: Word[]) => {
     }
   }
 
-  return newWords;
+  return newWords.map((w) => {
+    return {
+      ...w,
+      word: w.word.replaceAll(/``/g, ""),
+    };
+  });
 };

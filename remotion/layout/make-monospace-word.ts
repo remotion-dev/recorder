@@ -2,6 +2,7 @@ import type { Word } from "../sub-types";
 
 export const splitWordIntoMonospaceSegment = (word: Word): Word[] => {
   const result: Word[] = [];
+
   const regex = /`([^`]+)`/g; // regex pattern to find text enclosed in backticks
   let lastIndex = 0;
 
