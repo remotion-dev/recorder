@@ -205,13 +205,7 @@ export const CameraScene: React.FC<{
         durationInFrames={Math.max(1, metadata.durationInFrames)}
       >
         <div>
-          <h1
-            style={{
-              backgroundColor: "red",
-            }}
-          >
-            no conf
-          </h1>
+          <h1 style={{}}>no conf</h1>
         </div>
       </Sequence>
     );
