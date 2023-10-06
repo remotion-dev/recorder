@@ -11,7 +11,13 @@ import type { CanvasLayout, WebcamPosition } from "../configuration";
 import type { Layout } from "../layout/get-layout";
 import type { SubTypes } from "../sub-types";
 import { postprocessSubtitles } from "./postprocess-subs";
-import { getFontSize, getSubsBox, SegmentComp } from "./Segment";
+import {
+  getSubsBox,
+  getSubtitlesFontSize,
+  getSubtitlesLines,
+  getSubtitlesType,
+  SegmentComp,
+} from "./Segment";
 
 export const Subs: React.FC<{
   file: StaticFile;
@@ -81,16 +87,18 @@ export const Subs: React.FC<{
     displayLayout,
   });
 
+  const subtitlesType = getSubtitlesType({ canvasLayout, displayLayout });
+
   const postprocessed = useMemo(() => {
     return data
       ? postprocessSubtitles({
           subTypes: data,
           boxWidth: subsLayout.width,
-          maxLines: 4,
-          fontSize: getFontSize(canvasLayout),
+          maxLines: getSubtitlesLines(subtitlesType),
+          fontSize: getSubtitlesFontSize(subtitlesType),
         })
       : null;
-  }, [canvasLayout, data, subsLayout.width]);
+  }, [data, subsLayout.width, subtitlesType]);
 
   if (!postprocessed) {
     return null;
