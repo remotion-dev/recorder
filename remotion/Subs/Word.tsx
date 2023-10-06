@@ -81,8 +81,6 @@ export const WordComp: React.FC<{
 
   const active = word.start <= time && (word.end > time || isLast);
 
-  const withoutBackticks = word.word.replace(/`/g, "");
-
   const wordColor = getWordColor({
     appeared,
     displayLayout,
@@ -94,7 +92,7 @@ export const WordComp: React.FC<{
       : "transparent"
     : "transparent";
 
-  const startsWithSpace = withoutBackticks.startsWith(" ");
+  const startsWithSpace = word.word.startsWith(" ");
 
   return (
     <>
@@ -113,7 +111,7 @@ export const WordComp: React.FC<{
           display: "inline-block",
         }}
       >
-        {withoutBackticks.trim()}
+        {word.word.trim()}
       </span>
     </>
   );

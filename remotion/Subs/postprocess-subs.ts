@@ -1,5 +1,6 @@
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { fillTextBox } from "../layout/measure/fill-layout";
+import { hasMonoSpaceInIt } from "../layout/monospace";
 import { wordsTogether } from "../layout/words-together";
 import type { Segment, SubTypes } from "../sub-types";
 import { remapWord } from "./remap-words";
@@ -60,7 +61,7 @@ const cutWords = ({
   }
 
   while (
-    segment.words[bestCut - 1].monospace ||
+    hasMonoSpaceInIt(segment.words[bestCut - 1]) ||
     segment.words[bestCut - 1].word.trim() === ""
   ) {
     bestCut--;
@@ -135,22 +136,29 @@ export const postprocessSubtitles = ({
     segments: subTypes.segments.map((segment) => {
       return {
         ...segment,
-        words: wordsTogether(
-          segment.words
-            .map((word) => splitWordIntoMonospaceSegment(word))
-            .flat(1)
-            .map((w) => remapWord(w)),
-        ),
+        words: wordsTogether(segment.words.map((w) => remapWord(w))),
       };
     }),
   };
 
-  return ensureMaxWords({
+  const maxWords = ensureMaxWords({
     subTypes: mappedSubTypes,
     boxWidth,
     maxLines,
     fontSize,
   });
+
+  return {
+    ...maxWords,
+    segments: maxWords.segments.map((segment) => {
+      return {
+        ...segment,
+        words: segment.words
+          .map((word) => splitWordIntoMonospaceSegment(word))
+          .flat(1),
+      };
+    }),
+  };
 };
 
 declare global {
