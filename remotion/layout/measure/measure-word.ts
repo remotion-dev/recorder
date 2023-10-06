@@ -11,14 +11,16 @@ export const measureWordWidth = ({
   fontWeight: number | string;
   fontSize: number;
 }) => {
-  if (wordCache.has(text)) {
-    return wordCache.get(text) as number;
+  const key = `${text}-${fontFamily}-${fontWeight}-${fontSize}`;
+
+  if (wordCache.has(key)) {
+    return wordCache.get(key) as number;
   }
 
   const node = document.createElement("span");
 
   node.style.fontFamily = fontFamily;
-  node.style.display = "inline";
+  node.style.display = "inline-block";
   node.style.position = "absolute";
   node.style.top = `-10000px`;
   node.style.whiteSpace = "pre";
@@ -32,6 +34,6 @@ export const measureWordWidth = ({
 
   document.body.removeChild(node);
   const result = boundingBox.width;
-  wordCache.set(text, result);
+  wordCache.set(key, result);
   return result;
 };

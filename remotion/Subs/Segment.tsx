@@ -15,12 +15,40 @@ import { useSequenceDuration, useTime, WordComp } from "./Word";
 
 loadFont();
 
-export const getFontSize = (canvasLayout: CanvasLayout) => {
+type SubtitleType = "below-video" | "overlayed-center" | "boxed";
+
+export const getSubtitlesType = ({
+  canvasLayout,
+  displayLayout,
+}: {
+  canvasLayout: CanvasLayout;
+  displayLayout: Layout | null;
+}): SubtitleType => {
+  if (displayLayout === null) {
+    return "overlayed-center";
+  }
+
   if (canvasLayout === "square" || canvasLayout === "tall") {
+    return "boxed";
+  }
+
+  return "below-video";
+};
+
+export const getSubtitlesFontSize = (subtitleType: SubtitleType) => {
+  if (subtitleType === "boxed") {
     return 56;
   }
 
   return 40;
+};
+
+export const getSubtitlesLines = (subtitleType: SubtitleType) => {
+  if (subtitleType === "boxed") {
+    return 4;
+  }
+
+  return 2;
 };
 
 export const getSubsBox = ({
@@ -42,8 +70,8 @@ export const getSubsBox = ({
       height,
       y: canvasSize.height - getBottomSafeSpace("square") * 3 - height,
       borderRadius: 0,
-      width: canvasSize.width - safeSpace(canvasLayout) * 4,
-      x: safeSpace(canvasLayout) * 2,
+      width: (canvasSize.width / 3) * 2,
+      x: canvasSize.width / 6,
     };
   }
 
@@ -51,9 +79,9 @@ export const getSubsBox = ({
     const height = getBottomSafeSpace(canvasLayout);
     return {
       height,
-      x: 40,
+      x: canvasSize.width / 6,
       y: canvasSize.height - height,
-      width: canvasSize.width - 80,
+      width: (canvasSize.width / 3) * 2,
       borderRadius: 0,
     };
   }
@@ -85,11 +113,7 @@ const getSubsLayout = ({
       top: subsBox.y,
       width: subsBox.width,
       height: subsBox.height,
-      // @ts-expect-error not yet available
-      textWrap: "balance",
       textAlign: "center",
-      paddingLeft: safeSpace(canvasLayout) * 2,
-      paddingRight: safeSpace(canvasLayout) * 2,
       justifyContent: "center",
       alignItems: "center",
     };
@@ -101,8 +125,7 @@ const getSubsLayout = ({
       top: subsBox.y,
       width: subsBox.width,
       height: subsBox.height,
-      // @ts-expect-error not yet available
-      textWrap: "balance",
+      maxLines: 2,
       textAlign: "center",
       justifyContent: "center",
       alignItems: "center",
@@ -124,14 +147,12 @@ const inlineSubsLayout = (
 ): React.CSSProperties => {
   if (displayLayout === null) {
     return {
-      paddingLeft: 20,
-      paddingRight: 20,
       borderRadius: borderRadius - safeSpace("tall") / 4,
     };
   }
 
   if (canvasLayout === "wide") {
-    return { paddingLeft: 20, paddingRight: 20 };
+    return {};
   }
 
   return {};
@@ -186,7 +207,9 @@ export const SegmentComp: React.FC<{
     <AbsoluteFill
       style={{
         top: "auto",
-        fontSize: getFontSize(canvasLayout),
+        fontSize: getSubtitlesFontSize(
+          getSubtitlesType({ canvasLayout, displayLayout }),
+        ),
         display: "flex",
         lineHeight: 1.2,
         opacity,
