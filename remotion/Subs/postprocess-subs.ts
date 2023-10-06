@@ -1,6 +1,7 @@
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { fillTextBox } from "../layout/measure/fill-layout";
 import type { Segment, SubTypes, Word } from "../sub-types";
+import { remapWord } from "./remap-words";
 import {
   monospaceFont,
   monospaceFontWeight,
@@ -20,24 +21,6 @@ const wordsTogether = (words: Word[]) => {
       lastAddedWord.word += word.word;
       lastAddedWord.end = word.end;
     } else {
-      if (word.word === " github") {
-        word.word = " GitHub";
-      }
-
-      if (word.word === " BUN") {
-        word.word = " Bun";
-      }
-
-      if (word.word === " javascript") {
-        word.word = " JavaScript";
-      }
-
-      word.word = word.word.replace(" Algorra", " Algora");
-      word.word = word.word.replace(/ remotion.$/, " Remotion.");
-      word.word = word.word.replace(" ReMotion", " Remotion");
-      word.word = word.word.replace(" Monorepo", " monorepo");
-      word.word = word.word.replace(" rust.", " Rust.");
-
       newWords.push(word);
     }
   }
@@ -95,7 +78,6 @@ const cutWords = ({
     segment.words[bestCut - 1].word.trim() === ""
   ) {
     bestCut--;
-    console.log("is monospace", segment.words[bestCut]);
   }
 
   const firstHalf = segment.words.slice(0, bestCut);
@@ -166,9 +148,12 @@ export const postprocessSubtitles = (
     segments: subTypes.segments.map((segment) => {
       return {
         ...segment,
-        words: wordsTogether(segment.words)
-          .map((word) => splitWordIntoMonospaceSegment(word))
-          .flat(1),
+        words: wordsTogether(
+          segment.words
+            .map((word) => splitWordIntoMonospaceSegment(word))
+            .flat(1)
+            .map((w) => remapWord(w)),
+        ),
       };
     }),
   };
