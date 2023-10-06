@@ -3550,7 +3550,7 @@ export const Root = () => {
               transitionToNextScene: true,
               newChapter: "Asset previews",
               stopChapteringAfterThis: false,
-              music: "previous" as const,
+              music: "none" as const,
             },
             {
               type: "scene" as const,
@@ -3627,7 +3627,7 @@ export const Root = () => {
             {
               type: "endcard" as const,
               durationInFrames: 100,
-              music: "previous" as const,
+              music: "soft" as const,
               channel: "remotion" as const,
               platform: "youtube" as const,
             },
