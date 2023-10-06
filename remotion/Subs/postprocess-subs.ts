@@ -20,6 +20,9 @@ const wordsTogether = (words: Word[]) => {
       const lastAddedWord = newWords[newWords.length - 1];
       lastAddedWord.word += word.word;
       lastAddedWord.end = word.end;
+      if (word.monospace) {
+        lastAddedWord.monospace = true;
+      }
     } else {
       newWords.push(word);
     }
