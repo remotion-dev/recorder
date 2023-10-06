@@ -33,13 +33,11 @@ const wordsTogether = (words: Word[]) => {
 
 const cutWords = ({
   segment,
-  maxCharsPerScene,
   boxWidth,
   maxLines,
   fontSize,
 }: {
   segment: Segment;
-  maxCharsPerScene: number;
   boxWidth: number;
   maxLines: number;
   fontSize: number;
@@ -100,7 +98,6 @@ const cutWords = ({
         end: secondHalf[secondHalf.length - 1].end,
         words: secondHalf,
       },
-      maxCharsPerScene,
       boxWidth,
       maxLines,
       fontSize,
@@ -110,13 +107,11 @@ const cutWords = ({
 
 export const ensureMaxWords = ({
   subTypes,
-  maxCharsPerScene,
   maxLines,
   boxWidth,
   fontSize,
 }: {
   subTypes: SubTypes;
-  maxCharsPerScene: number;
   maxLines: number;
   boxWidth: number;
   fontSize: number;
@@ -132,7 +127,6 @@ export const ensureMaxWords = ({
     ...subTypes,
     segments: cutWords({
       segment: masterSegment,
-      maxCharsPerScene,
       boxWidth,
       maxLines,
       fontSize,
@@ -163,7 +157,6 @@ export const postprocessSubtitles = (
 
   return ensureMaxWords({
     subTypes: mappedSubTypes,
-    maxCharsPerScene: 100,
     boxWidth,
     maxLines,
     fontSize,
