@@ -44,19 +44,19 @@ test("join words correctly", () => {
       end: 5.94,
       probability: 0.20170751214027405,
       start: 5.42,
-      word: " `bun`",
+      word: " `bun",
     },
     {
       end: 6.54,
       probability: 0.570287823677063,
       start: 5.94,
-      word: " `run`",
+      word: " run",
     },
     {
       start: 6.54,
       end: 6.96,
       probability: 0.27501168847084045,
-      word: " `dev`.",
+      word: " dev`.",
     },
     {
       end: 8.36,

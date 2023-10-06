@@ -10,7 +10,6 @@ test("Should split up into monospace words", () => {
     start: 10,
     end: 100,
     word: "This is a `monospace` word",
-    monospace: false,
   };
 
   expect(splitWordIntoMonospaceSegment(word)).toEqual([
