@@ -3629,7 +3629,7 @@ export const Root = () => {
               durationInFrames: 100,
               music: "soft" as const,
               channel: "remotion" as const,
-              platform: "youtube" as const,
+              platform: "x" as const,
             },
           ],
           metadata: [],
