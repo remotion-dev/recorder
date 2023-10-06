@@ -213,6 +213,8 @@ export const SegmentComp: React.FC<{
         display: "flex",
         lineHeight: 1.2,
         opacity,
+        // @ts-expect-error
+        textWrap: "balance",
         ...getSubsLayout({
           canvasLayout,
           subsBox,
