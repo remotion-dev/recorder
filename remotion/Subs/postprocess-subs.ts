@@ -90,6 +90,14 @@ const cutWords = ({
     }
   }
 
+  while (
+    segment.words[bestCut - 1].monospace ||
+    segment.words[bestCut - 1].word.trim() === ""
+  ) {
+    bestCut--;
+    console.log("is monospace", segment.words[bestCut]);
+  }
+
   const firstHalf = segment.words.slice(0, bestCut);
   const secondHalf = segment.words.slice(bestCut);
 
