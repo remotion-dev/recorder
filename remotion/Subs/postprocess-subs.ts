@@ -47,7 +47,7 @@ const cutWords = ({
 
   if (wordsToUse / segment.words.length > 0.9) {
     // Prevent a few hanging words at the end
-    bestCut = Math.round(segment.words.length / 2);
+    bestCut = segment.words.length - 5;
   }
 
   for (let i = 1; i < 4; i++) {
