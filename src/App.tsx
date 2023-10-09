@@ -50,7 +50,12 @@ const App = () => {
 
     window.navigator.mediaDevices
       .getUserMedia({
-        video: { deviceId: selectedWebcam },
+        // Highest possible resolution up to 1080p
+        video: {
+          deviceId: selectedWebcam,
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
         audio: { deviceId: microphone.deviceId },
       })
       .then((stream) => {
