@@ -62,8 +62,6 @@ const Permission: React.FC<{
     run();
   }, [run]);
 
-  console.log(type, state);
-
   return (
     <div style={peripheral}>
       <div>{type === "audio" ? "Microphone:" : "Camera:"}</div>
