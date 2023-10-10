@@ -3,6 +3,24 @@ import React, { useCallback, useEffect, useState } from "react";
 
 type PermissionState = "granted" | "denied" | "prompt";
 
+const largeContainer: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+};
+
+const explanationWrapper: React.CSSProperties = {
+  display: "flex",
+  textAlign: "start",
+};
+
+const explanationContainer: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "flex-start",
+  flexDirection: "column",
+  maxWidth: 800,
+};
+
 const innerContainer: React.CSSProperties = {
   display: "flex",
   justifyContent: "flex-start",
@@ -14,6 +32,8 @@ const container: React.CSSProperties = {
   border: "1px solid white",
   borderRadius: 10,
   padding: 12,
+  maxWidth: 400,
+  margin: 20,
 };
 
 const title: React.CSSProperties = {
@@ -82,11 +102,31 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
   }
 
   return (
-    <div style={container}>
-      <div style={title}>Required peripheral permissions</div>
-      <div style={innerContainer}>
-        <Permission type="audio" onGranted={() => setAudioGranted(true)} />
-        <Permission type="video" onGranted={() => setVideoGranted(true)} />
+    <div style={largeContainer}>
+      <div style={container}>
+        <div style={title}>Required peripheral permissions</div>
+        <div style={innerContainer}>
+          <Permission type="audio" onGranted={() => setAudioGranted(true)} />
+          <Permission type="video" onGranted={() => setVideoGranted(true)} />
+        </div>
+      </div>
+      This app requires access to your microphone and camera to work.
+      <div style={explanationContainer}>
+        <div style={explanationWrapper}>
+          1. Click on the padlock/info icon 🛡️ next to the web address in your
+          browser&apos;s address bar.
+        </div>
+        <div style={explanationWrapper}>
+          2. In the dropdown menu that appears, locate the
+          &apos;Permissions&apos; or &apos;Site settings&apos; option.
+        </div>
+        <div style={explanationWrapper}>
+          3. Look for &apos;Camera&apos; and &apos;Microphone&apos; settings and
+          ensure they are set to &apos;Allow&apos; or &apos;Ask&apos;
+        </div>
+        <div style={explanationWrapper}>
+          4. Refresh the page if necessary to apply the changes.
+        </div>
       </div>
     </div>
   );
