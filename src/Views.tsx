@@ -1,15 +1,25 @@
 /* eslint-disable no-alert */
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 export const View: React.FC<{
   name: string;
   recordAudio: boolean;
   devices: MediaDeviceInfo[];
-}> = ({ name, recordAudio, devices }) => {
+  addMediaSource: (source: MediaStream) => void;
+  removeMediaSource: (source: MediaStream) => void;
+}> = ({ name, recordAudio, devices, addMediaSource, removeMediaSource }) => {
   const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
   const sourceRef = useRef<HTMLVideoElement>(null);
 
   const [selectedExternalSource, setSelectedExternalSource] =
     useState<ConstrainDOMString | null>(null);
+
+  useEffect(() => {
+    if (!mediaSource) {
+      return;
+    }
+
+    addMediaSource(mediaSource);
+  }, [addMediaSource, mediaSource]);
 
   const selectExternalSource = useCallback(() => {
     const microphone = devices.find(
@@ -23,6 +33,10 @@ export const View: React.FC<{
 
     if (selectedExternalSource === "undefined") {
       mediaSource?.getVideoTracks().forEach((track) => track.stop());
+      if (mediaSource) {
+        removeMediaSource(mediaSource);
+      }
+
       setMediaSource(null);
       setSelectedExternalSource(null);
       return;

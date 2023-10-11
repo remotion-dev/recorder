@@ -31,8 +31,32 @@ const App = () => {
 
   const [selectedWebcam, setSelectedWebcamVideo] =
     useState<ConstrainDOMString | null>(null);
-  const [selectedScreen, setSelectedScreen] =
-    useState<ConstrainDOMString | null>(null);
+  const [mediaSources, setMediaSources] = useState<MediaStream[]>([]);
+  console.log("mediaSources", mediaSources);
+  const addMediaSource = useCallback(
+    (source: MediaStream) => {
+      const filteredSources = mediaSources.filter((s) => s.id === source.id);
+
+      if (filteredSources.length > 0) {
+        return;
+      }
+
+      setMediaSources([...mediaSources, source]);
+    },
+    [mediaSources],
+  );
+
+  const removeMediaSource = useCallback(
+    (source: MediaStream) => {
+      const filteredSources = mediaSources.filter((s) => s.id !== source.id);
+      if (filteredSources.length === mediaSources.length) {
+        return;
+      }
+
+      setMediaSources(filteredSources);
+    },
+    [mediaSources],
+  );
 
   const selectWebcam = useCallback(() => {
     // const microphone = devices.find(
@@ -68,40 +92,6 @@ const App = () => {
         setWebcam(stream);
       });
   }, [selectedWebcam]);
-
-  const selectVirtualScreen = useCallback(() => {
-    if (!selectedScreen) {
-      alert("No video selected");
-      return;
-    }
-
-    window.navigator.mediaDevices
-      .getUserMedia({
-        video: { deviceId: selectedScreen },
-      })
-      .then((stream) => {
-        if (virtualScreenRef.current) {
-          virtualScreenRef.current.srcObject = stream;
-          virtualScreenRef.current.play();
-        }
-
-        setVirtualScreen(stream);
-      });
-  }, [selectedScreen]);
-
-  const selectscreen = () => {
-    window.navigator.mediaDevices
-      .getDisplayMedia({ video: true })
-      .then((stream) => {
-        setDisplay(stream);
-        if (!screenRef.current) {
-          return;
-        }
-
-        screenRef.current.srcObject = stream;
-        screenRef.current.play();
-      });
-  };
 
   const start = () => {
     if (!webcam) {
@@ -185,9 +175,6 @@ const App = () => {
       <div style={{ color: recording ? "red" : "black" }}>
         {recording ? "recording" : "not recording"}
       </div>
-      <button type="button" onClick={selectscreen}>
-        Select screen
-      </button>
       <button
         type="button"
         disabled={!webcam || recording !== false}
@@ -203,7 +190,13 @@ const App = () => {
           <tr>
             {webcam && (
               <td>
-                <View name={"Webcam"} recordAudio devices={devices} />
+                <View
+                  name={"Webcam"}
+                  recordAudio
+                  devices={devices}
+                  addMediaSource={addMediaSource}
+                  removeMediaSource={removeMediaSource}
+                />
               </td>
             )}
             {display && (
@@ -220,7 +213,13 @@ const App = () => {
         </tbody>
       </table>
       <br />
-      <View name={"Screen1"} recordAudio={false} devices={devices}></View>
+      <View
+        name={"Screen1"}
+        recordAudio={false}
+        devices={devices}
+        addMediaSource={addMediaSource}
+        removeMediaSource={removeMediaSource}
+      />
     </div>
   );
 };
