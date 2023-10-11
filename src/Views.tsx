@@ -11,9 +11,6 @@ export const View: React.FC<{
   const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
   const sourceRef = useRef<HTMLVideoElement>(null);
 
-  const [selectedExternalSource, setSelectedExternalSource] =
-    useState<ConstrainDOMString | null>(null);
-
   useEffect(() => {
     if (!mediaSource) {
       return;
@@ -22,62 +19,57 @@ export const View: React.FC<{
     addMediaSource({ mediaStream: mediaSource, prefix: name });
   }, [addMediaSource, mediaSource, name]);
 
-  const selectExternalSource = useCallback(() => {
-    const microphone = devices.find(
-      (d) => d.kind === "audioinput" && d.label.includes("NT-USB"),
-    );
+  const selectExternalSource = useCallback(
+    (selectedExternalSource: ConstrainDOMString | null) => {
+      const microphone = devices.find(
+        (d) => d.kind === "audioinput" && d.label.includes("NT-USB"),
+      );
 
-    if (!selectedExternalSource) {
-      alert("No video selected");
-      return;
-    }
-
-    if (selectedExternalSource === "undefined") {
-      mediaSource?.getVideoTracks().forEach((track) => track.stop());
-      if (mediaSource) {
-        removeMediaSource({ mediaStream: mediaSource, prefix: name });
+      if (!selectedExternalSource) {
+        alert("No video selected");
+        return;
       }
 
-      setMediaSource(null);
-      setSelectedExternalSource(null);
-      return;
-    }
-
-    const mediaStreamContraints = recordAudio
-      ? {
-          video: {
-            deviceId: selectedExternalSource,
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
-          },
-          audio: { deviceId: microphone?.deviceId },
-        }
-      : {
-          video: { deviceId: selectedExternalSource },
-        };
-
-    window.navigator.mediaDevices
-      .getUserMedia(mediaStreamContraints)
-      .then((stream) => {
-        if (sourceRef.current) {
-          sourceRef.current.srcObject = stream;
-          sourceRef.current.play();
+      if (selectedExternalSource === "undefined") {
+        mediaSource?.getVideoTracks().forEach((track) => track.stop());
+        if (mediaSource) {
+          removeMediaSource({ mediaStream: mediaSource, prefix: name });
         }
 
-        setMediaSource(stream);
-      })
-      .catch((e) => {
         setMediaSource(null);
-        alert(e);
-      });
-  }, [
-    devices,
-    mediaSource,
-    name,
-    recordAudio,
-    removeMediaSource,
-    selectedExternalSource,
-  ]);
+        return;
+      }
+
+      const mediaStreamContraints = recordAudio
+        ? {
+            video: {
+              deviceId: selectedExternalSource,
+              width: { ideal: 1920 },
+              height: { ideal: 1080 },
+            },
+            audio: { deviceId: microphone?.deviceId },
+          }
+        : {
+            video: { deviceId: selectedExternalSource },
+          };
+
+      window.navigator.mediaDevices
+        .getUserMedia(mediaStreamContraints)
+        .then((stream) => {
+          if (sourceRef.current) {
+            sourceRef.current.srcObject = stream;
+            sourceRef.current.play();
+          }
+
+          setMediaSource(stream);
+        })
+        .catch((e) => {
+          setMediaSource(null);
+          alert(e);
+        });
+    },
+    [devices, mediaSource, name, recordAudio, removeMediaSource],
+  );
 
   const selectScreen = () => {
     window.navigator.mediaDevices
@@ -103,7 +95,7 @@ export const View: React.FC<{
       <video ref={sourceRef} muted width="640" />
       <select
         onChange={(e) => {
-          setSelectedExternalSource(e.target.value as ConstrainDOMString);
+          selectExternalSource(e.target.value as ConstrainDOMString);
         }}
       >
         <option key={"unselected"} value={"undefined"}>
@@ -119,9 +111,9 @@ export const View: React.FC<{
             );
           })}
       </select>
-      <button type="button" onClick={selectExternalSource}>
+      {/* <button type="button" onClick={selectExternalSource}>
         Confirm
-      </button>{" "}
+      </button>{" "} */}
     </div>
   );
 };
