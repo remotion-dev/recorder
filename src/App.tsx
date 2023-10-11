@@ -30,8 +30,8 @@ const App = () => {
   const [selectedWebcam, setSelectedWebcamVideo] =
     useState<ConstrainDOMString | null>(null);
   const [mediaSources, setMediaSources] = useState<CustomMediaStream[]>([]);
-  console.log("mediaSources", mediaSources);
-  console.log("recorders", recorders);
+  const [amountOfViews, setAmountOfViews] = useState(2);
+
   const addMediaSource = useCallback(
     (source: CustomMediaStream) => {
       const filteredSources = mediaSources.filter(
@@ -146,7 +146,7 @@ const App = () => {
       selectWebcam();
     }
   }, [devices, selectWebcam]);
-
+  console.log("devices in app", devices);
   return (
     <div className="App">
       <div style={{ color: recording ? "red" : "black" }}>
@@ -162,31 +162,27 @@ const App = () => {
       <button type="button" disabled={!recording} onClick={stop}>
         Stop
       </button>
-      <table>
-        <tbody>
-          <tr>
-            {webcam && (
-              <td>
-                <View
-                  name={"Webcam"}
-                  recordAudio
-                  devices={devices}
-                  addMediaSource={addMediaSource}
-                  removeMediaSource={removeMediaSource}
-                />
-              </td>
-            )}
-          </tr>
-        </tbody>
-      </table>
-      <br />
-      <View
-        name={"Screen1"}
-        recordAudio={false}
-        devices={devices}
-        addMediaSource={addMediaSource}
-        removeMediaSource={removeMediaSource}
-      />
+      <div
+        style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
+      >
+        {new Array(amountOfViews).fill(0).map((_, i) => (
+          <View
+            // eslint-disable-next-line react/no-array-index-key
+            key={i}
+            name={["webcam", "display", "alternative1", "alternative2"][i]}
+            devices={devices}
+            recordAudio
+            addMediaSource={addMediaSource}
+            removeMediaSource={removeMediaSource}
+            type={i % 2 ? "screen" : "peripheral"}
+          />
+        ))}
+      </div>
+      {amountOfViews < 4 ? (
+        <button type="button" onClick={() => setAmountOfViews((v) => v + 1)}>
+          Add view
+        </button>
+      ) : null}
     </div>
   );
 };

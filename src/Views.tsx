@@ -1,15 +1,32 @@
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CustomMediaStream } from "./App";
+
+const viewContainer: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  margin: 10,
+};
+
 export const View: React.FC<{
   name: string;
   recordAudio: boolean;
   devices: MediaDeviceInfo[];
+  type: "peripheral" | "screen";
   addMediaSource: (source: CustomMediaStream) => void;
   removeMediaSource: (source: CustomMediaStream) => void;
-}> = ({ name, recordAudio, devices, addMediaSource, removeMediaSource }) => {
+}> = ({
+  name,
+  recordAudio,
+  devices,
+  type,
+  addMediaSource,
+  removeMediaSource,
+}) => {
   const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
   const sourceRef = useRef<HTMLVideoElement>(null);
+
+  console.log("devices", devices);
 
   useEffect(() => {
     if (!mediaSource) {
@@ -87,30 +104,34 @@ export const View: React.FC<{
   };
 
   return (
-    <div>
+    <div style={viewContainer}>
       {name}
-      <button type="button" onClick={selectScreen}>
-        Select screen
-      </button>
-      <video ref={sourceRef} muted width="640" />
-      <select
-        onChange={(e) => {
-          selectExternalSource(e.target.value as ConstrainDOMString);
-        }}
-      >
-        <option key={"unselected"} value={"undefined"}>
-          --select video source--
-        </option>
-        {devices
-          .filter((d) => d.kind === "videoinput")
-          .map((d) => {
-            return (
-              <option key={d.deviceId} value={d.deviceId}>
-                {d.label} ({d.kind})
-              </option>
-            );
-          })}
-      </select>
+      <video ref={sourceRef} style={{ marginTop: 6 }} muted width="640" />
+      {type === "screen" ? (
+        <button type="button" onClick={selectScreen}>
+          Select screen
+        </button>
+      ) : (
+        <select
+          onChange={(e) => {
+            selectExternalSource(e.target.value as ConstrainDOMString);
+          }}
+        >
+          <option key={"unselected"} value={"undefined"}>
+            --select video source--
+          </option>
+          {devices
+            .filter((d) => d.kind === "videoinput")
+            .map((d) => {
+              return (
+                <option key={d.deviceId} value={d.deviceId}>
+                  {d.label} ({d.kind})
+                </option>
+              );
+            })}
+        </select>
+      )}
+
       {/* <button type="button" onClick={selectExternalSource}>
         Confirm
       </button>{" "} */}
