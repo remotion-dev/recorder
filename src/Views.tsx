@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CustomMediaStream } from "./App";
 
 const viewContainer: React.CSSProperties = {
@@ -38,6 +38,13 @@ export const View: React.FC<{
   const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
   const sourceRef = useRef<HTMLVideoElement>(null);
 
+  const dynamicVideoStyle: React.CSSProperties = useMemo(() => {
+    return {
+      ...videoStyle,
+      opacity: mediaSource ? 1 : 0,
+    };
+  }, [mediaSource]);
+  console.log(mediaSource);
   useEffect(() => {
     if (!mediaSource) {
       return;
@@ -130,7 +137,9 @@ export const View: React.FC<{
     <div style={viewContainer}>
       <div style={viewName}>{name}</div>
       <div style={{ flex: 1 }} />
-      <video ref={sourceRef} style={videoStyle} muted width="640" />
+
+      <video ref={sourceRef} style={dynamicVideoStyle} muted width="640" />
+
       <div style={{ flex: 1 }} />
       {type === "screen" ? (
         <button style={{ marginTop: 10 }} type="button" onClick={selectScreen}>
