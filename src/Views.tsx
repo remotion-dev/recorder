@@ -187,7 +187,7 @@ export const View: React.FC<{
   return (
     <div style={viewContainer}>
       <div style={viewName}>
-        <div style={{ flex: 1 }} />
+        {name === "webcam" ? <div style={{ flex: 1 }} /> : null}
         {name}
         {name === "webcam" ? (
           <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
@@ -201,8 +201,6 @@ export const View: React.FC<{
           </div>
         ) : null}
       </div>
-
-      <div style={{ flex: 1 }} />
 
       <div style={{ position: "relative" }}>
         <video ref={sourceRef} style={dynamicVideoStyle} muted width="640" />
