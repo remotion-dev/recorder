@@ -199,7 +199,7 @@ const App = () => {
         Stop
       </button>
       <table>
-        <tbody style={{ backgroundColor: "lightblue" }}>
+        <tbody>
           <tr>
             {webcam && (
               <td>
@@ -220,46 +220,7 @@ const App = () => {
         </tbody>
       </table>
       <br />
-      Webcam:
-      <select
-        onChange={(e) => {
-          setSelectedWebcamVideo(e.target.value as ConstrainDOMString);
-        }}
-      >
-        {devices
-          .filter((d) => d.kind === "videoinput")
-          .map((d) => {
-            return (
-              <option key={d.deviceId} value={d.deviceId}>
-                {d.label} ({d.kind})
-              </option>
-            );
-          })}
-      </select>
-      <button type="button" onClick={selectWebcam}>
-        Confirm
-      </button>{" "}
-      <br />
-      Virtual screen:{" "}
-      <select
-        onChange={(e) => {
-          setSelectedScreen(e.target.value as ConstrainDOMString);
-        }}
-      >
-        {devices
-          .filter((d) => d.kind === "videoinput")
-          .map((d) => {
-            return (
-              <option key={d.deviceId} value={d.deviceId}>
-                {d.label} ({d.kind})
-              </option>
-            );
-          })}
-      </select>
-      <button type="button" onClick={selectVirtualScreen}>
-        Confirm
-      </button>{" "}
-      <br />
+      <View name={"Screen1"} recordAudio={false} devices={devices}></View>
     </div>
   );
 };

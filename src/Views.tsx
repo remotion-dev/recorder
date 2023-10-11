@@ -74,6 +74,7 @@ export const View: React.FC<{
 
   return (
     <div>
+      {name}
       <button type="button" onClick={selectScreen}>
         Select screen
       </button>
