@@ -17,6 +17,7 @@ const cropIndicator: React.CSSProperties = {
   top: -BORDERWIDTH /* Adjust the top position as needed */,
   left: "0px" /* Adjust the left position as needed */,
   height: "100%" /* Adjust the height of the square */,
+  borderRadius: 20,
 };
 
 const videoStyle: React.CSSProperties = {
@@ -94,7 +95,7 @@ export const View: React.FC<{
       return cropIndicator;
     }
 
-    const derivedWidth = (videoElemHeight / 350) * 400;
+    const derivedWidth = (videoElemHeight / 400) * 350;
     const derivedHeight = videoElemHeight;
     return {
       ...cropIndicator,
