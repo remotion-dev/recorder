@@ -28,8 +28,6 @@ export const View: React.FC<{
   const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
   const sourceRef = useRef<HTMLVideoElement>(null);
 
-  console.log("devices", devices);
-
   useEffect(() => {
     if (!mediaSource) {
       return;

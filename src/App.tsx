@@ -6,6 +6,10 @@ import { View } from "./Views";
 
 let endDate = 0;
 
+const buttonStyle: React.CSSProperties = {
+  margin: 10,
+};
+
 const mediaRecorderOptions: MediaRecorderOptions = {
   audioBitsPerSecond: 128000,
   mimeType: "video/webm;codecs=h264,opus",
@@ -132,9 +136,22 @@ const App = () => {
           />
         ))}
       </div>
+      {amountOfViews > 2 ? (
+        <button
+          style={buttonStyle}
+          type="button"
+          onClick={() => setAmountOfViews((v) => v - 1)}
+        >
+          Remove source
+        </button>
+      ) : null}
       {amountOfViews < 4 ? (
-        <button type="button" onClick={() => setAmountOfViews((v) => v + 1)}>
-          Add view
+        <button
+          style={buttonStyle}
+          type="button"
+          onClick={() => setAmountOfViews((v) => v + 1)}
+        >
+          Add source
         </button>
       ) : null}
     </div>
