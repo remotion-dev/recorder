@@ -25,6 +25,8 @@ const videoStyle: React.CSSProperties = {
 };
 const viewName: React.CSSProperties = {
   marginBottom: 10,
+  display: "flex",
+  justifyContent: "center",
 };
 
 export const View: React.FC<{
@@ -48,9 +50,12 @@ export const View: React.FC<{
   const sourceRef = useRef<HTMLVideoElement>(null);
   const [videoElemWidth, setVideoElemWidth] = useState(0);
   const [videoElemHeight, setVideoElemHeight] = useState(0);
-  const displayCropIndicator = useMemo(() => {
-    return name === "webcam" && mediaSource;
-  }, [mediaSource, name]);
+  const [showCropIndicator, setShowCropIndicator] = useState(false);
+
+  const handleChange = useCallback(() => {
+    setShowCropIndicator((prev) => !prev);
+  }, []);
+
   const dynamicVideoStyle: React.CSSProperties = useMemo(() => {
     return {
       ...videoStyle,
@@ -86,7 +91,6 @@ export const View: React.FC<{
   }, []);
   const dynCropIndicator: React.CSSProperties = useMemo(() => {
     if (!videoElemWidth && !videoElemHeight) {
-      console.log("inside if");
       return cropIndicator;
     }
 
@@ -181,12 +185,27 @@ export const View: React.FC<{
 
   return (
     <div style={viewContainer}>
-      <div style={viewName}>{name}</div>
+      <div style={viewName}>
+        <div style={{ flex: 1 }} />
+        {name}
+        {name === "webcam" ? (
+          <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
+            <label htmlFor="indicator">Show Crop</label>
+            <input
+              id="toggleCropIndicator"
+              type="checkbox"
+              name="indicator"
+              onChange={handleChange}
+            />
+          </div>
+        ) : null}
+      </div>
+
       <div style={{ flex: 1 }} />
 
       <div style={{ position: "relative" }}>
         <video ref={sourceRef} style={dynamicVideoStyle} muted width="640" />
-        {displayCropIndicator ? <div style={dynCropIndicator} /> : null}
+        {showCropIndicator ? <div style={dynCropIndicator} /> : null}
       </div>
 
       <div style={{ flex: 1 }} />
