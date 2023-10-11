@@ -1,11 +1,12 @@
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { CustomMediaStream } from "./App";
 export const View: React.FC<{
   name: string;
   recordAudio: boolean;
   devices: MediaDeviceInfo[];
-  addMediaSource: (source: MediaStream) => void;
-  removeMediaSource: (source: MediaStream) => void;
+  addMediaSource: (source: CustomMediaStream) => void;
+  removeMediaSource: (source: CustomMediaStream) => void;
 }> = ({ name, recordAudio, devices, addMediaSource, removeMediaSource }) => {
   const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
   const sourceRef = useRef<HTMLVideoElement>(null);
@@ -18,8 +19,8 @@ export const View: React.FC<{
       return;
     }
 
-    addMediaSource(mediaSource);
-  }, [addMediaSource, mediaSource]);
+    addMediaSource({ mediaStream: mediaSource, prefix: name });
+  }, [addMediaSource, mediaSource, name]);
 
   const selectExternalSource = useCallback(() => {
     const microphone = devices.find(
@@ -34,7 +35,7 @@ export const View: React.FC<{
     if (selectedExternalSource === "undefined") {
       mediaSource?.getVideoTracks().forEach((track) => track.stop());
       if (mediaSource) {
-        removeMediaSource(mediaSource);
+        removeMediaSource({ mediaStream: mediaSource, prefix: name });
       }
 
       setMediaSource(null);
@@ -69,7 +70,14 @@ export const View: React.FC<{
         setMediaSource(null);
         alert(e);
       });
-  }, [devices, mediaSource, recordAudio, selectedExternalSource]);
+  }, [
+    devices,
+    mediaSource,
+    name,
+    recordAudio,
+    removeMediaSource,
+    selectedExternalSource,
+  ]);
 
   const selectScreen = () => {
     window.navigator.mediaDevices
