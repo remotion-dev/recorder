@@ -7,20 +7,15 @@ export const View: React.FC<{
 }> = ({ name, recordAudio, devices }) => {
   const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
   const sourceRef = useRef<HTMLVideoElement>(null);
-  const [selectedVideo, setSelectedVideo] = useState<ConstrainDOMString | null>(
-    null,
-  );
+
   const [selectedExternalSource, setSelectedExternalSource] =
     useState<ConstrainDOMString | null>(null);
 
-  console.log("external video source", selectedExternalSource);
-  console.log(recordAudio, selectedVideo, sourceRef, mediaSource);
-
   const selectExternalSource = useCallback(() => {
-    console.log(
-      "inside select external source. Selected external source: ",
-      selectedExternalSource,
+    const microphone = devices.find(
+      (d) => d.kind === "audioinput" && d.label.includes("NT-USB"),
     );
+
     if (!selectedExternalSource) {
       alert("No video selected");
       return;
@@ -33,12 +28,22 @@ export const View: React.FC<{
       return;
     }
 
+    const mediaStreamContraints = recordAudio
+      ? {
+          video: {
+            deviceId: selectedExternalSource,
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+          },
+          audio: { deviceId: microphone?.deviceId },
+        }
+      : {
+          video: { deviceId: selectedExternalSource },
+        };
+
     window.navigator.mediaDevices
-      .getUserMedia({
-        video: { deviceId: selectedExternalSource },
-      })
+      .getUserMedia(mediaStreamContraints)
       .then((stream) => {
-        console.log("inside then. Stream: ", stream);
         if (sourceRef.current) {
           sourceRef.current.srcObject = stream;
           sourceRef.current.play();
@@ -50,7 +55,7 @@ export const View: React.FC<{
         setMediaSource(null);
         alert(e);
       });
-  }, [mediaSource, selectedExternalSource]);
+  }, [devices, mediaSource, recordAudio, selectedExternalSource]);
 
   const selectScreen = () => {
     window.navigator.mediaDevices
@@ -75,7 +80,6 @@ export const View: React.FC<{
       <video ref={sourceRef} muted width="640" />
       <select
         onChange={(e) => {
-          console.log("changing");
           setSelectedExternalSource(e.target.value as ConstrainDOMString);
         }}
       >
