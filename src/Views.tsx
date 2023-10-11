@@ -11,6 +11,9 @@ const viewContainer: React.CSSProperties = {
   borderRadius: 10,
 };
 
+const videoStyle: React.CSSProperties = {
+  maxHeight: window.innerHeight / 2.5,
+};
 const viewName: React.CSSProperties = {
   marginBottom: 10,
 };
@@ -126,8 +129,8 @@ export const View: React.FC<{
   return (
     <div style={viewContainer}>
       <div style={viewName}>{name}</div>
-      <div style={{ flex: 1 }}></div>
-      <video ref={sourceRef} muted width="640" />
+      <div style={{ flex: 1 }} />
+      <video ref={sourceRef} style={videoStyle} muted width="640" />
       <div style={{ flex: 1 }} />
       {type === "screen" ? (
         <button style={{ marginTop: 10 }} type="button" onClick={selectScreen}>
