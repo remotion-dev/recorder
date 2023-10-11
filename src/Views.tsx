@@ -116,6 +116,11 @@ export const View: React.FC<{
         return;
       }
 
+      if (!microphone) {
+        alert("NT USB mic is not connected");
+        return;
+      }
+
       if (selectedExternalSource === "undefined") {
         mediaSource?.getVideoTracks().forEach((track) => track.stop());
         if (mediaSource) {
