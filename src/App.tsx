@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { onVideo } from "./on-video";
 import { View } from "./Views";
@@ -18,17 +18,12 @@ export type CustomMediaStream = {
 };
 
 const App = () => {
-  const liveRef = useRef<HTMLVideoElement>(null);
-
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
-  const [webcam, setWebcam] = useState<MediaStream | null>(null);
 
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
 
   const [recording, setRecording] = useState<number | false>(false);
 
-  const [selectedWebcam, setSelectedWebcamVideo] =
-    useState<ConstrainDOMString | null>(null);
   const [mediaSources, setMediaSources] = useState<CustomMediaStream[]>([]);
   const [amountOfViews, setAmountOfViews] = useState(2);
 
@@ -61,45 +56,10 @@ const App = () => {
     [mediaSources],
   );
 
-  const selectWebcam = useCallback(() => {
-    // const microphone = devices.find(
-    //   (d) => d.kind === "audioinput" && d.label.includes("NT-USB"),
-    // );
-
-    // if (!microphone) {
-    //   alert("NT USB mic is not connected");
-    //   return;
-    // }
-
-    if (!selectedWebcam) {
-      alert("No video selected");
-      return;
-    }
-
-    window.navigator.mediaDevices
-      .getUserMedia({
-        // Highest possible resolution up to 1080p
-        video: {
-          deviceId: selectedWebcam,
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
-        },
-        // audio: { deviceId: microphone.deviceId },
-      })
-      .then((stream) => {
-        if (liveRef.current) {
-          liveRef.current.srcObject = stream;
-          liveRef.current.play();
-        }
-
-        setWebcam(stream);
-      });
-  }, [selectedWebcam]);
-
   const start = () => {
-    if (!webcam) {
-      throw new Error("No webcam");
-    }
+    // if (!webcam) {
+    //   throw new Error("No webcam");
+    // }
 
     setRecording(Date.now());
 
@@ -136,17 +96,10 @@ const App = () => {
 
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then((_devices) => {
-      setSelectedWebcamVideo(_devices[0].deviceId);
       setDevices(_devices);
     });
   }, []);
 
-  useEffect(() => {
-    if (devices.length > 0) {
-      selectWebcam();
-    }
-  }, [devices, selectWebcam]);
-  console.log("devices in app", devices);
   return (
     <div className="App">
       <div style={{ color: recording ? "red" : "black" }}>
@@ -154,7 +107,10 @@ const App = () => {
       </div>
       <button
         type="button"
-        disabled={!webcam || recording !== false}
+        disabled={
+          // !webcam ||
+          recording !== false
+        }
         onClick={start}
       >
         Start
