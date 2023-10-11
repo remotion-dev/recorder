@@ -27,6 +27,7 @@ export const View: React.FC<{
     }
 
     if (selectedExternalSource === "undefined") {
+      mediaSource?.getVideoTracks().forEach((track) => track.stop());
       setMediaSource(null);
       setSelectedExternalSource(null);
       return;
@@ -49,7 +50,7 @@ export const View: React.FC<{
         setMediaSource(null);
         alert(e);
       });
-  }, [selectedExternalSource]);
+  }, [mediaSource, selectedExternalSource]);
 
   const selectScreen = () => {
     window.navigator.mediaDevices
