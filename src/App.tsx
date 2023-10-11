@@ -12,30 +12,31 @@ const mediaRecorderOptions: MediaRecorderOptions = {
   videoBitsPerSecond: 8 * 4000000,
 };
 
+export type CustomMediaStream = {
+  mediaStream: MediaStream;
+  prefix: string;
+};
+
 const App = () => {
   const liveRef = useRef<HTMLVideoElement>(null);
-  const screenRef = useRef<HTMLVideoElement>(null);
-  const virtualScreenRef = useRef<HTMLVideoElement>(null);
 
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
-  const [display, setDisplay] = useState<MediaStream | null>(null);
   const [webcam, setWebcam] = useState<MediaStream | null>(null);
-  const [virtualScreen, setVirtualScreen] = useState<MediaStream | null>(null);
-  const [displayMediaRecorder, setMediaDisplayRecorder] =
-    useState<MediaRecorder | null>(null);
-  const [webcamMediaRecorder, setWebcamDisplayRecorder] =
-    useState<MediaRecorder | null>(null);
-  const [virtualScreenRecorder, setVirtualScreenRecorder] =
-    useState<MediaRecorder | null>(null);
+
+  const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
+
   const [recording, setRecording] = useState<number | false>(false);
 
   const [selectedWebcam, setSelectedWebcamVideo] =
     useState<ConstrainDOMString | null>(null);
-  const [mediaSources, setMediaSources] = useState<MediaStream[]>([]);
+  const [mediaSources, setMediaSources] = useState<CustomMediaStream[]>([]);
   console.log("mediaSources", mediaSources);
+  console.log("recorders", recorders);
   const addMediaSource = useCallback(
-    (source: MediaStream) => {
-      const filteredSources = mediaSources.filter((s) => s.id === source.id);
+    (source: CustomMediaStream) => {
+      const filteredSources = mediaSources.filter(
+        (s) => s.mediaStream.id === source.mediaStream.id,
+      );
 
       if (filteredSources.length > 0) {
         return;
@@ -47,8 +48,10 @@ const App = () => {
   );
 
   const removeMediaSource = useCallback(
-    (source: MediaStream) => {
-      const filteredSources = mediaSources.filter((s) => s.id !== source.id);
+    (source: CustomMediaStream) => {
+      const filteredSources = mediaSources.filter(
+        (s) => s.mediaStream.id !== source.mediaStream.id,
+      );
       if (filteredSources.length === mediaSources.length) {
         return;
       }
@@ -101,56 +104,30 @@ const App = () => {
     setRecording(Date.now());
 
     const toStart = [];
-
-    if (display) {
-      const displayRecorder = new MediaRecorder(display, mediaRecorderOptions);
-      setMediaDisplayRecorder(displayRecorder);
-      displayRecorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, endDate, "display");
-      });
-      toStart.push(() => displayRecorder.start());
-    } else {
-      setMediaDisplayRecorder(null);
-    }
-
-    if (webcam) {
-      const webcamRecorder = new MediaRecorder(webcam, mediaRecorderOptions);
-      setWebcamDisplayRecorder(webcamRecorder);
-      webcamRecorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, endDate, "webcam");
-      });
-
-      toStart.push(() => webcamRecorder.start());
-    } else {
-      setWebcamDisplayRecorder(null);
-    }
-
-    if (virtualScreen) {
-      const recorder = new MediaRecorder(virtualScreen, mediaRecorderOptions);
-      setVirtualScreenRecorder(recorder);
+    const newRecorders: MediaRecorder[] = [];
+    for (const source of mediaSources) {
+      const recorder = new MediaRecorder(
+        source.mediaStream,
+        mediaRecorderOptions,
+      );
+      newRecorders.push(recorder);
       recorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, endDate, "display");
+        onVideo(data, endDate, source.prefix);
       });
 
       toStart.push(() => recorder.start());
-    } else {
-      setVirtualScreenRecorder(null);
     }
+
+    setRecorders(newRecorders);
 
     toStart.forEach((f) => f());
   };
 
   const stop = () => {
-    if (displayMediaRecorder) {
-      displayMediaRecorder.stop();
-    }
-
-    if (webcamMediaRecorder) {
-      webcamMediaRecorder.stop();
-    }
-
-    if (virtualScreenRecorder) {
-      virtualScreenRecorder.stop();
+    if (recorders) {
+      for (const recorder of recorders) {
+        recorder.stop();
+      }
     }
 
     endDate = Date.now();
@@ -197,16 +174,6 @@ const App = () => {
                   addMediaSource={addMediaSource}
                   removeMediaSource={removeMediaSource}
                 />
-              </td>
-            )}
-            {display && (
-              <td>
-                <video ref={screenRef} muted width="640" />
-              </td>
-            )}
-            {virtualScreen && (
-              <td>
-                <video ref={virtualScreenRef} muted width="640" />
               </td>
             )}
           </tr>
