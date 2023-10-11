@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CustomMediaStream } from "./App";
-
+const BORDERWIDTH = 2;
 const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
@@ -11,8 +11,17 @@ const viewContainer: React.CSSProperties = {
   borderRadius: 10,
 };
 
+const cropIndicator: React.CSSProperties = {
+  position: "absolute",
+  border: `${BORDERWIDTH}px solid red` /* You can customize the border style */,
+  top: -BORDERWIDTH /* Adjust the top position as needed */,
+  left: "0px" /* Adjust the left position as needed */,
+  height: "100%" /* Adjust the height of the square */,
+};
+
 const videoStyle: React.CSSProperties = {
   maxHeight: window.innerHeight / 2.5,
+  position: "relative",
 };
 const viewName: React.CSSProperties = {
   marginBottom: 10,
@@ -37,14 +46,17 @@ export const View: React.FC<{
 }) => {
   const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
   const sourceRef = useRef<HTMLVideoElement>(null);
-
+  const [videoElemWidth, setVideoElemWidth] = useState(0);
+  const [videoElemHeight, setVideoElemHeight] = useState(0);
+  const displayCropIndicator = useMemo(() => {
+    return name === "webcam" && mediaSource;
+  }, [mediaSource, name]);
   const dynamicVideoStyle: React.CSSProperties = useMemo(() => {
     return {
       ...videoStyle,
       opacity: mediaSource ? 1 : 0,
     };
   }, [mediaSource]);
-  console.log(mediaSource);
   useEffect(() => {
     if (!mediaSource) {
       return;
@@ -53,6 +65,40 @@ export const View: React.FC<{
     addMediaSource({ mediaStream: mediaSource, prefix: name });
   }, [addMediaSource, mediaSource, name]);
 
+  useEffect(() => {
+    if (!sourceRef.current) {
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      setVideoElemWidth(entries[0].contentRect.width);
+      setVideoElemHeight(entries[0].contentRect.height);
+    });
+
+    observer.observe(sourceRef.current);
+
+    // ???
+    return () => {
+      if (sourceRef.current) {
+        observer.unobserve(sourceRef.current);
+      }
+    };
+  }, []);
+  const dynCropIndicator: React.CSSProperties = useMemo(() => {
+    if (!videoElemWidth && !videoElemHeight) {
+      console.log("inside if");
+      return cropIndicator;
+    }
+
+    const derivedWidth = (videoElemHeight / 350) * 400;
+    const derivedHeight = videoElemHeight;
+    return {
+      ...cropIndicator,
+      width: derivedWidth,
+      height: derivedHeight,
+      left: (videoElemWidth - derivedWidth) / 2,
+    };
+  }, [videoElemWidth, videoElemHeight]);
   const selectExternalSource = useCallback(
     (selectedExternalSource: ConstrainDOMString | null) => {
       const isWebcam = name === "webcam";
@@ -138,7 +184,10 @@ export const View: React.FC<{
       <div style={viewName}>{name}</div>
       <div style={{ flex: 1 }} />
 
-      <video ref={sourceRef} style={dynamicVideoStyle} muted width="640" />
+      <div style={{ position: "relative" }}>
+        <video ref={sourceRef} style={dynamicVideoStyle} muted width="640" />
+        {displayCropIndicator ? <div style={dynCropIndicator} /> : null}
+      </div>
 
       <div style={{ flex: 1 }} />
       {type === "screen" ? (
