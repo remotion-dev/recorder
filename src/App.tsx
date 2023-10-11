@@ -34,14 +34,14 @@ const App = () => {
     useState<ConstrainDOMString | null>(null);
 
   const selectWebcam = useCallback(() => {
-    const microphone = devices.find(
-      (d) => d.kind === "audioinput" && d.label.includes("NT-USB")
-    );
+    // const microphone = devices.find(
+    //   (d) => d.kind === "audioinput" && d.label.includes("NT-USB"),
+    // );
 
-    if (!microphone) {
-      alert("NT USB mic is not connected");
-      return;
-    }
+    // if (!microphone) {
+    //   alert("NT USB mic is not connected");
+    //   return;
+    // }
 
     if (!selectedWebcam) {
       alert("No video selected");
@@ -56,7 +56,6 @@ const App = () => {
           width: { ideal: 1920 },
           height: { ideal: 1080 },
         },
-        audio: { deviceId: microphone.deviceId },
       })
       .then((stream) => {
         if (liveRef.current) {
@@ -66,7 +65,7 @@ const App = () => {
 
         setWebcam(stream);
       });
-  }, [devices, selectedWebcam]);
+  }, [selectedWebcam]);
 
   const selectVirtualScreen = useCallback(() => {
     if (!selectedScreen) {
@@ -168,6 +167,7 @@ const App = () => {
 
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then((_devices) => {
+      console.log(_devices);
       setSelectedWebcamVideo(_devices[0].deviceId);
       setDevices(_devices);
     });
