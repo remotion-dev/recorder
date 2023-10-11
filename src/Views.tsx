@@ -6,6 +6,13 @@ const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   margin: 10,
+  padding: "10px 8px",
+  boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75)",
+  borderRadius: 10,
+};
+
+const viewName: React.CSSProperties = {
+  marginBottom: 10,
 };
 
 export const View: React.FC<{
@@ -55,6 +62,7 @@ export const View: React.FC<{
         }
 
         if (isWebcam) {
+          mediaSource?.getAudioTracks().forEach((track) => track.stop());
           setWebcam(false);
         }
 
@@ -117,10 +125,12 @@ export const View: React.FC<{
 
   return (
     <div style={viewContainer}>
-      {name}
-      <video ref={sourceRef} style={{ marginTop: 6 }} muted width="640" />
+      <div style={viewName}>{name}</div>
+      <div style={{ flex: 1 }}></div>
+      <video ref={sourceRef} muted width="640" />
+      <div style={{ flex: 1 }} />
       {type === "screen" ? (
-        <button type="button" onClick={selectScreen}>
+        <button style={{ marginTop: 10 }} type="button" onClick={selectScreen}>
           Select screen
         </button>
       ) : (
@@ -128,6 +138,7 @@ export const View: React.FC<{
           onChange={(e) => {
             selectExternalSource(e.target.value as ConstrainDOMString);
           }}
+          style={{ margin: "10px 0px" }}
         >
           <option key={"unselected"} value={"undefined"}>
             --select video source--

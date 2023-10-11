@@ -107,18 +107,22 @@ const App = () => {
   return (
     <div className="App">
       <div style={{ color: recording ? "red" : "black" }}>
-        {recording ? "recording" : "not recording"}
+        {recording ? "recording" : null}
       </div>
-      <button
-        type="button"
-        disabled={!webcam || recording !== false}
-        onClick={start}
-      >
-        Start
-      </button>
-      <button type="button" disabled={!recording} onClick={stop}>
-        Stop
-      </button>
+      {recording ? (
+        <button type="button" disabled={!recording} onClick={stop}>
+          Stop Recording
+        </button>
+      ) : (
+        <button
+          type="button"
+          disabled={!webcam || recording !== false}
+          onClick={start}
+        >
+          Start Recording
+        </button>
+      )}
+
       <div
         style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
       >
