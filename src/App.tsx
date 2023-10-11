@@ -21,7 +21,7 @@ const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
 
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
-
+  const [webcam, setWebcam] = useState(false);
   const [recording, setRecording] = useState<number | false>(false);
 
   const [mediaSources, setMediaSources] = useState<CustomMediaStream[]>([]);
@@ -57,9 +57,9 @@ const App = () => {
   );
 
   const start = () => {
-    // if (!webcam) {
-    //   throw new Error("No webcam");
-    // }
+    if (!webcam) {
+      throw new Error("No webcam");
+    }
 
     setRecording(Date.now());
 
@@ -107,10 +107,7 @@ const App = () => {
       </div>
       <button
         type="button"
-        disabled={
-          // !webcam ||
-          recording !== false
-        }
+        disabled={!webcam || recording !== false}
         onClick={start}
       >
         Start
@@ -131,6 +128,7 @@ const App = () => {
             addMediaSource={addMediaSource}
             removeMediaSource={removeMediaSource}
             type={i % 2 ? "screen" : "peripheral"}
+            setWebcam={setWebcam}
           />
         ))}
       </div>

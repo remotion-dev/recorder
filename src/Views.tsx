@@ -15,6 +15,7 @@ export const View: React.FC<{
   type: "peripheral" | "screen";
   addMediaSource: (source: CustomMediaStream) => void;
   removeMediaSource: (source: CustomMediaStream) => void;
+  setWebcam: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   name,
   recordAudio,
@@ -22,6 +23,7 @@ export const View: React.FC<{
   type,
   addMediaSource,
   removeMediaSource,
+  setWebcam,
 }) => {
   const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
   const sourceRef = useRef<HTMLVideoElement>(null);
@@ -38,6 +40,7 @@ export const View: React.FC<{
 
   const selectExternalSource = useCallback(
     (selectedExternalSource: ConstrainDOMString | null) => {
+      const isWebcam = name === "webcam";
       const microphone = devices.find(
         (d) => d.kind === "audioinput" && d.label.includes("NT-USB"),
       );
@@ -51,6 +54,10 @@ export const View: React.FC<{
         mediaSource?.getVideoTracks().forEach((track) => track.stop());
         if (mediaSource) {
           removeMediaSource({ mediaStream: mediaSource, prefix: name });
+        }
+
+        if (isWebcam) {
+          setWebcam(false);
         }
 
         setMediaSource(null);
@@ -79,13 +86,20 @@ export const View: React.FC<{
           }
 
           setMediaSource(stream);
+          if (isWebcam) {
+            setWebcam(true);
+          }
         })
         .catch((e) => {
+          if (isWebcam) {
+            setWebcam(false);
+          }
+
           setMediaSource(null);
           alert(e);
         });
     },
-    [devices, mediaSource, name, recordAudio, removeMediaSource],
+    [devices, mediaSource, name, recordAudio, removeMediaSource, setWebcam],
   );
 
   const selectScreen = () => {
