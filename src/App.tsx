@@ -34,14 +34,14 @@ const App = () => {
     useState<ConstrainDOMString | null>(null);
 
   const selectWebcam = useCallback(() => {
-    // const microphone = devices.find(
-    //   (d) => d.kind === "audioinput" && d.label.includes("NT-USB"),
-    // );
+    const microphone = devices.find(
+      (d) => d.kind === "audioinput" && d.label.includes("NT-USB"),
+    );
 
-    // if (!microphone) {
-    //   alert("NT USB mic is not connected");
-    //   return;
-    // }
+    if (!microphone) {
+      alert("NT USB mic is not connected");
+      return;
+    }
 
     if (!selectedWebcam) {
       alert("No video selected");
