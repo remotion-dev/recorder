@@ -38,6 +38,7 @@ export const View: React.FC<{
   addMediaSource: (source: CustomMediaStream) => void;
   removeMediaSource: (source: CustomMediaStream) => void;
   setWebcam: React.Dispatch<React.SetStateAction<boolean>>;
+  derivedAudioSource: string | undefined;
 }> = ({
   name,
   recordAudio,
@@ -46,6 +47,7 @@ export const View: React.FC<{
   addMediaSource,
   removeMediaSource,
   setWebcam,
+  derivedAudioSource,
 }) => {
   const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
   const sourceRef = useRef<HTMLVideoElement>(null);
@@ -104,20 +106,13 @@ export const View: React.FC<{
       left: (videoElemWidth - derivedWidth) / 2,
     };
   }, [videoElemWidth, videoElemHeight]);
+
   const selectExternalSource = useCallback(
     (selectedExternalSource: ConstrainDOMString | null) => {
       const isWebcam = name === "webcam";
-      const microphone = devices.find(
-        (d) => d.kind === "audioinput" && d.label.includes("NT-USB"),
-      );
 
       if (!selectedExternalSource) {
         alert("No video selected");
-        return;
-      }
-
-      if (!microphone) {
-        alert("NT USB mic is not connected");
         return;
       }
 
@@ -143,7 +138,7 @@ export const View: React.FC<{
               width: { ideal: 1920 },
               height: { ideal: 1080 },
             },
-            audio: { deviceId: microphone?.deviceId },
+            audio: { deviceId: derivedAudioSource },
           }
         : {
             video: { deviceId: selectedExternalSource },
@@ -171,7 +166,15 @@ export const View: React.FC<{
           alert(e);
         });
     },
-    [devices, mediaSource, name, recordAudio, removeMediaSource, setWebcam],
+    [
+      derivedAudioSource,
+      devices,
+      mediaSource,
+      name,
+      recordAudio,
+      removeMediaSource,
+      setWebcam,
+    ],
   );
 
   const selectScreen = () => {
@@ -238,10 +241,6 @@ export const View: React.FC<{
             })}
         </select>
       )}
-
-      {/* <button type="button" onClick={selectExternalSource}>
-        Confirm
-      </button>{" "} */}
     </div>
   );
 };
