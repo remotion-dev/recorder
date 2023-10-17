@@ -1,6 +1,7 @@
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CustomMediaStream } from "./App";
+import { AudioSelector } from "./AudioSelector";
 const BORDERWIDTH = 2;
 const viewContainer: React.CSSProperties = {
   display: "flex",
@@ -38,7 +39,6 @@ export const View: React.FC<{
   addMediaSource: (source: CustomMediaStream) => void;
   removeMediaSource: (source: CustomMediaStream) => void;
   setWebcam: React.Dispatch<React.SetStateAction<boolean>>;
-  derivedAudioSource: string | undefined;
 }> = ({
   name,
   recordAudio,
@@ -47,17 +47,35 @@ export const View: React.FC<{
   addMediaSource,
   removeMediaSource,
   setWebcam,
-  derivedAudioSource,
 }) => {
   const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
   const sourceRef = useRef<HTMLVideoElement>(null);
   const [videoElemWidth, setVideoElemWidth] = useState(0);
   const [videoElemHeight, setVideoElemHeight] = useState(0);
   const [showCropIndicator, setShowCropIndicator] = useState(false);
+  const [selectedAudioSource, setSelectedAudioSource] =
+    useState<ConstrainDOMString | null>(null);
+
+  const [currMediaStreamConstraints, setCurrMediaStreamConstraints] =
+    useState<MediaStreamConstraints | null>();
 
   const handleChange = useCallback(() => {
     setShowCropIndicator((prev) => !prev);
   }, []);
+
+  const derivedAudioSource: string | undefined = useMemo(() => {
+    const microphone = devices.find((d) => d.kind === "audioinput");
+
+    if (!microphone) {
+      return undefined;
+    }
+
+    if (selectedAudioSource) {
+      return selectedAudioSource as string;
+    }
+
+    return microphone.deviceId;
+  }, [devices, selectedAudioSource]);
 
   const dynamicVideoStyle: React.CSSProperties = useMemo(() => {
     return {
@@ -107,6 +125,34 @@ export const View: React.FC<{
     };
   }, [videoElemWidth, videoElemHeight]);
 
+  const updateAudioChannel = useCallback(() => {
+    if (!recordAudio) {
+      return;
+    }
+
+    const updatedSteamConstraints = {
+      ...currMediaStreamConstraints,
+      audio: { deviceId: derivedAudioSource },
+    };
+
+    setCurrMediaStreamConstraints(updatedSteamConstraints);
+
+    window.navigator.mediaDevices
+      .getUserMedia(updatedSteamConstraints)
+      .then((stream) => {
+        if (sourceRef.current) {
+          sourceRef.current.srcObject = stream;
+          sourceRef.current.play();
+        }
+
+        setMediaSource(stream);
+      })
+      .catch((e) => {
+        setMediaSource(null);
+        alert(e);
+      });
+  }, [currMediaStreamConstraints, derivedAudioSource, recordAudio]);
+
   const selectExternalSource = useCallback(
     (selectedExternalSource: ConstrainDOMString | null) => {
       const isWebcam = name === "webcam";
@@ -131,7 +177,7 @@ export const View: React.FC<{
         return;
       }
 
-      const mediaStreamContraints = recordAudio
+      const mediaStreamConstraints = recordAudio
         ? {
             video: {
               deviceId: selectedExternalSource,
@@ -145,7 +191,7 @@ export const View: React.FC<{
           };
 
       window.navigator.mediaDevices
-        .getUserMedia(mediaStreamContraints)
+        .getUserMedia(mediaStreamConstraints)
         .then((stream) => {
           if (sourceRef.current) {
             sourceRef.current.srcObject = stream;
@@ -215,31 +261,48 @@ export const View: React.FC<{
       </div>
 
       <div style={{ flex: 1 }} />
-      {type === "screen" ? (
-        <button style={{ marginTop: 10 }} type="button" onClick={selectScreen}>
-          Select screen
-        </button>
-      ) : (
-        <select
-          onChange={(e) => {
-            selectExternalSource(e.target.value as ConstrainDOMString);
-          }}
-          style={{ margin: "10px 0px" }}
-        >
-          <option key={"unselected"} value={"undefined"}>
-            --select video source--
-          </option>
-          {devices
-            .filter((d) => d.kind === "videoinput")
-            .map((d) => {
-              return (
-                <option key={d.deviceId} value={d.deviceId}>
-                  {d.label} ({d.kind})
-                </option>
-              );
-            })}
-        </select>
-      )}
+      <div>
+        {type === "screen" ? (
+          <button
+            style={{ marginTop: 10 }}
+            type="button"
+            onClick={selectScreen}
+          >
+            Select screen
+          </button>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            Media Source
+            <select
+              onChange={(e) => {
+                selectExternalSource(e.target.value as ConstrainDOMString);
+              }}
+              style={{ margin: "10px 0px" }}
+            >
+              <option key={"unselected"} value={"undefined"}>
+                --select video source--
+              </option>
+              {devices
+                .filter((d) => d.kind === "videoinput")
+                .map((d) => {
+                  return (
+                    <option key={d.deviceId} value={d.deviceId}>
+                      {d.label} ({d.kind})
+                    </option>
+                  );
+                })}
+            </select>
+          </div>
+        )}
+
+        {recordAudio ? (
+          <AudioSelector
+            devices={devices}
+            setSelectedAudioSource={setSelectedAudioSource}
+            updateAudioChannel={updateAudioChannel}
+          />
+        ) : null}
+      </div>
     </div>
   );
 };

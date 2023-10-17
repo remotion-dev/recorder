@@ -8,7 +8,8 @@ export const AudioSelector: React.FC<{
   setSelectedAudioSource: React.Dispatch<
     SetStateAction<ConstrainDOMString | null>
   >;
-}> = ({ devices, setSelectedAudioSource }) => {
+  updateAudioChannel: () => void;
+}> = ({ devices, setSelectedAudioSource, updateAudioChannel }) => {
   const selectAudioSource = useCallback(
     (selectedAudioSource: ConstrainDOMString | null) => {
       setSelectedAudioSource(selectedAudioSource as string);
@@ -22,6 +23,7 @@ export const AudioSelector: React.FC<{
       <select
         onChange={(e) => {
           selectAudioSource(e.target.value as ConstrainDOMString);
+          updateAudioChannel();
         }}
         style={{ margin: "10px 0px" }}
       >
