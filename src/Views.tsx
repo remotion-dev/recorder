@@ -168,7 +168,6 @@ export const View: React.FC<{
     },
     [
       derivedAudioSource,
-      devices,
       mediaSource,
       name,
       recordAudio,
