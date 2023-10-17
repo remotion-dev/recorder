@@ -60,6 +60,10 @@ const App = () => {
     [mediaSources],
   );
 
+  const microphone = devices.find((d) => d.kind === "audioinput");
+
+  console.log("microphones: ", microphone);
+
   const start = () => {
     if (!webcam) {
       throw new Error("No webcam");
