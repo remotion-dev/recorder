@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { onVideo } from "./on-video";
-import { View } from "./Views";
+import { prefixes, View } from "./Views";
 
 let endDate = 0;
 
@@ -16,67 +16,42 @@ const mediaRecorderOptions: MediaRecorderOptions = {
   videoBitsPerSecond: 8 * 4000000,
 };
 
-export type CustomMediaStream = {
-  mediaStream: MediaStream;
-  prefix: string;
-};
-
 const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
 
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
-  const [webcam, setWebcam] = useState(false);
   const [recording, setRecording] = useState<number | false>(false);
 
-  const [mediaSources, setMediaSources] = useState<CustomMediaStream[]>([]);
+  const [mediaSources, setMediaSources] = useState<{
+    [key in (typeof prefixes)[number]]: MediaStream | null;
+  }>({ webcam: null, display: null, alternative1: null, alternative2: null });
   const [amountOfViews, setAmountOfViews] = useState(2);
 
-  const addMediaSource = useCallback(
-    (source: CustomMediaStream) => {
-      const filteredSources = mediaSources.filter(
-        (s) => s.mediaStream.id === source.mediaStream.id,
-      );
-
-      if (filteredSources.length > 0) {
-        return;
-      }
-
-      setMediaSources([...mediaSources, source]);
+  console.log("Media Sources:  ", mediaSources);
+  const setMediaStream = useCallback(
+    (prefix: string, source: MediaStream | null) => {
+      setMediaSources((prevMediaSources) => ({
+        ...prevMediaSources,
+        [prefix]: source,
+      }));
     },
-    [mediaSources],
-  );
-
-  const removeMediaSource = useCallback(
-    (source: CustomMediaStream) => {
-      const filteredSources = mediaSources.filter(
-        (s) => s.mediaStream.id !== source.mediaStream.id,
-      );
-      if (filteredSources.length === mediaSources.length) {
-        return;
-      }
-
-      setMediaSources(filteredSources);
-    },
-    [mediaSources],
+    [],
   );
 
   const start = () => {
-    if (!webcam) {
-      throw new Error("No webcam");
-    }
-
     setRecording(Date.now());
 
     const toStart = [];
     const newRecorders: MediaRecorder[] = [];
-    for (const source of mediaSources) {
-      const recorder = new MediaRecorder(
-        source.mediaStream,
-        mediaRecorderOptions,
-      );
+    for (const [prefix, source] of Object.entries(mediaSources)) {
+      if (!source) {
+        continue;
+      }
+
+      const recorder = new MediaRecorder(source, mediaRecorderOptions);
       newRecorders.push(recorder);
       recorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, endDate, source.prefix);
+        onVideo(data, endDate, prefix);
       });
 
       toStart.push(() => recorder.start());
@@ -116,7 +91,7 @@ const App = () => {
       ) : (
         <button
           type="button"
-          disabled={!webcam || recording !== false}
+          disabled={!mediaSources.webcam || recording !== false}
           onClick={start}
         >
           Start Recording
@@ -126,19 +101,21 @@ const App = () => {
       <div
         style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
       >
-        {new Array(amountOfViews).fill(0).map((_, i) => (
-          <View
-            // eslint-disable-next-line react/no-array-index-key
-            key={i}
-            name={["webcam", "display", "alternative1", "alternative2"][i]}
-            devices={devices}
-            recordAudio={i === 0}
-            addMediaSource={addMediaSource}
-            removeMediaSource={removeMediaSource}
-            type={i % 2 ? "screen" : "peripheral"}
-            setWebcam={setWebcam}
-          />
-        ))}
+        {new Array(amountOfViews).fill(0).map((_, i) => {
+          const prefix = prefixes[i];
+          return (
+            <View
+              // eslint-disable-next-line react/no-array-index-key
+              key={i}
+              prefix={prefix}
+              devices={devices}
+              recordAudio={i === 0}
+              type={i % 2 ? "screen" : "peripheral"}
+              setMediaStream={setMediaStream}
+              mediaStream={mediaSources[prefix] ?? null}
+            />
+          );
+        })}
       </div>
       {amountOfViews > 2 ? (
         <button
