@@ -190,6 +190,7 @@ export const View: React.FC<{
             video: { deviceId: selectedExternalSource },
           };
 
+      setCurrMediaStreamConstraints(mediaStreamConstraints);
       window.navigator.mediaDevices
         .getUserMedia(mediaStreamConstraints)
         .then((stream) => {
