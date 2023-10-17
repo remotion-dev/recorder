@@ -1,6 +1,7 @@
 /* eslint-disable no-alert */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
+import { AudioSelector } from "./AudioSelector";
 import { onVideo } from "./on-video";
 import { View } from "./Views";
 
@@ -30,6 +31,22 @@ const App = () => {
 
   const [mediaSources, setMediaSources] = useState<CustomMediaStream[]>([]);
   const [amountOfViews, setAmountOfViews] = useState(2);
+  const [selectedAudioSource, setSelectedAudioSource] =
+    useState<ConstrainDOMString | null>(null);
+
+  const derivedAudioSource: string | undefined = useMemo(() => {
+    const microphone = devices.find((d) => d.kind === "audioinput");
+
+    if (!microphone) {
+      return undefined;
+    }
+
+    if (selectedAudioSource) {
+      return selectedAudioSource as string;
+    }
+
+    return microphone.deviceId;
+  }, [devices, selectedAudioSource]);
 
   const addMediaSource = useCallback(
     (source: CustomMediaStream) => {
@@ -59,10 +76,6 @@ const App = () => {
     },
     [mediaSources],
   );
-
-  const microphone = devices.find((d) => d.kind === "audioinput");
-
-  console.log("microphones: ", microphone);
 
   const start = () => {
     if (!webcam) {
@@ -141,6 +154,7 @@ const App = () => {
             removeMediaSource={removeMediaSource}
             type={i % 2 ? "screen" : "peripheral"}
             setWebcam={setWebcam}
+            derivedAudioSource={derivedAudioSource}
           />
         ))}
       </div>
@@ -162,6 +176,10 @@ const App = () => {
           Add source
         </button>
       ) : null}
+      <AudioSelector
+        devices={devices}
+        setSelectedAudioSource={setSelectedAudioSource}
+      />
     </div>
   );
 };
