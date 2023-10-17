@@ -1,9 +1,14 @@
 /* eslint-disable no-alert */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { onVideo } from "./on-video";
+import { View } from "./Views";
 
 let endDate = 0;
+
+const buttonStyle: React.CSSProperties = {
+  margin: 10,
+};
 
 const mediaRecorderOptions: MediaRecorderOptions = {
   audioBitsPerSecond: 128000,
@@ -11,95 +16,53 @@ const mediaRecorderOptions: MediaRecorderOptions = {
   videoBitsPerSecond: 8 * 4000000,
 };
 
-const App = () => {
-  const liveRef = useRef<HTMLVideoElement>(null);
-  const screenRef = useRef<HTMLVideoElement>(null);
-  const virtualScreenRef = useRef<HTMLVideoElement>(null);
+export type CustomMediaStream = {
+  mediaStream: MediaStream;
+  prefix: string;
+};
 
+const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
-  const [display, setDisplay] = useState<MediaStream | null>(null);
-  const [webcam, setWebcam] = useState<MediaStream | null>(null);
-  const [virtualScreen, setVirtualScreen] = useState<MediaStream | null>(null);
-  const [displayMediaRecorder, setMediaDisplayRecorder] =
-    useState<MediaRecorder | null>(null);
-  const [webcamMediaRecorder, setWebcamDisplayRecorder] =
-    useState<MediaRecorder | null>(null);
-  const [virtualScreenRecorder, setVirtualScreenRecorder] =
-    useState<MediaRecorder | null>(null);
+
+  const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
+  const [webcam, setWebcam] = useState(false);
   const [recording, setRecording] = useState<number | false>(false);
 
-  const [selectedWebcam, setSelectedWebcamVideo] =
-    useState<ConstrainDOMString | null>(null);
-  const [selectedScreen, setSelectedScreen] =
-    useState<ConstrainDOMString | null>(null);
+  const [mediaSources, setMediaSources] = useState<CustomMediaStream[]>([]);
+  const [amountOfViews, setAmountOfViews] = useState(2);
 
-  const selectWebcam = useCallback(() => {
-    const microphone = devices.find(
-      (d) => d.kind === "audioinput" && d.label.includes("NT-USB"),
-    );
+  const addMediaSource = useCallback(
+    (source: CustomMediaStream) => {
+      const filteredSources = mediaSources.filter(
+        (s) => s.mediaStream.id === source.mediaStream.id,
+      );
 
-    if (!microphone) {
-      alert("NT USB mic is not connected");
-      return;
-    }
+      if (filteredSources.length > 0) {
+        return;
+      }
 
-    if (!selectedWebcam) {
-      alert("No video selected");
-      return;
-    }
+      setMediaSources([...mediaSources, source]);
+    },
+    [mediaSources],
+  );
 
-    window.navigator.mediaDevices
-      .getUserMedia({
-        // Highest possible resolution up to 1080p
-        video: {
-          deviceId: selectedWebcam,
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
-        },
-      })
-      .then((stream) => {
-        if (liveRef.current) {
-          liveRef.current.srcObject = stream;
-          liveRef.current.play();
-        }
+  const removeMediaSource = useCallback(
+    (source: CustomMediaStream) => {
+      const filteredSources = mediaSources.filter(
+        (s) => s.mediaStream.id !== source.mediaStream.id,
+      );
+      if (filteredSources.length === mediaSources.length) {
+        return;
+      }
 
-        setWebcam(stream);
-      });
-  }, [selectedWebcam]);
+      setMediaSources(filteredSources);
+    },
+    [mediaSources],
+  );
 
-  const selectVirtualScreen = useCallback(() => {
-    if (!selectedScreen) {
-      alert("No video selected");
-      return;
-    }
+  const microphone = devices.find((d) => d.kind === "audioinput");
 
-    window.navigator.mediaDevices
-      .getUserMedia({
-        video: { deviceId: selectedScreen },
-      })
-      .then((stream) => {
-        if (virtualScreenRef.current) {
-          virtualScreenRef.current.srcObject = stream;
-          virtualScreenRef.current.play();
-        }
-
-        setVirtualScreen(stream);
-      });
-  }, [selectedScreen]);
-
-  const selectscreen = () => {
-    window.navigator.mediaDevices
-      .getDisplayMedia({ video: true })
-      .then((stream) => {
-        setDisplay(stream);
-        if (!screenRef.current) {
-          return;
-        }
-
-        screenRef.current.srcObject = stream;
-        screenRef.current.play();
-      });
-  };
+  console.log("microphones: ", microphone);
 
   const start = () => {
     if (!webcam) {
@@ -109,56 +72,30 @@ const App = () => {
     setRecording(Date.now());
 
     const toStart = [];
-
-    if (display) {
-      const displayRecorder = new MediaRecorder(display, mediaRecorderOptions);
-      setMediaDisplayRecorder(displayRecorder);
-      displayRecorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, endDate, "display");
-      });
-      toStart.push(() => displayRecorder.start());
-    } else {
-      setMediaDisplayRecorder(null);
-    }
-
-    if (webcam) {
-      const webcamRecorder = new MediaRecorder(webcam, mediaRecorderOptions);
-      setWebcamDisplayRecorder(webcamRecorder);
-      webcamRecorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, endDate, "webcam");
-      });
-
-      toStart.push(() => webcamRecorder.start());
-    } else {
-      setWebcamDisplayRecorder(null);
-    }
-
-    if (virtualScreen) {
-      const recorder = new MediaRecorder(virtualScreen, mediaRecorderOptions);
-      setVirtualScreenRecorder(recorder);
+    const newRecorders: MediaRecorder[] = [];
+    for (const source of mediaSources) {
+      const recorder = new MediaRecorder(
+        source.mediaStream,
+        mediaRecorderOptions,
+      );
+      newRecorders.push(recorder);
       recorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, endDate, "display");
+        onVideo(data, endDate, source.prefix);
       });
 
       toStart.push(() => recorder.start());
-    } else {
-      setVirtualScreenRecorder(null);
     }
+
+    setRecorders(newRecorders);
 
     toStart.forEach((f) => f());
   };
 
   const stop = () => {
-    if (displayMediaRecorder) {
-      displayMediaRecorder.stop();
-    }
-
-    if (webcamMediaRecorder) {
-      webcamMediaRecorder.stop();
-    }
-
-    if (virtualScreenRecorder) {
-      virtualScreenRecorder.stop();
+    if (recorders) {
+      for (const recorder of recorders) {
+        recorder.stop();
+      }
     }
 
     endDate = Date.now();
@@ -167,98 +104,64 @@ const App = () => {
 
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then((_devices) => {
-      console.log(_devices);
-      setSelectedWebcamVideo(_devices[0].deviceId);
       setDevices(_devices);
     });
   }, []);
 
-  useEffect(() => {
-    if (devices.length > 0) {
-      selectWebcam();
-    }
-  }, [devices, selectWebcam]);
-
   return (
     <div className="App">
       <div style={{ color: recording ? "red" : "black" }}>
-        {recording ? "recording" : "not recording"}
+        {recording ? "recording" : null}
       </div>
-      <button type="button" onClick={selectscreen}>
-        Select screen
-      </button>
-      <button
-        type="button"
-        disabled={!webcam || recording !== false}
-        onClick={start}
+      {recording ? (
+        <button type="button" disabled={!recording} onClick={stop}>
+          Stop Recording
+        </button>
+      ) : (
+        <button
+          type="button"
+          disabled={!webcam || recording !== false}
+          onClick={start}
+        >
+          Start Recording
+        </button>
+      )}
+
+      <div
+        style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
       >
-        Start
-      </button>
-      <button type="button" disabled={!recording} onClick={stop}>
-        Stop
-      </button>
-      <table>
-        <tbody>
-          <tr>
-            {webcam && (
-              <td>
-                <video ref={liveRef} muted width="640" />
-              </td>
-            )}
-            {display && (
-              <td>
-                <video ref={screenRef} muted width="640" />
-              </td>
-            )}
-            {virtualScreen && (
-              <td>
-                <video ref={virtualScreenRef} muted width="640" />
-              </td>
-            )}
-          </tr>
-        </tbody>
-      </table>
-      <br />
-      Webcam:
-      <select
-        onChange={(e) => {
-          setSelectedWebcamVideo(e.target.value as ConstrainDOMString);
-        }}
-      >
-        {devices
-          .filter((d) => d.kind === "videoinput")
-          .map((d) => {
-            return (
-              <option key={d.deviceId} value={d.deviceId}>
-                {d.label} ({d.kind})
-              </option>
-            );
-          })}
-      </select>
-      <button type="button" onClick={selectWebcam}>
-        Confirm
-      </button>{" "}
-      <br />
-      Virtual screen:{" "}
-      <select
-        onChange={(e) => {
-          setSelectedScreen(e.target.value as ConstrainDOMString);
-        }}
-      >
-        {devices
-          .filter((d) => d.kind === "videoinput")
-          .map((d) => {
-            return (
-              <option key={d.deviceId} value={d.deviceId}>
-                {d.label} ({d.kind})
-              </option>
-            );
-          })}
-      </select>
-      <button type="button" onClick={selectVirtualScreen}>
-        Confirm
-      </button>{" "}
-      <br />
+        {new Array(amountOfViews).fill(0).map((_, i) => (
+          <View
+            // eslint-disable-next-line react/no-array-index-key
+            key={i}
+            name={["webcam", "display", "alternative1", "alternative2"][i]}
+            devices={devices}
+            recordAudio
+            addMediaSource={addMediaSource}
+            removeMediaSource={removeMediaSource}
+            type={i % 2 ? "screen" : "peripheral"}
+            setWebcam={setWebcam}
+          />
+        ))}
+      </div>
+      {amountOfViews > 2 ? (
+        <button
+          style={buttonStyle}
+          type="button"
+          onClick={() => setAmountOfViews((v) => v - 1)}
+        >
+          Remove source
+        </button>
+      ) : null}
+      {amountOfViews < 4 ? (
+        <button
+          style={buttonStyle}
+          type="button"
+          onClick={() => setAmountOfViews((v) => v + 1)}
+        >
+          Add source
+        </button>
+      ) : null}
     </div>
   );
 };
