@@ -1,3 +1,4 @@
+/* eslint-disable no-negated-condition */
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AudioSelector } from "./AudioSelector";
@@ -41,11 +42,10 @@ export type Prefix = (typeof prefixes)[number];
 export const View: React.FC<{
   recordAudio: boolean;
   devices: MediaDeviceInfo[];
-  type: "peripheral" | "screen";
   setMediaStream: (prefix: string, source: MediaStream | null) => void;
   mediaStream: MediaStream | null;
   prefix: string;
-}> = ({ recordAudio, devices, type, setMediaStream, mediaStream, prefix }) => {
+}> = ({ recordAudio, devices, setMediaStream, mediaStream, prefix }) => {
   const sourceRef = useRef<HTMLVideoElement>(null);
   const [videoElemWidth, setVideoElemWidth] = useState(0);
   const [videoElemHeight, setVideoElemHeight] = useState(0);
@@ -211,7 +211,35 @@ export const View: React.FC<{
 
       <div style={{ flex: 1 }} />
       <div>
-        {type === "screen" ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          Media Source
+          <select
+            onChange={(e) => {
+              if (e.target.value === "undefined") {
+                setSelectedVideoSource(null);
+                return;
+              }
+
+              setSelectedVideoSource(e.target.value as ConstrainDOMString);
+            }}
+            style={{ margin: "10px 0px" }}
+          >
+            <option key={"unselected"} value={"undefined"}>
+              --select video source--
+            </option>
+            {devices
+              .filter((d) => d.kind === "videoinput")
+              .map((d) => {
+                return (
+                  <option key={d.deviceId} value={d.deviceId}>
+                    {d.label} ({d.kind})
+                  </option>
+                );
+              })}
+          </select>
+        </div>
+
+        {prefix !== "webcam" ? (
           <button
             style={{ marginTop: 10 }}
             type="button"
@@ -219,35 +247,7 @@ export const View: React.FC<{
           >
             Select screen
           </button>
-        ) : (
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            Media Source
-            <select
-              onChange={(e) => {
-                if (e.target.value === "undefined") {
-                  setSelectedVideoSource(null);
-                  return;
-                }
-
-                setSelectedVideoSource(e.target.value as ConstrainDOMString);
-              }}
-              style={{ margin: "10px 0px" }}
-            >
-              <option key={"unselected"} value={"undefined"}>
-                --select video source--
-              </option>
-              {devices
-                .filter((d) => d.kind === "videoinput")
-                .map((d) => {
-                  return (
-                    <option key={d.deviceId} value={d.deviceId}>
-                      {d.label} ({d.kind})
-                    </option>
-                  );
-                })}
-            </select>
-          </div>
-        )}
+        ) : null}
 
         {recordAudio ? (
           <AudioSelector
