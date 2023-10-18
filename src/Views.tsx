@@ -124,10 +124,17 @@ export const View: React.FC<{
   );
 
   useEffect(() => {
+    if (recordAudio) {
+      return () => {
+        mediaStream?.getVideoTracks().forEach((track) => track.stop());
+        mediaStream?.getAudioTracks().forEach((track) => track.stop());
+      };
+    }
+
     return () => {
-      mediaStream?.stop?.();
+      mediaStream?.getVideoTracks().forEach((track) => track.stop());
     };
-  }, [mediaStream]);
+  }, [mediaStream, recordAudio]);
 
   useEffect(() => {
     if (selectedVideoSource === null) {
