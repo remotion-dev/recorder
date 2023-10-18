@@ -3,6 +3,10 @@ import { AbsoluteFill } from "remotion";
 
 const border = 6;
 
+// Assuming 1080p, values upscaled from 720p
+const YOUTUBE_END_SCREEN_SAFE_AREA_HEIGHT = 790;
+const YOUTUBE_END_SCREEN_SAFE_AREA_TOP = 135;
+
 const ThumbnailPreview: React.FC = () => {
   return (
     <div
@@ -24,15 +28,22 @@ export const ThumbnailContainers: React.FC = () => {
   return (
     <AbsoluteFill
       style={{
-        justifyContent: "center",
         alignItems: "flex-end",
         paddingRight: 100,
+        top: YOUTUBE_END_SCREEN_SAFE_AREA_TOP,
       }}
     >
-      <ThumbnailPreview />
-      <div style={{ height: 60 }} />
-      <ThumbnailPreview />
-      <div style={{ height: 20 }} />
+      <div
+        style={{
+          height: YOUTUBE_END_SCREEN_SAFE_AREA_HEIGHT,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <ThumbnailPreview />
+        <div style={{ flex: 1 }} />
+        <ThumbnailPreview />
+      </div>
     </AbsoluteFill>
   );
 };
