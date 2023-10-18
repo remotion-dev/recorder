@@ -80,7 +80,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="App">
+    <div style={{ width: "100%" }}>
       <div style={{ color: recording ? "red" : "black" }}>
         {recording ? "recording" : null}
       </div>
@@ -99,7 +99,12 @@ const App = () => {
       )}
 
       <div
-        style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
+        style={{
+          display: "flex",
+          width: "100%",
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
       >
         {new Array(amountOfViews).fill(0).map((_, i) => {
           const prefix = prefixes[i];
