@@ -31,6 +31,19 @@ body {
   min-height: 100vh;
 }
 
+select {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  appearance: none;
+  /* safari */
+  -webkit-appearance: none;
+  /* other styles for aesthetics */
+  padding: 0.675em 6em 0.675em 1em;
+  background-color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
