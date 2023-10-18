@@ -42,7 +42,6 @@ const App = () => {
 
   const setMediaStream = useCallback(
     (prefix: Prefix, source: MediaStream | null) => {
-      console.log("setMediaStream", prefix, source);
       setMediaSources((prevMediaSources) => ({
         ...prevMediaSources,
         [prefix]: source,
@@ -91,8 +90,6 @@ const App = () => {
       setDevices(_devices);
     });
   }, []);
-  console.log("app display", mediaSources.display);
-  console.log("app", mediaSources);
 
   return (
     <div style={outer}>
