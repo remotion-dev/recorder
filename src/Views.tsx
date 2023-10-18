@@ -1,6 +1,7 @@
+/* eslint-disable no-negated-condition */
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CustomMediaStream } from "./App";
+import { AudioSelector } from "./AudioSelector";
 const BORDERWIDTH = 2;
 const viewContainer: React.CSSProperties = {
   display: "flex",
@@ -30,49 +31,59 @@ const viewName: React.CSSProperties = {
   justifyContent: "center",
 };
 
+export const prefixes = [
+  "webcam",
+  "display",
+  "alternative1",
+  "alternative2",
+] as const;
+export type Prefix = (typeof prefixes)[number];
+
 export const View: React.FC<{
-  name: string;
   recordAudio: boolean;
   devices: MediaDeviceInfo[];
-  type: "peripheral" | "screen";
-  addMediaSource: (source: CustomMediaStream) => void;
-  removeMediaSource: (source: CustomMediaStream) => void;
-  setWebcam: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({
-  name,
-  recordAudio,
-  devices,
-  type,
-  addMediaSource,
-  removeMediaSource,
-  setWebcam,
-}) => {
-  const [mediaSource, setMediaSource] = useState<MediaStream | null>(null);
+  setMediaStream: (prefix: string, source: MediaStream | null) => void;
+  mediaStream: MediaStream | null;
+  prefix: string;
+}> = ({ recordAudio, devices, setMediaStream, mediaStream, prefix }) => {
   const sourceRef = useRef<HTMLVideoElement>(null);
   const [videoElemWidth, setVideoElemWidth] = useState(0);
   const [videoElemHeight, setVideoElemHeight] = useState(0);
   const [showCropIndicator, setShowCropIndicator] = useState(false);
+  const [selectedAudioSource, setSelectedAudioSource] =
+    useState<ConstrainDOMString | null>(null);
+  const [selectedVideoSource, setSelectedVideoSource] =
+    useState<ConstrainDOMString | null>(null);
 
+  console.log("devices", devices);
   const handleChange = useCallback(() => {
     setShowCropIndicator((prev) => !prev);
   }, []);
 
+  const actualAudioSource: string | undefined = useMemo(() => {
+    if (selectedAudioSource) {
+      return selectedAudioSource as string;
+    }
+
+    const microphone = devices.find((d) => d.kind === "audioinput");
+
+    if (!microphone) {
+      return undefined;
+    }
+
+    return microphone.deviceId;
+  }, [devices, selectedAudioSource]);
+
   const dynamicVideoStyle: React.CSSProperties = useMemo(() => {
     return {
       ...videoStyle,
-      opacity: mediaSource ? 1 : 0,
+      opacity: mediaStream ? 1 : 0,
     };
-  }, [mediaSource]);
-  useEffect(() => {
-    if (!mediaSource) {
-      return;
-    }
-
-    addMediaSource({ mediaStream: mediaSource, prefix: name });
-  }, [addMediaSource, mediaSource, name]);
+  }, [mediaStream]);
 
   useEffect(() => {
-    if (!sourceRef.current) {
+    const { current } = sourceRef;
+    if (!current) {
       return;
     }
 
@@ -81,15 +92,16 @@ export const View: React.FC<{
       setVideoElemHeight(entries[0].contentRect.height);
     });
 
-    observer.observe(sourceRef.current);
+    observer.observe(current);
 
     // ???
     return () => {
-      if (sourceRef.current) {
-        observer.unobserve(sourceRef.current);
+      if (current) {
+        observer.unobserve(current);
       }
     };
   }, []);
+
   const dynCropIndicator: React.CSSProperties = useMemo(() => {
     if (!videoElemWidth && !videoElemHeight) {
       return cropIndicator;
@@ -104,82 +116,73 @@ export const View: React.FC<{
       left: (videoElemWidth - derivedWidth) / 2,
     };
   }, [videoElemWidth, videoElemHeight]);
-  const selectExternalSource = useCallback(
-    (selectedExternalSource: ConstrainDOMString | null) => {
-      const isWebcam = name === "webcam";
-      const microphone = devices.find(
-        (d) => d.kind === "audioinput" && d.label.includes("NT-USB"),
-      );
 
-      if (!selectedExternalSource) {
-        alert("No video selected");
-        return;
-      }
+  const setVideoSource = useCallback(
+    (newVideoSource: ConstrainDOMString | null) => {
+      setVideoSource(newVideoSource);
+    },
+    [],
+  );
 
-      if (!microphone) {
-        alert("NT USB mic is not connected");
-        return;
-      }
+  useEffect(() => {
+    if (recordAudio) {
+      return () => {
+        mediaStream?.getVideoTracks().forEach((track) => track.stop());
+        mediaStream?.getAudioTracks().forEach((track) => track.stop());
+      };
+    }
 
-      if (selectedExternalSource === "undefined") {
-        mediaSource?.getVideoTracks().forEach((track) => track.stop());
-        if (mediaSource) {
-          removeMediaSource({ mediaStream: mediaSource, prefix: name });
-        }
+    return () => {
+      mediaStream?.getVideoTracks().forEach((track) => track.stop());
+    };
+  }, [mediaStream, recordAudio]);
 
-        if (isWebcam) {
-          mediaSource?.getAudioTracks().forEach((track) => track.stop());
-          setWebcam(false);
-        }
+  useEffect(() => {
+    if (selectedVideoSource === null) {
+      setMediaStream(prefix, null);
+      return;
+    }
 
-        setMediaSource(null);
-        return;
-      }
-
-      const mediaStreamContraints = recordAudio
+    const mediaStreamConstraints: MediaStreamConstraints =
+      recordAudio && actualAudioSource
         ? {
             video: {
-              deviceId: selectedExternalSource,
-              width: { ideal: 1920 },
-              height: { ideal: 1080 },
+              deviceId: selectedVideoSource,
             },
-            audio: { deviceId: microphone?.deviceId },
+            audio: { deviceId: actualAudioSource },
           }
         : {
-            video: { deviceId: selectedExternalSource },
+            video: { deviceId: selectedVideoSource },
           };
 
-      window.navigator.mediaDevices
-        .getUserMedia(mediaStreamContraints)
-        .then((stream) => {
-          if (sourceRef.current) {
-            sourceRef.current.srcObject = stream;
-            sourceRef.current.play();
-          }
+    window.navigator.mediaDevices
+      .getUserMedia(mediaStreamConstraints)
+      .then((stream) => {
+        if (sourceRef.current) {
+          sourceRef.current.srcObject = stream;
+          sourceRef.current.play();
+        }
 
-          setMediaSource(stream);
-          if (isWebcam) {
-            setWebcam(true);
-          }
-        })
-        .catch((e) => {
-          if (isWebcam) {
-            setWebcam(false);
-          }
-
-          setMediaSource(null);
-          alert(e);
-        });
-    },
-    [devices, mediaSource, name, recordAudio, removeMediaSource, setWebcam],
-  );
+        setMediaStream(prefix, stream);
+      })
+      .catch((e) => {
+        setMediaStream(prefix, null);
+        alert(e);
+      });
+  }, [
+    actualAudioSource,
+    prefix,
+    recordAudio,
+    selectedVideoSource,
+    setMediaStream,
+  ]);
 
   const selectScreen = () => {
     window.navigator.mediaDevices
       // getDisplayMedia asks the user for permission to capture the screen
       .getDisplayMedia({ video: true })
       .then((stream) => {
-        setMediaSource(stream);
+        setMediaStream(prefix, stream);
         if (!sourceRef.current) {
           return;
         }
@@ -192,9 +195,9 @@ export const View: React.FC<{
   return (
     <div style={viewContainer}>
       <div style={viewName}>
-        {name === "webcam" ? <div style={{ flex: 1 }} /> : null}
-        {name}
-        {name === "webcam" ? (
+        {prefix === "webcam" ? <div style={{ flex: 1 }} /> : null}
+        {prefix}
+        {prefix === "webcam" ? (
           <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
             <label htmlFor="indicator">Show Crop</label>
             <input
@@ -213,35 +216,52 @@ export const View: React.FC<{
       </div>
 
       <div style={{ flex: 1 }} />
-      {type === "screen" ? (
-        <button style={{ marginTop: 10 }} type="button" onClick={selectScreen}>
-          Select screen
-        </button>
-      ) : (
-        <select
-          onChange={(e) => {
-            selectExternalSource(e.target.value as ConstrainDOMString);
-          }}
-          style={{ margin: "10px 0px" }}
-        >
-          <option key={"unselected"} value={"undefined"}>
-            --select video source--
-          </option>
-          {devices
-            .filter((d) => d.kind === "videoinput")
-            .map((d) => {
-              return (
-                <option key={d.deviceId} value={d.deviceId}>
-                  {d.label} ({d.kind})
-                </option>
-              );
-            })}
-        </select>
-      )}
+      <div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          Media Source
+          <select
+            onChange={(e) => {
+              if (e.target.value === "undefined") {
+                setSelectedVideoSource(null);
+                return;
+              }
 
-      {/* <button type="button" onClick={selectExternalSource}>
-        Confirm
-      </button>{" "} */}
+              setSelectedVideoSource(e.target.value as ConstrainDOMString);
+            }}
+            style={{ margin: "10px 0px" }}
+          >
+            <option key={"unselected"} value={"undefined"}>
+              --select video source--
+            </option>
+            {devices
+              .filter((d) => d.kind === "videoinput")
+              .map((d) => {
+                return (
+                  <option key={d.deviceId} value={d.deviceId}>
+                    {d.label} ({d.kind})
+                  </option>
+                );
+              })}
+          </select>
+        </div>
+
+        {prefix !== "webcam" ? (
+          <button
+            style={{ marginTop: 10 }}
+            type="button"
+            onClick={selectScreen}
+          >
+            Select screen
+          </button>
+        ) : null}
+
+        {recordAudio ? (
+          <AudioSelector
+            devices={devices}
+            setSelectedAudioSource={setSelectedAudioSource}
+          />
+        ) : null}
+      </div>
     </div>
   );
 };
