@@ -71,7 +71,7 @@ export const configuration = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal("endcard"),
-    durationInFrames: z.number().int().default(100),
+    durationInFrames: z.number().int().default(200),
     music,
     channel,
     platform,
@@ -102,7 +102,7 @@ export const getPairs = (prefix: string) => {
         const display = files.find(
           (_f) =>
             _f.name === `${prefix}/display${timestamp}.webm` ||
-            _f.name === `${prefix}/display${timestamp}.mp4`
+            _f.name === `${prefix}/display${timestamp}.mp4`,
         );
 
         const sub = files.find((_f) => {
