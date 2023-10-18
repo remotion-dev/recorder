@@ -38,10 +38,7 @@ const videoWrapper: React.CSSProperties = {
   height: "100%",
   position: "relative",
 };
-const videoStyle: React.CSSProperties = {
-  maxWidth: "inherit",
-  maxHeight: "inherit",
-};
+
 const viewName: React.CSSProperties = {
   marginBottom: 10,
   display: "flex",
@@ -69,6 +66,7 @@ export const View: React.FC<{
     height: number;
   }>({ width: 0, height: 0 });
   const [videoParentMeasurements, setVideoParentMeasurements] = useState<{
+    // Important for crop indicator!
     width: number;
     height: number;
   }>({ width: 0, height: 0 });
@@ -109,10 +107,11 @@ export const View: React.FC<{
 
   const dynamicVideoStyle: React.CSSProperties = useMemo(() => {
     return {
-      ...videoStyle,
       opacity: mediaStream ? 1 : 0,
+      maxWidth: videoParentMeasurements.width,
+      maxHeight: "auto",
     };
-  }, [mediaStream]);
+  }, [mediaStream, videoParentMeasurements.width]);
 
   // dynamic size for the crop indicator
   useEffect(() => {
