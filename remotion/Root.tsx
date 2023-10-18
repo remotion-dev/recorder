@@ -3758,7 +3758,7 @@ export const Root = () => {
         id="pro"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "wide" as const,
+          canvasLayout: "square" as const,
           prefix: "pro",
           scenes: [
             {
@@ -3898,7 +3898,7 @@ export const Root = () => {
               durationInFrames: 200,
               music: "previous" as const,
               channel: "jonny" as const,
-              platform: "youtube" as const,
+              platform: "x" as const,
               links: [
                 { link: "remotion.pro" },
                 { link: "remotion.dev/shapes" },

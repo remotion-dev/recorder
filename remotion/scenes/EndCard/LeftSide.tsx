@@ -11,7 +11,7 @@ import {
 } from "remotion";
 import { z } from "zod";
 import type { Channel, Platform } from "../../configuration";
-import { channels, transitionDuration } from "../../configuration";
+import { avatars, channels, transitionDuration } from "../../configuration";
 import { FollowButton, followButtonHeight } from "./FollowButton";
 import {
   InstagramIcon,
@@ -21,7 +21,9 @@ import {
   YouTubeIcon,
 } from "./icons";
 
-const Avatar: React.FC = () => {
+const Avatar: React.FC<{
+  avatar: string;
+}> = ({ avatar }) => {
   return (
     <Img
       style={{
@@ -30,7 +32,7 @@ const Avatar: React.FC = () => {
         borderRadius: "50%",
         border: "6px solid black",
       }}
-      src="https://jonny.io/avatar.png"
+      src={avatar}
     />
   );
 };
@@ -44,10 +46,11 @@ const spaceBetweenAvatarAndCta = 30;
 
 const FollowCTA: React.FC<{
   platform: Platform;
-}> = ({ platform }) => {
+  avatar: string;
+}> = ({ platform, avatar }) => {
   return (
     <div style={style}>
-      <Avatar />
+      <Avatar avatar={avatar} />
       <div style={{ width: spaceBetweenAvatarAndCta }} />
       <FollowButton platform={platform} />
     </div>
@@ -80,14 +83,8 @@ const labelStyle: React.CSSProperties = {
 const IconRow: React.FC<{
   type: Platform | "link";
   label: string;
-  fadeInDelay: number;
-}> = ({ type, label, fadeInDelay }) => {
-  const frame = useCurrentFrame();
-  const opacity = interpolate(frame, [fadeInDelay, fadeInDelay + 10], [0, 1], {
-    extrapolateRight: "clamp",
-    extrapolateLeft: "clamp",
-  });
-
+  opacity: number;
+}> = ({ type, label, opacity }) => {
   return (
     <div style={{ ...iconRow, opacity }}>
       <div style={iconContainer}>
@@ -123,6 +120,7 @@ export const LeftSide: React.FC<{
   const frame = useCurrentFrame();
 
   const slideDelay = transitionDuration + 20;
+  const slideDuration = 30;
 
   const slideUp = spring({
     fps,
@@ -130,7 +128,8 @@ export const LeftSide: React.FC<{
     config: {
       damping: 200,
     },
-    delay: transitionDuration + 20,
+    delay: slideDelay,
+    durationInFrames: slideDuration,
   });
 
   useEffect(() => {
@@ -180,6 +179,8 @@ export const LeftSide: React.FC<{
     return configs;
   }, [channel, platform]);
 
+  const totalLinks = links.length + otherPlatforms.length;
+
   return (
     <AbsoluteFill
       style={{
@@ -200,17 +201,28 @@ export const LeftSide: React.FC<{
           )}px)`,
         }}
       >
-        <FollowCTA platform={platform} />
+        <FollowCTA avatar={avatars[channel]} platform={platform} />
       </div>
       <div ref={ref}>
         <div style={{ height: 80 }} />
         {otherPlatforms.map((p, i) => {
+          const indexFromLast = links.length + otherPlatforms.length - i;
+          const opacity = spring({
+            fps,
+            frame,
+            config: {
+              damping: 200,
+            },
+            delay:
+              slideDelay +
+              ((indexFromLast - 1) / totalLinks) * (slideDuration - 15),
+            durationInFrames: 15,
+          });
+
           return (
             <IconRow
               key={p.platform}
-              fadeInDelay={
-                slideDelay + (links.length + otherPlatforms.length - i) * 3
-              }
+              opacity={opacity}
               type={p.platform}
               label={p.name}
             />
@@ -218,10 +230,23 @@ export const LeftSide: React.FC<{
         })}
         {links.length > 0 ? <div style={{ height: 80 }} /> : null}
         {links.map((l, i) => {
+          const indexFromLast = links.length - i;
+          const opacity = spring({
+            fps,
+            frame,
+            config: {
+              damping: 200,
+            },
+            delay:
+              slideDelay +
+              ((indexFromLast - 1) / totalLinks) * (slideDuration - 15),
+            durationInFrames: 15,
+          });
+
           return (
             <IconRow
               key={l.link}
-              fadeInDelay={slideDelay + (links.length - i) * 3}
+              opacity={opacity}
               type="link"
               label={l.link}
             />

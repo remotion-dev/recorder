@@ -54,6 +54,11 @@ export const channels: { [key in Channel]: ChannelConfig } = {
   },
 };
 
+export const avatars: { [key in Channel]: string } = {
+  jonny: "https://jonny.io/avatar.png",
+  remotion: "https://jonny.io/avatar.png",
+};
+
 export const configuration = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("scene"),
