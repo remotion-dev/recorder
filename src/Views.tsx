@@ -148,8 +148,6 @@ export const View: React.FC<{
         ? {
             video: {
               deviceId: selectedVideoSource,
-              width: { ideal: 4096 }, // browser will try to find setting with he smallest distance from the ideal values given.
-              height: { ideal: 4096 },
             },
             audio: { deviceId: actualAudioSource },
           }
