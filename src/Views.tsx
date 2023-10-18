@@ -43,10 +43,10 @@ export type Prefix = (typeof prefixes)[number];
 
 export const View: React.FC<{
   devices: MediaDeviceInfo[];
-  setMediaStream: (prefix: string, source: MediaStream | null) => void;
+  setMediaStream: (prefix: Prefix, source: MediaStream | null) => void;
   mediaStream: MediaStream | null;
-  prefix: string;
-}> = ({ devices, setMediaStream, mediaStream, prefix }) => {
+  prefix: Prefix;
+}> = ({ devices, setMediaStream, prefix, mediaStream }) => {
   const sourceRef = useRef<HTMLVideoElement>(null);
   const [videoElemWidth, setVideoElemWidth] = useState(0);
   const [videoElemHeight, setVideoElemHeight] = useState(0);
@@ -193,8 +193,6 @@ export const View: React.FC<{
     setMediaStream,
   ]);
 
-  console.log("media stream: ", mediaStream);
-
   const selectScreen = () => {
     window.navigator.mediaDevices
       // getDisplayMedia asks the user for permission to capture the screen
@@ -210,6 +208,8 @@ export const View: React.FC<{
         sourceRef.current.play();
       });
   };
+
+  console.log("media stream: ", prefix, mediaStream);
 
   return (
     <div style={viewContainer}>
