@@ -1,5 +1,5 @@
 import type { StaticFile } from "remotion";
-import { getStaticFiles } from "remotion";
+import { getStaticFiles, staticFile } from "remotion";
 import { z } from "zod";
 import { music } from "./layout/music";
 import { linkType } from "./scenes/EndCard/LeftSide";
@@ -56,7 +56,7 @@ export const channels: { [key in Channel]: ChannelConfig } = {
 
 export const avatars: { [key in Channel]: string } = {
   jonny: "https://jonny.io/avatar.png",
-  remotion: "https://jonny.io/avatar.png",
+  remotion: staticFile("logo-on-white.png"),
 };
 
 export const configuration = z.discriminatedUnion("type", [
