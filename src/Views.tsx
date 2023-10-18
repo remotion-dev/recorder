@@ -10,8 +10,10 @@ const viewContainer: React.CSSProperties = {
   padding: "10px 8px",
   boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75)",
   borderRadius: 10,
-  maxWidth: window.innerHeight / 1.5,
-  width: "100%",
+  width: "95%",
+  height: "90%",
+  maxHeight: "95%",
+  maxWidth: "95%",
 };
 
 const cropIndicator: React.CSSProperties = {
@@ -41,12 +43,11 @@ export const prefixes = [
 export type Prefix = (typeof prefixes)[number];
 
 export const View: React.FC<{
-  recordAudio: boolean;
   devices: MediaDeviceInfo[];
   setMediaStream: (prefix: string, source: MediaStream | null) => void;
   mediaStream: MediaStream | null;
   prefix: string;
-}> = ({ recordAudio, devices, setMediaStream, mediaStream, prefix }) => {
+}> = ({ devices, setMediaStream, mediaStream, prefix }) => {
   const sourceRef = useRef<HTMLVideoElement>(null);
   const [videoElemWidth, setVideoElemWidth] = useState(0);
   const [videoElemHeight, setVideoElemHeight] = useState(0);
@@ -55,7 +56,7 @@ export const View: React.FC<{
     useState<ConstrainDOMString | null>(null);
   const [selectedVideoSource, setSelectedVideoSource] =
     useState<ConstrainDOMString | null>(null);
-
+  const recordAudio = prefix === "webcam";
   const [currentResolution, setCurrentResolution] = useState<{
     width: number | null;
     height: number | null;
@@ -67,7 +68,6 @@ export const View: React.FC<{
       : "";
   }, [currentResolution.height, currentResolution.width]);
 
-  console.log("devices", devices);
   const handleChange = useCallback(() => {
     setShowCropIndicator((prev) => !prev);
   }, []);
@@ -226,7 +226,7 @@ export const View: React.FC<{
         ) : null}
       </div>
 
-      <div style={{ position: "relative" }}>
+      <div style={{ position: "relative", flex: 1 }}>
         <video ref={sourceRef} style={dynamicVideoStyle} muted />
         {showCropIndicator ? <div style={dynCropIndicator} /> : null}
       </div>
