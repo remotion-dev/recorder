@@ -26,15 +26,15 @@ export const EndCard: React.FC<{
   const { fps, width } = useVideoConfig();
 
   const swipe = isTransitioningIn
-    ? 1
-    : spring({
+    ? spring({
         fps,
         frame,
         config: {
           damping: 200,
         },
         durationInFrames: transitionDuration,
-      });
+      })
+    : 1;
 
   return (
     <AbsoluteFill
