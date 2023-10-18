@@ -2397,6 +2397,7 @@ export const Root = () => {
               music: "previous" as const,
               channel: "jonny",
               platform: "x" as const,
+              links: [],
             },
           ],
           metadata: [],
@@ -2610,6 +2611,7 @@ export const Root = () => {
               music: "soft" as const,
               channel: "jonny" as const,
               platform: "x" as const,
+              links: [],
             },
           ],
           metadata: [],
@@ -2985,6 +2987,7 @@ export const Root = () => {
               music: "previous" as const,
               channel: "jonny" as const,
               platform: "x" as const,
+              links: [],
             },
           ],
           metadata: [],
@@ -3191,6 +3194,7 @@ export const Root = () => {
               music: "previous" as const,
               channel: "remotion" as const,
               platform: "x" as const,
+              links: [],
             },
           ],
           metadata: [],
@@ -3506,6 +3510,7 @@ export const Root = () => {
               music: "soft" as const,
               channel: "jonny" as const,
               platform: "x" as const,
+              links: [],
             },
           ],
           metadata: [],
@@ -3630,6 +3635,7 @@ export const Root = () => {
               music: "soft" as const,
               channel: "remotion" as const,
               platform: "x" as const,
+              links: [],
             },
           ],
           metadata: [],
@@ -3737,6 +3743,7 @@ export const Root = () => {
               music: "previous" as const,
               channel: "jonny" as const,
               platform: "x" as const,
+              links: [],
             },
           ],
           metadata: [],
@@ -3751,7 +3758,7 @@ export const Root = () => {
         id="pro"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "square" as const,
+          canvasLayout: "wide" as const,
           prefix: "pro",
           scenes: [
             {
@@ -3892,6 +3899,10 @@ export const Root = () => {
               music: "previous" as const,
               channel: "jonny" as const,
               platform: "youtube" as const,
+              links: [
+                { link: "remotion.pro" },
+                { link: "remotion.dev/shapes" },
+              ],
             },
           ],
           metadata: [],

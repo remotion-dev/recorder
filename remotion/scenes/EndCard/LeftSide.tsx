@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   AbsoluteFill,
   continueRender,
@@ -9,7 +9,9 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { transitionDuration } from "../../configuration";
+import { z } from "zod";
+import type { Channel, Platform } from "../../configuration";
+import { channels, transitionDuration } from "../../configuration";
 import { FollowButton, followButtonHeight } from "./FollowButton";
 import {
   InstagramIcon,
@@ -40,12 +42,14 @@ const style: React.CSSProperties = {
 
 const spaceBetweenAvatarAndCta = 30;
 
-const FollowCTA: React.FC = () => {
+const FollowCTA: React.FC<{
+  platform: Platform;
+}> = ({ platform }) => {
   return (
     <div style={style}>
       <Avatar />
       <div style={{ width: spaceBetweenAvatarAndCta }} />
-      <FollowButton />
+      <FollowButton platform={platform} />
     </div>
   );
 };
@@ -74,7 +78,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 const IconRow: React.FC<{
-  type: "youtube" | "linkedin" | "instagram" | "x" | "link";
+  type: Platform | "link";
   label: string;
   fadeInDelay: number;
 }> = ({ type, label, fadeInDelay }) => {
@@ -99,7 +103,17 @@ const IconRow: React.FC<{
   );
 };
 
-export const LeftSide: React.FC<{}> = () => {
+export const linkType = z.object({
+  link: z.string(),
+});
+
+export type LinkType = z.infer<typeof linkType>;
+
+export const LeftSide: React.FC<{
+  platform: Platform;
+  channel: Channel;
+  links: LinkType[];
+}> = ({ platform, channel, links }) => {
   const ref = useRef<HTMLDivElement>(null);
   const scaler = useRef<HTMLDivElement>(null);
   const [handle] = useState(() => delayRender());
@@ -141,6 +155,31 @@ export const LeftSide: React.FC<{}> = () => {
     calc();
   }, [handle]);
 
+  const otherPlatforms = useMemo(() => {
+    const configs: {
+      name: string;
+      platform: Platform;
+    }[] = [];
+
+    for (const c in channels[channel]) {
+      const name = channels[channel][c as Platform];
+      if (!name) {
+        continue;
+      }
+
+      if (c === platform) {
+        continue;
+      }
+
+      configs.push({
+        name,
+        platform: c as Platform,
+      });
+    }
+
+    return configs;
+  }, [channel, platform]);
+
   return (
     <AbsoluteFill
       style={{
@@ -161,31 +200,33 @@ export const LeftSide: React.FC<{}> = () => {
           )}px)`,
         }}
       >
-        <FollowCTA />
+        <FollowCTA platform={platform} />
       </div>
       <div ref={ref}>
         <div style={{ height: 80 }} />
-        <IconRow
-          fadeInDelay={slideDelay + 9}
-          type="youtube"
-          label="/JonnyBurger"
-        />
-        <IconRow
-          fadeInDelay={slideDelay + 6}
-          type="linkedin"
-          label="Jonny Burger"
-        />
-        <div style={{ height: 80 }} />
-        <IconRow
-          fadeInDelay={slideDelay + 3}
-          type="link"
-          label="remotion.pro"
-        />
-        <IconRow
-          fadeInDelay={slideDelay}
-          type="link"
-          label="remotion.dev/shapes"
-        />
+        {otherPlatforms.map((p, i) => {
+          return (
+            <IconRow
+              key={p.platform}
+              fadeInDelay={
+                slideDelay + (links.length + otherPlatforms.length - i) * 3
+              }
+              type={p.platform}
+              label={p.name}
+            />
+          );
+        })}
+        {links.length > 0 ? <div style={{ height: 80 }} /> : null}
+        {links.map((l, i) => {
+          return (
+            <IconRow
+              key={l.link}
+              fadeInDelay={slideDelay + (links.length - i) * 3}
+              type="link"
+              label={l.link}
+            />
+          );
+        })}
       </div>
     </AbsoluteFill>
   );

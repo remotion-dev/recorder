@@ -2,6 +2,7 @@ import type { StaticFile } from "remotion";
 import { getStaticFiles } from "remotion";
 import { z } from "zod";
 import { music } from "./layout/music";
+import { linkType } from "./scenes/EndCard/LeftSide";
 
 export type Dimensions = {
   width: number;
@@ -35,6 +36,23 @@ export type WebcamPosition = z.infer<typeof webcamPosition>;
 
 export const channel = z.enum(["jonny", "remotion"]);
 export type Channel = z.infer<typeof channel>;
+
+type ChannelConfig = { [key in Platform]: string | null };
+
+export const channels: { [key in Channel]: ChannelConfig } = {
+  jonny: {
+    instagram: null,
+    linkedin: "Jonny Burger",
+    x: "@JNYBGR",
+    youtube: "/JonnyBurger",
+  },
+  remotion: {
+    instagram: "@remotion",
+    linkedin: "Remotion",
+    x: "@remotion",
+    youtube: "@remotion_dev",
+  },
+};
 
 export const configuration = z.discriminatedUnion("type", [
   z.object({
@@ -75,6 +93,7 @@ export const configuration = z.discriminatedUnion("type", [
     music,
     channel,
     platform,
+    links: z.array(linkType),
   }),
 ]);
 

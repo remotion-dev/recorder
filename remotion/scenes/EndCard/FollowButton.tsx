@@ -1,6 +1,10 @@
+import type { Platform } from "../../configuration";
+
 export const followButtonHeight = 140;
 
-export const FollowButton: React.FC = () => {
+export const FollowButton: React.FC<{
+  platform: Platform;
+}> = ({ platform }) => {
   return (
     <div
       style={{
@@ -17,7 +21,11 @@ export const FollowButton: React.FC = () => {
         fontWeight: 500,
       }}
     >
-      Follow
+      {platform === "youtube"
+        ? "Subscribe"
+        : platform === "linkedin"
+        ? "Connect"
+        : "Follow"}
     </div>
   );
 };

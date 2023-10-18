@@ -9,6 +9,7 @@ import {
 } from "remotion";
 import type { CanvasLayout, Channel, Platform } from "../../configuration";
 import { transitionDuration } from "../../configuration";
+import type { LinkType } from "./LeftSide";
 import { LeftSide } from "./LeftSide";
 import { ThumbnailContainers } from "./RightSide";
 
@@ -18,19 +19,22 @@ export const EndCard: React.FC<{
   channel: Channel;
   canvasLayout: CanvasLayout;
   platform: Platform;
+  links: LinkType[];
   isTransitioningIn: boolean;
-}> = ({ canvasLayout }) => {
+}> = ({ canvasLayout, platform, channel, links, isTransitioningIn }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
 
-  const swipe = spring({
-    fps,
-    frame,
-    config: {
-      damping: 200,
-    },
-    durationInFrames: transitionDuration,
-  });
+  const swipe = isTransitioningIn
+    ? 1
+    : spring({
+        fps,
+        frame,
+        config: {
+          damping: 200,
+        },
+        durationInFrames: transitionDuration,
+      });
 
   return (
     <AbsoluteFill
@@ -39,7 +43,7 @@ export const EndCard: React.FC<{
         transform: `translateX(${interpolate(swipe, [0, 1], [width, 0])}px)`,
       }}
     >
-      <LeftSide />
+      <LeftSide links={links} channel={channel} platform={platform} />
       {canvasLayout === "wide" ? <ThumbnailContainers /> : null}
     </AbsoluteFill>
   );
