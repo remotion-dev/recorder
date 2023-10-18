@@ -13,6 +13,9 @@ const viewContainer: React.CSSProperties = {
   overflow: "hidden",
   width: "100%",
   height: "100%",
+  maxHeight: "100%",
+  maxWidth: "100%",
+  overflowY: "hidden",
 };
 
 const cropIndicator: React.CSSProperties = {
@@ -25,7 +28,8 @@ const cropIndicator: React.CSSProperties = {
 };
 
 const videoStyle: React.CSSProperties = {
-  // maxHeight: "100%",
+  maxWidth: "inherit",
+  maxHeight: "inherit",
 };
 const viewName: React.CSSProperties = {
   marginBottom: 10,
@@ -113,8 +117,6 @@ export const View: React.FC<{
       }
     };
   }, []);
-
-  // limiting the size of the crop video tag
 
   const dynCropIndicator: React.CSSProperties = useMemo(() => {
     if (!videoElemWidth && !videoElemHeight) {
@@ -232,8 +234,8 @@ export const View: React.FC<{
 
       <div
         style={{
-          position: "relative",
-          flex: 1,
+          width: "100%",
+          height: "100%",
         }}
       >
         <video ref={sourceRef} style={dynamicVideoStyle} muted />
