@@ -1,5 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Img } from "remotion";
+import { FollowButton, followButtonHeight } from "./FollowButton";
 import {
   InstagramIcon,
   LinkedInIcon,
@@ -8,14 +9,12 @@ import {
   YouTubeIcon,
 } from "./icons";
 
-const height = 140;
-
 const Avatar: React.FC = () => {
   return (
     <Img
       style={{
-        height,
-        width: height,
+        height: followButtonHeight,
+        width: followButtonHeight,
         borderRadius: "50%",
         border: "6px solid black",
       }}
@@ -27,28 +26,6 @@ const Avatar: React.FC = () => {
 const style: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
-};
-
-const FollowButton: React.FC = () => {
-  return (
-    <div
-      style={{
-        height,
-        borderRadius: height / 2,
-        width: 400,
-        backgroundColor: "black",
-        color: "white",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontFamily: "GT Planar",
-        fontSize: 50,
-        fontWeight: 500,
-      }}
-    >
-      Follow
-    </div>
-  );
 };
 
 const spaceBetweenAvatarAndCta = 30;
@@ -68,7 +45,7 @@ const iconContainer: React.CSSProperties = {
   alignItems: "center",
   justifyContent: "center",
   height: 60,
-  width: height,
+  width: followButtonHeight,
 };
 
 const iconRow: React.CSSProperties = {
