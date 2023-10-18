@@ -30,9 +30,9 @@ export const ThumbnailContainers: React.FC = () => {
       }}
     >
       <ThumbnailPreview />
-      <div style={{ height: 50 }} />
+      <div style={{ height: 60 }} />
       <ThumbnailPreview />
-      <div style={{ height: 30 }} />
+      <div style={{ height: 20 }} />
     </AbsoluteFill>
   );
 };

@@ -12,7 +12,7 @@ export const EndCard: React.FC<{
   canvasLayout: CanvasLayout;
   platform: Platform;
   isTransitioningIn: boolean;
-}> = () => {
+}> = ({ canvasLayout }) => {
   return (
     <AbsoluteFill
       style={{
@@ -20,7 +20,7 @@ export const EndCard: React.FC<{
       }}
     >
       <LeftSide />
-      <ThumbnailContainers />
+      {canvasLayout === "wide" ? <ThumbnailContainers /> : null}
     </AbsoluteFill>
   );
 };
