@@ -19,11 +19,9 @@ const gridContainer: React.CSSProperties = {
   gridTemplateRows: "repeat(2, 1fr)",
   alignItems: "center",
   justifyItems: "center",
-  height: "95%",
-};
-
-const mainContent: React.CSSProperties = {
   flex: 1,
+  minWidth: 0,
+  minHeight: 0,
 };
 
 const mediaRecorderOptions: MediaRecorderOptions = {
@@ -36,7 +34,7 @@ const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
 
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
-  const [recording, setRecording] = useState<number | false>(false);
+  const [recording, setRecording] = useState<boolean>(false);
 
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
@@ -54,7 +52,7 @@ const App = () => {
   );
 
   const start = () => {
-    setRecording(Date.now());
+    setRecording(true);
 
     const toStart = [];
     const newRecorders: MediaRecorder[] = [];
@@ -96,51 +94,38 @@ const App = () => {
 
   return (
     <div style={outer}>
-      <TopBar />
-      <div style={mainContent}>
-        <div style={{ color: recording ? "red" : "black" }}>
-          {recording ? "recording" : null}
-        </div>
-        {recording ? (
-          <button type="button" disabled={!recording} onClick={stop}>
-            Stop Recording
-          </button>
-        ) : (
-          <button
-            type="button"
-            disabled={!mediaSources.webcam || recording !== false}
-            onClick={start}
-          >
-            Start Recording
-          </button>
-        )}
+      <TopBar
+        start={start}
+        stop={stop}
+        recording={recording}
+        disabledByParent={!mediaSources.webcam}
+      />
 
-        <div style={gridContainer}>
-          <View
-            prefix={"webcam"}
-            devices={devices}
-            setMediaStream={setMediaStream}
-            mediaStream={mediaSources.webcam ?? null}
-          />
-          <View
-            prefix={"display"}
-            devices={devices}
-            setMediaStream={setMediaStream}
-            mediaStream={mediaSources.webcam ?? null}
-          />
-          <View
-            prefix={"alternative1"}
-            devices={devices}
-            setMediaStream={setMediaStream}
-            mediaStream={mediaSources.webcam ?? null}
-          />
-          <View
-            prefix={"alternative2"}
-            devices={devices}
-            setMediaStream={setMediaStream}
-            mediaStream={mediaSources.webcam ?? null}
-          />
-        </div>
+      <div style={gridContainer}>
+        <View
+          prefix={"webcam"}
+          devices={devices}
+          setMediaStream={setMediaStream}
+          mediaStream={mediaSources.display ?? null}
+        />
+        <View
+          prefix={"display"}
+          devices={devices}
+          setMediaStream={setMediaStream}
+          mediaStream={mediaSources.alternative1 ?? null}
+        />
+        <View
+          prefix={"alternative1"}
+          devices={devices}
+          setMediaStream={setMediaStream}
+          mediaStream={mediaSources.alternative2 ?? null}
+        />
+        <View
+          prefix={"alternative2"}
+          devices={devices}
+          setMediaStream={setMediaStream}
+          mediaStream={mediaSources.webcam ?? null}
+        />
       </div>
     </div>
   );

@@ -10,10 +10,9 @@ const viewContainer: React.CSSProperties = {
   padding: "10px 8px",
   boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75)",
   borderRadius: 10,
-  width: "95%",
-  height: "90%",
-  maxHeight: "95%",
-  maxWidth: "95%",
+  overflow: "hidden",
+  width: "100%",
+  height: "100%",
 };
 
 const cropIndicator: React.CSSProperties = {
@@ -26,7 +25,7 @@ const cropIndicator: React.CSSProperties = {
 };
 
 const videoStyle: React.CSSProperties = {
-  maxHeight: window.innerHeight / 2.5,
+  // maxHeight: "100%",
 };
 const viewName: React.CSSProperties = {
   marginBottom: 10,
@@ -93,6 +92,7 @@ export const View: React.FC<{
     };
   }, [mediaStream]);
 
+  // dynamic size for the crop indicator
   useEffect(() => {
     const { current } = sourceRef;
     if (!current) {
@@ -113,6 +113,8 @@ export const View: React.FC<{
       }
     };
   }, []);
+
+  // limiting the size of the crop video tag
 
   const dynCropIndicator: React.CSSProperties = useMemo(() => {
     if (!videoElemWidth && !videoElemHeight) {
@@ -191,6 +193,8 @@ export const View: React.FC<{
     setMediaStream,
   ]);
 
+  console.log("media stream: ", mediaStream);
+
   const selectScreen = () => {
     window.navigator.mediaDevices
       // getDisplayMedia asks the user for permission to capture the screen
@@ -226,7 +230,12 @@ export const View: React.FC<{
         ) : null}
       </div>
 
-      <div style={{ position: "relative", flex: 1 }}>
+      <div
+        style={{
+          position: "relative",
+          flex: 1,
+        }}
+      >
         <video ref={sourceRef} style={dynamicVideoStyle} muted />
         {showCropIndicator ? <div style={dynCropIndicator} /> : null}
       </div>
