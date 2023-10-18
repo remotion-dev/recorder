@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { onVideo } from "./on-video";
 import { TopBar } from "./TopBar";
-import type { prefixes } from "./Views";
+import type { Prefix, prefixes } from "./Views";
 import { View } from "./Views";
 
 let endDate = 0;
@@ -40,9 +40,9 @@ const App = () => {
     [key in (typeof prefixes)[number]]: MediaStream | null;
   }>({ webcam: null, display: null, alternative1: null, alternative2: null });
 
-  console.log("Media Sources:  ", mediaSources);
   const setMediaStream = useCallback(
-    (prefix: string, source: MediaStream | null) => {
+    (prefix: Prefix, source: MediaStream | null) => {
+      console.log("setMediaStream", prefix, source);
       setMediaSources((prevMediaSources) => ({
         ...prevMediaSources,
         [prefix]: source,
@@ -91,6 +91,8 @@ const App = () => {
       setDevices(_devices);
     });
   }, []);
+  console.log("app display", mediaSources.display);
+  console.log("app", mediaSources);
 
   return (
     <div style={outer}>
@@ -106,25 +108,25 @@ const App = () => {
           prefix={"webcam"}
           devices={devices}
           setMediaStream={setMediaStream}
-          mediaStream={mediaSources.display ?? null}
+          mediaStream={mediaSources.webcam}
         />
         <View
           prefix={"display"}
           devices={devices}
           setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative1 ?? null}
+          mediaStream={mediaSources.display}
         />
         <View
           prefix={"alternative1"}
           devices={devices}
           setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative2 ?? null}
+          mediaStream={mediaSources.alternative1}
         />
         <View
           prefix={"alternative2"}
           devices={devices}
           setMediaStream={setMediaStream}
-          mediaStream={mediaSources.webcam ?? null}
+          mediaStream={mediaSources.alternative2}
         />
       </div>
     </div>
