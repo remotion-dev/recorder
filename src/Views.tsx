@@ -10,6 +10,8 @@ const viewContainer: React.CSSProperties = {
   padding: "10px 8px",
   boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75)",
   borderRadius: 10,
+  maxWidth: window.innerHeight / 1.5,
+  flex: 1,
 };
 
 const cropIndicator: React.CSSProperties = {
@@ -23,7 +25,6 @@ const cropIndicator: React.CSSProperties = {
 
 const videoStyle: React.CSSProperties = {
   maxHeight: window.innerHeight / 2.5,
-  position: "relative",
 };
 const viewName: React.CSSProperties = {
   marginBottom: 10,
@@ -229,8 +230,6 @@ export const View: React.FC<{
         <video ref={sourceRef} style={dynamicVideoStyle} muted />
         {showCropIndicator ? <div style={dynCropIndicator} /> : null}
       </div>
-
-      <div style={{ flex: 1 }} />
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           Media Source
