@@ -10,6 +10,14 @@ const buttonStyle: React.CSSProperties = {
   margin: 10,
 };
 
+const gridContainer: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(2, 1fr)",
+  gridTemplateRows: "repeat(2, 1fr)",
+  alignItems: "center",
+  justifyItems: "center",
+};
+
 const mediaRecorderOptions: MediaRecorderOptions = {
   audioBitsPerSecond: 128000,
   mimeType: "video/webm;codecs=h264,opus",
@@ -98,14 +106,7 @@ const App = () => {
         </button>
       )}
 
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-          flexWrap: "wrap",
-          justifyContent: "center",
-        }}
-      >
+      <div style={gridContainer}>
         {new Array(amountOfViews).fill(0).map((_, i) => {
           const prefix = prefixes[i];
           return (
