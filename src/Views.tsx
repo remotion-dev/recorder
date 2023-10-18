@@ -18,6 +18,12 @@ const viewContainer: React.CSSProperties = {
   overflowY: "hidden",
 };
 
+const sourceContainer: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-around",
+  marginTop: 10,
+};
 const cropIndicator: React.CSSProperties = {
   position: "absolute",
   border: `${BORDERWIDTH}px solid red`,
@@ -241,8 +247,14 @@ export const View: React.FC<{
         <video ref={sourceRef} style={dynamicVideoStyle} muted />
         {showCropIndicator ? <div style={dynCropIndicator} /> : null}
       </div>
-      <div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={sourceContainer}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
           Media Source
           <select
             onChange={(e) => {
