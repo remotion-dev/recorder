@@ -11,15 +11,15 @@ const viewContainer: React.CSSProperties = {
   boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75)",
   borderRadius: 10,
   maxWidth: window.innerHeight / 1.5,
-  flex: 1,
+  width: "100%",
 };
 
 const cropIndicator: React.CSSProperties = {
   position: "absolute",
-  border: `${BORDERWIDTH}px solid red` /* You can customize the border style */,
-  top: -BORDERWIDTH /* Adjust the top position as needed */,
-  left: "0px" /* Adjust the left position as needed */,
-  height: "100%" /* Adjust the height of the square */,
+  border: `${BORDERWIDTH}px solid red`,
+  top: -BORDERWIDTH,
+  left: "0px",
+  height: "100%",
   borderRadius: 20,
 };
 
