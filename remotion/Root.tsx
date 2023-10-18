@@ -3751,7 +3751,7 @@ export const Root = () => {
         id="pro"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "wide" as const,
+          canvasLayout: "square" as const,
           prefix: "pro",
           scenes: [
             {
@@ -3887,16 +3887,11 @@ export const Root = () => {
               music: "previous" as const,
             },
             {
-              type: "scene" as const,
-              webcamPosition: "top-left" as const,
-              trimStart: 0,
-              duration: null,
-              zoomInAtStart: false,
-              zoomInAtEnd: false,
-              transitionToNextScene: false,
-              newChapter: "",
-              stopChapteringAfterThis: false,
+              type: "endcard" as const,
+              durationInFrames: 100,
               music: "previous" as const,
+              channel: "jonny" as const,
+              platform: "youtube" as const,
             },
           ],
           metadata: [],
