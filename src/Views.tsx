@@ -200,10 +200,7 @@ export const View: React.FC<{
           return;
         }
 
-        const { width, height } = stream.getVideoTracks()[0].getSettings();
-
-        setCurrentResolution({ width: width ?? null, height: height ?? null });
-
+        setCurrentResolution({ width: null, height: null });
         sourceRef.current.srcObject = stream;
         sourceRef.current.play();
       });
@@ -229,7 +226,7 @@ export const View: React.FC<{
       </div>
 
       <div style={{ position: "relative" }}>
-        <video ref={sourceRef} style={dynamicVideoStyle} muted width="640" />
+        <video ref={sourceRef} style={dynamicVideoStyle} muted />
         {showCropIndicator ? <div style={dynCropIndicator} /> : null}
       </div>
 
@@ -241,6 +238,7 @@ export const View: React.FC<{
             onChange={(e) => {
               if (e.target.value === "undefined") {
                 setSelectedVideoSource(null);
+                setCurrentResolution({ width: null, height: null });
                 return;
               }
 
