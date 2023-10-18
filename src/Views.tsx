@@ -55,6 +55,17 @@ export const View: React.FC<{
   const [selectedVideoSource, setSelectedVideoSource] =
     useState<ConstrainDOMString | null>(null);
 
+  const [currentResolution, setCurrentResolution] = useState<{
+    width: number | null;
+    height: number | null;
+  }>({ width: null, height: null });
+
+  const resolutionString = useMemo(() => {
+    return currentResolution.width && currentResolution.height
+      ? `${currentResolution.width}x${currentResolution.height}`
+      : "";
+  }, [currentResolution.height, currentResolution.width]);
+
   console.log("devices", devices);
   const handleChange = useCallback(() => {
     setShowCropIndicator((prev) => !prev);
@@ -163,6 +174,8 @@ export const View: React.FC<{
           sourceRef.current.play();
         }
 
+        const { width, height } = stream.getVideoTracks()[0].getSettings();
+        setCurrentResolution({ width: width ?? null, height: height ?? null });
         setMediaStream(prefix, stream);
       })
       .catch((e) => {
@@ -187,6 +200,10 @@ export const View: React.FC<{
           return;
         }
 
+        const { width, height } = stream.getVideoTracks()[0].getSettings();
+
+        setCurrentResolution({ width: width ?? null, height: height ?? null });
+
         sourceRef.current.srcObject = stream;
         sourceRef.current.play();
       });
@@ -195,6 +212,7 @@ export const View: React.FC<{
   return (
     <div style={viewContainer}>
       <div style={viewName}>
+        {resolutionString}
         {prefix === "webcam" ? <div style={{ flex: 1 }} /> : null}
         {prefix}
         {prefix === "webcam" ? (
