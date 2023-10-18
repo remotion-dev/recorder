@@ -3751,7 +3751,7 @@ export const Root = () => {
         id="pro"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "square" as const,
+          canvasLayout: "wide" as const,
           prefix: "pro",
           scenes: [
             {
@@ -3888,7 +3888,7 @@ export const Root = () => {
             },
             {
               type: "endcard" as const,
-              durationInFrames: 100,
+              durationInFrames: 200,
               music: "previous" as const,
               channel: "jonny" as const,
               platform: "youtube" as const,

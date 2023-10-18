@@ -3,6 +3,7 @@ import React from "react";
 import { AbsoluteFill } from "remotion";
 import type { CanvasLayout, Channel, Platform } from "../../configuration";
 import { LeftSide } from "./LeftSide";
+import { ThumbnailContainers } from "./RightSide";
 
 loadFont();
 
@@ -19,6 +20,7 @@ export const EndCard: React.FC<{
       }}
     >
       <LeftSide />
+      <ThumbnailContainers />
     </AbsoluteFill>
   );
 };
