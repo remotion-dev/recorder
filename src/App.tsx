@@ -110,7 +110,6 @@ const App = () => {
               prefix={prefix}
               devices={devices}
               recordAudio={i === 0}
-              type={i % 2 ? "screen" : "peripheral"}
               setMediaStream={setMediaStream}
               mediaStream={mediaSources[prefix] ?? null}
             />
