@@ -1,21 +1,29 @@
 /* eslint-disable no-alert */
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { onVideo } from "./on-video";
-import { prefixes, View } from "./Views";
+import { TopBar } from "./TopBar";
+import type { prefixes } from "./Views";
+import { View } from "./Views";
 
 let endDate = 0;
 
-const buttonStyle: React.CSSProperties = {
-  margin: 10,
+const outer: React.CSSProperties = {
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
 };
-
 const gridContainer: React.CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(2, 1fr)",
   gridTemplateRows: "repeat(2, 1fr)",
   alignItems: "center",
   justifyItems: "center",
+  height: "95%",
+};
+
+const mainContent: React.CSSProperties = {
+  flex: 1,
 };
 
 const mediaRecorderOptions: MediaRecorderOptions = {
@@ -33,7 +41,6 @@ const App = () => {
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
   }>({ webcam: null, display: null, alternative1: null, alternative2: null });
-  const [amountOfViews, setAmountOfViews] = useState(2);
 
   console.log("Media Sources:  ", mediaSources);
   const setMediaStream = useCallback(
@@ -88,58 +95,53 @@ const App = () => {
   }, []);
 
   return (
-    <div style={{ width: "100%" }}>
-      <div style={{ color: recording ? "red" : "black" }}>
-        {recording ? "recording" : null}
-      </div>
-      {recording ? (
-        <button type="button" disabled={!recording} onClick={stop}>
-          Stop Recording
-        </button>
-      ) : (
-        <button
-          type="button"
-          disabled={!mediaSources.webcam || recording !== false}
-          onClick={start}
-        >
-          Start Recording
-        </button>
-      )}
+    <div style={outer}>
+      <TopBar />
+      <div style={mainContent}>
+        <div style={{ color: recording ? "red" : "black" }}>
+          {recording ? "recording" : null}
+        </div>
+        {recording ? (
+          <button type="button" disabled={!recording} onClick={stop}>
+            Stop Recording
+          </button>
+        ) : (
+          <button
+            type="button"
+            disabled={!mediaSources.webcam || recording !== false}
+            onClick={start}
+          >
+            Start Recording
+          </button>
+        )}
 
-      <div style={gridContainer}>
-        {new Array(amountOfViews).fill(0).map((_, i) => {
-          const prefix = prefixes[i];
-          return (
-            <View
-              // eslint-disable-next-line react/no-array-index-key
-              key={i}
-              prefix={prefix}
-              devices={devices}
-              recordAudio={i === 0}
-              setMediaStream={setMediaStream}
-              mediaStream={mediaSources[prefix] ?? null}
-            />
-          );
-        })}
+        <div style={gridContainer}>
+          <View
+            prefix={"webcam"}
+            devices={devices}
+            setMediaStream={setMediaStream}
+            mediaStream={mediaSources.webcam ?? null}
+          />
+          <View
+            prefix={"display"}
+            devices={devices}
+            setMediaStream={setMediaStream}
+            mediaStream={mediaSources.webcam ?? null}
+          />
+          <View
+            prefix={"alternative1"}
+            devices={devices}
+            setMediaStream={setMediaStream}
+            mediaStream={mediaSources.webcam ?? null}
+          />
+          <View
+            prefix={"alternative2"}
+            devices={devices}
+            setMediaStream={setMediaStream}
+            mediaStream={mediaSources.webcam ?? null}
+          />
+        </div>
       </div>
-      {amountOfViews > 2 ? (
-        <button
-          style={buttonStyle}
-          type="button"
-          onClick={() => setAmountOfViews((v) => v - 1)}
-        >
-          Remove source
-        </button>
-      ) : null}
-      {amountOfViews < 4 ? (
-        <button
-          style={buttonStyle}
-          type="button"
-          onClick={() => setAmountOfViews((v) => v + 1)}
-        >
-          Add source
-        </button>
-      ) : null}
     </div>
   );
 };
