@@ -3,7 +3,7 @@ import { execSync } from "child_process";
 import fs, { existsSync, mkdirSync } from "fs";
 import path from "path";
 
-const prefix = "court";
+const prefix = "betray";
 
 const downloadsDir =
   process.platform === "win32"
@@ -68,19 +68,19 @@ const convert = (i, o) => {
     ].join(" "),
     {
       stdio: "inherit",
-    },
+    }
   );
 };
 
 if (existsSync(displaySrc)) {
   convert(
     displaySrc,
-    `${folder}${path.sep}${displayLatest.replace(".webm", ".mp4")}`,
+    `${folder}${path.sep}${displayLatest.replace(".webm", ".mp4")}`
   );
 }
 
 convert(
   webcamSrc,
-  `${folder}${path.sep}${webcamLatest.replace(".webm", ".mp4")}`,
+  `${folder}${path.sep}${webcamLatest.replace(".webm", ".mp4")}`
 );
 console.log("copied", latest, displayLatest);
