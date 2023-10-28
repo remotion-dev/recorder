@@ -16,11 +16,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strictNullChecks": true,
-    "alwaysStrict": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "alwaysStrict": true
   },
   "include": ["src", "remotion"],
   "references": [{ "path": "./tsconfig.node.json" }]
