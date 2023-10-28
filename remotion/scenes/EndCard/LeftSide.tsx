@@ -10,6 +10,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { z } from "zod";
+import { COLORS } from "../../colors";
 import type { Channel, Platform } from "../../configuration";
 import { avatars, channels, transitionDuration } from "../../configuration";
 import { FollowButton, followButtonHeight } from "./FollowButton";
@@ -30,7 +31,7 @@ const Avatar: React.FC<{
         height: followButtonHeight,
         width: followButtonHeight,
         borderRadius: "50%",
-        border: "6px solid black",
+        border: "6px solid " + COLORS.WORD_COLOR_ON_BG,
       }}
       src={avatar}
     />
@@ -78,6 +79,7 @@ const labelStyle: React.CSSProperties = {
   fontFamily: "GT Planar",
   fontWeight: 500,
   marginLeft: 20,
+  color: COLORS.WORD_COLOR_ON_BG,
 };
 
 const IconRow: React.FC<{
