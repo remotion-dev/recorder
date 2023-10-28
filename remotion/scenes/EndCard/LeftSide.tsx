@@ -79,7 +79,7 @@ const labelStyle: React.CSSProperties = {
   fontFamily: "GT Planar",
   fontWeight: 500,
   marginLeft: 20,
-  color: COLORS.WORD_COLOR_ON_BG_APPEARED,
+  color: COLORS.ENDCARD_TEXT_COLOR,
 };
 
 const IconRow: React.FC<{
