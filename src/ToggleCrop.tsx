@@ -1,7 +1,7 @@
 import { Crop } from "lucide-react";
 
-import { Toggle } from "@/components/ui/toggle";
 import React from "react";
+import { Toggle } from "./components/ui/toggle";
 
 export const ToggleCrop: React.FC<{
   onPressedChange: (pressed: boolean) => void;

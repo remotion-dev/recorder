@@ -7,6 +7,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { COLORS } from "../../colors";
 import type { CanvasLayout, Channel, Platform } from "../../configuration";
 import { transitionDuration } from "../../configuration";
 import type { LinkType } from "./LeftSide";
@@ -39,7 +40,7 @@ export const EndCard: React.FC<{
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "white",
+        backgroundColor: COLORS.BACKGROUND,
         transform: `translateX(${interpolate(swipe, [0, 1], [width, 0])}px)`,
       }}
     >

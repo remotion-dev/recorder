@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 import {
   existsSync,
+  lstatSync,
   readdirSync,
   readFileSync,
   rmSync,
@@ -12,11 +13,11 @@ import * as prettier from "prettier";
 const subFile = async (file) => {
   execSync(
     `whisper --language=English --model=small.en --word_timestamps True --output_format=json --output_dir=${path.dirname(
-      file
+      file,
     )} ${file}`,
     {
       stdio: "inherit",
-    }
+    },
   );
 
   const output = file.replace(".mp4", ".json");
@@ -30,8 +31,12 @@ const subFile = async (file) => {
 const folders = readdirSync("public").filter((f) => f !== ".DS_Store");
 
 for (const folder of folders) {
+  if (!lstatSync(`public/${folder}`).isDirectory()) {
+    continue;
+  }
+
   const files = readdirSync(`public/${folder}`).filter(
-    (f) => f !== ".DS_Store"
+    (f) => f !== ".DS_Store",
   );
   for (const file of files) {
     if (!file.startsWith("webcam")) {
@@ -40,11 +45,11 @@ for (const folder of folders) {
 
     const fileToTranscribe = path.join(
       process.cwd(),
-      `public/${folder}/${file}`
+      `public/${folder}/${file}`,
     );
 
     const isTranscribed = existsSync(
-      fileToTranscribe.replace(".mp4", ".json").replace("webcam", "subs")
+      fileToTranscribe.replace(".mp4", ".json").replace("webcam", "subs"),
     );
     if (isTranscribed) {
       continue;
