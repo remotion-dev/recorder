@@ -31,7 +31,7 @@ const Avatar: React.FC<{
         height: followButtonHeight,
         width: followButtonHeight,
         borderRadius: "50%",
-        border: "6px solid " + COLORS.WORD_COLOR_ON_BG,
+        border: "6px solid " + COLORS.WORD_COLOR_ON_BG_APPEARED,
       }}
       src={avatar}
     />
@@ -79,7 +79,7 @@ const labelStyle: React.CSSProperties = {
   fontFamily: "GT Planar",
   fontWeight: 500,
   marginLeft: 20,
-  color: COLORS.WORD_COLOR_ON_BG,
+  color: COLORS.WORD_COLOR_ON_BG_APPEARED,
 };
 
 const IconRow: React.FC<{

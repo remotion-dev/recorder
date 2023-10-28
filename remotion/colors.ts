@@ -5,4 +5,6 @@ export const COLORS = {
   WORD_COLOR_ON_VIDEO_APPEARED: "white",
   WORD_COLOR_ON_VIDEO_GREYED: "rgba(0, 0, 0, 0.3)",
   WORD_HIGHLIGHT_COLOR: "#3B82EB",
+  CTA_BUTTON_COLOR: "white",
+  CTA_BUTTON_BACKGROUND_COLOR: "black",
 };
