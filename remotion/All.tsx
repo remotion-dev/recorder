@@ -8,6 +8,7 @@ import {
 import { AudioTrack } from "./AudioTrack";
 import { generateChapters } from "./chapters/make-chapters";
 import { WideScreenChapters } from "./chapters/WideScreenChapters";
+import { COLORS } from "./colors";
 import type { Pair, SceneMetadata, videoConf } from "./configuration";
 import { transitionDuration } from "./configuration";
 import { CameraScene } from "./scenes/CameraScene";
@@ -38,7 +39,7 @@ export const All: React.FC<AllProps> = ({
   return (
     <AbsoluteFill
       style={{
-        backgroundImage: "linear-gradient(to right, white, white)",
+        background: COLORS.BACKGROUND,
       }}
     >
       {scenes.map((scene, i) => {
