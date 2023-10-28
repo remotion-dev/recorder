@@ -1,5 +1,5 @@
+import { fillTextBox } from "@remotion/layout-utils";
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
-import { fillTextBox } from "../layout/measure/fill-layout";
 import { hasMonoSpaceInIt } from "../layout/monospace";
 import { wordsTogether } from "../layout/words-together";
 import type { Segment, SubTypes } from "../sub-types";
