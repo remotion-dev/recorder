@@ -1,6 +1,8 @@
 export const COLORS = {
   BACKGROUND: "#fff",
-  WORD_COLOR_ON_BG: "black",
-  WORD_COLOR_ON_VIDEO: "white",
+  WORD_COLOR_ON_BG_APPEARED: "black",
+  WORD_COLOR_ON_BG_GREYED: "rgba(0, 0, 0, 0.3)",
+  WORD_COLOR_ON_VIDEO_APPEARED: "white",
+  WORD_COLOR_ON_VIDEO_GREYED: "rgba(0, 0, 0, 0.3)",
   WORD_HIGHLIGHT_COLOR: "#3B82EB",
 };
