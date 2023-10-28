@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Button } from "./components/ui/button";
 
 const topBarContainer: React.CSSProperties = {
   height: 60,
@@ -51,18 +52,18 @@ export const TopBar: React.FC<{
     <div style={topBarContainer}>
       {recording ? (
         <>
-          <button
+          <Button
             type="button"
             disabled={!recording}
             onClick={stop}
             style={{ display: "flex", alignItems: "center", gap: 10 }}
           >
             Stop
-          </button>
+          </Button>
           {blinkingCircle}
         </>
       ) : (
-        <button
+        <Button
           type="button"
           disabled={disabled}
           onClick={start}
@@ -70,7 +71,7 @@ export const TopBar: React.FC<{
         >
           Record
           {recordCircle}
-        </button>
+        </Button>
       )}
     </div>
   );

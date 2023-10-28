@@ -18,7 +18,7 @@ export const AudioSelector: React.FC<{
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-      Audio Source
+      Audio
       <select
         onChange={(e) => {
           selectAudioSource(e.target.value as ConstrainDOMString);
