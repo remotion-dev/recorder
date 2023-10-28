@@ -37,7 +37,7 @@ const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
 
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
-  const [recording, setRecording] = useState<boolean>(false);
+  const [recording, setRecording] = useState<false | number>(false);
 
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
@@ -54,7 +54,7 @@ const App = () => {
   );
 
   const start = () => {
-    setRecording(true);
+    setRecording(() => Date.now());
 
     const toStart = [];
     const newRecorders: MediaRecorder[] = [];
