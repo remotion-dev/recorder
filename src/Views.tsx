@@ -2,6 +2,7 @@
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AudioSelector } from "./AudioSelector";
+import { Button } from "./components/ui/button";
 
 const BORDERWIDTH = 2;
 
@@ -9,7 +10,6 @@ const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   margin: 10,
-  padding: "10px 8px",
   backgroundColor: "#242424",
   borderRadius: 10,
   overflow: "hidden",
@@ -52,7 +52,6 @@ const videoWrapper: React.CSSProperties = {
 };
 
 const viewName: React.CSSProperties = {
-  marginBottom: 10,
   display: "flex",
   justifyContent: "center",
 };
@@ -210,6 +209,59 @@ export const View: React.FC<{
             />
           </div>
         ) : null}
+        <div style={sourceContainer}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            Media
+            <select
+              onChange={(e) => {
+                if (e.target.value === "undefined") {
+                  setSelectedVideoSource(null);
+                  setCurrentResolution({ width: null, height: null });
+                  return;
+                }
+
+                setSelectedVideoSource(e.target.value as ConstrainDOMString);
+              }}
+              style={{ margin: "10px 0px" }}
+            >
+              <option key={"unselected"} value={"undefined"}>
+                --select video source--
+              </option>
+              {devices
+                .filter((d) => d.kind === "videoinput")
+                .map((d) => {
+                  return (
+                    <option key={d.deviceId} value={d.deviceId}>
+                      {d.label}
+                    </option>
+                  );
+                })}
+            </select>
+          </div>
+
+          {prefix !== "webcam" ? (
+            <Button
+              style={{ marginTop: 10 }}
+              type="button"
+              onClick={selectScreen}
+            >
+              Select screen
+            </Button>
+          ) : null}
+
+          {recordAudio ? (
+            <AudioSelector
+              devices={devices}
+              setSelectedAudioSource={setSelectedAudioSource}
+            />
+          ) : null}
+        </div>
       </div>
       <div style={videoWrapper}>
         <video ref={sourceRef} style={dynamicVideoStyle} muted />
@@ -217,59 +269,6 @@ export const View: React.FC<{
           <div style={dynamicCropIndicator}>
             <div style={cropIndicator} />
           </div>
-        ) : null}
-      </div>
-      <div style={sourceContainer}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          Media Source
-          <select
-            onChange={(e) => {
-              if (e.target.value === "undefined") {
-                setSelectedVideoSource(null);
-                setCurrentResolution({ width: null, height: null });
-                return;
-              }
-
-              setSelectedVideoSource(e.target.value as ConstrainDOMString);
-            }}
-            style={{ margin: "10px 0px" }}
-          >
-            <option key={"unselected"} value={"undefined"}>
-              --select video source--
-            </option>
-            {devices
-              .filter((d) => d.kind === "videoinput")
-              .map((d) => {
-                return (
-                  <option key={d.deviceId} value={d.deviceId}>
-                    {d.label}
-                  </option>
-                );
-              })}
-          </select>
-        </div>
-
-        {prefix !== "webcam" ? (
-          <button
-            style={{ marginTop: 10 }}
-            type="button"
-            onClick={selectScreen}
-          >
-            Select screen
-          </button>
-        ) : null}
-
-        {recordAudio ? (
-          <AudioSelector
-            devices={devices}
-            setSelectedAudioSource={setSelectedAudioSource}
-          />
         ) : null}
       </div>
     </div>

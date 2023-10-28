@@ -12,16 +12,23 @@
     "pull": "node copy-from-downloads.mjs"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.0.2",
     "@remotion/zod-types": "4.0.28",
     "@types/dom-mediacapture-record": "^1.0.17",
     "@types/web": "^0.0.115",
     "@types/webrtc": "^0.0.37",
+    "@vitejs/plugin-react": "^4.1.0",
     "bun-types": "^1.0.4-canary.20231004T140131",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
     "eslint": "^8.50.0",
+    "lucide-react": "^0.290.0",
     "prettier": "^3.0.3",
     "prettier-plugin-organize-imports": "^3.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "tailwind-merge": "^1.14.0",
+    "tailwindcss-animate": "^1.0.7",
     "zod": "^3.21.4"
   },
   "devDependencies": {
@@ -31,10 +38,14 @@
     "@remotion/media-utils": "4.0.28",
     "@remotion/renderer": "4.0.28",
     "@remotion/shapes": "4.0.28",
+    "@types/node": "^20.8.9",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react-swc": "^3.0.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
     "remotion": "4.0.28",
+    "tailwindcss": "^3.3.5",
     "typescript": "4.9.5",
     "vite": "^4.1.0"
   }
