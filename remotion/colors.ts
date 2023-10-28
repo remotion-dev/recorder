@@ -7,4 +7,5 @@ export const COLORS = {
   WORD_HIGHLIGHT_COLOR: "#3B82EB",
   CTA_BUTTON_COLOR: "white",
   CTA_BUTTON_BACKGROUND_COLOR: "black",
+  ENDCARD_TEXT_COLOR: "white",
 };
