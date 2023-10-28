@@ -158,7 +158,6 @@ const Inner: React.FC<{
           exit={exit}
           nextWebcamPosition={nextWebcamPosition}
           prevWebcamPosition={previousWebcamPosition}
-          shouldExit={shouldExit}
         />
       ) : null}
       {scene.newChapter && canvasLayout === "square" ? (
