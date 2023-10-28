@@ -3,6 +3,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AudioSelector } from "./AudioSelector";
 import { Button } from "./components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./components/ui/select";
 
 const BORDERWIDTH = 2;
 
@@ -22,7 +29,6 @@ const viewContainer: React.CSSProperties = {
 const sourceContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "row",
-  justifyContent: "space-around",
   marginTop: 10,
 };
 
@@ -53,7 +59,6 @@ const videoWrapper: React.CSSProperties = {
 
 const viewName: React.CSSProperties = {
   display: "flex",
-  justifyContent: "center",
 };
 
 export const prefixes = [
@@ -213,36 +218,35 @@ export const View: React.FC<{
           <div
             style={{
               display: "flex",
-              alignItems: "center",
-              gap: 10,
             }}
           >
             Media
-            <select
-              onChange={(e) => {
-                if (e.target.value === "undefined") {
+            <Select
+              onValueChange={(value) => {
+                if (value === "undefined") {
                   setSelectedVideoSource(null);
                   setCurrentResolution({ width: null, height: null });
                   return;
                 }
 
-                setSelectedVideoSource(e.target.value as ConstrainDOMString);
+                setSelectedVideoSource(value as ConstrainDOMString);
               }}
-              style={{ margin: "10px 0px" }}
             >
-              <option key={"unselected"} value={"undefined"}>
-                --select video source--
-              </option>
-              {devices
-                .filter((d) => d.kind === "videoinput")
-                .map((d) => {
-                  return (
-                    <option key={d.deviceId} value={d.deviceId}>
-                      {d.label}
-                    </option>
-                  );
-                })}
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="--select video source--" />
+              </SelectTrigger>
+              <SelectContent>
+                {devices
+                  .filter((d) => d.kind === "videoinput")
+                  .map((d) => {
+                    return (
+                      <SelectItem key={d.deviceId} value={d.deviceId}>
+                        {d.label}
+                      </SelectItem>
+                    );
+                  })}
+              </SelectContent>
+            </Select>
           </div>
 
           {prefix !== "webcam" ? (
