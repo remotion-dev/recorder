@@ -1,5 +1,10 @@
 import React from "react";
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import {
+  interpolateColors,
+  spring,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import { COLORS } from "../colors";
 import type { Layout } from "../layout/get-layout";
 import type { Word } from "../sub-types";
@@ -30,14 +35,26 @@ const getWordColor = ({
   displayLayout: Layout | null;
   monospace: boolean;
   appeared: boolean;
-}) => {
+}): { appeared: string; greyed: string } => {
   const normalWordColor =
     displayLayout === null
-      ? COLORS.WORD_COLOR_ON_VIDEO
-      : COLORS.WORD_COLOR_ON_BG;
+      ? {
+          appeared: COLORS.WORD_COLOR_ON_VIDEO_APPEARED,
+          greyed: COLORS.WORD_COLOR_ON_VIDEO_GREYED,
+        }
+      : {
+          appeared: COLORS.WORD_COLOR_ON_BG_APPEARED,
+          greyed: COLORS.WORD_COLOR_ON_BG_GREYED,
+        };
 
   const wordColor =
-    monospace && appeared ? COLORS.WORD_HIGHLIGHT_COLOR : normalWordColor;
+    monospace && appeared
+      ? {
+          appeared: COLORS.WORD_HIGHLIGHT_COLOR,
+          // TODO: Not sure if this is the right color
+          greyed: COLORS.WORD_COLOR_ON_VIDEO_GREYED,
+        }
+      : normalWordColor;
   return wordColor;
 };
 
@@ -74,13 +91,6 @@ export const WordComp: React.FC<{
     : 1;
 
   const appeared = word.start <= time;
-  const opacity = appeared
-    ? word.monospace
-      ? 1
-      : interpolate(time, [word.start, word.start + 0.1], [0.3, 1], {
-          extrapolateRight: "clamp",
-        })
-    : 0.3;
 
   const active = word.start <= time && (word.end > time || isLast);
 
@@ -89,6 +99,17 @@ export const WordComp: React.FC<{
     displayLayout,
     monospace: word.monospace ?? false,
   });
+
+  const shownWordColor = appeared
+    ? word.monospace
+      ? wordColor.appeared
+      : interpolateColors(
+          time,
+          [word.start, word.start + 0.1],
+          [wordColor.greyed, wordColor.appeared],
+        )
+    : wordColor.greyed;
+
   const backgroundColor = active
     ? word.monospace
       ? COLORS.WORD_HIGHLIGHT_COLOR
@@ -103,12 +124,8 @@ export const WordComp: React.FC<{
       <span
         style={{
           ...style,
-          opacity,
           fontFamily: word.monospace ? monospaceFont : regularFont,
-          color:
-            backgroundColor === COLORS.WORD_HIGHLIGHT_COLOR
-              ? "white"
-              : wordColor,
+          color: shownWordColor,
           fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
           backgroundColor,
           outline: active ? "5px solid " + backgroundColor : "none",
