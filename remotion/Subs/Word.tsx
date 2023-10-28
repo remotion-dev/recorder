@@ -1,5 +1,6 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { COLORS } from "../colors";
 import type { Layout } from "../layout/get-layout";
 import type { Word } from "../sub-types";
 
@@ -21,8 +22,6 @@ export const useSequenceDuration = (trimStart: number) => {
   return sequenceDuration;
 };
 
-const BLUE = "#3B82EB";
-
 const getWordColor = ({
   displayLayout,
   appeared,
@@ -32,9 +31,13 @@ const getWordColor = ({
   monospace: boolean;
   appeared: boolean;
 }) => {
-  const normalWordColor = displayLayout === null ? "white" : "black";
+  const normalWordColor =
+    displayLayout === null
+      ? COLORS.WORD_COLOR_ON_VIDEO
+      : COLORS.WORD_COLOR_ON_BG;
 
-  const wordColor = monospace && appeared ? BLUE : normalWordColor;
+  const wordColor =
+    monospace && appeared ? COLORS.WORD_HIGHLIGHT_COLOR : normalWordColor;
   return wordColor;
 };
 
@@ -88,7 +91,7 @@ export const WordComp: React.FC<{
   });
   const backgroundColor = active
     ? word.monospace
-      ? BLUE
+      ? COLORS.WORD_HIGHLIGHT_COLOR
       : "transparent"
     : "transparent";
 
@@ -102,7 +105,10 @@ export const WordComp: React.FC<{
           ...style,
           opacity,
           fontFamily: word.monospace ? monospaceFont : regularFont,
-          color: backgroundColor === BLUE ? "white" : wordColor,
+          color:
+            backgroundColor === COLORS.WORD_HIGHLIGHT_COLOR
+              ? "white"
+              : wordColor,
           fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
           backgroundColor,
           outline: active ? "5px solid " + backgroundColor : "none",
