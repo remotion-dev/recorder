@@ -2,13 +2,21 @@
 
 import type { SetStateAction } from "react";
 import { useCallback } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./components/ui/select";
 
 export const AudioSelector: React.FC<{
   devices: MediaDeviceInfo[];
   setSelectedAudioSource: React.Dispatch<
     SetStateAction<ConstrainDOMString | null>
   >;
-}> = ({ devices, setSelectedAudioSource }) => {
+  audioSource: ConstrainDOMString | null;
+}> = ({ devices, setSelectedAudioSource, audioSource }) => {
   const selectAudioSource = useCallback(
     (selectedAudioSource: ConstrainDOMString | null) => {
       setSelectedAudioSource(selectedAudioSource as string);
@@ -17,24 +25,27 @@ export const AudioSelector: React.FC<{
   );
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-      Audio
-      <select
-        onChange={(e) => {
-          selectAudioSource(e.target.value as ConstrainDOMString);
-        }}
-        style={{ margin: "10px 0px" }}
-      >
+    <Select
+      onValueChange={(value) => {
+        selectAudioSource(value as ConstrainDOMString);
+      }}
+    >
+      <SelectTrigger style={{ maxWidth: 200 }}>
+        <SelectValue placeholder="Select audio">
+          {audioSource?.toString() ?? "Select audio"}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
         {devices
           .filter((d) => d.kind === "audioinput")
           .map((d) => {
             return (
-              <option key={d.deviceId} value={d.deviceId}>
+              <SelectItem key={d.deviceId} value={d.deviceId}>
                 {d.label}
-              </option>
+              </SelectItem>
             );
           })}
-      </select>
-    </div>
+      </SelectContent>
+    </Select>
   );
 };

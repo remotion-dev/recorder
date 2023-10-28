@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./components/ui/select";
+import { ToggleCrop } from "./ToggleCrop";
 
 const BORDERWIDTH = 2;
 
@@ -24,12 +25,6 @@ const viewContainer: React.CSSProperties = {
   height: "100%",
   maxHeight: "100%",
   maxWidth: "100%",
-};
-
-const sourceContainer: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "row",
-  marginTop: 10,
 };
 
 const cropIndicator: React.CSSProperties = {
@@ -59,6 +54,10 @@ const videoWrapper: React.CSSProperties = {
 
 const viewName: React.CSSProperties = {
   display: "flex",
+  alignItems: "center",
+  gap: 4,
+  padding: 4,
+  paddingLeft: 10,
 };
 
 export const prefixes = [
@@ -200,72 +199,63 @@ export const View: React.FC<{
   return (
     <div style={viewContainer}>
       <div style={viewName}>
-        {resolutionString}
-        {prefix === "webcam" ? <div style={{ flex: 1 }} /> : null}
-        {prefix}
-        {prefix === "webcam" ? (
-          <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
-            <label htmlFor="indicator">Show Crop</label>
-            <input
-              id="toggleCropIndicator"
-              type="checkbox"
-              name="indicator"
-              onChange={handleChange}
-            />
-          </div>
-        ) : null}
-        <div style={sourceContainer}>
-          <div
-            style={{
-              display: "flex",
-            }}
-          >
-            Media
-            <Select
-              onValueChange={(value) => {
-                if (value === "undefined") {
-                  setSelectedVideoSource(null);
-                  setCurrentResolution({ width: null, height: null });
-                  return;
-                }
-
-                setSelectedVideoSource(value as ConstrainDOMString);
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="--select video source--" />
-              </SelectTrigger>
-              <SelectContent>
-                {devices
-                  .filter((d) => d.kind === "videoinput")
-                  .map((d) => {
-                    return (
-                      <SelectItem key={d.deviceId} value={d.deviceId}>
-                        {d.label}
-                      </SelectItem>
-                    );
-                  })}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {prefix !== "webcam" ? (
-            <Button
-              style={{ marginTop: 10 }}
-              type="button"
-              onClick={selectScreen}
-            >
-              Select screen
-            </Button>
-          ) : null}
-
-          {recordAudio ? (
-            <AudioSelector
-              devices={devices}
-              setSelectedAudioSource={setSelectedAudioSource}
-            />
-          ) : null}
+        <div
+          style={{
+            fontSize: 13,
+            textAlign: "left",
+            textTransform: "uppercase",
+          }}
+        >
+          {prefix}
+          <br />
+          {resolutionString}
         </div>
+        {prefix === "webcam" ? (
+          <ToggleCrop
+            pressed={showCropIndicator}
+            onPressedChange={handleChange}
+          />
+        ) : null}
+        <Select
+          onValueChange={(value) => {
+            if (value === "undefined") {
+              setSelectedVideoSource(null);
+              setCurrentResolution({ width: null, height: null });
+              return;
+            }
+
+            setSelectedVideoSource(value as ConstrainDOMString);
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select video" />
+          </SelectTrigger>
+          <SelectContent>
+            {devices
+              .filter((d) => d.kind === "videoinput")
+              .map((d) => {
+                return (
+                  <SelectItem key={d.deviceId} value={d.deviceId}>
+                    {d.label}
+                  </SelectItem>
+                );
+              })}
+          </SelectContent>
+        </Select>
+
+        {prefix !== "webcam" ? (
+          <Button type="button" onClick={selectScreen}>
+            Select screen
+          </Button>
+        ) : null}
+
+        {recordAudio ? (
+          <AudioSelector
+            devices={devices}
+            setSelectedAudioSource={setSelectedAudioSource}
+            audioSource={selectedAudioSource}
+          />
+        ) : null}
       </div>
       <div style={videoWrapper}>
         <video ref={sourceRef} style={dynamicVideoStyle} muted />

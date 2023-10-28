@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./components/ui/button";
 
 const topBarContainer: React.CSSProperties = {
-  height: 60,
   display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
   gap: 10,
+  marginTop: 10,
+  marginLeft: 10,
+  alignItems: "center",
 };
 
 export const TopBar: React.FC<{
@@ -29,7 +29,7 @@ export const TopBar: React.FC<{
   const recordCircle = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      height="18px"
+      height="10px"
       viewBox="0 0 512 512"
       style={{ opacity: disabledByParent ? 0.4 : 1 }}
     >
@@ -40,7 +40,7 @@ export const TopBar: React.FC<{
   const blinkingCircle = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      height="18px"
+      height="10px"
       viewBox="0 0 512 512"
       style={{ visibility: isVisible ? "visible" : "hidden" }}
     >
@@ -53,24 +53,26 @@ export const TopBar: React.FC<{
       {recording ? (
         <>
           <Button
+            variant={"outline"}
             type="button"
             disabled={!recording}
             onClick={stop}
             style={{ display: "flex", alignItems: "center", gap: 10 }}
           >
-            Stop
+            Stop recording
           </Button>
           {blinkingCircle}
         </>
       ) : (
         <Button
+          variant={"outline"}
           type="button"
           disabled={disabled}
           onClick={start}
           style={{ display: "flex", alignItems: "center", gap: 10 }}
         >
-          Record
           {recordCircle}
+          Start recording
         </Button>
       )}
     </div>
