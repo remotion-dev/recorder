@@ -13,6 +13,7 @@ const outer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
 };
+
 const gridContainer: React.CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(2, 1fr)",
@@ -22,6 +23,8 @@ const gridContainer: React.CSSProperties = {
   flex: 1,
   minWidth: 0,
   minHeight: 0,
+  gap: 10,
+  margin: 10,
 };
 
 const mediaRecorderOptions: MediaRecorderOptions = {

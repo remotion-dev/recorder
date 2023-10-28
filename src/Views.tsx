@@ -2,13 +2,15 @@
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AudioSelector } from "./AudioSelector";
+
 const BORDERWIDTH = 2;
+
 const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   margin: 10,
   padding: "10px 8px",
-  boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75)",
+  backgroundColor: "#242424",
   borderRadius: 10,
   overflow: "hidden",
   width: "100%",
@@ -246,7 +248,7 @@ export const View: React.FC<{
               .map((d) => {
                 return (
                   <option key={d.deviceId} value={d.deviceId}>
-                    {d.label} ({d.kind})
+                    {d.label}
                   </option>
                 );
               })}
