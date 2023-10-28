@@ -15,7 +15,6 @@ const viewContainer: React.CSSProperties = {
   height: "100%",
   maxHeight: "100%",
   maxWidth: "100%",
-  overflowY: "hidden",
 };
 
 const sourceContainer: React.CSSProperties = {
@@ -24,19 +23,30 @@ const sourceContainer: React.CSSProperties = {
   justifyContent: "space-around",
   marginTop: 10,
 };
+
 const cropIndicator: React.CSSProperties = {
-  position: "absolute",
-  border: `${BORDERWIDTH}px solid red`,
-  top: 0,
-  left: "0px",
+  border: `${BORDERWIDTH}px solid #F7D449`,
   height: "100%",
-  borderRadius: 20,
+  borderRadius: 10,
+  aspectRatio: 350 / 400,
+};
+
+const dynamicCropIndicator: React.CSSProperties = {
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  justifyContent: "center",
+  alignContent: "center",
+  position: "absolute",
 };
 
 const videoWrapper: React.CSSProperties = {
-  width: "100%",
-  height: "100%",
+  flex: 1,
+  overflow: "hidden",
   position: "relative",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
 };
 
 const viewName: React.CSSProperties = {
@@ -61,15 +71,6 @@ export const View: React.FC<{
 }> = ({ devices, setMediaStream, prefix, mediaStream }) => {
   const sourceRef = useRef<HTMLVideoElement>(null);
 
-  const [videoTagMeasurements, setVideoTagMeasurements] = useState<{
-    width: number;
-    height: number;
-  }>({ width: 0, height: 0 });
-  const [videoParentMeasurements, setVideoParentMeasurements] = useState<{
-    // Important for crop indicator!
-    width: number;
-    height: number;
-  }>({ width: 0, height: 0 });
   const [showCropIndicator, setShowCropIndicator] = useState(false);
   const [selectedAudioSource, setSelectedAudioSource] =
     useState<ConstrainDOMString | null>(null);
@@ -108,57 +109,9 @@ export const View: React.FC<{
   const dynamicVideoStyle: React.CSSProperties = useMemo(() => {
     return {
       opacity: mediaStream ? 1 : 0,
-      maxWidth: videoParentMeasurements.width,
-      maxHeight: "auto",
+      height: "100%",
     };
-  }, [mediaStream, videoParentMeasurements.width]);
-
-  // dynamic size for the crop indicator
-  useEffect(() => {
-    const { current } = sourceRef;
-    if (!current) {
-      return;
-    }
-
-    const observer = new ResizeObserver((entries) => {
-      setVideoTagMeasurements({
-        width: entries[0].contentRect.width,
-        height: entries[0].contentRect.height,
-      });
-      setVideoParentMeasurements({
-        width: entries[0].target.parentElement?.clientWidth ?? 0,
-        height: entries[0].target.parentElement?.clientHeight ?? 0,
-      });
-    });
-
-    observer.observe(current);
-
-    // ???
-    return () => {
-      if (current) {
-        observer.unobserve(current);
-      }
-    };
-  }, []);
-
-  const dynCropIndicator: React.CSSProperties = useMemo(() => {
-    if (!videoTagMeasurements.width && !videoTagMeasurements.height) {
-      return cropIndicator;
-    }
-
-    const derivedWidth = (videoTagMeasurements.height / 400) * 350;
-    const derivedHeight = videoTagMeasurements.height;
-    return {
-      ...cropIndicator,
-      width: derivedWidth,
-      height: derivedHeight,
-      left: (videoParentMeasurements.width - derivedWidth) / 2,
-    };
-  }, [
-    videoTagMeasurements.width,
-    videoTagMeasurements.height,
-    videoParentMeasurements.width,
-  ]);
+  }, [mediaStream]);
 
   const setVideoSource = useCallback(
     (newVideoSource: ConstrainDOMString | null) => {
@@ -256,10 +209,13 @@ export const View: React.FC<{
           </div>
         ) : null}
       </div>
-
       <div style={videoWrapper}>
         <video ref={sourceRef} style={dynamicVideoStyle} muted />
-        {showCropIndicator ? <div style={dynCropIndicator} /> : null}
+        {showCropIndicator ? (
+          <div style={dynamicCropIndicator}>
+            <div style={cropIndicator} />
+          </div>
+        ) : null}
       </div>
       <div style={sourceContainer}>
         <div
