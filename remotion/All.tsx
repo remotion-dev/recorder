@@ -115,6 +115,7 @@ export const All: React.FC<AllProps> = ({
                 canvasLayout={canvasLayout}
                 channel={scene.channel}
                 isTransitioningIn={isTransitioningIn}
+                links={scene.links}
               />
             </Sequence>
           );
