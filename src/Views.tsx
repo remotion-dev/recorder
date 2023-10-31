@@ -107,6 +107,14 @@ export const View: React.FC<{
     return microphone.deviceId;
   }, [devices, selectedAudioSource]);
 
+  useEffect(() => {
+    if (mediaStream) {
+      mediaStream.getVideoTracks()[0].onended = () => {
+        setMediaStream(prefix, null);
+      };
+    }
+  }, [mediaStream, prefix, setMediaStream]);
+
   const dynamicVideoStyle: React.CSSProperties = useMemo(() => {
     return {
       opacity: mediaStream ? 1 : 0,
