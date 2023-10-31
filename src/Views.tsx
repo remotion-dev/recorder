@@ -124,7 +124,6 @@ export const View: React.FC<{
     },
     [],
   );
-
   useEffect(() => {
     if (recordAudio) {
       return () => {
@@ -137,6 +136,17 @@ export const View: React.FC<{
       mediaStream?.getVideoTracks().forEach((track) => track.stop());
     };
   }, [mediaStream, recordAudio]);
+
+  useEffect(() => {
+    if (mediaStream) {
+      console.log("inside if");
+      const { width, height } = mediaStream.getVideoTracks()[0].getSettings();
+      setCurrentResolution({
+        width: width ?? null,
+        height: height ?? null,
+      });
+    }
+  }, [mediaStream]);
 
   useEffect(() => {
     if (selectedVideoSource === null) {
@@ -164,8 +174,6 @@ export const View: React.FC<{
           sourceRef.current.play();
         }
 
-        const { width, height } = stream.getVideoTracks()[0].getSettings();
-        setCurrentResolution({ width: width ?? null, height: height ?? null });
         setMediaStream(prefix, stream);
       })
       .catch((e) => {
@@ -179,7 +187,6 @@ export const View: React.FC<{
     selectedVideoSource,
     setMediaStream,
   ]);
-
   const selectScreen = () => {
     window.navigator.mediaDevices
       // getDisplayMedia asks the user for permission to capture the screen
