@@ -124,8 +124,8 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
           This app requires access to your microphone and camera to work.
           <div style={explanationContainer}>
             <div style={explanationWrapper}>
-              1. Click on the padlock/info icon 🛡️ next to the web address in
-              your browser&apos;s address bar.
+              1. Click on the padlock/info icon next to the web address in your
+              browser&apos;s address bar.
             </div>
             <div style={explanationWrapper}>
               2. In the dropdown menu that appears, locate the

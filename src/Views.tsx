@@ -27,6 +27,8 @@ const viewContainer: React.CSSProperties = {
   maxWidth: "100%",
 };
 
+const loadingStyle: React.CSSProperties = {};
+
 const cropIndicator: React.CSSProperties = {
   border: `${BORDERWIDTH}px solid #F7D449`,
   height: "100%",
@@ -68,6 +70,8 @@ export const prefixes = [
 ] as const;
 export type Prefix = (typeof prefixes)[number];
 
+type StreamState = "initial" | "loading" | "loaded";
+
 export const View: React.FC<{
   devices: MediaDeviceInfo[];
   setMediaStream: (prefix: Prefix, source: MediaStream | null) => void;
@@ -83,6 +87,7 @@ export const View: React.FC<{
     useState<ConstrainDOMString | null>(null);
   const recordAudio = prefix === "webcam";
   const [resolutionString, setResolutionString] = useState<string>("");
+  const [streamState, setStreamState] = useState<StreamState>("initial");
   const onLoadedMetadata = useCallback(() => {
     setResolutionString(
       `${sourceRef.current?.videoWidth}x${sourceRef.current?.videoHeight}`,
@@ -147,6 +152,7 @@ export const View: React.FC<{
       return;
     }
 
+    setStreamState("loading");
     const mediaStreamConstraints: MediaStreamConstraints =
       recordAudio && actualAudioSource
         ? {
@@ -168,9 +174,11 @@ export const View: React.FC<{
         }
 
         setMediaStream(prefix, stream);
+        setStreamState("loaded");
       })
       .catch((e) => {
         setMediaStream(prefix, null);
+        setStreamState("initial");
         alert(e);
       });
   }, [
@@ -262,6 +270,9 @@ export const View: React.FC<{
           muted
           onLoadedMetadata={onLoadedMetadata}
         />
+        {streamState === "loading" ? (
+          <div style={loadingStyle}>Loading...</div>
+        ) : null}
         {showCropIndicator ? (
           <div style={dynamicCropIndicator}>
             <div style={cropIndicator} />
