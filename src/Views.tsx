@@ -82,16 +82,12 @@ export const View: React.FC<{
   const [selectedVideoSource, setSelectedVideoSource] =
     useState<ConstrainDOMString | null>(null);
   const recordAudio = prefix === "webcam";
-  const [currentResolution, setCurrentResolution] = useState<{
-    width: number | null;
-    height: number | null;
-  }>({ width: null, height: null });
-
-  const resolutionString = useMemo(() => {
-    return currentResolution.width && currentResolution.height
-      ? `${currentResolution.width}x${currentResolution.height}`
-      : "";
-  }, [currentResolution.height, currentResolution.width]);
+  const [resolutionString, setResolutionString] = useState<string>("");
+  const onLoadedMetadata = useCallback(() => {
+    setResolutionString(
+      `${sourceRef.current?.videoWidth}x${sourceRef.current?.videoHeight}`,
+    );
+  }, []);
 
   const handleChange = useCallback(() => {
     setShowCropIndicator((prev) => !prev);
@@ -136,17 +132,6 @@ export const View: React.FC<{
       mediaStream?.getVideoTracks().forEach((track) => track.stop());
     };
   }, [mediaStream, recordAudio]);
-
-  useEffect(() => {
-    if (mediaStream) {
-      console.log("inside if");
-      const { width, height } = mediaStream.getVideoTracks()[0].getSettings();
-      setCurrentResolution({
-        width: width ?? null,
-        height: height ?? null,
-      });
-    }
-  }, [mediaStream]);
 
   useEffect(() => {
     if (selectedVideoSource === null) {
@@ -197,7 +182,6 @@ export const View: React.FC<{
           return;
         }
 
-        setCurrentResolution({ width: null, height: null });
         sourceRef.current.srcObject = stream;
         sourceRef.current.play();
       });
@@ -227,7 +211,6 @@ export const View: React.FC<{
           onValueChange={(value) => {
             if (value === "undefined") {
               setSelectedVideoSource(null);
-              setCurrentResolution({ width: null, height: null });
               return;
             }
 
@@ -265,7 +248,12 @@ export const View: React.FC<{
         ) : null}
       </div>
       <div style={videoWrapper}>
-        <video ref={sourceRef} style={dynamicVideoStyle} muted />
+        <video
+          ref={sourceRef}
+          style={dynamicVideoStyle}
+          muted
+          onLoadedMetadata={onLoadedMetadata}
+        />
         {showCropIndicator ? (
           <div style={dynamicCropIndicator}>
             <div style={cropIndicator} />
