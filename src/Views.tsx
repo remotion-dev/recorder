@@ -82,16 +82,12 @@ export const View: React.FC<{
   const [selectedVideoSource, setSelectedVideoSource] =
     useState<ConstrainDOMString | null>(null);
   const recordAudio = prefix === "webcam";
-  const [currentResolution, setCurrentResolution] = useState<{
-    width: number | null;
-    height: number | null;
-  }>({ width: null, height: null });
-
-  const resolutionString = useMemo(() => {
-    return currentResolution.width && currentResolution.height
-      ? `${currentResolution.width}x${currentResolution.height}`
-      : "";
-  }, [currentResolution.height, currentResolution.width]);
+  const [resolutionString, setResolutionString] = useState<string>("");
+  const onLoadedMetadata = useCallback(() => {
+    setResolutionString(
+      `${sourceRef.current?.videoWidth}x${sourceRef.current?.videoHeight}`,
+    );
+  }, []);
 
   const handleChange = useCallback(() => {
     setShowCropIndicator((prev) => !prev);
@@ -132,7 +128,6 @@ export const View: React.FC<{
     },
     [],
   );
-
   useEffect(() => {
     if (recordAudio) {
       return () => {
@@ -172,8 +167,6 @@ export const View: React.FC<{
           sourceRef.current.play();
         }
 
-        const { width, height } = stream.getVideoTracks()[0].getSettings();
-        setCurrentResolution({ width: width ?? null, height: height ?? null });
         setMediaStream(prefix, stream);
       })
       .catch((e) => {
@@ -194,7 +187,6 @@ export const View: React.FC<{
     selectedVideoSource,
     setMediaStream,
   ]);
-
   const selectScreen = () => {
     window.navigator.mediaDevices
       // getDisplayMedia asks the user for permission to capture the screen
@@ -205,7 +197,6 @@ export const View: React.FC<{
           return;
         }
 
-        setCurrentResolution({ width: null, height: null });
         sourceRef.current.srcObject = stream;
         sourceRef.current.play();
       });
@@ -235,7 +226,6 @@ export const View: React.FC<{
           onValueChange={(value) => {
             if (value === "undefined") {
               setSelectedVideoSource(null);
-              setCurrentResolution({ width: null, height: null });
               return;
             }
 
@@ -273,7 +263,12 @@ export const View: React.FC<{
         ) : null}
       </div>
       <div style={videoWrapper}>
-        <video ref={sourceRef} style={dynamicVideoStyle} muted />
+        <video
+          ref={sourceRef}
+          style={dynamicVideoStyle}
+          muted
+          onLoadedMetadata={onLoadedMetadata}
+        />
         {showCropIndicator ? (
           <div style={dynamicCropIndicator}>
             <div style={cropIndicator} />
