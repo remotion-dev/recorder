@@ -51,15 +51,14 @@ const peripheral: React.CSSProperties = {
 
 const Permission: React.FC<{
   type: "audio" | "video";
+  deviceState: PermissionState;
   setDeviceState: (newState: PermissionState) => void;
-}> = ({ type, setDeviceState }) => {
-  const [state, setState] = useState<PermissionState>("initial");
-
+}> = ({ type, deviceState, setDeviceState }) => {
   const dynamicStyle: React.CSSProperties = useMemo(() => {
     return {
-      color: state === "granted" ? "white" : "red",
+      color: deviceState === "denied" ? "red" : "white",
     };
-  }, [state]);
+  }, [deviceState]);
   const run = useCallback(async () => {
     const name =
       type === "audio"
@@ -77,6 +76,7 @@ const Permission: React.FC<{
     // firefox case
     if (!result) {
       setDeviceState("prompt");
+      console.log("deviceState", deviceState);
       try {
         await navigator.mediaDevices.getUserMedia({
           video: type === "video",
@@ -84,7 +84,6 @@ const Permission: React.FC<{
         });
       } catch (err) {
         console.log("Error on getUserMedia", err);
-        setState("denied");
         setDeviceState("denied");
         return;
       }
@@ -93,7 +92,7 @@ const Permission: React.FC<{
       return;
     }
 
-    setState(result.state);
+    setDeviceState(result.state);
 
     if (result.state === "prompt") {
       try {
@@ -103,7 +102,7 @@ const Permission: React.FC<{
         });
       } catch (err) {
         console.log("Error on getUserMedia", err);
-        setState("denied");
+        setDeviceState("denied");
         return;
       }
     }
@@ -119,14 +118,17 @@ const Permission: React.FC<{
     run();
   }, [run]);
 
-  if (state === "initial") return null;
+  const accessInformation = useMemo(() => {
+    if (deviceState === "prompt") return "acces requested";
+    if (deviceState === "denied") return "access denied";
+    if (deviceState === "granted") return "access granted";
+  }, [deviceState]);
 
+  if (deviceState === "initial") return null;
   return (
     <div style={peripheral}>
       <div>{type === "audio" ? "Microphone:" : "Camera:"}</div>
-      <div style={dynamicStyle}>
-        {state === "granted" ? "access granted" : "access denied"}
-      </div>
+      <div style={dynamicStyle}>{accessInformation}</div>
     </div>
   );
 };
@@ -155,10 +157,12 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
         <div style={innerContainer}>
           <Permission
             type="audio"
+            deviceState={audioState}
             setDeviceState={(newState) => setAudioState(newState)}
           />
           <Permission
             type="video"
+            deviceState={videoState}
             setDeviceState={(newState) => setVideoState(newState)}
           />
         </div>
