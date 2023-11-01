@@ -88,10 +88,20 @@ export const View: React.FC<{
   const [resolutionString, setResolutionString] = useState<string>("");
   const [streamState, setStreamState] = useState<StreamState>("initial");
   const onLoadedMetadata = useCallback(() => {
-    setResolutionString(
-      `${sourceRef.current?.videoWidth}x${sourceRef.current?.videoHeight}`,
-    );
-  }, []);
+    if (mediaStream) {
+      setResolutionString(
+        `${sourceRef.current?.videoWidth}x${sourceRef.current?.videoHeight}`,
+      );
+    } else {
+      setResolutionString("");
+    }
+  }, [mediaStream]);
+
+  useEffect(() => {
+    if (!mediaStream) {
+      setResolutionString("");
+    }
+  }, [mediaStream]);
 
   const handleChange = useCallback(() => {
     setShowCropIndicator((prev) => !prev);
