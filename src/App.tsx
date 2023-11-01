@@ -42,7 +42,6 @@ const App = () => {
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
   }>({ webcam: null, display: null, alternative1: null, alternative2: null });
-
   const setMediaStream = useCallback(
     (prefix: Prefix, source: MediaStream | null) => {
       setMediaSources((prevMediaSources) => ({
@@ -55,7 +54,6 @@ const App = () => {
 
   const start = () => {
     setRecording(() => Date.now());
-
     const toStart = [];
     const newRecorders: MediaRecorder[] = [];
     for (const [prefix, source] of Object.entries(mediaSources)) {
@@ -65,15 +63,28 @@ const App = () => {
 
       const recorder = new MediaRecorder(source, mediaRecorderOptions);
       newRecorders.push(recorder);
+
       recorder.addEventListener("dataavailable", ({ data }) => {
+        console.log("prefix: ", prefix);
         onVideo(data, endDate, prefix);
+      });
+
+      recorder.addEventListener("error", (event) => {
+        console.log("error: ", prefix, event);
+      });
+
+      recorder.addEventListener("start", (event) => {
+        console.log("start: ", prefix, event);
+      });
+
+      recorder.addEventListener("stop", (event) => {
+        console.log("stop: ", prefix, event);
       });
 
       toStart.push(() => recorder.start());
     }
 
     setRecorders(newRecorders);
-
     toStart.forEach((f) => f());
   };
 
