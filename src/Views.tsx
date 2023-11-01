@@ -2,7 +2,7 @@
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AudioSelector } from "./AudioSelector";
-import { Spinner } from "./components/spinner";
+import { Spinner } from "./components/Spinner";
 import { Button } from "./components/ui/button";
 import {
   Select,
