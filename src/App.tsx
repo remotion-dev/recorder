@@ -29,7 +29,7 @@ const gridContainer: React.CSSProperties = {
 
 const mediaRecorderOptions: MediaRecorderOptions = {
   audioBitsPerSecond: 128000,
-  mimeType: "video/webm;codecs=h264,opus",
+  mimeType: "video/webm;codecs=vp8,opus",
   videoBitsPerSecond: 8 * 4000000,
 };
 
