@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
-type PermissionState = "granted" | "denied" | "prompt";
+type PermissionState = "granted" | "denied" | "prompt" | "initial";
 
 const largeContainer: React.CSSProperties = {
   display: "flex",
@@ -49,8 +49,8 @@ const peripheral: React.CSSProperties = {
 
 const Permission: React.FC<{
   type: "audio" | "video";
-  onGranted: () => void;
-}> = ({ type, onGranted }) => {
+  setDeviceState: (newState: PermissionState) => void;
+}> = ({ type, setDeviceState }) => {
   const [state, setState] = useState<PermissionState | null>(null);
 
   const run = useCallback(async () => {
@@ -58,7 +58,34 @@ const Permission: React.FC<{
       type === "audio"
         ? ("microphone" as PermissionName)
         : ("camera" as PermissionName);
-    const result = await navigator.permissions.query({ name });
+    const result = await navigator.permissions
+      .query({ name })
+      .then((res) => res)
+      .catch((e) => {
+        // eslint-disable-next-line no-alert
+        console.log(e);
+        return null;
+      });
+
+    // firefox case
+    if (!result) {
+      setDeviceState("prompt");
+      try {
+        await navigator.mediaDevices.getUserMedia({
+          video: type === "video",
+          audio: type === "audio",
+        });
+      } catch (err) {
+        console.log("Error on getUserMedia", err);
+        setState("denied");
+        setDeviceState("denied");
+        return;
+      }
+
+      setDeviceState("granted");
+      return;
+    }
+
     setState(result.state);
 
     if (result.state === "prompt") {
@@ -68,15 +95,18 @@ const Permission: React.FC<{
           audio: type === "audio",
         });
       } catch (err) {
+        console.log("Error on getUserMedia", err);
         setState("denied");
         return;
       }
     }
 
     if (result.state === "granted") {
-      onGranted();
+      setDeviceState("granted");
+    } else if (result.state === "denied") {
+      setDeviceState("denied");
     }
-  }, [onGranted, type]);
+  }, [setDeviceState, type]);
 
   useEffect(() => {
     run();
@@ -93,10 +123,14 @@ const Permission: React.FC<{
 export const DevicePermission: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [audioGranted, setAudioGranted] = useState(false);
-  const [videoGranted, setVideoGranted] = useState(false);
+  const [audioState, setAudioState] = useState<PermissionState>("initial");
+  const [videoState, setVideoState] = useState<PermissionState>("initial");
 
-  if (audioGranted && videoGranted) {
+  const isInitialState = useMemo(() => {
+    return audioState === "initial" && videoState === "initial";
+  }, [audioState, videoState]);
+  console.log("isInitialState", isInitialState);
+  if (audioState === "granted" && videoState === "granted") {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;
   }
@@ -106,8 +140,14 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
       <div style={container}>
         <div style={title}>Required peripheral permissions</div>
         <div style={innerContainer}>
-          <Permission type="audio" onGranted={() => setAudioGranted(true)} />
-          <Permission type="video" onGranted={() => setVideoGranted(true)} />
+          <Permission
+            type="audio"
+            setDeviceState={(newState) => setAudioState(newState)}
+          />
+          <Permission
+            type="video"
+            setDeviceState={(newState) => setVideoState(newState)}
+          />
         </div>
       </div>
       This app requires access to your microphone and camera to work.
