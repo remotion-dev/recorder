@@ -68,6 +68,11 @@ const Permission: React.FC<{
       .query({ name })
       .then((res) => res)
       .catch((e) => {
+        // firefox doesn't support microphone and camera as valid property
+        if (e instanceof TypeError) {
+          return null;
+        }
+
         console.log(e);
         return null;
       });

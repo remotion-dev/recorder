@@ -1,6 +1,5 @@
 export const onVideo = (data: Blob, endDate: number, prefix: string) => {
   let webcamchunks: Blob[] = [];
-
   if (data.size > 0) {
     webcamchunks.push(data);
   }
@@ -11,7 +10,6 @@ export const onVideo = (data: Blob, endDate: number, prefix: string) => {
   const blobUrl = URL.createObjectURL(blob);
   link.href = blobUrl;
   link.download = `${prefix}${endDate}.webm`;
-
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
