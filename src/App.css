@@ -21,7 +21,29 @@
   }
 }
 
+.spinner {
+  display: flex;
+  position: absolute;
+}
 
+.spinner-item {
+  width: 5px;
+  height: 5px;
+  background-color: white; /* Change the color as needed */
+  border-radius: 50%;
+  margin: 0 5px;
+  animation: bounce 1.4s infinite ease-in-out;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
 
 .card {
   padding: 2em;
@@ -35,4 +57,3 @@
   box-sizing: border-box;
   color: white;
 }
-
