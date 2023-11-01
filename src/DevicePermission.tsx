@@ -59,7 +59,6 @@ const Permission: React.FC<{
       color: deviceState === "denied" ? "red" : "white",
     };
   }, [deviceState]);
-  console.log(type, ": ", deviceState);
   const run = useCallback(async () => {
     const name =
       type === "audio"
@@ -69,7 +68,6 @@ const Permission: React.FC<{
       .query({ name })
       .then((res) => res)
       .catch((e) => {
-        // eslint-disable-next-line no-alert
         console.log(e);
         return null;
       });
