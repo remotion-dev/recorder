@@ -7,6 +7,8 @@ const largeContainer: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   flexDirection: "column",
+  justifyContent: "center",
+  height: "80%",
 };
 
 const explanationWrapper: React.CSSProperties = {
@@ -49,10 +51,15 @@ const peripheral: React.CSSProperties = {
 
 const Permission: React.FC<{
   type: "audio" | "video";
-  onGranted: () => void;
-}> = ({ type, onGranted }) => {
+  setDeviceState: (newState: PermissionState) => void;
+}> = ({ type, setDeviceState }) => {
   const [state, setState] = useState<PermissionState>("initial");
 
+  const dynamicStyle: React.CSSProperties = useMemo(() => {
+    return {
+      color: state === "granted" ? "white" : "red",
+    };
+  }, [state]);
   const run = useCallback(async () => {
     const name =
       type === "audio"
@@ -74,9 +81,11 @@ const Permission: React.FC<{
     }
 
     if (result.state === "granted") {
-      onGranted();
+      setDeviceState("granted");
+    } else if (result.state === "denied") {
+      setDeviceState("denied");
     }
-  }, [onGranted, type]);
+  }, [setDeviceState, type]);
 
   useEffect(() => {
     run();
@@ -87,7 +96,9 @@ const Permission: React.FC<{
   return (
     <div style={peripheral}>
       <div>{type === "audio" ? "Microphone:" : "Camera:"}</div>
-      <div>{state === "granted" ? "access granted" : "access denied"}</div>
+      <div style={dynamicStyle}>
+        {state === "granted" ? "access granted" : "access denied"}
+      </div>
     </div>
   );
 };
@@ -114,8 +125,14 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
           <div style={title}>Required peripheral permissions</div>
         )}
         <div style={innerContainer}>
-          <Permission type="audio" onGranted={() => setAudioState("granted")} />
-          <Permission type="video" onGranted={() => setVideoState("granted")} />
+          <Permission
+            type="audio"
+            setDeviceState={(newState) => setAudioState(newState)}
+          />
+          <Permission
+            type="video"
+            setDeviceState={(newState) => setVideoState(newState)}
+          />
         </div>
       </div>
 
