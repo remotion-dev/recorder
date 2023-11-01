@@ -2,6 +2,7 @@
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AudioSelector } from "./AudioSelector";
+import { Spinner } from "./components/spinner";
 import { Button } from "./components/ui/button";
 import {
   Select,
@@ -26,8 +27,6 @@ const viewContainer: React.CSSProperties = {
   maxHeight: "100%",
   maxWidth: "100%",
 };
-
-const loadingStyle: React.CSSProperties = {};
 
 const cropIndicator: React.CSSProperties = {
   border: `${BORDERWIDTH}px solid #F7D449`,
@@ -270,9 +269,7 @@ export const View: React.FC<{
           muted
           onLoadedMetadata={onLoadedMetadata}
         />
-        {streamState === "loading" ? (
-          <div style={loadingStyle}>Loading...</div>
-        ) : null}
+        {streamState === "loading" ? <Spinner /> : null}
         {showCropIndicator ? (
           <div style={dynamicCropIndicator}>
             <div style={cropIndicator} />
