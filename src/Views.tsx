@@ -176,6 +176,14 @@ export const View: React.FC<{
         setStreamState("loaded");
       })
       .catch((e) => {
+        if (e.name === "NotReadableError") {
+          alert(
+            "The selected device is not readable. Is the device already in use by another program?",
+          );
+        } else {
+          alert(e);
+        }
+
         setMediaStream(prefix, null);
         setStreamState("initial");
         alert(e);
