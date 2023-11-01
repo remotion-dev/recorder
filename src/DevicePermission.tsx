@@ -53,12 +53,14 @@ const Permission: React.FC<{
   type: "audio" | "video";
   deviceState: PermissionState;
   setDeviceState: (newState: PermissionState) => void;
-}> = ({ type, deviceState, setDeviceState }) => {
+  isInitialState: boolean;
+}> = ({ type, deviceState, setDeviceState, isInitialState }) => {
   const dynamicStyle: React.CSSProperties = useMemo(() => {
     return {
       color: deviceState === "denied" ? "red" : "white",
     };
   }, [deviceState]);
+
   const run = useCallback(async () => {
     const name =
       type === "audio"
@@ -79,13 +81,14 @@ const Permission: React.FC<{
 
     // firefox case
     if (!result && deviceState === "initial") {
-      setDeviceState("prompt");
       console.log("deviceState", deviceState);
+      // probe for permission
       try {
         await navigator.mediaDevices.getUserMedia({
           video: type === "video",
           audio: type === "audio",
         });
+        setDeviceState("prompt");
       } catch (err) {
         console.log("Error on getUserMedia", err);
         setDeviceState("denied");
@@ -132,7 +135,7 @@ const Permission: React.FC<{
     if (deviceState === "granted") return "access granted";
   }, [deviceState]);
 
-  if (deviceState === "initial") return null;
+  if (isInitialState) return null;
   return (
     <div style={peripheral}>
       <div>{type === "audio" ? "Microphone:" : "Camera:"}</div>
@@ -148,9 +151,16 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
   const [videoState, setVideoState] = useState<PermissionState>("initial");
 
   const isInitialState = useMemo(() => {
-    return audioState === "initial" && videoState === "initial";
+    return audioState === "initial" || videoState === "initial";
   }, [audioState, videoState]);
-  console.log("isInitialState", isInitialState);
+
+  const dynamicContainer: React.CSSProperties = useMemo(() => {
+    return {
+      ...container,
+      borderColor: isInitialState ? "black" : "white",
+    };
+  }, [isInitialState]);
+
   if (audioState === "granted" && videoState === "granted") {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;
@@ -158,17 +168,19 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
 
   return (
     <div style={largeContainer}>
-      <div style={container}>
+      <div style={dynamicContainer}>
         {isInitialState ? null : (
           <div style={title}>Required peripheral permissions</div>
         )}
         <div style={innerContainer}>
           <Permission
+            isInitialState={isInitialState}
             type="audio"
             deviceState={audioState}
             setDeviceState={(newState) => setAudioState(newState)}
           />
           <Permission
+            isInitialState={isInitialState}
             type="video"
             deviceState={videoState}
             setDeviceState={(newState) => setVideoState(newState)}
