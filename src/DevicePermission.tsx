@@ -59,6 +59,7 @@ const Permission: React.FC<{
       color: deviceState === "denied" ? "red" : "white",
     };
   }, [deviceState]);
+  console.log(type, ": ", deviceState);
   const run = useCallback(async () => {
     const name =
       type === "audio"
@@ -74,7 +75,7 @@ const Permission: React.FC<{
       });
 
     // firefox case
-    if (!result) {
+    if (!result && deviceState === "initial") {
       setDeviceState("prompt");
       console.log("deviceState", deviceState);
       try {
@@ -89,6 +90,10 @@ const Permission: React.FC<{
       }
 
       setDeviceState("granted");
+      return;
+    }
+
+    if (!result) {
       return;
     }
 
@@ -112,7 +117,7 @@ const Permission: React.FC<{
     } else if (result.state === "denied") {
       setDeviceState("denied");
     }
-  }, [setDeviceState, type]);
+  }, [deviceState, setDeviceState, type]);
 
   useEffect(() => {
     run();
