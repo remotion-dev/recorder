@@ -6,8 +6,8 @@ import {
   useVideoConfig,
 } from "remotion";
 import { COLORS } from "../colors";
-import type { Layout } from "../layout/get-layout";
 import type { Word } from "../sub-types";
+import type { SubtitleType } from "./Segment";
 
 const style: React.CSSProperties = {
   display: "inline",
@@ -28,16 +28,16 @@ export const useSequenceDuration = (trimStart: number) => {
 };
 
 const getWordColor = ({
-  displayLayout,
+  subtitleLayout,
   appeared,
   monospace,
 }: {
-  displayLayout: Layout | null;
+  subtitleLayout: SubtitleType;
   monospace: boolean;
   appeared: boolean;
 }): { appeared: string; greyed: string } => {
   const normalWordColor =
-    displayLayout === null
+    subtitleLayout === "overlayed-center"
       ? {
           appeared: COLORS.WORD_COLOR_ON_VIDEO_APPEARED,
           greyed: COLORS.WORD_COLOR_ON_VIDEO_GREYED,
@@ -68,8 +68,8 @@ export const WordComp: React.FC<{
   word: Word;
   trimStart: number;
   isLast: boolean;
-  displayLayout: Layout | null;
-}> = ({ word, trimStart, isLast, displayLayout }) => {
+  subtitleLayout: SubtitleType;
+}> = ({ word, trimStart, isLast, subtitleLayout }) => {
   const time = useTime(trimStart);
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -96,7 +96,7 @@ export const WordComp: React.FC<{
 
   const wordColor = getWordColor({
     appeared,
-    displayLayout,
+    subtitleLayout,
     monospace: word.monospace ?? false,
   });
 

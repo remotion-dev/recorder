@@ -10,9 +10,9 @@ export const isATextCard = (scene: SceneType) => {
 };
 
 export const getIsTransitioningOut = (scenes: SceneType[], index: number) => {
-  const scene = scenes[index];
+  const sceneAndMetadata = scenes[index];
 
-  if (isATextCard(scene)) {
+  if (isATextCard(sceneAndMetadata)) {
     return true;
   }
 
@@ -26,10 +26,10 @@ export const getIsTransitioningOut = (scenes: SceneType[], index: number) => {
   }
 
   if (
-    scene.type === "scene" &&
+    sceneAndMetadata.type === "scene" &&
     nextScene.type === "scene" &&
-    scene.transitionToNextScene &&
-    nextScene.webcamPosition !== scene.webcamPosition
+    sceneAndMetadata.transitionToNextScene &&
+    nextScene.webcamPosition !== sceneAndMetadata.webcamPosition
   ) {
     return true;
   }

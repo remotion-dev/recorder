@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .ts,.tsx",
+    "start": "remotion studio",
     "remotion": "remotion studio",
     "pull": "node copy-from-downloads.mjs"
   },

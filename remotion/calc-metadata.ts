@@ -2,12 +2,16 @@ import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import type { AllProps } from "./All";
 import { getIsTransitioningIn } from "./animations/transitions";
-import type { CanvasLayout, Dimensions, SceneMetadata } from "./configuration";
+import type {
+  CanvasLayout,
+  Dimensions,
+  SceneAndMetadata,
+} from "./configuration";
 import { fps, getPairs, transitionDuration } from "./configuration";
 import { truthy } from "./truthy";
 
 export const getDimensionsForLayout = (
-  canvasLayout: CanvasLayout
+  canvasLayout: CanvasLayout,
 ): Dimensions => {
   if (canvasLayout === "square") {
     return {
@@ -38,7 +42,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
   const metadata = (
     await Promise.all(
-      props.scenes.map(async (scene, i): Promise<SceneMetadata | null> => {
+      props.scenes.map(async (scene, i): Promise<SceneAndMetadata | null> => {
         if (
           scene.type === "title" ||
           scene.type === "titlecard" ||
@@ -46,11 +50,15 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           scene.type === "remotionupdate"
         ) {
           return {
-            videos: null,
-            durationInFrames: scene.durationInFrames,
-            sumUpDuration: getIsTransitioningIn(props.scenes, i)
-              ? scene.durationInFrames - transitionDuration
-              : scene.durationInFrames,
+            type: "other-scene",
+            scene,
+            metadata: {
+              type: "other",
+              durationInFrames: scene.durationInFrames,
+              sumUpDuration: getIsTransitioningIn(props.scenes, i)
+                ? scene.durationInFrames - transitionDuration
+                : scene.durationInFrames,
+            },
           };
         }
 
@@ -75,10 +83,8 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           scene?.duration ?? Math.round(durationInFrames - trimStart);
 
         return {
-          durationInFrames: duration,
-          sumUpDuration: getIsTransitioningIn(props.scenes, i)
-            ? duration - transitionDuration
-            : duration,
+          type: "video-scene",
+          scene,
           videos: {
             display: dim,
             webcam: {
@@ -86,14 +92,21 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
               width: webcamWidth,
             },
           },
+          metadata: {
+            type: "scene",
+            durationInFrames: duration,
+            sumUpDuration: getIsTransitioningIn(props.scenes, i)
+              ? duration - transitionDuration
+              : duration,
+          },
         };
-      })
+      }),
     )
   ).filter(truthy);
 
   const totalDuration = Math.max(
     1,
-    metadata.reduce((a, b) => a + b.sumUpDuration, 0)
+    metadata.reduce((a, b) => a + b.metadata.sumUpDuration, 0),
   );
 
   return {
@@ -102,8 +115,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
     props: {
       ...props,
       pairs,
-      metadata,
-      scenes: props.scenes,
+      scenesAndMetadata: metadata,
     },
   };
 };

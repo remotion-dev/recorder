@@ -60,9 +60,30 @@ const overrideYForAltLayouts = ({
 
 const fullscreenLayout = ({
   canvasSize,
+  canvasLayout,
+  webcamSize,
 }: {
   canvasSize: Dimensions;
+  canvasLayout: CanvasLayout;
+  webcamSize: Dimensions;
 }): Layout => {
+  if (canvasLayout === "square") {
+    const aspectRatio = webcamSize.width / webcamSize.height;
+
+    const actualWidth = canvasSize.width - safeSpace(canvasLayout) * 2;
+
+    const height = actualWidth / aspectRatio;
+
+    // TODO: Will look weird with vertical video
+    return {
+      x: safeSpace(canvasLayout),
+      y: safeSpace(canvasLayout),
+      width: actualWidth,
+      height,
+      borderRadius,
+    };
+  }
+
   return {
     x: 0,
     y: 0,
@@ -239,11 +260,26 @@ const getWebcamSize = ({
   displayLayout,
   canvasSize,
   canvasLayout,
+  webcamSize,
 }: {
-  displayLayout: Layout;
+  displayLayout: Layout | null;
   canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
+  webcamSize: Dimensions;
 }): Dimensions => {
+  if (displayLayout === null) {
+    const aspectRatio = webcamSize.width / webcamSize.height;
+
+    const actualWidth = canvasSize.width - safeSpace(canvasLayout) * 2;
+
+    const actualHeight = actualWidth / aspectRatio;
+
+    return {
+      height: actualHeight,
+      width: actualWidth,
+    };
+  }
+
   if (canvasLayout === "square" || canvasLayout === "tall") {
     const remainingHeight =
       canvasSize.height - displayLayout.height - safeSpace(canvasLayout) * 3;
@@ -273,8 +309,10 @@ export const getLayout = ({
   display,
   canvasLayout,
   webcamPosition,
+  webcam,
 }: {
   display: Dimensions | null;
+  webcam: Dimensions;
   canvasLayout: CanvasLayout;
   webcamPosition: WebcamPosition;
 }): CameraSceneLayout => {
@@ -289,13 +327,12 @@ export const getLayout = ({
       })
     : null;
 
-  const webcamSize: Dimensions = displayLayout
-    ? getWebcamSize({
-        canvasSize,
-        canvasLayout,
-        displayLayout,
-      })
-    : { height: 0, width: 0 };
+  const webcamSize: Dimensions = getWebcamSize({
+    canvasSize,
+    canvasLayout,
+    displayLayout,
+    webcamSize: webcam,
+  });
 
   const webcamLayout = display
     ? makeWebcamLayoutBasedOnWebcamPosition({
@@ -306,6 +343,8 @@ export const getLayout = ({
       })
     : fullscreenLayout({
         canvasSize,
+        canvasLayout,
+        webcamSize,
       });
 
   return {

@@ -1,7 +1,7 @@
 import React from "react";
 import { Audio, interpolate, Sequence, useVideoConfig } from "remotion";
 import { getIsTransitioningOut, isATextCard } from "./animations/transitions";
-import type { SceneMetadata, SceneType } from "./configuration";
+import type { SceneAndMetadata } from "./configuration";
 import { transitionDuration } from "./configuration";
 import { getAudioSource } from "./layout/music";
 
@@ -39,7 +39,7 @@ const AudioClip: React.FC<{
           {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
-          }
+          },
         );
 
         if (isLoudPart) {
@@ -51,7 +51,7 @@ const AudioClip: React.FC<{
               isLoudPart[1] - FADE,
               isLoudPart[1],
             ],
-            [regularVolume, 1, 1, regularVolume]
+            [regularVolume, 1, 1, regularVolume],
           );
         }
 
@@ -63,33 +63,35 @@ const AudioClip: React.FC<{
 };
 
 export const AudioTrack: React.FC<{
-  scenes: SceneType[];
-  metadata: SceneMetadata[];
-}> = ({ metadata, scenes }) => {
+  scenesAndMetadata: SceneAndMetadata[];
+}> = ({ scenesAndMetadata }) => {
   let addedUpDurations = 0;
   const audioClips: TAudioTrack[] = [];
 
-  scenes.forEach((scene, i) => {
-    const metadataForScene = metadata[i];
+  scenesAndMetadata.forEach((scene, i) => {
+    const metadataForScene = scenesAndMetadata[i];
     if (!metadataForScene) {
       return null;
     }
 
     const from = addedUpDurations;
-    addedUpDurations += metadataForScene.durationInFrames;
-    const isTransitioningOut = getIsTransitioningOut(scenes, i);
+    addedUpDurations += metadataForScene.metadata.durationInFrames;
+    const isTransitioningOut = getIsTransitioningOut(
+      scenesAndMetadata.map((s) => s.scene),
+      i,
+    );
     if (isTransitioningOut) {
       addedUpDurations -= transitionDuration;
     }
 
-    const isLoud = isATextCard(scene);
+    const isLoud = isATextCard(scene.scene);
 
-    const { music } = scene;
+    const { music } = scene.scene;
 
     if (music === "previous") {
       if (audioClips.length > 0) {
         audioClips[audioClips.length - 1].duration +=
-          metadataForScene.durationInFrames;
+          metadataForScene.metadata.durationInFrames;
         if (isTransitioningOut) {
           audioClips[audioClips.length - 1].duration -= transitionDuration;
         }
@@ -97,17 +99,17 @@ export const AudioTrack: React.FC<{
         if (isLoud) {
           audioClips[audioClips.length - 1].loudParts.push([
             from,
-            from + metadataForScene.durationInFrames,
+            from + metadataForScene.metadata.durationInFrames,
           ]);
         }
       }
     } else {
       audioClips.push({
         src: getAudioSource(music),
-        duration: metadataForScene.durationInFrames,
+        duration: metadataForScene.metadata.durationInFrames,
         from,
         loudParts: isLoud
-          ? [[from, from + metadataForScene.durationInFrames]]
+          ? [[from, from + metadataForScene.metadata.durationInFrames]]
           : [],
       });
     }
