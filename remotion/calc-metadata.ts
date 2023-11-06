@@ -40,7 +40,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
   let videoIndex = -1;
 
-  const metadata = (
+  const scenesAndMetadata = (
     await Promise.all(
       props.scenes.map(async (scene, i): Promise<SceneAndMetadata | null> => {
         if (
@@ -106,7 +106,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
   const totalDuration = Math.max(
     1,
-    metadata.reduce((a, b) => a + b.metadata.sumUpDuration, 0),
+    scenesAndMetadata.reduce((a, b) => a + b.metadata.sumUpDuration, 0),
   );
 
   return {
@@ -115,7 +115,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
     props: {
       ...props,
       pairs,
-      scenesAndMetadata: metadata,
+      scenesAndMetadata,
     },
   };
 };
