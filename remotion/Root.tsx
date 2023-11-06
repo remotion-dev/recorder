@@ -43,8 +43,9 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           canvasLayout: "wide",
-
           prefix: "day2",
+          scenesAndMetadata: [],
+          pairs: [],
           scenes: [
             {
               type: "scene",
@@ -154,8 +155,6 @@ export const Root = () => {
               duration: 1930,
             },
           ],
-          metadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -167,7 +166,6 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           canvasLayout: "wide",
-
           prefix: "day3",
           scenes: [
             {
@@ -178,7 +176,7 @@ export const Root = () => {
               music: "previous",
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -462,7 +460,7 @@ export const Root = () => {
               type: "scene",
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -688,7 +686,7 @@ export const Root = () => {
               type: "scene",
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -872,7 +870,7 @@ export const Root = () => {
               type: "scene",
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -949,7 +947,7 @@ export const Root = () => {
               type: "scene",
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -1066,7 +1064,7 @@ export const Root = () => {
               type: "scene",
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -1283,7 +1281,7 @@ export const Root = () => {
               type: "scene",
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -1370,7 +1368,7 @@ export const Root = () => {
               duration: 429,
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -1577,7 +1575,7 @@ export const Root = () => {
               duration: null,
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -1734,7 +1732,7 @@ export const Root = () => {
               duration: null,
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -1918,7 +1916,7 @@ export const Root = () => {
               duration: null,
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -2082,7 +2080,7 @@ export const Root = () => {
               duration: null,
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -2208,7 +2206,7 @@ export const Root = () => {
               music: "previous" as const,
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -2400,7 +2398,7 @@ export const Root = () => {
               links: [],
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -2614,7 +2612,7 @@ export const Root = () => {
               links: [],
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -2818,7 +2816,7 @@ export const Root = () => {
               music: "previous" as const,
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -2990,7 +2988,7 @@ export const Root = () => {
               links: [],
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -3004,8 +3002,8 @@ export const Root = () => {
         defaultProps={{
           canvasLayout: "wide",
           prefix: "karaoketeaser",
+          scenesAndMetadata: [],
           scenes: [],
-          metadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -3197,7 +3195,7 @@ export const Root = () => {
               links: [],
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -3369,7 +3367,7 @@ export const Root = () => {
               music: "previous" as const,
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -3513,7 +3511,7 @@ export const Root = () => {
               links: [],
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -3638,7 +3636,7 @@ export const Root = () => {
               links: [],
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -3746,7 +3744,7 @@ export const Root = () => {
               links: [],
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -3905,7 +3903,7 @@ export const Root = () => {
               ],
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -3919,8 +3917,8 @@ export const Root = () => {
         defaultProps={{
           canvasLayout: "wide",
           prefix: "court",
+          scenesAndMetadata: [],
           scenes: [],
-          metadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -4076,7 +4074,7 @@ export const Root = () => {
               links: [{ link: "link.jonny.io/vice-redhat" }],
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -4292,7 +4290,7 @@ export const Root = () => {
               links: [{ link: "zhjkhkjhjk" }],
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -4304,7 +4302,7 @@ export const Root = () => {
         id="mistakes"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "wide" as const,
+          canvasLayout: "square" as const,
           prefix: "mistakes",
           scenes: [
             {
@@ -4452,7 +4450,7 @@ export const Root = () => {
               music: "previous" as const,
             },
           ],
-          metadata: [],
+          scenesAndMetadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}
@@ -4466,8 +4464,8 @@ export const Root = () => {
         defaultProps={{
           canvasLayout: "wide",
           prefix: "empty",
+          scenesAndMetadata: [],
           scenes: [],
-          metadata: [],
           pairs: [],
         }}
         calculateMetadata={calcMetadata}

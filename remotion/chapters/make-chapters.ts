@@ -1,8 +1,7 @@
 import { getIsTransitioningIn } from "../animations/transitions";
 import type {
   CanvasLayout,
-  SceneMetadata,
-  SceneType,
+  SceneAndMetadata,
   SceneVideos,
   WebcamPosition,
 } from "../configuration";
@@ -29,40 +28,44 @@ export type ChapterType = {
 
 export const generateChapters = ({
   scenes,
-  metadatas,
   canvasLayout,
 }: {
-  scenes: SceneType[];
-  metadatas: (SceneMetadata | null)[];
+  scenes: SceneAndMetadata[];
   canvasLayout: CanvasLayout;
 }) => {
   let passedDuration = 0;
   const chapters: ChapterType[] = [];
 
   for (let i = 0; i < scenes.length; i++) {
-    const scene = scenes[i];
-    const metadata = metadatas[i];
+    const sceneAndMetadata = scenes[i];
 
-    if (scene.type === "scene" && scene.newChapter) {
-      if (!metadata) {
-        throw new Error("expected metadata to be defined");
-      }
+    if (
+      sceneAndMetadata.type === "video-scene" &&
+      sceneAndMetadata.scene.newChapter
+    ) {
+      const { metadata } = sceneAndMetadata;
 
       let start = passedDuration;
 
       const end = start + metadata.sumUpDuration;
-      if (getIsTransitioningIn(scenes, i)) {
+      if (
+        getIsTransitioningIn(
+          scenes.map((s) => s.scene),
+          i,
+        )
+      ) {
         start -= transitionDuration;
       }
 
       const layout = getLayout({
         canvasLayout,
-        display: (metadata.videos as SceneVideos).display,
-        webcamPosition: scene.webcamPosition,
+        display: (sceneAndMetadata.videos as SceneVideos).display,
+        webcamPosition: sceneAndMetadata.scene.webcamPosition,
+        webcam: (sceneAndMetadata.videos as SceneVideos).webcam,
       });
 
       const chapter: ChapterType = {
-        title: scene.newChapter,
+        title: sceneAndMetadata.scene.newChapter,
         start,
         end,
         id: passedDuration,
@@ -70,10 +73,10 @@ export const generateChapters = ({
         webcamPositions: [
           {
             start,
-            webcamPosition: scene.webcamPosition,
+            webcamPosition: sceneAndMetadata.scene.webcamPosition,
             end,
             layout,
-            transitionToNextScene: scene.transitionToNextScene,
+            transitionToNextScene: sceneAndMetadata.scene.transitionToNextScene,
           },
         ],
       };
@@ -81,42 +84,48 @@ export const generateChapters = ({
       chapters.push(chapter);
     } else if (chapters.length > 0) {
       const lastChapter = chapters[chapters.length - 1];
-      if (scene.type === "scene") {
+      if (sceneAndMetadata.type === "video-scene") {
         if (
-          scene.webcamPosition ===
+          sceneAndMetadata.scene.webcamPosition ===
           lastChapter.webcamPositions[lastChapter.webcamPositions.length - 1]
             .webcamPosition
         ) {
           lastChapter.webcamPositions[
             lastChapter.webcamPositions.length - 1
-          ].transitionToNextScene = scene.transitionToNextScene;
+          ].transitionToNextScene =
+            sceneAndMetadata.scene.transitionToNextScene;
           lastChapter.webcamPositions[
             lastChapter.webcamPositions.length - 1
-          ].end += metadata?.sumUpDuration ?? 0;
+          ].end += sceneAndMetadata.metadata.sumUpDuration ?? 0;
         } else {
           lastChapter.webcamPositions.push({
             start: lastChapter.end,
-            end: lastChapter.end + (metadata?.sumUpDuration ?? 0),
-            webcamPosition: scene.webcamPosition,
+            end:
+              lastChapter.end + (sceneAndMetadata.metadata.sumUpDuration ?? 0),
+            webcamPosition: sceneAndMetadata.scene.webcamPosition,
             layout: getLayout({
               canvasLayout,
-              display: (metadata?.videos as SceneVideos).display,
-              webcamPosition: scene.webcamPosition,
+              display: (sceneAndMetadata.videos as SceneVideos).display,
+              webcamPosition: sceneAndMetadata.scene.webcamPosition,
+              webcam: (sceneAndMetadata.videos as SceneVideos).webcam,
             }),
-            transitionToNextScene: scene.transitionToNextScene,
+            transitionToNextScene: sceneAndMetadata.scene.transitionToNextScene,
           });
         }
       }
 
-      lastChapter.end += metadata?.sumUpDuration ?? 0;
+      lastChapter.end += sceneAndMetadata.metadata.sumUpDuration ?? 0;
     }
 
-    if (scene.type === "scene" && scene.stopChapteringAfterThis) {
+    if (
+      sceneAndMetadata.type === "video-scene" &&
+      sceneAndMetadata.scene.stopChapteringAfterThis
+    ) {
       break;
     }
 
-    if (metadata) {
-      passedDuration += metadata.sumUpDuration;
+    if (sceneAndMetadata.metadata) {
+      passedDuration += sceneAndMetadata.metadata.sumUpDuration;
     }
   }
 

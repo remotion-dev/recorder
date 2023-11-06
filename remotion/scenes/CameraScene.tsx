@@ -10,12 +10,11 @@ import {
   useVideoConfig,
 } from "remotion";
 import { getDisplayTranslation } from "../animations/camera-scene-transitions";
-import type { ChapterType } from "../chapters/make-chapters";
 import { SquareChapter } from "../chapters/SquareChapter";
 import type {
   CanvasLayout,
   Pair,
-  SceneMetadata,
+  SceneAndMetadata,
   SceneType,
   WebcamPosition,
 } from "../configuration";
@@ -174,74 +173,63 @@ const Inner: React.FC<{
 };
 
 export const CameraScene: React.FC<{
-  metadata: SceneMetadata;
+  sceneAndMetadata: SceneAndMetadata;
   pair: Pair;
   start: number;
   index: number;
   shouldEnter: boolean;
   shouldExit: boolean;
   canvasLayout: CanvasLayout;
-  scene: SceneType | undefined;
-  nextScene: { scene: SceneType; metadata: SceneMetadata } | null;
-  previousScene: { scene: SceneType; metadata: SceneMetadata } | null;
-  chapters: ChapterType[];
+  nextScene: SceneAndMetadata | null;
+  previousScene: SceneAndMetadata | null;
 }> = ({
-  metadata,
   pair,
   start,
   index,
   shouldEnter,
   shouldExit,
   canvasLayout,
-  scene,
   nextScene,
   previousScene,
+  sceneAndMetadata,
 }) => {
-  if (scene === undefined) {
-    return (
-      <Sequence
-        from={start}
-        durationInFrames={Math.max(1, metadata.durationInFrames)}
-      >
-        <div>
-          <h1 style={{}}>no conf</h1>
-        </div>
-      </Sequence>
-    );
-  }
-
-  if (scene.type !== "scene") {
+  if (sceneAndMetadata.type !== "video-scene") {
     throw new Error("Not a camera scene");
   }
 
-  if (metadata.videos === null) {
-    throw new Error("No videos");
+  if (sceneAndMetadata.scene.type !== "scene") {
+    throw new Error("Not a scene");
   }
+
+  const { metadata, scene, videos } = sceneAndMetadata;
 
   const startFrom = scene.trimStart ?? 0;
   const endAt = scene.duration ? startFrom + scene.duration : undefined;
 
   const layout = getLayout({
-    display: metadata.videos.display,
+    display: videos.display,
     canvasLayout,
     webcamPosition: scene.webcamPosition,
+    webcam: videos.webcam,
   });
 
   const prevLayout =
-    previousScene && previousScene.scene.type === "scene"
+    previousScene && previousScene.type === "video-scene"
       ? getLayout({
-          display: previousScene.metadata.videos?.display ?? null,
+          display: previousScene.videos.display ?? null,
           canvasLayout,
           webcamPosition: previousScene.scene.webcamPosition,
+          webcam: previousScene.videos.webcam,
         })
       : null;
 
   const nextLayout =
-    nextScene && nextScene.scene.type === "scene"
+    nextScene && nextScene.type === "video-scene"
       ? getLayout({
-          display: nextScene.metadata.videos?.display ?? null,
+          display: nextScene.videos.display ?? null,
           canvasLayout,
           webcamPosition: nextScene.scene.webcamPosition,
+          webcam: nextScene.videos.webcam,
         })
       : null;
 

@@ -77,26 +77,27 @@ export const Subs: React.FC<{
     width,
   ]);
 
+  const subtitleType = getSubtitlesType({ canvasLayout, displayLayout });
+
   const subsLayout = getSubsBox({
     canvasLayout,
     webcamLayout,
     webcamPosition,
     canvasSize: { height, width },
+    subtitleType,
     displayLayout,
   });
-
-  const subtitlesType = getSubtitlesType({ canvasLayout, displayLayout });
 
   const postprocessed = useMemo(() => {
     return data
       ? postprocessSubtitles({
           subTypes: data,
           boxWidth: subsLayout.width,
-          maxLines: getSubtitlesLines(subtitlesType),
-          fontSize: getSubtitlesFontSize(subtitlesType),
+          maxLines: getSubtitlesLines(subtitleType),
+          fontSize: getSubtitlesFontSize(subtitleType),
         })
       : null;
-  }, [data, subsLayout.width, subtitlesType]);
+  }, [data, subsLayout.width, subtitleType]);
 
   if (!postprocessed) {
     return null;
@@ -117,8 +118,8 @@ export const Subs: React.FC<{
             segment={segment}
             trimStart={trimStart}
             canvasLayout={canvasLayout}
-            displayLayout={displayLayout}
             subsBox={subsLayout}
+            subtitleType={subtitleType}
           />
         );
       })}

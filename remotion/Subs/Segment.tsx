@@ -14,7 +14,7 @@ import { useSequenceDuration, useTime, WordComp } from "./Word";
 
 loadFont();
 
-type SubtitleType = "below-video" | "overlayed-center" | "boxed";
+export type SubtitleType = "below-video" | "overlayed-center" | "boxed";
 
 export const getSubtitlesType = ({
   canvasLayout,
@@ -24,6 +24,10 @@ export const getSubtitlesType = ({
   displayLayout: Layout | null;
 }): SubtitleType => {
   if (displayLayout === null) {
+    if (canvasLayout === "square") {
+      return "boxed";
+    }
+
     return "overlayed-center";
   }
 
@@ -55,19 +59,21 @@ export const getSubtitlesLines = (subtitleType: SubtitleType) => {
 };
 
 export const getSubsBox = ({
-  displayLayout,
+  subtitleType,
   canvasLayout,
   canvasSize,
   webcamLayout,
   webcamPosition,
+  displayLayout,
 }: {
-  displayLayout: Layout | null;
+  subtitleType: SubtitleType;
   canvasLayout: CanvasLayout;
   canvasSize: Dimensions;
   webcamLayout: Layout;
   webcamPosition: WebcamPosition;
+  displayLayout: Layout | null;
 }): Layout => {
-  if (displayLayout === null) {
+  if (subtitleType === "overlayed-center") {
     const height = getBottomSafeSpace("square") * 2;
     return {
       height,
@@ -89,6 +95,20 @@ export const getSubsBox = ({
     };
   }
 
+  if (displayLayout === null) {
+    const isTopAligned =
+      webcamPosition === "top-left" || webcamPosition === "top-right";
+
+    return {
+      height: webcamLayout.height,
+      y: isTopAligned ? webcamLayout.height : safeSpace(canvasLayout),
+      x: safeSpace(canvasLayout),
+      width:
+        canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
+      borderRadius: 0,
+    };
+  }
+
   return {
     height: webcamLayout.height,
     y: webcamLayout.y,
@@ -103,14 +123,14 @@ export const getSubsBox = ({
 
 const getSubsLayout = ({
   canvasLayout,
-  displayLayout,
   subsBox,
+  subtitleType,
 }: {
   canvasLayout: CanvasLayout;
-  displayLayout: Layout | null;
   subsBox: Layout;
+  subtitleType: SubtitleType;
 }): React.CSSProperties => {
-  if (displayLayout === null) {
+  if (subtitleType === "overlayed-center") {
     return {
       left: subsBox.x,
       top: subsBox.y,
@@ -144,11 +164,14 @@ const getSubsLayout = ({
   };
 };
 
-const inlineSubsLayout = (
-  canvasLayout: CanvasLayout,
-  displayLayout: Layout | null,
-): React.CSSProperties => {
-  if (displayLayout === null) {
+const inlineSubsLayout = ({
+  canvasLayout,
+  subtitleType,
+}: {
+  canvasLayout: CanvasLayout;
+  subtitleType: SubtitleType;
+}): React.CSSProperties => {
+  if (subtitleType === "overlayed-center") {
     return {
       borderRadius: borderRadius - safeSpace("tall") / 4,
     };
@@ -166,9 +189,9 @@ export const SegmentComp: React.FC<{
   isLast: boolean;
   trimStart: number;
   canvasLayout: CanvasLayout;
-  displayLayout: Layout | null;
   subsBox: Layout;
-}> = ({ segment, isLast, trimStart, canvasLayout, subsBox, displayLayout }) => {
+  subtitleType: SubtitleType;
+}> = ({ segment, isLast, trimStart, canvasLayout, subsBox, subtitleType }) => {
   const time = useTime(trimStart);
   const duration = useSequenceDuration(trimStart);
 
@@ -196,9 +219,7 @@ export const SegmentComp: React.FC<{
     <AbsoluteFill
       style={{
         top: "auto",
-        fontSize: getSubtitlesFontSize(
-          getSubtitlesType({ canvasLayout, displayLayout }),
-        ),
+        fontSize: getSubtitlesFontSize(subtitleType),
         display: "flex",
         lineHeight: 1.2,
         opacity,
@@ -207,7 +228,7 @@ export const SegmentComp: React.FC<{
         ...getSubsLayout({
           canvasLayout,
           subsBox,
-          displayLayout,
+          subtitleType,
         }),
       }}
     >
@@ -215,14 +236,14 @@ export const SegmentComp: React.FC<{
         <span
           style={{
             textShadow:
-              displayLayout === null
+              subtitleType === "overlayed-center"
                 ? "0px 0px 30px rgba(0, 0, 0, 0.5)"
                 : undefined,
             lineHeight: 1.2,
             display: "inline-block",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
-            ...inlineSubsLayout(canvasLayout, displayLayout),
+            ...inlineSubsLayout({ canvasLayout, subtitleType }),
           }}
         >
           {segment.words.map((word, index) => {
@@ -233,7 +254,7 @@ export const SegmentComp: React.FC<{
                 isLast={index === segment.words.length - 1}
                 trimStart={trimStart}
                 word={word}
-                displayLayout={displayLayout}
+                subtitleLayout={subtitleType}
               />
             );
           })}
