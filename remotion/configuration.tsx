@@ -1,6 +1,7 @@
 import type { StaticFile } from "remotion";
 import { getStaticFiles, staticFile } from "remotion";
 import { z } from "zod";
+import type { CameraSceneLayout } from "./layout/get-layout";
 import { music } from "./layout/music";
 import { linkType } from "./scenes/EndCard/LeftSide";
 
@@ -14,29 +15,22 @@ export type SceneVideos = {
   display: Dimensions | null;
 };
 
-export type SceneMetadata =
-  | {
-      type: "scene";
-      durationInFrames: number;
-      sumUpDuration: number;
-    }
-  | {
-      type: "other";
-      durationInFrames: number;
-      sumUpDuration: number;
-    };
+export type VideoSceneAndMetadata = {
+  type: "video-scene";
+  scene: VideoScene;
+  durationInFrames: number;
+  sumUpDuration: number;
+  videos: SceneVideos;
+  layout: CameraSceneLayout;
+};
 
 export type SceneAndMetadata =
-  | {
-      type: "video-scene";
-      scene: VideoScene;
-      metadata: SceneMetadata;
-      videos: SceneVideos;
-    }
+  | VideoSceneAndMetadata
   | {
       type: "other-scene";
       scene: SceneType;
-      metadata: SceneMetadata;
+      durationInFrames: number;
+      sumUpDuration: number;
     };
 
 const webcamPosition = z.enum([

@@ -75,7 +75,7 @@ export const AudioTrack: React.FC<{
     }
 
     const from = addedUpDurations;
-    addedUpDurations += metadataForScene.metadata.durationInFrames;
+    addedUpDurations += metadataForScene.durationInFrames;
     const isTransitioningOut = getIsTransitioningOut(
       scenesAndMetadata.map((s) => s.scene),
       i,
@@ -91,7 +91,7 @@ export const AudioTrack: React.FC<{
     if (music === "previous") {
       if (audioClips.length > 0) {
         audioClips[audioClips.length - 1].duration +=
-          metadataForScene.metadata.durationInFrames;
+          metadataForScene.durationInFrames;
         if (isTransitioningOut) {
           audioClips[audioClips.length - 1].duration -= transitionDuration;
         }
@@ -99,17 +99,17 @@ export const AudioTrack: React.FC<{
         if (isLoud) {
           audioClips[audioClips.length - 1].loudParts.push([
             from,
-            from + metadataForScene.metadata.durationInFrames,
+            from + metadataForScene.durationInFrames,
           ]);
         }
       }
     } else {
       audioClips.push({
         src: getAudioSource(music),
-        duration: metadataForScene.metadata.durationInFrames,
+        duration: metadataForScene.durationInFrames,
         from,
         loudParts: isLoud
-          ? [[from, from + metadataForScene.metadata.durationInFrames]]
+          ? [[from, from + metadataForScene.durationInFrames]]
           : [],
       });
     }

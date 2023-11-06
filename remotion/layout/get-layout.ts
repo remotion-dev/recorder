@@ -1,6 +1,8 @@
 import type {
   CanvasLayout,
   Dimensions,
+  SceneVideos,
+  VideoScene,
   WebcamPosition,
 } from "../configuration";
 import { getDimensionsForLayout } from "./dimensions";
@@ -312,24 +314,22 @@ export type CameraSceneLayout = {
 };
 
 export const getLayout = ({
-  display,
   canvasLayout,
-  webcamPosition,
-  webcam,
+  videos,
+  scene,
 }: {
-  display: Dimensions | null;
-  webcam: Dimensions;
+  videos: SceneVideos;
+  scene: VideoScene;
   canvasLayout: CanvasLayout;
-  webcamPosition: WebcamPosition;
 }): CameraSceneLayout => {
   const canvasSize = getDimensionsForLayout(canvasLayout);
-  const displayLayout = display
+  const displayLayout = videos.display
     ? wideLayout({
-        videoWidth: display.width,
-        videoHeight: display.height,
+        videoWidth: videos.display.width,
+        videoHeight: videos.display.height,
         canvasSize,
         canvasLayout,
-        webcamPosition,
+        webcamPosition: scene.webcamPosition,
       })
     : null;
 
@@ -337,12 +337,12 @@ export const getLayout = ({
     canvasSize,
     canvasLayout,
     displayLayout,
-    webcamSize: webcam,
+    webcamSize: videos.webcam,
   });
 
-  const webcamLayout = display
+  const webcamLayout = videos.display
     ? makeWebcamLayoutBasedOnWebcamPosition({
-        webcamPosition,
+        webcamPosition: scene.webcamPosition,
         canvasSize,
         canvasLayout,
         webcamSize,
@@ -351,7 +351,7 @@ export const getLayout = ({
         canvasSize,
         canvasLayout,
         webcamSize,
-        webcamPosition,
+        webcamPosition: scene.webcamPosition,
       });
 
   return {
@@ -360,7 +360,7 @@ export const getLayout = ({
           canvasLayout,
           layout: shiftDisplayLayoutBasedOnWebcamPosition({
             layout: displayLayout,
-            webcamPosition,
+            webcamPosition: scene.webcamPosition,
             webcamSize,
             canvasLayout,
           }),

@@ -6,7 +6,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { getWebcamTranslation } from "./animations/camera-scene-transitions";
-import type { CanvasLayout, Pair, WebcamPosition } from "./configuration";
+import type { CanvasLayout, Pair, SceneAndMetadata } from "./configuration";
 import { transitionDuration } from "./configuration";
 import type { Layout } from "./layout/get-layout";
 
@@ -19,13 +19,11 @@ export const WebcamVideo: React.FC<{
   pair: Pair;
   zoomInAtStart: boolean;
   zoomInAtEnd: boolean;
-  webcamPosition: WebcamPosition;
   shouldExit: boolean;
-  nextLayout: Layout | null;
-  previousLayout: Layout | null;
-  previousWebcamPosition: WebcamPosition | null;
-  nextWebcamPosition: WebcamPosition | null;
   canvasLayout: CanvasLayout;
+  nextScene: SceneAndMetadata | null;
+  previousScene: SceneAndMetadata | null;
+  currentScene: SceneAndMetadata;
 }> = ({
   webcamLayout,
   enter,
@@ -35,13 +33,11 @@ export const WebcamVideo: React.FC<{
   startFrom,
   endAt,
   pair,
-  webcamPosition,
+  nextScene,
+  previousScene,
   shouldExit,
-  nextLayout,
-  previousLayout,
-  nextWebcamPosition,
-  previousWebcamPosition,
   canvasLayout,
+  currentScene,
 }) => {
   const { height, width, fps, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -70,12 +66,9 @@ export const WebcamVideo: React.FC<{
     exit,
     height,
     width,
-    webcamPosition,
-    currentLayout: webcamLayout,
-    nextLayout,
-    previousLayout,
-    nextWebcamPosition,
-    previousWebcamPosition,
+    currentScene,
+    nextScene,
+    previousScene,
     canvasLayout,
   });
 
