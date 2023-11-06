@@ -109,10 +109,10 @@ export const getSubsBox = ({
     return {
       height: webcamLayout.height,
       y: isTopAligned
-        ? webcamLayout.height + safeSpace(canvasLayout)
+        ? webcamLayout.height + safeSpace(canvasLayout) * 2
         : safeSpace(canvasLayout),
       x: safeSpace(canvasLayout),
-      width: canvasSize.width - safeSpace(canvasLayout) * 2,
+      width: canvasSize.width - safeSpace(canvasLayout) * 3,
       borderRadius: 0,
     };
   }
