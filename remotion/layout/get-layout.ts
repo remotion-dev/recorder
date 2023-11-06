@@ -1,9 +1,9 @@
-import { getDimensionsForLayout } from "../calc-metadata";
 import type {
   CanvasLayout,
   Dimensions,
   WebcamPosition,
 } from "../configuration";
+import { getDimensionsForLayout } from "./dimensions";
 import { getBottomSafeSpace } from "./get-safe-space";
 
 export const borderRadius = 20;
@@ -62,10 +62,12 @@ const fullscreenLayout = ({
   canvasSize,
   canvasLayout,
   webcamSize,
+  webcamPosition,
 }: {
   canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
   webcamSize: Dimensions;
+  webcamPosition: WebcamPosition;
 }): Layout => {
   if (canvasLayout === "square") {
     const aspectRatio = webcamSize.width / webcamSize.height;
@@ -73,11 +75,15 @@ const fullscreenLayout = ({
     const actualWidth = canvasSize.width - safeSpace(canvasLayout) * 2;
 
     const height = actualWidth / aspectRatio;
+    const isTopAligned =
+      webcamPosition === "top-left" || webcamPosition === "top-right";
 
     // TODO: Will look weird with vertical video
     return {
       x: safeSpace(canvasLayout),
-      y: safeSpace(canvasLayout),
+      y: isTopAligned
+        ? safeSpace(canvasLayout)
+        : canvasSize.height - height - safeSpace(canvasLayout),
       width: actualWidth,
       height,
       borderRadius,
@@ -345,6 +351,7 @@ export const getLayout = ({
         canvasSize,
         canvasLayout,
         webcamSize,
+        webcamPosition,
       });
 
   return {

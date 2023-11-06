@@ -4307,7 +4307,7 @@ export const Root = () => {
           scenes: [
             {
               type: "scene" as const,
-              webcamPosition: "top-left" as const,
+              webcamPosition: "bottom-left" as const,
               trimStart: 0,
               duration: null,
               zoomInAtStart: false,

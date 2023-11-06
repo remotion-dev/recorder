@@ -2,36 +2,10 @@ import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import type { AllProps } from "./All";
 import { getIsTransitioningIn } from "./animations/transitions";
-import type {
-  CanvasLayout,
-  Dimensions,
-  SceneAndMetadata,
-} from "./configuration";
+import type { SceneAndMetadata } from "./configuration";
 import { fps, getPairs, transitionDuration } from "./configuration";
+import { getDimensionsForLayout } from "./layout/dimensions";
 import { truthy } from "./truthy";
-
-export const getDimensionsForLayout = (
-  canvasLayout: CanvasLayout,
-): Dimensions => {
-  if (canvasLayout === "square") {
-    return {
-      height: 1080,
-      width: 1080,
-    };
-  }
-
-  if (canvasLayout === "tall") {
-    return {
-      height: 1860,
-      width: 1080,
-    };
-  }
-
-  return {
-    height: 1080,
-    width: 1920,
-  };
-};
 
 export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   props,
@@ -113,7 +87,10 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
     durationInFrames: totalDuration,
     ...getDimensionsForLayout(props.canvasLayout),
     props: {
-      ...props,
+      canvasLayout: props.canvasLayout,
+      prefix: props.prefix,
+      scenes: props.scenes,
+      fps,
       pairs,
       scenesAndMetadata,
     },

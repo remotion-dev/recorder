@@ -38,8 +38,15 @@ export const getSubtitlesType = ({
   return "below-video";
 };
 
-export const getSubtitlesFontSize = (subtitleType: SubtitleType) => {
+export const getSubtitlesFontSize = (
+  subtitleType: SubtitleType,
+  displayLayout: Layout | null,
+) => {
   if (subtitleType === "boxed") {
+    if (displayLayout === null) {
+      return 64;
+    }
+
     return 56;
   }
 
@@ -101,10 +108,11 @@ export const getSubsBox = ({
 
     return {
       height: webcamLayout.height,
-      y: isTopAligned ? webcamLayout.height : safeSpace(canvasLayout),
+      y: isTopAligned
+        ? webcamLayout.height + safeSpace(canvasLayout)
+        : safeSpace(canvasLayout),
       x: safeSpace(canvasLayout),
-      width:
-        canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
+      width: canvasSize.width - safeSpace(canvasLayout) * 2,
       borderRadius: 0,
     };
   }
@@ -125,10 +133,12 @@ const getSubsLayout = ({
   canvasLayout,
   subsBox,
   subtitleType,
+  displayLayout,
 }: {
   canvasLayout: CanvasLayout;
   subsBox: Layout;
   subtitleType: SubtitleType;
+  displayLayout: Layout | null;
 }): React.CSSProperties => {
   if (subtitleType === "overlayed-center") {
     return {
@@ -160,7 +170,7 @@ const getSubsLayout = ({
     top: subsBox.y,
     width: subsBox.width,
     height: subsBox.height,
-    paddingTop: safeSpace(canvasLayout),
+    paddingTop: displayLayout === null ? 0 : safeSpace(canvasLayout),
   };
 };
 
@@ -191,7 +201,16 @@ export const SegmentComp: React.FC<{
   canvasLayout: CanvasLayout;
   subsBox: Layout;
   subtitleType: SubtitleType;
-}> = ({ segment, isLast, trimStart, canvasLayout, subsBox, subtitleType }) => {
+  displayLayout: Layout | null;
+}> = ({
+  segment,
+  isLast,
+  trimStart,
+  canvasLayout,
+  subsBox,
+  subtitleType,
+  displayLayout,
+}) => {
   const time = useTime(trimStart);
   const duration = useSequenceDuration(trimStart);
 
@@ -219,7 +238,7 @@ export const SegmentComp: React.FC<{
     <AbsoluteFill
       style={{
         top: "auto",
-        fontSize: getSubtitlesFontSize(subtitleType),
+        fontSize: getSubtitlesFontSize(subtitleType, displayLayout),
         display: "flex",
         lineHeight: 1.2,
         opacity,
@@ -229,6 +248,7 @@ export const SegmentComp: React.FC<{
           canvasLayout,
           subsBox,
           subtitleType,
+          displayLayout,
         }),
       }}
     >

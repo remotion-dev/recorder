@@ -94,10 +94,10 @@ export const Subs: React.FC<{
           subTypes: data,
           boxWidth: subsLayout.width,
           maxLines: getSubtitlesLines(subtitleType),
-          fontSize: getSubtitlesFontSize(subtitleType),
+          fontSize: getSubtitlesFontSize(subtitleType, displayLayout),
         })
       : null;
-  }, [data, subsLayout.width, subtitleType]);
+  }, [data, displayLayout, subsLayout.width, subtitleType]);
 
   if (!postprocessed) {
     return null;
@@ -120,6 +120,7 @@ export const Subs: React.FC<{
             canvasLayout={canvasLayout}
             subsBox={subsLayout}
             subtitleType={subtitleType}
+            displayLayout={displayLayout}
           />
         );
       })}
