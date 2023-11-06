@@ -38,8 +38,8 @@ export const All: React.FC<AllProps> = ({
   let videoCounter = -1;
 
   const chapters = useMemo(() => {
-    return generateChapters({ scenes: scenesAndMetadata, canvasLayout });
-  }, [canvasLayout, scenesAndMetadata]);
+    return generateChapters({ scenes: scenesAndMetadata });
+  }, [scenesAndMetadata]);
 
   return (
     <AbsoluteFill
@@ -58,7 +58,7 @@ export const All: React.FC<AllProps> = ({
         );
 
         const from = addedUpDurations;
-        addedUpDurations += sceneAndMetadata.metadata.durationInFrames;
+        addedUpDurations += sceneAndMetadata.durationInFrames;
         if (isTransitioningOut) {
           addedUpDurations -= transitionDuration;
         }

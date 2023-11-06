@@ -1,13 +1,7 @@
 import { getIsTransitioningIn } from "../animations/transitions";
-import type {
-  CanvasLayout,
-  SceneAndMetadata,
-  SceneVideos,
-  WebcamPosition,
-} from "../configuration";
+import type { SceneAndMetadata, WebcamPosition } from "../configuration";
 import { transitionDuration } from "../configuration";
 import type { CameraSceneLayout } from "../layout/get-layout";
-import { getLayout } from "../layout/get-layout";
 
 export type WebcamInformation = {
   webcamPosition: WebcamPosition;
@@ -28,10 +22,8 @@ export type ChapterType = {
 
 export const generateChapters = ({
   scenes,
-  canvasLayout,
 }: {
   scenes: SceneAndMetadata[];
-  canvasLayout: CanvasLayout;
 }) => {
   let passedDuration = 0;
   const chapters: ChapterType[] = [];
@@ -43,11 +35,9 @@ export const generateChapters = ({
       sceneAndMetadata.type === "video-scene" &&
       sceneAndMetadata.scene.newChapter
     ) {
-      const { metadata } = sceneAndMetadata;
-
       let start = passedDuration;
 
-      const end = start + metadata.sumUpDuration;
+      const end = start + sceneAndMetadata.sumUpDuration;
       if (
         getIsTransitioningIn(
           scenes.map((s) => s.scene),
@@ -56,13 +46,6 @@ export const generateChapters = ({
       ) {
         start -= transitionDuration;
       }
-
-      const layout = getLayout({
-        canvasLayout,
-        display: (sceneAndMetadata.videos as SceneVideos).display,
-        webcamPosition: sceneAndMetadata.scene.webcamPosition,
-        webcam: (sceneAndMetadata.videos as SceneVideos).webcam,
-      });
 
       const chapter: ChapterType = {
         title: sceneAndMetadata.scene.newChapter,
@@ -75,7 +58,7 @@ export const generateChapters = ({
             start,
             webcamPosition: sceneAndMetadata.scene.webcamPosition,
             end,
-            layout,
+            layout: sceneAndMetadata.layout,
             transitionToNextScene: sceneAndMetadata.scene.transitionToNextScene,
           },
         ],
@@ -96,25 +79,19 @@ export const generateChapters = ({
             sceneAndMetadata.scene.transitionToNextScene;
           lastChapter.webcamPositions[
             lastChapter.webcamPositions.length - 1
-          ].end += sceneAndMetadata.metadata.sumUpDuration ?? 0;
+          ].end += sceneAndMetadata.sumUpDuration ?? 0;
         } else {
           lastChapter.webcamPositions.push({
             start: lastChapter.end,
-            end:
-              lastChapter.end + (sceneAndMetadata.metadata.sumUpDuration ?? 0),
+            end: lastChapter.end + (sceneAndMetadata.sumUpDuration ?? 0),
             webcamPosition: sceneAndMetadata.scene.webcamPosition,
-            layout: getLayout({
-              canvasLayout,
-              display: (sceneAndMetadata.videos as SceneVideos).display,
-              webcamPosition: sceneAndMetadata.scene.webcamPosition,
-              webcam: (sceneAndMetadata.videos as SceneVideos).webcam,
-            }),
+            layout: sceneAndMetadata.layout,
             transitionToNextScene: sceneAndMetadata.scene.transitionToNextScene,
           });
         }
       }
 
-      lastChapter.end += sceneAndMetadata.metadata.sumUpDuration ?? 0;
+      lastChapter.end += sceneAndMetadata.sumUpDuration ?? 0;
     }
 
     if (
@@ -124,9 +101,7 @@ export const generateChapters = ({
       break;
     }
 
-    if (sceneAndMetadata.metadata) {
-      passedDuration += sceneAndMetadata.metadata.sumUpDuration;
-    }
+    passedDuration += sceneAndMetadata.sumUpDuration;
   }
 
   return chapters;

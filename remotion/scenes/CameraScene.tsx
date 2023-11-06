@@ -11,16 +11,8 @@ import {
 } from "remotion";
 import { getDisplayTranslation } from "../animations/camera-scene-transitions";
 import { SquareChapter } from "../chapters/SquareChapter";
-import type {
-  CanvasLayout,
-  Pair,
-  SceneAndMetadata,
-  SceneType,
-  WebcamPosition,
-} from "../configuration";
+import type { CanvasLayout, Pair, SceneAndMetadata } from "../configuration";
 import { transitionDuration } from "../configuration";
-import type { CameraSceneLayout } from "../layout/get-layout";
-import { getLayout } from "../layout/get-layout";
 import { Subs } from "../Subs/Subs";
 import { WebcamVideo } from "../WebcamVideo";
 
@@ -31,12 +23,9 @@ const Inner: React.FC<{
   shouldEnter: boolean;
   shouldExit: boolean;
   canvasLayout: CanvasLayout;
-  scene: SceneType;
-  layout: CameraSceneLayout;
-  previousLayout: CameraSceneLayout | null;
-  nextLayout: CameraSceneLayout | null;
-  previousWebcamPosition: WebcamPosition | null;
-  nextWebcamPosition: WebcamPosition | null;
+  scene: SceneAndMetadata;
+  nextScene: SceneAndMetadata | null;
+  previousScene: SceneAndMetadata | null;
 }> = ({
   endAt,
   shouldEnter,
@@ -45,11 +34,8 @@ const Inner: React.FC<{
   startFrom,
   scene,
   canvasLayout,
-  layout,
-  nextLayout,
-  previousLayout,
-  nextWebcamPosition,
-  previousWebcamPosition,
+  nextScene,
+  previousScene,
 }) => {
   const { fps, width, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -87,7 +73,7 @@ const Inner: React.FC<{
     return 0;
   })();
 
-  if (scene.type !== "scene") {
+  if (scene.type !== "video-scene") {
     throw new Error("Not a camera scene");
   }
 
@@ -95,23 +81,23 @@ const Inner: React.FC<{
     enter,
     exit,
     width,
-    nextLayout: nextLayout?.displayLayout ?? null,
-    previousLayout: previousLayout?.displayLayout ?? null,
-    currentLayout: layout.displayLayout,
+    nextScene,
+    previousScene,
+    currentScene: scene,
   });
 
   return (
     <>
       <AbsoluteFill>
-        {layout.displayLayout && pair.display ? (
+        {scene.layout.displayLayout && pair.display ? (
           <div
             style={{
-              width: layout.displayLayout.width,
-              height: layout.displayLayout.height,
-              left: layout.displayLayout.x,
-              top: layout.displayLayout.y,
+              width: scene.layout.displayLayout.width,
+              height: scene.layout.displayLayout.height,
+              left: scene.layout.displayLayout.x,
+              top: scene.layout.displayLayout.y,
               position: "absolute",
-              borderRadius: layout.displayLayout.borderRadius,
+              borderRadius: scene.layout.displayLayout.borderRadius,
               opacity: displayTranslation.opacity,
               translate: `${displayTranslation.translationX}px ${displayTranslation.translationY}px`,
             }}
@@ -122,47 +108,43 @@ const Inner: React.FC<{
               src={pair.display.src}
               style={{
                 maxWidth: "100%",
-                borderRadius: layout.displayLayout.borderRadius,
+                borderRadius: scene.layout.displayLayout.borderRadius,
               }}
             />
           </div>
         ) : null}
         <WebcamVideo
+          currentScene={scene}
           endAt={endAt}
           enter={enter}
           exit={exit}
           pair={pair}
-          zoomInAtStart={scene.zoomInAtStart ?? false}
+          zoomInAtStart={scene.scene.zoomInAtStart ?? false}
           startFrom={startFrom}
-          webcamLayout={layout.webcamLayout}
-          webcamPosition={scene.webcamPosition}
-          zoomInAtEnd={scene.zoomInAtEnd}
+          webcamLayout={scene.layout.webcamLayout}
+          zoomInAtEnd={scene.scene.zoomInAtEnd}
           shouldExit={shouldExit}
-          nextLayout={nextLayout?.webcamLayout ?? null}
-          previousLayout={previousLayout?.webcamLayout ?? null}
-          nextWebcamPosition={nextWebcamPosition}
-          previousWebcamPosition={previousWebcamPosition}
           canvasLayout={canvasLayout}
+          nextScene={nextScene}
+          previousScene={previousScene}
         />
       </AbsoluteFill>
       {pair.sub ? (
         <Subs
-          webcamPosition={scene.webcamPosition}
           canvasLayout={canvasLayout}
           trimStart={startFrom}
           file={pair.sub}
-          webcamLayout={layout.webcamLayout}
-          displayLayout={layout.displayLayout}
           enter={enter}
           exit={exit}
-          nextWebcamPosition={nextWebcamPosition}
-          prevWebcamPosition={previousWebcamPosition}
+          scene={scene}
+          nextScene={nextScene}
+          previousScene={previousScene}
         />
       ) : null}
-      {scene.newChapter && canvasLayout === "square" ? (
+      {scene.scene.newChapter && canvasLayout === "square" ? (
         <SquareChapter
-          webcamPosition={scene.webcamPosition}
-          title={scene.newChapter}
+          webcamPosition={scene.scene.webcamPosition}
+          title={scene.scene.newChapter}
         />
       ) : null}
       {shouldEnter ? (
@@ -201,50 +183,16 @@ export const CameraScene: React.FC<{
     throw new Error("Not a scene");
   }
 
-  const { metadata, scene, videos } = sceneAndMetadata;
+  const { scene, durationInFrames } = sceneAndMetadata;
 
   const startFrom = scene.trimStart ?? 0;
   const endAt = scene.duration ? startFrom + scene.duration : undefined;
-
-  const layout = getLayout({
-    display: videos.display,
-    canvasLayout,
-    webcamPosition: scene.webcamPosition,
-    webcam: videos.webcam,
-  });
-
-  const prevLayout =
-    previousScene && previousScene.type === "video-scene"
-      ? getLayout({
-          display: previousScene.videos.display ?? null,
-          canvasLayout,
-          webcamPosition: previousScene.scene.webcamPosition,
-          webcam: previousScene.videos.webcam,
-        })
-      : null;
-
-  const nextLayout =
-    nextScene && nextScene.type === "video-scene"
-      ? getLayout({
-          display: nextScene.videos.display ?? null,
-          canvasLayout,
-          webcamPosition: nextScene.scene.webcamPosition,
-          webcam: nextScene.videos.webcam,
-        })
-      : null;
-
-  const prevWebcamPosition =
-    previousScene?.scene.type === "scene"
-      ? previousScene?.scene.webcamPosition
-      : null;
-  const nextWebcamPosition =
-    nextScene?.scene.type === "scene" ? nextScene?.scene.webcamPosition : null;
 
   return (
     <Sequence
       name={`Scene ${index}`}
       from={start}
-      durationInFrames={Math.max(1, metadata.durationInFrames)}
+      durationInFrames={Math.max(1, durationInFrames)}
     >
       <Inner
         canvasLayout={canvasLayout}
@@ -253,12 +201,9 @@ export const CameraScene: React.FC<{
         shouldEnter={shouldEnter}
         shouldExit={shouldExit}
         startFrom={startFrom}
-        layout={layout}
-        scene={scene}
-        nextLayout={nextLayout}
-        previousLayout={prevLayout}
-        nextWebcamPosition={nextWebcamPosition}
-        previousWebcamPosition={prevWebcamPosition}
+        scene={sceneAndMetadata}
+        nextScene={nextScene}
+        previousScene={previousScene}
       />
     </Sequence>
   );

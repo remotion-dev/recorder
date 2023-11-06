@@ -2,9 +2,10 @@ import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import type { AllProps } from "./All";
 import { getIsTransitioningIn } from "./animations/transitions";
-import type { SceneAndMetadata } from "./configuration";
+import type { SceneAndMetadata, SceneVideos } from "./configuration";
 import { fps, getPairs, transitionDuration } from "./configuration";
 import { getDimensionsForLayout } from "./layout/dimensions";
+import { getLayout } from "./layout/get-layout";
 import { truthy } from "./truthy";
 
 export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
@@ -26,13 +27,10 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           return {
             type: "other-scene",
             scene,
-            metadata: {
-              type: "other",
-              durationInFrames: scene.durationInFrames,
-              sumUpDuration: getIsTransitioningIn(props.scenes, i)
-                ? scene.durationInFrames - transitionDuration
-                : scene.durationInFrames,
-            },
+            durationInFrames: scene.durationInFrames,
+            sumUpDuration: getIsTransitioningIn(props.scenes, i)
+              ? scene.durationInFrames - transitionDuration
+              : scene.durationInFrames,
           };
         }
 
@@ -56,23 +54,27 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
         const duration =
           scene?.duration ?? Math.round(durationInFrames - trimStart);
 
+        const videos: SceneVideos = {
+          display: dim,
+          webcam: {
+            height: webcamHeight,
+            width: webcamWidth,
+          },
+        };
+
         return {
           type: "video-scene",
           scene,
-          videos: {
-            display: dim,
-            webcam: {
-              height: webcamHeight,
-              width: webcamWidth,
-            },
-          },
-          metadata: {
-            type: "scene",
-            durationInFrames: duration,
-            sumUpDuration: getIsTransitioningIn(props.scenes, i)
-              ? duration - transitionDuration
-              : duration,
-          },
+          videos,
+          durationInFrames: duration,
+          sumUpDuration: getIsTransitioningIn(props.scenes, i)
+            ? duration - transitionDuration
+            : duration,
+          layout: getLayout({
+            scene,
+            videos,
+            canvasLayout: props.canvasLayout,
+          }),
         };
       }),
     )
@@ -80,7 +82,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
   const totalDuration = Math.max(
     1,
-    scenesAndMetadata.reduce((a, b) => a + b.metadata.sumUpDuration, 0),
+    scenesAndMetadata.reduce((a, b) => a + b.sumUpDuration, 0),
   );
 
   return {

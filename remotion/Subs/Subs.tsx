@@ -7,8 +7,11 @@ import {
   useVideoConfig,
 } from "remotion";
 import { getSubtitleTranslation } from "../animations/camera-scene-transitions";
-import type { CanvasLayout, WebcamPosition } from "../configuration";
-import type { Layout } from "../layout/get-layout";
+import type {
+  CanvasLayout,
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../configuration";
 import type { SubTypes } from "../sub-types";
 import { postprocessSubtitles } from "./postprocess-subs";
 import {
@@ -23,24 +26,20 @@ export const Subs: React.FC<{
   file: StaticFile;
   trimStart: number;
   canvasLayout: CanvasLayout;
-  displayLayout: Layout | null;
-  webcamPosition: WebcamPosition;
-  webcamLayout: Layout;
+  scene: VideoSceneAndMetadata;
   enter: number;
   exit: number;
-  prevWebcamPosition: WebcamPosition | null;
-  nextWebcamPosition: WebcamPosition | null;
+  nextScene: SceneAndMetadata | null;
+  previousScene: SceneAndMetadata | null;
 }> = ({
   file,
   trimStart,
   canvasLayout,
-  displayLayout,
-  webcamPosition,
-  webcamLayout,
+  scene,
   enter,
   exit,
-  nextWebcamPosition,
-  prevWebcamPosition,
+  nextScene,
+  previousScene,
 }) => {
   const [data, setData] = useState<SubTypes | null>(null);
   const { width, height } = useVideoConfig();
@@ -60,32 +59,35 @@ export const Subs: React.FC<{
       enter,
       exit,
       height,
-      webcamPosition,
       width,
       canvasLayout,
-      nextWebcamPosition,
-      prevWebcamPosition,
+      nextScene,
+      previousScene,
+      scene,
     });
   }, [
     canvasLayout,
     enter,
     exit,
     height,
-    nextWebcamPosition,
-    prevWebcamPosition,
-    webcamPosition,
+    nextScene,
+    previousScene,
+    scene,
     width,
   ]);
 
-  const subtitleType = getSubtitlesType({ canvasLayout, displayLayout });
+  const subtitleType = getSubtitlesType({
+    canvasLayout,
+    displayLayout: scene.layout.displayLayout,
+  });
 
   const subsLayout = getSubsBox({
     canvasLayout,
-    webcamLayout,
-    webcamPosition,
     canvasSize: { height, width },
     subtitleType,
-    displayLayout,
+    displayLayout: scene.layout.displayLayout,
+    webcamLayout: scene.layout.webcamLayout,
+    webcamPosition: scene.scene.webcamPosition,
   });
 
   const postprocessed = useMemo(() => {
@@ -94,10 +96,13 @@ export const Subs: React.FC<{
           subTypes: data,
           boxWidth: subsLayout.width,
           maxLines: getSubtitlesLines(subtitleType),
-          fontSize: getSubtitlesFontSize(subtitleType, displayLayout),
+          fontSize: getSubtitlesFontSize(
+            subtitleType,
+            scene.layout.displayLayout,
+          ),
         })
       : null;
-  }, [data, displayLayout, subsLayout.width, subtitleType]);
+  }, [data, scene.layout.displayLayout, subsLayout.width, subtitleType]);
 
   if (!postprocessed) {
     return null;
@@ -120,7 +125,7 @@ export const Subs: React.FC<{
             canvasLayout={canvasLayout}
             subsBox={subsLayout}
             subtitleType={subtitleType}
-            displayLayout={displayLayout}
+            displayLayout={scene.layout.displayLayout}
           />
         );
       })}
