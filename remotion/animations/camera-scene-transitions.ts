@@ -7,94 +7,6 @@ import type {
 } from "../configuration";
 import type { Layout } from "../layout/get-layout";
 
-export const getDisplayTranslation = ({
-  enter,
-  exit,
-  width,
-  nextScene: nextLayout,
-  previousScene: previousLayout,
-  currentScene: currentLayout,
-}: {
-  enter: number;
-  exit: number;
-  width: number;
-  previousScene: SceneAndMetadata | null;
-  nextScene: SceneAndMetadata | null;
-  currentScene: VideoSceneAndMetadata;
-}) => {
-  if (
-    currentLayout.type !== "video-scene" ||
-    currentLayout.layout.displayLayout === null
-  ) {
-    throw new Error("no transitions on non-video scenes");
-  }
-
-  const currentandPreviousAreVideoScenes =
-    previousLayout &&
-    previousLayout.type === "video-scene" &&
-    previousLayout.layout.displayLayout !== null;
-  const nextAndCurrentAreVideoScenes =
-    nextLayout &&
-    nextLayout.type === "video-scene" &&
-    nextLayout.layout.displayLayout !== null;
-
-  const enterStartX = currentandPreviousAreVideoScenes
-    ? (previousLayout.layout.displayLayout as Layout).x
-    : currentLayout.layout.displayLayout.x + width;
-
-  const enterStartY = currentandPreviousAreVideoScenes
-    ? (previousLayout.layout.displayLayout as Layout).y
-    : currentLayout.layout.displayLayout.y;
-
-  const exitEndX = nextAndCurrentAreVideoScenes
-    ? (nextLayout.layout.displayLayout as Layout).x
-    : currentLayout.layout.displayLayout.x - width;
-
-  const exitEndY = nextAndCurrentAreVideoScenes
-    ? (nextLayout.layout.displayLayout as Layout).y
-    : currentLayout.layout.displayLayout.y;
-
-  const startOpacity = currentLayout && previousLayout ? 0 : 1;
-  const opacity = interpolate(enter, [0, 0.5], [startOpacity, 1]);
-
-  if (exit > 0) {
-    return {
-      translationX: Math.round(
-        interpolate(
-          exit,
-          [0, 1],
-          [currentLayout.layout.displayLayout.x, exitEndX],
-        ),
-      ),
-      translationY: Math.round(
-        interpolate(
-          exit,
-          [0, 1],
-          [currentLayout.layout.displayLayout.y, exitEndY],
-        ),
-      ),
-      opacity,
-    };
-  }
-
-  const enterX = interpolate(
-    enter,
-    [0, 1],
-    [enterStartX, currentLayout.layout.displayLayout.x],
-  );
-  const enterY = interpolate(
-    enter,
-    [0, 1],
-    [enterStartY, currentLayout.layout.displayLayout.y],
-  );
-
-  return {
-    translationX: Math.round(enterX),
-    translationY: Math.round(enterY),
-    opacity,
-  };
-};
-
 const isGrowingOrShrinkingToMiniature = ({
   currentScene,
   otherScene,
@@ -115,6 +27,127 @@ const isGrowingOrShrinkingToMiniature = ({
     otherScene.layout.displayLayout === null;
 
   return toMiniature || fromMiniature;
+};
+
+const getDisplayTransitionOrigins = ({
+  currentScene,
+  nextScene,
+  previousScene,
+  width,
+}: {
+  nextScene: SceneAndMetadata | null;
+  previousScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+}) => {
+  if (
+    currentScene.type !== "video-scene" ||
+    currentScene.layout.displayLayout === null
+  ) {
+    throw new Error("no transitions on non-video scenes");
+  }
+
+  const currentandPreviousAreVideoScenes =
+    previousScene &&
+    previousScene.type === "video-scene" &&
+    previousScene.layout.displayLayout !== null;
+  const nextAndCurrentAreVideoScenes =
+    nextScene &&
+    nextScene.type === "video-scene" &&
+    nextScene.layout.displayLayout !== null;
+  const enterStartX = currentandPreviousAreVideoScenes
+    ? (previousScene.layout.displayLayout as Layout).x
+    : currentScene.layout.displayLayout.x + width;
+
+  const enterStartY = currentandPreviousAreVideoScenes
+    ? (previousScene.layout.displayLayout as Layout).y
+    : currentScene.layout.displayLayout.y;
+
+  const exitEndX = nextAndCurrentAreVideoScenes
+    ? (nextScene.layout.displayLayout as Layout).x
+    : currentScene.layout.displayLayout.x - width;
+
+  const exitEndY = nextAndCurrentAreVideoScenes
+    ? (nextScene.layout.displayLayout as Layout).y
+    : currentScene.layout.displayLayout.y;
+
+  return {
+    enterStartX,
+    enterStartY,
+    exitEndX,
+    exitEndY,
+  };
+};
+
+export const getDisplayPosition = ({
+  enter,
+  exit,
+  width,
+  nextScene,
+  previousScene,
+  currentScene,
+}: {
+  enter: number;
+  exit: number;
+  width: number;
+  previousScene: SceneAndMetadata | null;
+  nextScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+}) => {
+  if (
+    currentScene.type !== "video-scene" ||
+    currentScene.layout.displayLayout === null
+  ) {
+    throw new Error("no transitions on non-video scenes");
+  }
+
+  const { enterStartX, enterStartY, exitEndX, exitEndY } =
+    getDisplayTransitionOrigins({
+      currentScene,
+      nextScene,
+      previousScene,
+      width,
+    });
+
+  const startOpacity = currentScene && previousScene ? 0 : 1;
+  const opacity = interpolate(enter, [0, 0.5], [startOpacity, 1]);
+
+  if (exit > 0) {
+    return {
+      translationX: Math.round(
+        interpolate(
+          exit,
+          [0, 1],
+          [currentScene.layout.displayLayout.x, exitEndX],
+        ),
+      ),
+      translationY: Math.round(
+        interpolate(
+          exit,
+          [0, 1],
+          [currentScene.layout.displayLayout.y, exitEndY],
+        ),
+      ),
+      opacity,
+    };
+  }
+
+  const enterX = interpolate(
+    enter,
+    [0, 1],
+    [enterStartX, currentScene.layout.displayLayout.x],
+  );
+  const enterY = interpolate(
+    enter,
+    [0, 1],
+    [enterStartY, currentScene.layout.displayLayout.y],
+  );
+
+  return {
+    translationX: Math.round(enterX),
+    translationY: Math.round(enterY),
+    opacity,
+  };
 };
 
 const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
