@@ -264,9 +264,14 @@ export const SegmentComp: React.FC<{
         opacity,
         // @ts-expect-error
         textWrap: "balance",
-        border: "3px solid " + COLORS.BORDER_COLOR,
-        backgroundColor: COLORS.SUBTITLES_BACKGROUND,
-        boxShadow: "0px 2px 2px rgba(0,0,0,.04)",
+        border:
+          subtitleType === "boxed"
+            ? `3px solid ${COLORS.BORDER_COLOR}`
+            : undefined,
+        backgroundColor:
+          subtitleType === "boxed" ? COLORS.SUBTITLES_BACKGROUND : undefined,
+        boxShadow:
+          subtitleType === "boxed" ? "0px 2px 2px rgba(0,0,0,.04)" : undefined,
         paddingLeft: getHorizontalPaddingForSubtitles(
           subtitleType,
           canvasLayout,

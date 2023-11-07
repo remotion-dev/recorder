@@ -3711,6 +3711,14 @@ export const Root = () => {
               stopChapteringAfterThis: false,
               music: "previous" as const,
             },
+            {
+              type: "endcard" as const,
+              durationInFrames: 200,
+              music: "previous" as const,
+              channel: "remotion" as const,
+              platform: "x" as const,
+              links: [{ link: "remotion.dev/docs/flickering" }],
+            },
           ],
           scenesAndMetadata: [],
         }}
