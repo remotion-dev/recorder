@@ -253,7 +253,8 @@ export const SegmentComp: React.FC<{
     return null;
   }
 
-  const opacity = getOpacity({ duration, isLast, segment, time, isFirst });
+  const opacity =
+    getOpacity({ duration, isLast, segment, time, isFirst }) * subsBox.opacity;
 
   return (
     <AbsoluteFill

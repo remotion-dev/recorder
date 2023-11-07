@@ -20,16 +20,25 @@ const getSubtitleExit = ({
   nextScene,
   scene,
   currentLayout,
+  height,
 }: {
   width: number;
   canvasLayout: CanvasLayout;
   scene: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
   currentLayout: Layout;
+  height: number;
 }) => {
   if (nextScene === null || nextScene.type !== "video-scene") {
     return {
       translationX: -width,
+      translationY: 0,
+    };
+  }
+
+  if (canvasLayout === "wide" && scene.layout.displayLayout === null) {
+    return {
+      translationX: 0,
       translationY: 0,
     };
   }
@@ -45,6 +54,14 @@ const getSubtitleExit = ({
       const isLeft = !isWebCamRight(scene.finalWebcamPosition);
       const webcamTranslation =
         nextScene.layout.webcamLayout.y - scene.layout.webcamLayout.y;
+
+      if (canvasLayout === "wide") {
+        return {
+          translationX: 0,
+          translationY: height,
+        };
+      }
+
       return {
         translationX: isLeft
           ? currentLayout.width + safeSpace(canvasLayout)
@@ -127,6 +144,13 @@ const getSubtitleEnter = ({
     throw new Error("no subtitles on non-video scenes");
   }
 
+  if (canvasLayout === "wide" && currentScene.layout.displayLayout === null) {
+    return {
+      translationX: 0,
+      translationY: 0,
+    };
+  }
+
   if (
     previousScene &&
     previousScene.type === "video-scene" &&
@@ -135,6 +159,13 @@ const getSubtitleEnter = ({
       secondScene: currentScene,
     })
   ) {
+    if (canvasLayout === "wide") {
+      return {
+        translationX: 0,
+        translationY: height,
+      };
+    }
+
     const isWebcamLeft = !isWebCamRight(currentScene.finalWebcamPosition);
     const atBottom = isWebCamAtBottom(currentScene.finalWebcamPosition);
 
@@ -277,6 +308,7 @@ export const getSubtitleTranslation = ({
     nextScene,
     scene,
     currentLayout,
+    height,
   });
 
   if (exit > 0) {
@@ -292,6 +324,13 @@ export const getSubtitleTranslation = ({
         [0, 1],
         [currentLayout.y, currentLayout.y + _exit.translationY],
       ),
+      opacity:
+        canvasLayout === "wide"
+          ? interpolate(exit, [0, 0.3], [1, 0], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            })
+          : 0,
     };
   }
 
@@ -307,5 +346,12 @@ export const getSubtitleTranslation = ({
       [0, 1],
       [currentLayout.y + _enter.translationY, currentLayout.y],
     ),
+    opacity:
+      canvasLayout === "wide"
+        ? interpolate(enter, [0.7, 1], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          })
+        : 0,
   };
 };

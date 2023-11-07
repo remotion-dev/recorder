@@ -129,8 +129,8 @@ const getDisplayEnter = ({
       : height;
 
     const wideX = isWebCamRight(currentScene.finalWebcamPosition)
-      ? -width
-      : width;
+      ? -width - safeSpace(canvasLayout)
+      : width + safeSpace(canvasLayout);
 
     if (canvasLayout === "wide") {
       return {
