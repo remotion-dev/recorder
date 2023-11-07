@@ -2,8 +2,10 @@ import { interpolate } from "remotion";
 import type {
   CanvasLayout,
   SceneAndMetadata,
+  VideoSceneAndMetadata,
   WebcamPosition,
 } from "../configuration";
+import type { Layout } from "../layout/get-layout";
 
 export const getDisplayTranslation = ({
   enter,
@@ -18,41 +20,32 @@ export const getDisplayTranslation = ({
   width: number;
   previousScene: SceneAndMetadata | null;
   nextScene: SceneAndMetadata | null;
-  currentScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
 }) => {
-  const enterStartX =
-    currentLayout &&
+  const currentandPreviousAreVideoScenes =
     previousLayout &&
     currentLayout.type === "video-scene" &&
-    previousLayout.type === "video-scene"
-      ? previousLayout.layout.webcamLayout.x -
-        currentLayout.layout.webcamLayout.x
-      : width;
-
-  const enterStartY =
-    currentLayout &&
-    previousLayout &&
-    currentLayout.type === "video-scene" &&
-    previousLayout.type === "video-scene"
-      ? previousLayout.layout.webcamLayout.y -
-        currentLayout.layout.webcamLayout.y
-      : 0;
-
-  const exitEndX =
-    currentLayout &&
+    previousLayout.type === "video-scene";
+  const nextAndCurrentAreVideoScenes =
     nextLayout &&
     currentLayout.type === "video-scene" &&
-    nextLayout.type === "video-scene"
-      ? nextLayout.layout.webcamLayout.x - currentLayout.layout.webcamLayout.x
-      : -width;
+    nextLayout.type === "video-scene";
 
-  const exitEndY =
-    currentLayout &&
-    nextLayout &&
-    currentLayout.type === "video-scene" &&
-    nextLayout.type === "video-scene"
-      ? nextLayout.layout.webcamLayout.y - currentLayout.layout.webcamLayout.y
-      : 0;
+  const enterStartX = currentandPreviousAreVideoScenes
+    ? previousLayout.layout.webcamLayout.x - currentLayout.layout.webcamLayout.x
+    : width;
+
+  const enterStartY = currentandPreviousAreVideoScenes
+    ? previousLayout.layout.webcamLayout.y - currentLayout.layout.webcamLayout.y
+    : 0;
+
+  const exitEndX = nextAndCurrentAreVideoScenes
+    ? nextLayout.layout.webcamLayout.x - currentLayout.layout.webcamLayout.x
+    : -width;
+
+  const exitEndY = nextAndCurrentAreVideoScenes
+    ? nextLayout.layout.webcamLayout.y - currentLayout.layout.webcamLayout.y
+    : 0;
 
   const startOpacity = currentLayout && previousLayout ? 0 : 1;
 
@@ -74,6 +67,28 @@ export const getDisplayTranslation = ({
   };
 };
 
+const isGrowingOrShrinkingToMiniature = ({
+  currentScene,
+  otherScene,
+}: {
+  currentScene: VideoSceneAndMetadata;
+  otherScene: SceneAndMetadata;
+}) => {
+  if (otherScene.type !== "video-scene") {
+    return false;
+  }
+
+  const toMiniature =
+    currentScene.layout.displayLayout === null &&
+    otherScene.layout.displayLayout !== null;
+
+  const fromMiniature =
+    currentScene.layout.displayLayout !== null &&
+    otherScene.layout.displayLayout === null;
+
+  return toMiniature || fromMiniature;
+};
+
 const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
   return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
 };
@@ -90,23 +105,30 @@ const getWebcamEndOffset = ({
   currentScene,
 }: {
   nextScene: SceneAndMetadata | null;
-  currentScene: SceneAndMetadata;
+  currentScene: VideoSceneAndMetadata;
   width: number;
   height: number;
   canvasLayout: CanvasLayout;
-}): { endX: number; endY: number } => {
+}): Layout => {
+  if (!currentScene || currentScene.type !== "video-scene") {
+    throw new Error("no transitions on non-video scenes");
+  }
+
+  const currentLayout = currentScene.layout.webcamLayout;
+
   if (!nextScene || nextScene.type !== "video-scene") {
     return {
-      endX: -width,
-      endY: 0,
+      ...currentLayout,
+      x: currentLayout.x - width,
     };
   }
 
-  if (!currentScene || currentScene.type !== "video-scene") {
-    return {
-      endX: -width,
-      endY: 0,
-    };
+  if (
+    isGrowingOrShrinkingToMiniature({ currentScene, otherScene: nextScene })
+  ) {
+    const next = nextScene.layout.webcamLayout;
+
+    return next;
   }
 
   const samePositionHorizontal =
@@ -119,34 +141,36 @@ const getWebcamEndOffset = ({
   if (canvasLayout === "wide") {
     if (!isSamePositionVertical) {
       return {
-        endX: isWebCamRight(currentScene.scene.webcamPosition) ? width : -width,
-        endY: 0,
+        ...currentLayout,
+        x:
+          currentLayout.x +
+          (isWebCamRight(currentScene.scene.webcamPosition) ? width : -width),
       };
     }
 
     if (!samePositionHorizontal) {
       return {
-        endX: 0,
-        endY:
-          nextScene.layout.webcamLayout.y - currentScene.layout.webcamLayout.y,
+        ...currentLayout,
+        y: nextScene.layout.webcamLayout.y,
       };
     }
 
     return {
-      endX: -width,
-      endY: 0,
+      ...currentLayout,
+      x: currentLayout.x - width,
     };
   }
 
   return {
-    endX: samePositionHorizontal
-      ? nextScene.layout.webcamLayout.x - currentScene.layout.webcamLayout.x
-      : 0,
-    endY: samePositionHorizontal
-      ? 0
+    ...currentLayout,
+    x: samePositionHorizontal
+      ? nextScene.layout.webcamLayout.x
+      : currentLayout.x,
+    y: samePositionHorizontal
+      ? currentLayout.y
       : isWebCamAtBottom(currentScene.scene.webcamPosition)
-      ? height
-      : -height,
+      ? currentLayout.y + height
+      : currentLayout.y - height,
   };
 };
 
@@ -158,23 +182,26 @@ const getWebCamStartOffset = ({
   currentScene,
 }: {
   previousScene: SceneAndMetadata | null;
-  currentScene: SceneAndMetadata;
+  currentScene: VideoSceneAndMetadata;
   width: number;
   height: number;
   canvasLayout: CanvasLayout;
-}): { startX: number; startY: number } => {
+}): Layout => {
+  const currentLayout = currentScene.layout.webcamLayout;
+
   if (!previousScene || previousScene.type !== "video-scene") {
     return {
-      startX: width,
-      startY: 0,
+      ...currentLayout,
+      x: currentLayout.x + width,
     };
   }
 
-  if (!currentScene || currentScene.type !== "video-scene") {
-    return {
-      startX: width,
-      startY: 0,
-    };
+  if (
+    isGrowingOrShrinkingToMiniature({ currentScene, otherScene: previousScene })
+  ) {
+    const prev = previousScene.layout.webcamLayout;
+
+    return prev;
   }
 
   const samePositionHorizontal =
@@ -187,33 +214,32 @@ const getWebCamStartOffset = ({
   if (canvasLayout === "wide") {
     if (!isSamePositionVertical) {
       return {
-        startX: isWebCamRight(currentScene.scene.webcamPosition)
-          ? width
-          : -width,
-        startY: 0,
+        ...currentLayout,
+        x:
+          currentLayout.x +
+          (isWebCamRight(currentScene.scene.webcamPosition) ? width : -width),
       };
     }
 
     if (!samePositionHorizontal) {
       return {
-        startX: 0,
-        startY:
-          previousScene.layout.webcamLayout.y -
-          currentScene.layout.webcamLayout.y,
+        ...currentLayout,
+        y: previousScene.layout.webcamLayout.y,
       };
     }
 
     return {
-      startX: width,
-      startY: 0,
+      ...currentLayout,
+      x: currentLayout.x + width,
     };
   }
 
   return {
-    startX: samePositionHorizontal
+    ...currentLayout,
+    x: samePositionHorizontal
       ? previousScene.layout.webcamLayout.x - currentScene.layout.webcamLayout.x
       : 0,
-    startY: samePositionHorizontal
+    y: samePositionHorizontal
       ? 0
       : isWebCamAtBottom(currentScene.scene.webcamPosition)
       ? height
@@ -221,7 +247,7 @@ const getWebCamStartOffset = ({
   };
 };
 
-export const getWebcamTranslation = ({
+export const getWebcamPosition = ({
   enter,
   exit,
   width,
@@ -237,10 +263,10 @@ export const getWebcamTranslation = ({
   height: number;
   canvasLayout: CanvasLayout;
   nextScene: SceneAndMetadata | null;
-  currentScene: SceneAndMetadata;
+  currentScene: VideoSceneAndMetadata;
   previousScene: SceneAndMetadata | null;
-}) => {
-  const { startX, startY } = getWebCamStartOffset({
+}): Layout => {
+  const startLayout = getWebCamStartOffset({
     canvasLayout,
     currentScene,
     height,
@@ -248,7 +274,7 @@ export const getWebcamTranslation = ({
     width,
   });
 
-  const { endX, endY } = getWebcamEndOffset({
+  const endLayout = getWebcamEndOffset({
     canvasLayout,
     currentScene,
     height,
@@ -256,12 +282,63 @@ export const getWebcamTranslation = ({
     width,
   });
 
-  const enterX = interpolate(enter, [0, 1], [startX, 0]);
-  const enterY = interpolate(enter, [0, 1], [startY, 0]);
-  const exitX = interpolate(exit, [0, 1], [0, endX]);
-  const exitY = interpolate(exit, [0, 1], [0, endY]);
+  if (exit > 0) {
+    return {
+      x: interpolate(
+        exit,
+        [0, 1],
+        [currentScene.layout.webcamLayout.x, endLayout.x],
+      ),
+      y: interpolate(
+        exit,
+        [0, 1],
+        [currentScene.layout.webcamLayout.y, endLayout.y],
+      ),
+      borderRadius: interpolate(
+        exit,
+        [0, 1],
+        [currentScene.layout.webcamLayout.borderRadius, endLayout.borderRadius],
+      ),
+      height: interpolate(
+        exit,
+        [0, 1],
+        [currentScene.layout.webcamLayout.height, endLayout.height],
+      ),
+      width: interpolate(
+        exit,
+        [0, 1],
+        [currentScene.layout.webcamLayout.width, endLayout.width],
+      ),
+    };
+  }
 
-  return { translationX: exitX + enterX, translationY: enterY + exitY };
+  return {
+    x: interpolate(
+      enter,
+      [0, 1],
+      [startLayout.x, currentScene.layout.webcamLayout.x],
+    ),
+    y: interpolate(
+      enter,
+      [0, 1],
+      [startLayout.y, currentScene.layout.webcamLayout.y],
+    ),
+    borderRadius: interpolate(
+      enter,
+      [0, 1],
+      [startLayout.borderRadius, currentScene.layout.webcamLayout.borderRadius],
+    ),
+    height: interpolate(
+      enter,
+      [0, 1],
+      [startLayout.height, currentScene.layout.webcamLayout.height],
+    ),
+    width: interpolate(
+      enter,
+      [0, 1],
+      [startLayout.width, currentScene.layout.webcamLayout.width],
+    ),
+  };
 };
 
 const getSubtitleExit = ({

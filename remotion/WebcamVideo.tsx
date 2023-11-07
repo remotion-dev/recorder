@@ -5,8 +5,13 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { getWebcamTranslation } from "./animations/camera-scene-transitions";
-import type { CanvasLayout, Pair, SceneAndMetadata } from "./configuration";
+import { getWebcamPosition } from "./animations/camera-scene-transitions";
+import type {
+  CanvasLayout,
+  Pair,
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "./configuration";
 import { transitionDuration } from "./configuration";
 import type { Layout } from "./layout/get-layout";
 
@@ -23,7 +28,7 @@ export const WebcamVideo: React.FC<{
   canvasLayout: CanvasLayout;
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
-  currentScene: SceneAndMetadata;
+  currentScene: VideoSceneAndMetadata;
 }> = ({
   webcamLayout,
   enter,
@@ -61,7 +66,7 @@ export const WebcamVideo: React.FC<{
       })
     : 0;
 
-  const webcamTranslation = getWebcamTranslation({
+  const webcamLayoutWithTransitions = getWebcamPosition({
     enter,
     exit,
     height,
@@ -81,14 +86,13 @@ export const WebcamVideo: React.FC<{
     >
       <div
         style={{
-          borderRadius: webcamLayout.borderRadius,
+          borderRadius: webcamLayoutWithTransitions.borderRadius,
           overflow: "hidden",
-          width: webcamLayout.width,
-          height: webcamLayout.height,
-          left: webcamLayout.x,
-          top: webcamLayout.y,
+          width: webcamLayoutWithTransitions.width,
+          height: webcamLayoutWithTransitions.height,
+          left: webcamLayoutWithTransitions.x,
+          top: webcamLayoutWithTransitions.y,
           position: "relative",
-          translate: `${webcamTranslation.translationX}px ${webcamTranslation.translationY}px`,
         }}
       >
         <OffthreadVideo
