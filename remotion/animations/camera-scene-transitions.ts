@@ -96,12 +96,11 @@ const getDisplayEnter = ({
       }) &&
       previousScene.layout.displayLayout === null
     ) {
-      const y = isWebCamAtBottom(currentScene.scene.webcamPosition)
+      const y = isWebCamAtBottom(currentScene.finalWebcamPosition)
         ? -height
         : height;
       return {
         enterStartX: (currentScene.layout.displayLayout as Layout).x,
-        // TODO: What if the display is at the top
         enterStartY: y,
       };
     }
@@ -265,11 +264,11 @@ const getWebcamEndOffset = ({
   }
 
   const samePositionHorizontal =
-    isWebCamAtBottom(nextScene.scene.webcamPosition) ===
-    isWebCamAtBottom(currentScene.scene.webcamPosition);
+    isWebCamAtBottom(nextScene.finalWebcamPosition) ===
+    isWebCamAtBottom(currentScene.finalWebcamPosition);
   const isSamePositionVertical =
-    isWebCamRight(nextScene.scene.webcamPosition) ===
-    isWebCamRight(currentScene.scene.webcamPosition);
+    isWebCamRight(nextScene.finalWebcamPosition) ===
+    isWebCamRight(currentScene.finalWebcamPosition);
 
   if (canvasLayout === "wide") {
     if (!isSamePositionVertical) {
@@ -277,7 +276,7 @@ const getWebcamEndOffset = ({
         ...currentLayout,
         x:
           currentLayout.x +
-          (isWebCamRight(currentScene.scene.webcamPosition) ? width : -width),
+          (isWebCamRight(currentScene.finalWebcamPosition) ? width : -width),
       };
     }
 
@@ -301,7 +300,7 @@ const getWebcamEndOffset = ({
       : currentLayout.x,
     y: samePositionHorizontal
       ? currentLayout.y
-      : isWebCamAtBottom(currentScene.scene.webcamPosition)
+      : isWebCamAtBottom(currentScene.finalWebcamPosition)
       ? currentLayout.y + height
       : currentLayout.y - height,
   };
@@ -338,11 +337,11 @@ const getWebCamStartOffset = ({
   }
 
   const samePositionHorizontal =
-    isWebCamAtBottom(previousScene.scene.webcamPosition) ===
-    isWebCamAtBottom(currentScene.scene.webcamPosition);
+    isWebCamAtBottom(previousScene.finalWebcamPosition) ===
+    isWebCamAtBottom(currentScene.finalWebcamPosition);
   const isSamePositionVertical =
-    isWebCamRight(previousScene.scene.webcamPosition) ===
-    isWebCamRight(currentScene.scene.webcamPosition);
+    isWebCamRight(previousScene.finalWebcamPosition) ===
+    isWebCamRight(currentScene.finalWebcamPosition);
 
   if (canvasLayout === "wide") {
     if (!isSamePositionVertical) {
@@ -350,7 +349,7 @@ const getWebCamStartOffset = ({
         ...currentLayout,
         x:
           currentLayout.x +
-          (isWebCamRight(currentScene.scene.webcamPosition) ? width : -width),
+          (isWebCamRight(currentScene.finalWebcamPosition) ? width : -width),
       };
     }
 
@@ -374,7 +373,7 @@ const getWebCamStartOffset = ({
       : 0,
     y: samePositionHorizontal
       ? 0
-      : isWebCamAtBottom(currentScene.scene.webcamPosition)
+      : isWebCamAtBottom(currentScene.finalWebcamPosition)
       ? height
       : -height,
   };
@@ -501,11 +500,11 @@ const getSubtitleExit = ({
   }
 
   const isSamePositionVertical =
-    isWebCamRight(nextScene.scene.webcamPosition) ===
-    isWebCamRight(scene.scene.webcamPosition);
+    isWebCamRight(nextScene.finalWebcamPosition) ===
+    isWebCamRight(scene.finalWebcamPosition);
   const isSamePositionHorizontal =
-    isWebCamAtBottom(nextScene.scene.webcamPosition) ===
-    isWebCamAtBottom(scene.scene.webcamPosition);
+    isWebCamAtBottom(nextScene.finalWebcamPosition) ===
+    isWebCamAtBottom(scene.finalWebcamPosition);
 
   if (!isSamePositionHorizontal && canvasLayout === "square") {
     return {
@@ -513,7 +512,7 @@ const getSubtitleExit = ({
       translationY: interpolate(
         exit,
         [0, 1],
-        [0, isWebCamAtBottom(scene.scene.webcamPosition) ? height : -height],
+        [0, isWebCamAtBottom(scene.finalWebcamPosition) ? height : -height],
       ),
     };
   }
@@ -523,7 +522,7 @@ const getSubtitleExit = ({
       translationX: interpolate(
         exit,
         [0, 1],
-        [0, isWebCamRight(scene.scene.webcamPosition) ? -width : width],
+        [0, isWebCamRight(scene.finalWebcamPosition) ? -width : width],
       ),
       translationY: 0,
     };
@@ -570,11 +569,11 @@ const getSubtitleEnter = ({
   }
 
   const isSamePositionVertical =
-    isWebCamRight(previousScene.scene.webcamPosition) ===
-    isWebCamRight(currentScene.scene.webcamPosition);
+    isWebCamRight(previousScene.finalWebcamPosition) ===
+    isWebCamRight(currentScene.finalWebcamPosition);
   const isSamePositionHorizontal =
-    isWebCamAtBottom(previousScene.scene.webcamPosition) ===
-    isWebCamAtBottom(currentScene.scene.webcamPosition);
+    isWebCamAtBottom(previousScene.finalWebcamPosition) ===
+    isWebCamAtBottom(currentScene.finalWebcamPosition);
 
   if (
     !isSamePositionHorizontal &&
@@ -586,9 +585,7 @@ const getSubtitleEnter = ({
         enter,
         [0, 1],
         [
-          isWebCamAtBottom(currentScene.scene.webcamPosition)
-            ? height
-            : -height,
+          isWebCamAtBottom(currentScene.finalWebcamPosition) ? height : -height,
           0,
         ],
       ),
@@ -603,7 +600,7 @@ const getSubtitleEnter = ({
       translationX: interpolate(
         enter,
         [0, 1],
-        [isWebCamRight(currentScene.scene.webcamPosition) ? -width : width, 0],
+        [isWebCamRight(currentScene.finalWebcamPosition) ? -width : width, 0],
       ),
       translationY: 0,
     };

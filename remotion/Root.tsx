@@ -882,7 +882,7 @@ export const Root = () => {
 
           scenes: [
             {
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 40,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -932,7 +932,7 @@ export const Root = () => {
               type: "scene",
             },
             {
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 40,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -958,7 +958,7 @@ export const Root = () => {
 
           scenes: [
             {
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 107,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -1048,7 +1048,7 @@ export const Root = () => {
               type: "scene",
             },
             {
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 40,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -1074,7 +1074,7 @@ export const Root = () => {
 
           scenes: [
             {
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 47,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -1084,7 +1084,7 @@ export const Root = () => {
               type: "scene",
             },
             {
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 50,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -1124,7 +1124,7 @@ export const Root = () => {
               type: "scene",
             },
             {
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 38,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -1244,7 +1244,7 @@ export const Root = () => {
               type: "scene",
             },
             {
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 73,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -1254,7 +1254,7 @@ export const Root = () => {
               type: "scene",
             },
             {
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 54,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -1264,7 +1264,7 @@ export const Root = () => {
               type: "scene",
             },
             {
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 110,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -1291,7 +1291,7 @@ export const Root = () => {
           scenes: [
             {
               type: "scene" as const,
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 110,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -1351,7 +1351,7 @@ export const Root = () => {
             },
             {
               type: "scene" as const,
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 50,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -1557,7 +1557,7 @@ export const Root = () => {
             },
             {
               type: "scene" as const,
-              webcamPosition: "center" as const,
+              webcamPosition: "previous" as const,
               trimStart: 0,
               zoomInAtStart: false,
               zoomInAtEnd: false,
@@ -4291,7 +4291,7 @@ export const Root = () => {
             },
             {
               type: "scene" as const,
-              webcamPosition: "top-left" as const,
+              webcamPosition: "previous" as const,
               trimStart: 0,
               duration: null,
               zoomInAtStart: false,
