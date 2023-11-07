@@ -2,7 +2,11 @@ import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import type { AllProps } from "./All";
 import { getSumUpDuration } from "./animations/transitions";
-import type { SceneAndMetadata, SceneVideos } from "./configuration";
+import type {
+  SceneAndMetadata,
+  SceneVideos,
+  WebcamPosition,
+} from "./configuration";
 import { fps, getPairs } from "./configuration";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
@@ -14,6 +18,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   const pairs = getPairs(props.prefix);
 
   let videoIndex = -1;
+  let currentWebcamPosition: WebcamPosition = "top-left";
 
   const scenesAndMetadata = (
     await Promise.all(
@@ -32,6 +37,10 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
         }
 
         videoIndex += 1;
+        if (scene.webcamPosition !== "previous") {
+          currentWebcamPosition = scene.webcamPosition;
+        }
+
         const p = pairs[videoIndex];
         if (!p) {
           return null;
@@ -65,11 +74,12 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           videos,
           durationInFrames: duration,
           layout: getLayout({
-            scene,
+            webcamPosition: currentWebcamPosition,
             videos,
             canvasLayout: props.canvasLayout,
           }),
           pair: p,
+          finalWebcamPosition: currentWebcamPosition,
         };
       }),
     )

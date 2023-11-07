@@ -64,7 +64,7 @@ export const generateChapters = ({
         webcamPositions: [
           {
             start,
-            webcamPosition: sceneAndMetadata.scene.webcamPosition,
+            webcamPosition: sceneAndMetadata.finalWebcamPosition,
             end,
             layout: sceneAndMetadata.layout,
             transitionToNextScene: sceneAndMetadata.scene.transitionToNextScene,
@@ -107,7 +107,7 @@ export const generateChapters = ({
                 scene: sceneAndMetadata,
                 previousScene: scenes[i - 1] ?? null,
               }),
-            webcamPosition: sceneAndMetadata.scene.webcamPosition,
+            webcamPosition: sceneAndMetadata.finalWebcamPosition,
             layout: sceneAndMetadata.layout,
             transitionToNextScene: sceneAndMetadata.scene.transitionToNextScene,
           });
