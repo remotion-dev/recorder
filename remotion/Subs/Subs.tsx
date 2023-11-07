@@ -6,7 +6,7 @@ import {
   delayRender,
   useVideoConfig,
 } from "remotion";
-import { getSubtitleTranslation } from "../animations/camera-scene-transitions";
+import { getSubtitleTranslation } from "../animations/subtitle-transitions";
 import type {
   CanvasLayout,
   SceneAndMetadata,
@@ -54,28 +54,6 @@ export const Subs: React.FC<{
       });
   }, [file.src, handle]);
 
-  const subtitleTranslation = useMemo(() => {
-    return getSubtitleTranslation({
-      enter,
-      exit,
-      height,
-      width,
-      canvasLayout,
-      nextScene,
-      previousScene,
-      scene,
-    });
-  }, [
-    canvasLayout,
-    enter,
-    exit,
-    height,
-    nextScene,
-    previousScene,
-    scene,
-    width,
-  ]);
-
   const subtitleType = getSubtitlesType({
     canvasLayout,
     displayLayout: scene.layout.displayLayout,
@@ -87,43 +65,60 @@ export const Subs: React.FC<{
     subtitleType,
     displayLayout: scene.layout.displayLayout,
     webcamLayout: scene.layout.webcamLayout,
-    webcamPosition: scene.scene.webcamPosition,
+    webcamPosition: scene.finalWebcamPosition,
+  });
+
+  const animatedSubLayout = getSubtitleTranslation({
+    enter,
+    exit,
+    height,
+    width,
+    canvasLayout,
+    nextScene,
+    previousScene,
+    scene,
+    currentLayout: subsLayout,
   });
 
   const postprocessed = useMemo(() => {
     return data
       ? postprocessSubtitles({
           subTypes: data,
-          boxWidth: subsLayout.width,
+          boxWidth: animatedSubLayout.width,
           maxLines: getSubtitlesLines(subtitleType),
           fontSize: getSubtitlesFontSize(
             subtitleType,
             scene.layout.displayLayout,
           ),
+          canvasLayout,
+          subtitleType,
         })
       : null;
-  }, [data, scene.layout.displayLayout, subsLayout.width, subtitleType]);
+  }, [
+    animatedSubLayout.width,
+    canvasLayout,
+    data,
+    scene.layout.displayLayout,
+    subtitleType,
+  ]);
 
   if (!postprocessed) {
     return null;
   }
 
   return (
-    <AbsoluteFill
-      style={{
-        transform: `translateX(${subtitleTranslation.translationX}px) translateY(${subtitleTranslation.translationY}px)`,
-      }}
-    >
+    <AbsoluteFill>
       {postprocessed.segments.map((segment, index) => {
         return (
           <SegmentComp
             // eslint-disable-next-line react/no-array-index-key
             key={index}
             isLast={index === postprocessed.segments.length - 1}
+            isFirst={index === 0}
             segment={segment}
             trimStart={trimStart}
             canvasLayout={canvasLayout}
-            subsBox={subsLayout}
+            subsBox={animatedSubLayout}
             subtitleType={subtitleType}
             displayLayout={scene.layout.displayLayout}
           />

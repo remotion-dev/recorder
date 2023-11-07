@@ -1,6 +1,10 @@
 import { OffthreadVideo, useVideoConfig } from "remotion";
-import { getDisplayPosition } from "../animations/camera-scene-transitions";
-import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
+import { getDisplayPosition } from "../animations/display-transitions";
+import type {
+  CanvasLayout,
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../configuration";
 
 export const DisplayVideo: React.FC<{
   scene: VideoSceneAndMetadata;
@@ -10,7 +14,17 @@ export const DisplayVideo: React.FC<{
   previousScene: SceneAndMetadata | null;
   startFrom: number;
   endAt: number | undefined;
-}> = ({ scene, enter, exit, nextScene, previousScene, endAt, startFrom }) => {
+  canvasLayout: CanvasLayout;
+}> = ({
+  scene,
+  enter,
+  exit,
+  nextScene,
+  canvasLayout,
+  previousScene,
+  endAt,
+  startFrom,
+}) => {
   if (scene.layout.displayLayout === null) {
     throw new Error("No display");
   }
@@ -29,6 +43,7 @@ export const DisplayVideo: React.FC<{
     previousScene,
     currentScene: scene,
     height,
+    canvasLayout,
   });
 
   return (
