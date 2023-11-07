@@ -333,6 +333,9 @@ export const getWebcamPosition = ({
       [startLayout.width, currentScene.layout.webcamLayout.width],
     ),
     // Make opacity go twice as fast
-    opacity: Math.min(1, enter * 2),
+    opacity: interpolate(enter, [0.4, 0.6], [0, 1], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }),
   };
 };

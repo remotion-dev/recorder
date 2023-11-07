@@ -1,22 +1,30 @@
 import { interpolate } from "remotion";
-import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
+import type {
+  CanvasLayout,
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../configuration";
 import type { Layout } from "../layout/get-layout";
+import { safeSpace } from "../layout/get-layout";
 import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,
   isWebCamAtBottom,
+  isWebCamRight,
 } from "./camera-scene-transitions";
 
 const getDisplayExit = ({
   currentScene,
   nextScene,
   width,
+  canvasLayout,
   height,
 }: {
   nextScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
   height: number;
+  canvasLayout: CanvasLayout;
 }) => {
   if (
     currentScene.type !== "video-scene" ||
@@ -41,11 +49,30 @@ const getDisplayExit = ({
     nextScene &&
     isGrowingFromMiniature({ firstScene: currentScene, secondScene: nextScene })
   ) {
-    const y = isWebCamAtBottom(currentScene.finalWebcamPosition)
-      ? -currentScene.layout.displayLayout.height
-      : height;
+    if (nextScene.type !== "video-scene") {
+      throw new Error("no transitions on non-video scenes");
+    }
+
+    const previouslyAtBottom = isWebCamAtBottom(
+      currentScene.finalWebcamPosition,
+    );
+    const currentlyAtBottom = isWebCamAtBottom(nextScene.finalWebcamPosition);
+    const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
+    const y = isWebCamAtBottom(nextScene.finalWebcamPosition)
+      ? height
+      : nextScene.layout.webcamLayout.height + 2 * safeSpace(canvasLayout);
+
+    if (changedVerticalPosition) {
+      return {
+        exitEndX: currentScene.layout.displayLayout.x,
+        exitEndY: y,
+      };
+    }
+
     return {
-      exitEndX: currentScene.layout.displayLayout.x,
+      exitEndX: isWebCamRight(currentScene.finalWebcamPosition)
+        ? -(width - safeSpace(canvasLayout) * 2)
+        : width - safeSpace(canvasLayout) * 2,
       exitEndY: y,
     };
   }
@@ -60,12 +87,10 @@ const getDisplayEnter = ({
   currentScene,
   previousScene,
   width,
-  height,
 }: {
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
-  height: number;
 }) => {
   if (
     currentScene.type !== "video-scene" ||
@@ -74,25 +99,26 @@ const getDisplayEnter = ({
     throw new Error("no transitions on non-video scenes");
   }
 
+  if (
+    previousScene &&
+    isShrinkingToMiniature({
+      firstScene: previousScene,
+      secondScene: currentScene,
+    })
+  ) {
+    const translationY = currentScene.layout.displayLayout.height;
+    const y = isWebCamAtBottom(currentScene.finalWebcamPosition)
+      ? -translationY
+      : translationY;
+    return {
+      enterStartX: (currentScene.layout.displayLayout as Layout).x,
+      enterStartY: y,
+    };
+  }
+
   const currentandPreviousAreVideoScenes =
     previousScene && previousScene.type === "video-scene";
-
   if (currentandPreviousAreVideoScenes) {
-    if (
-      isShrinkingToMiniature({
-        firstScene: previousScene,
-        secondScene: currentScene,
-      })
-    ) {
-      const y = isWebCamAtBottom(currentScene.finalWebcamPosition)
-        ? -height
-        : height;
-      return {
-        enterStartX: (currentScene.layout.displayLayout as Layout).x,
-        enterStartY: y,
-      };
-    }
-
     return {
       enterStartX: (previousScene.layout.displayLayout as Layout).x,
       enterStartY: (previousScene.layout.displayLayout as Layout).y,
@@ -111,10 +137,12 @@ const getDisplayTransitionOrigins = ({
   previousScene,
   width,
   height,
+  canvasLayout,
 }: {
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
+  canvasLayout: CanvasLayout;
   width: number;
   height: number;
 }) => {
@@ -122,7 +150,6 @@ const getDisplayTransitionOrigins = ({
     currentScene,
     previousScene,
     width,
-    height,
   });
 
   const { exitEndX, exitEndY } = getDisplayExit({
@@ -130,6 +157,7 @@ const getDisplayTransitionOrigins = ({
     nextScene,
     width,
     height,
+    canvasLayout,
   });
 
   return {
@@ -148,6 +176,7 @@ export const getDisplayPosition = ({
   nextScene,
   previousScene,
   currentScene,
+  canvasLayout,
 }: {
   enter: number;
   exit: number;
@@ -156,6 +185,7 @@ export const getDisplayPosition = ({
   previousScene: SceneAndMetadata | null;
   nextScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
+  canvasLayout: CanvasLayout;
 }) => {
   if (
     currentScene.type !== "video-scene" ||
@@ -171,10 +201,8 @@ export const getDisplayPosition = ({
       previousScene,
       width,
       height,
+      canvasLayout,
     });
-
-  const startOpacity = currentScene && previousScene ? 0 : 1;
-  const opacity = interpolate(enter, [0, 0.5], [startOpacity, 1]);
 
   if (exit > 0) {
     return {
@@ -192,7 +220,7 @@ export const getDisplayPosition = ({
           [currentScene.layout.displayLayout.y, exitEndY],
         ),
       ),
-      opacity,
+      opacity: 1,
     };
   }
 
@@ -210,6 +238,6 @@ export const getDisplayPosition = ({
   return {
     translationX: Math.round(enterX),
     translationY: Math.round(enterY),
-    opacity,
+    opacity: 1,
   };
 };
