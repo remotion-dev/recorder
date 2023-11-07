@@ -64,7 +64,7 @@ export const generateChapters = ({
         webcamPositions: [
           {
             start,
-            webcamPosition: sceneAndMetadata.scene.webcamPosition,
+            webcamPosition: sceneAndMetadata.finalWebcamPosition,
             end,
             layout: sceneAndMetadata.layout,
             transitionToNextScene: sceneAndMetadata.scene.transitionToNextScene,
@@ -77,7 +77,7 @@ export const generateChapters = ({
       const lastChapter = chapters[chapters.length - 1] as ChapterType;
       if (sceneAndMetadata.type === "video-scene") {
         if (
-          sceneAndMetadata.scene.webcamPosition ===
+          sceneAndMetadata.finalWebcamPosition ===
           (
             lastChapter.webcamPositions[
               lastChapter.webcamPositions.length - 1
@@ -107,7 +107,7 @@ export const generateChapters = ({
                 scene: sceneAndMetadata,
                 previousScene: scenes[i - 1] ?? null,
               }),
-            webcamPosition: sceneAndMetadata.scene.webcamPosition,
+            webcamPosition: sceneAndMetadata.finalWebcamPosition,
             layout: sceneAndMetadata.layout,
             transitionToNextScene: sceneAndMetadata.scene.transitionToNextScene,
           });
