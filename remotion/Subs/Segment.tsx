@@ -1,6 +1,7 @@
 import { loadFont } from "@remotion/google-fonts/Inter";
 import React from "react";
 import { AbsoluteFill, interpolate } from "remotion";
+import { COLORS } from "../colors";
 import type {
   CanvasLayout,
   Dimensions,
@@ -109,13 +110,14 @@ export const getSubsBox = ({
       webcamPosition === "top-left" || webcamPosition === "top-right";
 
     return {
-      height: webcamLayout.height,
+      height:
+        canvasSize.height - webcamLayout.height - safeSpace(canvasLayout) * 3,
       y: isTopAligned
         ? webcamLayout.height + safeSpace(canvasLayout) * 2
         : safeSpace(canvasLayout),
       x: safeSpace(canvasLayout),
-      width: canvasSize.width - safeSpace(canvasLayout) * 3,
-      borderRadius: 0,
+      width: canvasSize.width - safeSpace(canvasLayout) * 2,
+      borderRadius,
       opacity: 1,
     };
   }
@@ -128,7 +130,7 @@ export const getSubsBox = ({
         ? webcamLayout.width + safeSpace(canvasLayout) * 2
         : safeSpace(canvasLayout),
     width: canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
-    borderRadius: 0,
+    borderRadius,
     opacity: 1,
   };
 };
@@ -150,6 +152,7 @@ const getSubsLayout = ({
       top: subsBox.y,
       width: subsBox.width,
       height: subsBox.height,
+      borderRadius: subsBox.borderRadius,
       textAlign: "center",
       justifyContent: "center",
       alignItems: "center",
@@ -162,6 +165,7 @@ const getSubsLayout = ({
       top: subsBox.y,
       width: subsBox.width,
       height: subsBox.height,
+      borderRadius: subsBox.borderRadius,
       maxLines: 2,
       textAlign: "center",
       justifyContent: "center",
@@ -174,6 +178,7 @@ const getSubsLayout = ({
     top: subsBox.y,
     width: subsBox.width,
     height: subsBox.height,
+    borderRadius: subsBox.borderRadius,
     paddingTop: displayLayout === null ? 0 : safeSpace(canvasLayout),
   };
 };
@@ -276,6 +281,8 @@ export const SegmentComp: React.FC<{
         opacity,
         // @ts-expect-error
         textWrap: "balance",
+        border: "3px solid " + COLORS.BORDER_COLOR,
+        backgroundColor: COLORS.SUBTITLES_BACKGROUND,
         ...getSubsLayout({
           canvasLayout,
           subsBox,
