@@ -88,6 +88,7 @@ export const getSubsBox = ({
       borderRadius: 0,
       width: (canvasSize.width / 3) * 2,
       x: canvasSize.width / 6,
+      opacity: 1,
     };
   }
 
@@ -99,6 +100,7 @@ export const getSubsBox = ({
       y: canvasSize.height - height,
       width: (canvasSize.width / 3) * 2,
       borderRadius: 0,
+      opacity: 1,
     };
   }
 
@@ -114,6 +116,7 @@ export const getSubsBox = ({
       x: safeSpace(canvasLayout),
       width: canvasSize.width - safeSpace(canvasLayout) * 3,
       borderRadius: 0,
+      opacity: 1,
     };
   }
 
@@ -126,6 +129,7 @@ export const getSubsBox = ({
         : safeSpace(canvasLayout),
     width: canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
     borderRadius: 0,
+    opacity: 1,
   };
 };
 
@@ -194,9 +198,46 @@ const inlineSubsLayout = ({
   return {};
 };
 
+const getOpacity = ({
+  segment,
+  time,
+  isLast,
+  duration,
+  isFirst,
+}: {
+  segment: Segment;
+  time: number;
+  isLast: boolean;
+  isFirst: boolean;
+  duration: number;
+}) => {
+  const end = isLast ? duration : segment.end;
+
+  const start = Math.min(segment.start + 0.2, end - 0.1 - 0.000000001);
+
+  const fadeIn = interpolate(time, [start - 0.2, start], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  if (isLast) {
+    return fadeIn;
+  }
+
+  const fadeOut = interpolate(time, [end - 0.1, end], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  if (isFirst) {
+    return 1 - fadeOut;
+  }
+
+  return fadeIn - fadeOut;
+};
+
 export const SegmentComp: React.FC<{
   segment: Segment;
   isLast: boolean;
+  isFirst: boolean;
   trimStart: number;
   canvasLayout: CanvasLayout;
   subsBox: Layout;
@@ -210,6 +251,7 @@ export const SegmentComp: React.FC<{
   subsBox,
   subtitleType,
   displayLayout,
+  isFirst,
 }) => {
   const time = useTime(trimStart);
   const duration = useSequenceDuration(trimStart);
@@ -222,17 +264,7 @@ export const SegmentComp: React.FC<{
     return null;
   }
 
-  const end = isLast ? duration : segment.end;
-
-  const fadeOutAt = end - 0.1;
-
-  const start = Math.min(segment.start + 0.2, fadeOutAt - 0.000000001);
-
-  const opacity = interpolate(
-    time,
-    [start - 0.2, Math.min(start), fadeOutAt, fadeOutAt + 0.1],
-    [0, 1, 1, 0],
-  );
+  const opacity = getOpacity({ duration, isLast, segment, time, isFirst });
 
   return (
     <AbsoluteFill

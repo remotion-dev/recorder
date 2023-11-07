@@ -57,6 +57,7 @@ export const WebcamVideo: React.FC<{
           height: webcamLayoutWithTransitions.height,
           left: webcamLayoutWithTransitions.x,
           top: webcamLayoutWithTransitions.y,
+          opacity: webcamLayoutWithTransitions.opacity,
           position: "relative",
         }}
       >

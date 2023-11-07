@@ -441,6 +441,7 @@ export const getWebcamPosition = ({
         [0, 1],
         [currentScene.layout.webcamLayout.width, endLayout.width],
       ),
+      opacity: 1,
     };
   }
 
@@ -470,6 +471,8 @@ export const getWebcamPosition = ({
       [0, 1],
       [startLayout.width, currentScene.layout.webcamLayout.width],
     ),
+    // Make opacity go twice as fast
+    opacity: Math.min(1, enter * 2),
   };
 };
 
