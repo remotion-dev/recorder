@@ -54,28 +54,6 @@ export const Subs: React.FC<{
       });
   }, [file.src, handle]);
 
-  const subtitleTranslation = useMemo(() => {
-    return getSubtitleTranslation({
-      enter,
-      exit,
-      height,
-      width,
-      canvasLayout,
-      nextScene,
-      previousScene,
-      scene,
-    });
-  }, [
-    canvasLayout,
-    enter,
-    exit,
-    height,
-    nextScene,
-    previousScene,
-    scene,
-    width,
-  ]);
-
   const subtitleType = getSubtitlesType({
     canvasLayout,
     displayLayout: scene.layout.displayLayout,
@@ -90,11 +68,23 @@ export const Subs: React.FC<{
     webcamPosition: scene.finalWebcamPosition,
   });
 
+  const animatedSubLayout = getSubtitleTranslation({
+    enter,
+    exit,
+    height,
+    width,
+    canvasLayout,
+    nextScene,
+    previousScene,
+    scene,
+    currentLayout: subsLayout,
+  });
+
   const postprocessed = useMemo(() => {
     return data
       ? postprocessSubtitles({
           subTypes: data,
-          boxWidth: subsLayout.width,
+          boxWidth: animatedSubLayout.width,
           maxLines: getSubtitlesLines(subtitleType),
           fontSize: getSubtitlesFontSize(
             subtitleType,
@@ -105,10 +95,10 @@ export const Subs: React.FC<{
         })
       : null;
   }, [
+    animatedSubLayout.width,
     canvasLayout,
     data,
     scene.layout.displayLayout,
-    subsLayout.width,
     subtitleType,
   ]);
 
@@ -117,11 +107,7 @@ export const Subs: React.FC<{
   }
 
   return (
-    <AbsoluteFill
-      style={{
-        transform: `translateX(${subtitleTranslation.translationX}px) translateY(${subtitleTranslation.translationY}px)`,
-      }}
-    >
+    <AbsoluteFill>
       {postprocessed.segments.map((segment, index) => {
         return (
           <SegmentComp
@@ -132,7 +118,7 @@ export const Subs: React.FC<{
             segment={segment}
             trimStart={trimStart}
             canvasLayout={canvasLayout}
-            subsBox={subsLayout}
+            subsBox={animatedSubLayout}
             subtitleType={subtitleType}
             displayLayout={scene.layout.displayLayout}
           />
