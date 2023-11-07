@@ -7,7 +7,11 @@ import type {
 } from "../configuration";
 import type { Layout } from "../layout/get-layout";
 
-const isGrowingOrShrinkingToMiniature = ({
+const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
+  return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
+};
+
+export const isGrowingOrShrinkingToMiniature = ({
   currentScene,
   otherScene,
 }: {
@@ -92,10 +96,13 @@ const getDisplayEnter = ({
       }) &&
       previousScene.layout.displayLayout === null
     ) {
+      const y = isWebCamAtBottom(currentScene.scene.webcamPosition)
+        ? -height
+        : height;
       return {
         enterStartX: (currentScene.layout.displayLayout as Layout).x,
         // TODO: What if the display is at the top
-        enterStartY: height,
+        enterStartY: y,
       };
     }
 
@@ -217,10 +224,6 @@ export const getDisplayPosition = ({
     translationY: Math.round(enterY),
     opacity,
   };
-};
-
-const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
-  return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
 };
 
 const isWebCamRight = (webcamPosition: WebcamPosition) => {

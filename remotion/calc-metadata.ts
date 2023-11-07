@@ -1,9 +1,9 @@
 import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import type { AllProps } from "./All";
-import { getIsTransitioningIn } from "./animations/transitions";
+import { getSumUpDuration } from "./animations/transitions";
 import type { SceneAndMetadata, SceneVideos } from "./configuration";
-import { fps, getPairs, transitionDuration } from "./configuration";
+import { fps, getPairs } from "./configuration";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
 import { truthy } from "./truthy";
@@ -17,7 +17,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
   const scenesAndMetadata = (
     await Promise.all(
-      props.scenes.map(async (scene, i): Promise<SceneAndMetadata | null> => {
+      props.scenes.map(async (scene): Promise<SceneAndMetadata | null> => {
         if (
           scene.type === "title" ||
           scene.type === "titlecard" ||
@@ -28,9 +28,6 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
             type: "other-scene",
             scene,
             durationInFrames: scene.durationInFrames,
-            sumUpDuration: getIsTransitioningIn(props.scenes, i)
-              ? scene.durationInFrames - transitionDuration
-              : scene.durationInFrames,
           };
         }
 
@@ -67,9 +64,6 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           scene,
           videos,
           durationInFrames: duration,
-          sumUpDuration: getIsTransitioningIn(props.scenes, i)
-            ? duration - transitionDuration
-            : duration,
           layout: getLayout({
             scene,
             videos,
@@ -81,9 +75,16 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
     )
   ).filter(truthy);
 
+  const durations = scenesAndMetadata.map((s, i) => {
+    return getSumUpDuration({
+      scene: s,
+      previousScene: scenesAndMetadata[i + 1] ?? null,
+    });
+  });
+
   const totalDuration = Math.max(
     1,
-    scenesAndMetadata.reduce((a, b) => a + b.sumUpDuration, 0),
+    durations.reduce((a, b) => a + b, 0),
   );
 
   return {

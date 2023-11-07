@@ -113,7 +113,12 @@ export const View: React.FC<{
 
   useEffect(() => {
     if (mediaStream) {
-      mediaStream.getVideoTracks()[0].onended = () => {
+      const track = mediaStream.getVideoTracks()[0];
+      if (!track) {
+        return;
+      }
+
+      track.onended = () => {
         setMediaStream(prefix, null);
       };
     }
