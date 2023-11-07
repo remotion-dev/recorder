@@ -6,6 +6,7 @@ import type {
   WebcamPosition,
 } from "../configuration";
 import type { Layout } from "../layout/get-layout";
+import { safeSpace } from "../layout/get-layout";
 
 const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
   return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
@@ -352,8 +353,8 @@ const getWebcamEndOffset = ({
     y: samePositionHorizontal
       ? currentLayout.y
       : isWebCamAtBottom(currentScene.finalWebcamPosition)
-      ? currentLayout.y + height
-      : currentLayout.y - height,
+      ? height + safeSpace(canvasLayout)
+      : -currentLayout.height - safeSpace(canvasLayout),
   };
 };
 
@@ -425,8 +426,8 @@ const getWebCamStartOffset = ({
     y: samePositionHorizontal
       ? currentLayout.y
       : isWebCamAtBottom(currentScene.finalWebcamPosition)
-      ? height
-      : -height,
+      ? height + safeSpace(canvasLayout)
+      : -currentLayout.height - safeSpace(canvasLayout),
   };
 };
 
@@ -533,12 +534,14 @@ const getSubtitleExit = ({
   canvasLayout,
   nextScene,
   scene,
+  currentLayout,
 }: {
   width: number;
   height: number;
   canvasLayout: CanvasLayout;
   scene: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
+  currentLayout: Layout;
 }) => {
   if (nextScene === null || nextScene.type !== "video-scene") {
     return {
@@ -592,8 +595,8 @@ const getSubtitleExit = ({
     return {
       translationX: 0,
       translationY: isWebCamAtBottom(scene.finalWebcamPosition)
-        ? height
-        : -height,
+        ? currentLayout.height + safeSpace(canvasLayout)
+        : -(currentLayout.height + safeSpace(canvasLayout) * 2),
     };
   }
 
@@ -613,12 +616,14 @@ const getSubtitleEnter = ({
   canvasLayout,
   currentScene,
   previousScene,
+  currentLayout,
 }: {
   width: number;
   height: number;
   currentScene: SceneAndMetadata;
   canvasLayout: CanvasLayout;
   previousScene: SceneAndMetadata | null;
+  currentLayout: Layout;
 }) => {
   if (currentScene.type !== "video-scene") {
     throw new Error("no subtitles on non-video scenes");
@@ -672,8 +677,8 @@ const getSubtitleEnter = ({
     return {
       translationX: 0,
       translationY: isWebCamAtBottom(currentScene.finalWebcamPosition)
-        ? height
-        : -height,
+        ? currentLayout.height + safeSpace(canvasLayout)
+        : -(currentLayout.height + safeSpace(canvasLayout) * 2),
     };
   }
 
@@ -701,6 +706,7 @@ export const getSubtitleTranslation = ({
   nextScene,
   previousScene,
   scene,
+  currentLayout,
 }: {
   enter: number;
   exit: number;
@@ -710,13 +716,15 @@ export const getSubtitleTranslation = ({
   scene: VideoSceneAndMetadata;
   previousScene: SceneAndMetadata | null;
   nextScene: SceneAndMetadata | null;
-}) => {
+  currentLayout: Layout;
+}): Layout => {
   const _enter = getSubtitleEnter({
     canvasLayout,
     height,
     width,
     currentScene: scene,
     previousScene,
+    currentLayout,
   });
 
   const _exit = getSubtitleExit({
@@ -725,17 +733,36 @@ export const getSubtitleTranslation = ({
     width,
     nextScene,
     scene,
+    currentLayout,
   });
 
   if (exit > 0) {
     return {
-      translationX: _exit.translationX * exit,
-      translationY: _exit.translationY * exit,
+      ...currentLayout,
+      x: interpolate(
+        exit,
+        [0, 1],
+        [currentLayout.x, currentLayout.x + _exit.translationX],
+      ),
+      y: interpolate(
+        exit,
+        [0, 1],
+        [currentLayout.y, currentLayout.y + _exit.translationY],
+      ),
     };
   }
 
   return {
-    translationX: (1 - enter) * _enter.translationX,
-    translationY: (1 - enter) * _enter.translationY,
+    ...currentLayout,
+    x: interpolate(
+      enter,
+      [0, 1],
+      [currentLayout.x + _enter.translationX, currentLayout.x],
+    ),
+    y: interpolate(
+      enter,
+      [0, 1],
+      [currentLayout.y + _enter.translationY, currentLayout.y],
+    ),
   };
 };
