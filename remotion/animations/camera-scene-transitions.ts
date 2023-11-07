@@ -29,13 +29,45 @@ const isGrowingOrShrinkingToMiniature = ({
   return toMiniature || fromMiniature;
 };
 
-const getDisplayTransitionOrigins = ({
+const getDisplayExit = ({
   currentScene,
   nextScene,
-  previousScene,
   width,
 }: {
   nextScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+}) => {
+  if (
+    currentScene.type !== "video-scene" ||
+    currentScene.layout.displayLayout === null
+  ) {
+    throw new Error("no transitions on non-video scenes");
+  }
+
+  const nextAndCurrentAreVideoScenes =
+    nextScene &&
+    nextScene.type === "video-scene" &&
+    nextScene.layout.displayLayout !== null;
+
+  if (nextAndCurrentAreVideoScenes) {
+    return {
+      exitEndX: (nextScene.layout.displayLayout as Layout).x,
+      exitEndY: (nextScene.layout.displayLayout as Layout).y,
+    };
+  }
+
+  return {
+    exitEndX: currentScene.layout.displayLayout.x - width,
+    exitEndY: currentScene.layout.displayLayout.y,
+  };
+};
+
+const getDisplayEnter = ({
+  currentScene,
+  previousScene,
+  width,
+}: {
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
@@ -51,25 +83,42 @@ const getDisplayTransitionOrigins = ({
     previousScene &&
     previousScene.type === "video-scene" &&
     previousScene.layout.displayLayout !== null;
-  const nextAndCurrentAreVideoScenes =
-    nextScene &&
-    nextScene.type === "video-scene" &&
-    nextScene.layout.displayLayout !== null;
-  const enterStartX = currentandPreviousAreVideoScenes
-    ? (previousScene.layout.displayLayout as Layout).x
-    : currentScene.layout.displayLayout.x + width;
 
-  const enterStartY = currentandPreviousAreVideoScenes
-    ? (previousScene.layout.displayLayout as Layout).y
-    : currentScene.layout.displayLayout.y;
+  if (currentandPreviousAreVideoScenes) {
+    return {
+      enterStartX: (previousScene.layout.displayLayout as Layout).x,
+      enterStartY: (previousScene.layout.displayLayout as Layout).y,
+    };
+  }
 
-  const exitEndX = nextAndCurrentAreVideoScenes
-    ? (nextScene.layout.displayLayout as Layout).x
-    : currentScene.layout.displayLayout.x - width;
+  return {
+    enterStartX: currentScene.layout.displayLayout.x + width,
+    enterStartY: currentScene.layout.displayLayout.y,
+  };
+};
 
-  const exitEndY = nextAndCurrentAreVideoScenes
-    ? (nextScene.layout.displayLayout as Layout).y
-    : currentScene.layout.displayLayout.y;
+const getDisplayTransitionOrigins = ({
+  currentScene,
+  nextScene,
+  previousScene,
+  width,
+}: {
+  nextScene: SceneAndMetadata | null;
+  previousScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+}) => {
+  const { enterStartX, enterStartY } = getDisplayEnter({
+    currentScene,
+    previousScene,
+    width,
+  });
+
+  const { exitEndX, exitEndY } = getDisplayExit({
+    currentScene,
+    nextScene,
+    width,
+  });
 
   return {
     enterStartX,
