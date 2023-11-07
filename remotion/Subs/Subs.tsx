@@ -120,6 +120,7 @@ export const Subs: React.FC<{
             // eslint-disable-next-line react/no-array-index-key
             key={index}
             isLast={index === postprocessed.segments.length - 1}
+            isFirst={index === 0}
             segment={segment}
             trimStart={trimStart}
             canvasLayout={canvasLayout}
