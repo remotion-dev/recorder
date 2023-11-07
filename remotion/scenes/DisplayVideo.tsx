@@ -19,7 +19,7 @@ export const DisplayVideo: React.FC<{
     throw new Error("No display");
   }
 
-  const { width } = useVideoConfig();
+  const { width, height } = useVideoConfig();
 
   const displayTranslation = getDisplayPosition({
     enter,
@@ -28,6 +28,7 @@ export const DisplayVideo: React.FC<{
     nextScene,
     previousScene,
     currentScene: scene,
+    height,
   });
 
   return (
