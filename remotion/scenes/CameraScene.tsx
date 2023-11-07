@@ -93,11 +93,8 @@ const Inner: React.FC<{
           endAt={endAt}
           enter={enter}
           exit={exit}
-          zoomInAtStart={scene.scene.zoomInAtStart ?? false}
           startFrom={startFrom}
           webcamLayout={scene.layout.webcamLayout}
-          zoomInAtEnd={scene.scene.zoomInAtEnd}
-          shouldExit={shouldExit}
           canvasLayout={canvasLayout}
           nextScene={nextScene}
           previousScene={previousScene}
