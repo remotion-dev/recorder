@@ -1,58 +1,229 @@
 import { interpolate } from "remotion";
-import type { CanvasLayout, WebcamPosition } from "../configuration";
+import type {
+  CanvasLayout,
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+  WebcamPosition,
+} from "../configuration";
 import type { Layout } from "../layout/get-layout";
 
-export const getDisplayTranslation = ({
+const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
+  return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
+};
+
+export const isGrowingOrShrinkingToMiniature = ({
+  currentScene,
+  otherScene,
+}: {
+  currentScene: VideoSceneAndMetadata;
+  otherScene: SceneAndMetadata;
+}) => {
+  if (otherScene.type !== "video-scene") {
+    return false;
+  }
+
+  const toMiniature =
+    currentScene.layout.displayLayout === null &&
+    otherScene.layout.displayLayout !== null;
+
+  const fromMiniature =
+    currentScene.layout.displayLayout !== null &&
+    otherScene.layout.displayLayout === null;
+
+  return toMiniature || fromMiniature;
+};
+
+const getDisplayExit = ({
+  currentScene,
+  nextScene,
+  width,
+}: {
+  nextScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+}) => {
+  if (
+    currentScene.type !== "video-scene" ||
+    currentScene.layout.displayLayout === null
+  ) {
+    throw new Error("no transitions on non-video scenes");
+  }
+
+  const nextAndCurrentAreVideoScenes =
+    nextScene &&
+    nextScene.type === "video-scene" &&
+    nextScene.layout.displayLayout !== null;
+
+  if (nextAndCurrentAreVideoScenes) {
+    return {
+      exitEndX: (nextScene.layout.displayLayout as Layout).x,
+      exitEndY: (nextScene.layout.displayLayout as Layout).y,
+    };
+  }
+
+  return {
+    exitEndX: currentScene.layout.displayLayout.x - width,
+    exitEndY: currentScene.layout.displayLayout.y,
+  };
+};
+
+const getDisplayEnter = ({
+  currentScene,
+  previousScene,
+  width,
+  height,
+}: {
+  previousScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+  height: number;
+}) => {
+  if (
+    currentScene.type !== "video-scene" ||
+    currentScene.layout.displayLayout === null
+  ) {
+    throw new Error("no transitions on non-video scenes");
+  }
+
+  const currentandPreviousAreVideoScenes =
+    previousScene && previousScene.type === "video-scene";
+
+  if (currentandPreviousAreVideoScenes) {
+    if (
+      isGrowingOrShrinkingToMiniature({
+        currentScene,
+        otherScene: previousScene,
+      }) &&
+      previousScene.layout.displayLayout === null
+    ) {
+      const y = isWebCamAtBottom(currentScene.scene.webcamPosition)
+        ? -height
+        : height;
+      return {
+        enterStartX: (currentScene.layout.displayLayout as Layout).x,
+        // TODO: What if the display is at the top
+        enterStartY: y,
+      };
+    }
+
+    return {
+      enterStartX: (previousScene.layout.displayLayout as Layout).x,
+      enterStartY: (previousScene.layout.displayLayout as Layout).y,
+    };
+  }
+
+  return {
+    enterStartX: currentScene.layout.displayLayout.x + width,
+    enterStartY: currentScene.layout.displayLayout.y,
+  };
+};
+
+const getDisplayTransitionOrigins = ({
+  currentScene,
+  nextScene,
+  previousScene,
+  width,
+  height,
+}: {
+  nextScene: SceneAndMetadata | null;
+  previousScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+  height: number;
+}) => {
+  const { enterStartX, enterStartY } = getDisplayEnter({
+    currentScene,
+    previousScene,
+    width,
+    height,
+  });
+
+  const { exitEndX, exitEndY } = getDisplayExit({
+    currentScene,
+    nextScene,
+    width,
+  });
+
+  return {
+    enterStartX,
+    enterStartY,
+    exitEndX,
+    exitEndY,
+  };
+};
+
+export const getDisplayPosition = ({
   enter,
   exit,
   width,
-  nextLayout,
-  previousLayout,
-  currentLayout,
+  height,
+  nextScene,
+  previousScene,
+  currentScene,
 }: {
   enter: number;
   exit: number;
   width: number;
-  previousLayout: Layout | null;
-  nextLayout: Layout | null;
-  currentLayout: Layout | null;
+  height: number;
+  previousScene: SceneAndMetadata | null;
+  nextScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
 }) => {
-  const enterStartX =
-    currentLayout && previousLayout
-      ? previousLayout.x - currentLayout.x
-      : width;
+  if (
+    currentScene.type !== "video-scene" ||
+    currentScene.layout.displayLayout === null
+  ) {
+    throw new Error("no transitions on non-video scenes");
+  }
 
-  const enterStartY =
-    currentLayout && previousLayout ? previousLayout.y - currentLayout.y : 0;
+  const { enterStartX, enterStartY, exitEndX, exitEndY } =
+    getDisplayTransitionOrigins({
+      currentScene,
+      nextScene,
+      previousScene,
+      width,
+      height,
+    });
 
-  const exitEndX =
-    currentLayout && nextLayout ? nextLayout.x - currentLayout.x : -width;
-
-  const exitEndY =
-    currentLayout && nextLayout ? nextLayout.y - currentLayout.y : 0;
-
-  const startOpacity = currentLayout && previousLayout ? 0 : 1;
-
-  const enterX = interpolate(enter, [0, 1], [enterStartX, 0]);
-  const enterY = interpolate(enter, [0, 1], [enterStartY, 0]);
-
-  const exitX = interpolate(exit, [0, 1], [0, exitEndX]);
-  const exitY = interpolate(exit, [0, 1], [0, exitEndY]);
-
+  const startOpacity = currentScene && previousScene ? 0 : 1;
   const opacity = interpolate(enter, [0, 0.5], [startOpacity, 1]);
 
-  const translationX = enterX + exitX;
-  const translationY = enterY + exitY;
+  if (exit > 0) {
+    return {
+      translationX: Math.round(
+        interpolate(
+          exit,
+          [0, 1],
+          [currentScene.layout.displayLayout.x, exitEndX],
+        ),
+      ),
+      translationY: Math.round(
+        interpolate(
+          exit,
+          [0, 1],
+          [currentScene.layout.displayLayout.y, exitEndY],
+        ),
+      ),
+      opacity,
+    };
+  }
+
+  const enterX = interpolate(
+    enter,
+    [0, 1],
+    [enterStartX, currentScene.layout.displayLayout.x],
+  );
+  const enterY = interpolate(
+    enter,
+    [0, 1],
+    [enterStartY, currentScene.layout.displayLayout.y],
+  );
 
   return {
-    translationX: Math.round(translationX),
-    translationY: Math.round(translationY),
+    translationX: Math.round(enterX),
+    translationY: Math.round(enterY),
     opacity,
   };
-};
-
-const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
-  return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
 };
 
 const isWebCamRight = (webcamPosition: WebcamPosition) => {
@@ -60,205 +231,281 @@ const isWebCamRight = (webcamPosition: WebcamPosition) => {
 };
 
 const getWebcamEndOffset = ({
-  nextLayout,
-  nextWebcamPosition,
-  webcamPosition,
-  currentLayout,
   width,
   height,
   canvasLayout,
+  nextScene,
+  currentScene,
 }: {
-  nextLayout: Layout | null;
-  nextWebcamPosition: WebcamPosition | null;
-  webcamPosition: WebcamPosition;
-  currentLayout: Layout;
+  nextScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
   width: number;
   height: number;
   canvasLayout: CanvasLayout;
-}): { endX: number; endY: number } => {
-  if (!nextLayout || !nextWebcamPosition) {
+}): Layout => {
+  if (!currentScene || currentScene.type !== "video-scene") {
+    throw new Error("no transitions on non-video scenes");
+  }
+
+  const currentLayout = currentScene.layout.webcamLayout;
+
+  if (!nextScene || nextScene.type !== "video-scene") {
     return {
-      endX: -width,
-      endY: 0,
+      ...currentLayout,
+      x: currentLayout.x - width,
     };
   }
 
+  if (
+    isGrowingOrShrinkingToMiniature({ currentScene, otherScene: nextScene })
+  ) {
+    const next = nextScene.layout.webcamLayout;
+
+    return next;
+  }
+
   const samePositionHorizontal =
-    isWebCamAtBottom(nextWebcamPosition) === isWebCamAtBottom(webcamPosition);
+    isWebCamAtBottom(nextScene.scene.webcamPosition) ===
+    isWebCamAtBottom(currentScene.scene.webcamPosition);
   const isSamePositionVertical =
-    isWebCamRight(nextWebcamPosition) === isWebCamRight(webcamPosition);
+    isWebCamRight(nextScene.scene.webcamPosition) ===
+    isWebCamRight(currentScene.scene.webcamPosition);
 
   if (canvasLayout === "wide") {
     if (!isSamePositionVertical) {
       return {
-        endX: isWebCamRight(webcamPosition) ? width : -width,
-        endY: 0,
+        ...currentLayout,
+        x:
+          currentLayout.x +
+          (isWebCamRight(currentScene.scene.webcamPosition) ? width : -width),
       };
     }
 
     if (!samePositionHorizontal) {
       return {
-        endX: 0,
-        endY: nextLayout.y - currentLayout.y,
+        ...currentLayout,
+        y: nextScene.layout.webcamLayout.y,
       };
     }
 
     return {
-      endX: -width,
-      endY: 0,
+      ...currentLayout,
+      x: currentLayout.x - width,
     };
   }
 
   return {
-    endX: samePositionHorizontal ? nextLayout.x - currentLayout.x : 0,
-    endY: samePositionHorizontal
-      ? 0
-      : isWebCamAtBottom(webcamPosition)
-      ? height
-      : -height,
+    ...currentLayout,
+    x: samePositionHorizontal
+      ? nextScene.layout.webcamLayout.x
+      : currentLayout.x,
+    y: samePositionHorizontal
+      ? currentLayout.y
+      : isWebCamAtBottom(currentScene.scene.webcamPosition)
+      ? currentLayout.y + height
+      : currentLayout.y - height,
   };
 };
 
 const getWebCamStartOffset = ({
-  previousLayout,
-  previousWebcamPosition,
-  webcamPosition,
-  currentLayout,
   width,
   height,
   canvasLayout,
+  previousScene,
+  currentScene,
 }: {
-  previousLayout: Layout | null;
-  previousWebcamPosition: WebcamPosition | null;
-  webcamPosition: WebcamPosition;
-  currentLayout: Layout;
+  previousScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
   width: number;
   height: number;
   canvasLayout: CanvasLayout;
-}): { startX: number; startY: number } => {
-  if (!previousLayout || !previousWebcamPosition) {
+}): Layout => {
+  const currentLayout = currentScene.layout.webcamLayout;
+
+  if (!previousScene || previousScene.type !== "video-scene") {
     return {
-      startX: width,
-      startY: 0,
+      ...currentLayout,
+      x: currentLayout.x + width,
     };
   }
 
+  if (
+    isGrowingOrShrinkingToMiniature({ currentScene, otherScene: previousScene })
+  ) {
+    const prev = previousScene.layout.webcamLayout;
+
+    return prev;
+  }
+
   const samePositionHorizontal =
-    isWebCamAtBottom(previousWebcamPosition) ===
-    isWebCamAtBottom(webcamPosition);
+    isWebCamAtBottom(previousScene.scene.webcamPosition) ===
+    isWebCamAtBottom(currentScene.scene.webcamPosition);
   const isSamePositionVertical =
-    isWebCamRight(previousWebcamPosition) === isWebCamRight(webcamPosition);
+    isWebCamRight(previousScene.scene.webcamPosition) ===
+    isWebCamRight(currentScene.scene.webcamPosition);
 
   if (canvasLayout === "wide") {
     if (!isSamePositionVertical) {
       return {
-        startX: isWebCamRight(webcamPosition) ? width : -width,
-        startY: 0,
+        ...currentLayout,
+        x:
+          currentLayout.x +
+          (isWebCamRight(currentScene.scene.webcamPosition) ? width : -width),
       };
     }
 
     if (!samePositionHorizontal) {
       return {
-        startX: 0,
-        startY: previousLayout.y - currentLayout.y,
+        ...currentLayout,
+        y: previousScene.layout.webcamLayout.y,
       };
     }
 
     return {
-      startX: width,
-      startY: 0,
+      ...currentLayout,
+      x: currentLayout.x + width,
     };
   }
 
   return {
-    startX: samePositionHorizontal ? previousLayout.x - currentLayout.x : 0,
-    startY: samePositionHorizontal
+    ...currentLayout,
+    x: samePositionHorizontal
+      ? previousScene.layout.webcamLayout.x - currentScene.layout.webcamLayout.x
+      : 0,
+    y: samePositionHorizontal
       ? 0
-      : isWebCamAtBottom(webcamPosition)
+      : isWebCamAtBottom(currentScene.scene.webcamPosition)
       ? height
       : -height,
   };
 };
 
-export const getWebcamTranslation = ({
+export const getWebcamPosition = ({
   enter,
   exit,
   width,
   height,
-  webcamPosition,
-  currentLayout,
-  nextLayout,
-  previousLayout,
-  nextWebcamPosition,
-  previousWebcamPosition,
   canvasLayout,
+  currentScene,
+  nextScene,
+  previousScene,
 }: {
   enter: number;
   exit: number;
   width: number;
   height: number;
-  webcamPosition: WebcamPosition;
-  previousWebcamPosition: WebcamPosition | null;
-  previousLayout: Layout | null;
-  nextLayout: Layout | null;
-  nextWebcamPosition: WebcamPosition | null;
-  currentLayout: Layout;
   canvasLayout: CanvasLayout;
-}) => {
-  const { startX, startY } = getWebCamStartOffset({
-    previousLayout,
-    previousWebcamPosition,
-    webcamPosition,
-    currentLayout,
-    width,
-    height,
+  nextScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  previousScene: SceneAndMetadata | null;
+}): Layout => {
+  const startLayout = getWebCamStartOffset({
     canvasLayout,
+    currentScene,
+    height,
+    previousScene,
+    width,
   });
 
-  const { endX, endY } = getWebcamEndOffset({
-    nextLayout,
-    nextWebcamPosition,
-    webcamPosition,
-    currentLayout,
-    width,
-    height,
+  const endLayout = getWebcamEndOffset({
     canvasLayout,
+    currentScene,
+    height,
+    nextScene,
+    width,
   });
 
-  const enterX = interpolate(enter, [0, 1], [startX, 0]);
-  const enterY = interpolate(enter, [0, 1], [startY, 0]);
-  const exitX = interpolate(exit, [0, 1], [0, endX]);
-  const exitY = interpolate(exit, [0, 1], [0, endY]);
+  if (exit > 0) {
+    return {
+      x: interpolate(
+        exit,
+        [0, 1],
+        [currentScene.layout.webcamLayout.x, endLayout.x],
+      ),
+      y: interpolate(
+        exit,
+        [0, 1],
+        [currentScene.layout.webcamLayout.y, endLayout.y],
+      ),
+      borderRadius: interpolate(
+        exit,
+        [0, 1],
+        [currentScene.layout.webcamLayout.borderRadius, endLayout.borderRadius],
+      ),
+      height: interpolate(
+        exit,
+        [0, 1],
+        [currentScene.layout.webcamLayout.height, endLayout.height],
+      ),
+      width: interpolate(
+        exit,
+        [0, 1],
+        [currentScene.layout.webcamLayout.width, endLayout.width],
+      ),
+    };
+  }
 
-  return { translationX: exitX + enterX, translationY: enterY + exitY };
+  return {
+    x: interpolate(
+      enter,
+      [0, 1],
+      [startLayout.x, currentScene.layout.webcamLayout.x],
+    ),
+    y: interpolate(
+      enter,
+      [0, 1],
+      [startLayout.y, currentScene.layout.webcamLayout.y],
+    ),
+    borderRadius: interpolate(
+      enter,
+      [0, 1],
+      [startLayout.borderRadius, currentScene.layout.webcamLayout.borderRadius],
+    ),
+    height: interpolate(
+      enter,
+      [0, 1],
+      [startLayout.height, currentScene.layout.webcamLayout.height],
+    ),
+    width: interpolate(
+      enter,
+      [0, 1],
+      [startLayout.width, currentScene.layout.webcamLayout.width],
+    ),
+  };
 };
 
 const getSubtitleExit = ({
   exit,
   width,
   height,
-  webcamPosition,
   canvasLayout,
-  nextWebcamPosition,
+  nextScene,
+  scene,
 }: {
   exit: number;
   width: number;
   height: number;
-  webcamPosition: WebcamPosition;
   canvasLayout: CanvasLayout;
-  nextWebcamPosition: WebcamPosition | null;
+  scene: SceneAndMetadata;
+  nextScene: SceneAndMetadata | null;
 }) => {
-  if (nextWebcamPosition === null) {
+  if (nextScene === null || nextScene.type !== "video-scene") {
     return {
       translationX: interpolate(exit, [0, 1], [0, -width]),
       translationY: 0,
     };
   }
 
+  if (scene.type !== "video-scene") {
+    throw new Error("no subtitles on non-video scenes");
+  }
+
   const isSamePositionVertical =
-    isWebCamRight(nextWebcamPosition) === isWebCamRight(webcamPosition);
+    isWebCamRight(nextScene.scene.webcamPosition) ===
+    isWebCamRight(scene.scene.webcamPosition);
   const isSamePositionHorizontal =
-    isWebCamAtBottom(nextWebcamPosition) === isWebCamAtBottom(webcamPosition);
+    isWebCamAtBottom(nextScene.scene.webcamPosition) ===
+    isWebCamAtBottom(scene.scene.webcamPosition);
 
   if (!isSamePositionHorizontal && canvasLayout === "square") {
     return {
@@ -266,7 +513,7 @@ const getSubtitleExit = ({
       translationY: interpolate(
         exit,
         [0, 1],
-        [0, isWebCamAtBottom(webcamPosition) ? height : -height]
+        [0, isWebCamAtBottom(scene.scene.webcamPosition) ? height : -height],
       ),
     };
   }
@@ -276,7 +523,7 @@ const getSubtitleExit = ({
       translationX: interpolate(
         exit,
         [0, 1],
-        [0, isWebCamRight(webcamPosition) ? -width : width]
+        [0, isWebCamRight(scene.scene.webcamPosition) ? -width : width],
       ),
       translationY: 0,
     };
@@ -289,18 +536,22 @@ const getSubtitleEnter = ({
   enter,
   width,
   height,
-  webcamPosition,
   canvasLayout,
-  prevWebcamPosition,
+  currentScene,
+  previousScene,
 }: {
   enter: number;
   width: number;
   height: number;
-  webcamPosition: WebcamPosition;
+  currentScene: SceneAndMetadata;
   canvasLayout: CanvasLayout;
-  prevWebcamPosition: WebcamPosition | null;
+  previousScene: SceneAndMetadata | null;
 }) => {
-  if (prevWebcamPosition === null) {
+  if (currentScene.type !== "video-scene") {
+    throw new Error("no subtitles on non-video scenes");
+  }
+
+  if (previousScene === null || previousScene.type !== "video-scene") {
     if (canvasLayout === "wide") {
       return {
         translationX: 0,
@@ -319,9 +570,11 @@ const getSubtitleEnter = ({
   }
 
   const isSamePositionVertical =
-    isWebCamRight(prevWebcamPosition) === isWebCamRight(webcamPosition);
+    isWebCamRight(previousScene.scene.webcamPosition) ===
+    isWebCamRight(currentScene.scene.webcamPosition);
   const isSamePositionHorizontal =
-    isWebCamAtBottom(prevWebcamPosition) === isWebCamAtBottom(webcamPosition);
+    isWebCamAtBottom(previousScene.scene.webcamPosition) ===
+    isWebCamAtBottom(currentScene.scene.webcamPosition);
 
   if (
     !isSamePositionHorizontal &&
@@ -332,7 +585,12 @@ const getSubtitleEnter = ({
       translationY: interpolate(
         enter,
         [0, 1],
-        [isWebCamAtBottom(webcamPosition) ? height : -height, 0]
+        [
+          isWebCamAtBottom(currentScene.scene.webcamPosition)
+            ? height
+            : -height,
+          0,
+        ],
       ),
     };
   }
@@ -345,7 +603,7 @@ const getSubtitleEnter = ({
       translationX: interpolate(
         enter,
         [0, 1],
-        [isWebCamRight(webcamPosition) ? -width : width, 0]
+        [isWebCamRight(currentScene.scene.webcamPosition) ? -width : width, 0],
       ),
       translationY: 0,
     };
@@ -359,35 +617,35 @@ export const getSubtitleTranslation = ({
   exit,
   width,
   height,
-  webcamPosition,
   canvasLayout,
-  nextWebcamPosition,
-  prevWebcamPosition,
+  nextScene,
+  previousScene,
+  scene,
 }: {
   enter: number;
   exit: number;
   width: number;
   height: number;
-  webcamPosition: WebcamPosition;
   canvasLayout: CanvasLayout;
-  prevWebcamPosition: WebcamPosition | null;
-  nextWebcamPosition: WebcamPosition | null;
+  scene: SceneAndMetadata;
+  previousScene: SceneAndMetadata | null;
+  nextScene: SceneAndMetadata | null;
 }) => {
   const _enter = getSubtitleEnter({
     canvasLayout,
     enter,
     height,
-    prevWebcamPosition,
-    webcamPosition,
     width,
+    currentScene: scene,
+    previousScene,
   });
   const _exit = getSubtitleExit({
     canvasLayout,
     exit,
     height,
-    nextWebcamPosition,
-    webcamPosition,
     width,
+    nextScene,
+    scene,
   });
 
   return {

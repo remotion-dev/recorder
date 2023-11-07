@@ -1,23 +1,28 @@
-import type { SceneType } from "../configuration";
+import type { SceneAndMetadata } from "../configuration";
+import { transitionDuration } from "../configuration";
+import { isGrowingOrShrinkingToMiniature } from "./camera-scene-transitions";
 
-export const isATextCard = (scene: SceneType) => {
+export const isATextCard = (scene: SceneAndMetadata) => {
   return (
-    scene.type === "title" ||
-    scene.type === "titlecard" ||
-    scene.type === "endcard" ||
-    scene.type === "remotionupdate"
+    scene.scene.type === "title" ||
+    scene.scene.type === "titlecard" ||
+    scene.scene.type === "endcard" ||
+    scene.scene.type === "remotionupdate"
   );
 };
 
-export const getIsTransitioningOut = (scenes: SceneType[], index: number) => {
-  const scene = scenes[index];
-
-  if (isATextCard(scene)) {
+export const getIsTransitioningOut = ({
+  sceneAndMetadata,
+  nextScene,
+}: {
+  sceneAndMetadata: SceneAndMetadata;
+  nextScene: SceneAndMetadata | null;
+}) => {
+  if (isATextCard(sceneAndMetadata)) {
     return true;
   }
 
-  const nextScene = scenes[index + 1];
-  if (!nextScene) {
+  if (nextScene === null) {
     return false;
   }
 
@@ -26,21 +31,52 @@ export const getIsTransitioningOut = (scenes: SceneType[], index: number) => {
   }
 
   if (
-    scene.type === "scene" &&
-    nextScene.type === "scene" &&
-    scene.transitionToNextScene &&
-    nextScene.webcamPosition !== scene.webcamPosition
+    sceneAndMetadata.type === "video-scene" &&
+    nextScene.type === "video-scene" &&
+    sceneAndMetadata.scene.transitionToNextScene
   ) {
-    return true;
+    const samePosition =
+      nextScene.scene.webcamPosition !== sceneAndMetadata.scene.webcamPosition;
+
+    const isShrinkingOrGrowing = isGrowingOrShrinkingToMiniature({
+      currentScene: sceneAndMetadata,
+      otherScene: nextScene,
+    });
+
+    return samePosition || isShrinkingOrGrowing;
   }
 
   return false;
 };
 
-export const getIsTransitioningIn = (scenes: SceneType[], index: number) => {
-  if (index === 0) {
+export const getIsTransitioningIn = ({
+  scene,
+  previousScene,
+}: {
+  scene: SceneAndMetadata;
+  previousScene: SceneAndMetadata | null;
+}) => {
+  if (previousScene === null) {
     return false;
   }
 
-  return getIsTransitioningOut(scenes, index - 1);
+  return getIsTransitioningOut({
+    sceneAndMetadata: previousScene,
+    nextScene: scene,
+  });
+};
+
+export const getSumUpDuration = ({
+  scene,
+  previousScene,
+}: {
+  scene: SceneAndMetadata;
+  previousScene: SceneAndMetadata | null;
+}) => {
+  return getIsTransitioningIn({
+    scene,
+    previousScene,
+  })
+    ? scene.durationInFrames - transitionDuration
+    : scene.durationInFrames;
 };

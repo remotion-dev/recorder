@@ -12,7 +12,7 @@ export const splitWordIntoMonospaceSegment = (word: Word): Word[] => {
       result.push({ ...word, word: word.word.slice(lastIndex, match.index) });
     }
 
-    result.push({ ...word, word: match[1], monospace: true });
+    result.push({ ...word, word: match[1] as string, monospace: true });
     lastIndex = regex.lastIndex;
   }
 
