@@ -121,9 +121,7 @@ const getDisplayEnter = ({
 
     const translationY = currentScene.layout.displayLayout.height;
     const y = isWebCamAtBottom(currentScene.finalWebcamPosition)
-      ? changedVerticalPosition
-        ? -translationY
-        : height
+      ? -translationY
       : changedVerticalPosition
       ? translationY
       : height;
