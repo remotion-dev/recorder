@@ -43,7 +43,6 @@ export const DisplayVideo: React.FC<{
     previousScene,
     currentScene: scene,
     height,
-    canvasLayout,
   });
 
   return (

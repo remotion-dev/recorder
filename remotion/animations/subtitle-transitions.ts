@@ -50,7 +50,7 @@ const getSubtitleExit = ({
       return {
         translationX: isLeft
           ? currentLayout.width + safeSpace(canvasLayout)
-          : -width,
+          : -currentLayout.width - safeSpace(canvasLayout),
         translationY: webcamTranslation,
       };
     }
@@ -68,7 +68,9 @@ const getSubtitleExit = ({
 
       return {
         translationX: 0,
-        translationY: isAtBottomBefore ? -height : height,
+        translationY: isAtBottomBefore
+          ? -currentLayout.height - safeSpace(canvasLayout)
+          : height,
       };
     }
 
@@ -140,6 +142,42 @@ const getSubtitleEnter = ({
     return {
       translationX: isWebcamLeft ? width : -width,
       translationY: 0,
+    };
+  }
+
+  if (
+    previousScene &&
+    previousScene.type === "video-scene" &&
+    isGrowingFromMiniature({
+      firstScene: previousScene,
+      secondScene: currentScene,
+    })
+  ) {
+    const heightDifference =
+      currentScene.layout.webcamLayout.height -
+      previousScene.layout.webcamLayout.height;
+
+    const previouslyAtBottom = isWebCamAtBottom(
+      previousScene.finalWebcamPosition,
+    );
+    const currentlyAtBottom = isWebCamAtBottom(
+      currentScene.finalWebcamPosition,
+    );
+    const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
+
+    if (changedVerticalPosition) {
+      const isWebcamAtTop = !isWebCamAtBottom(currentScene.finalWebcamPosition);
+      return {
+        translationX: 0,
+        translationY: isWebcamAtTop
+          ? currentLayout.height + safeSpace(canvasLayout)
+          : -currentLayout.height - safeSpace(canvasLayout),
+      };
+    }
+
+    return {
+      translationX: -width,
+      translationY: heightDifference,
     };
   }
 
