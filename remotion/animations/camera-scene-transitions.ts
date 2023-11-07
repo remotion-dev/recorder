@@ -11,6 +11,49 @@ const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
   return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
 };
 
+export const isGrowingFromMiniature = ({
+  firstScene,
+  secondScene,
+}: {
+  firstScene: SceneAndMetadata;
+  secondScene: SceneAndMetadata;
+}) => {
+  if (secondScene.type !== "video-scene") {
+    return false;
+  }
+
+  if (firstScene.type !== "video-scene") {
+    return false;
+  }
+
+  const toMiniature =
+    firstScene.layout.displayLayout !== null &&
+    secondScene.layout.displayLayout === null;
+
+  return toMiniature;
+};
+
+export const isShrinkingToMiniature = ({
+  firstScene,
+  secondScene,
+}: {
+  firstScene: SceneAndMetadata;
+  secondScene: SceneAndMetadata;
+}) => {
+  if (secondScene.type !== "video-scene") {
+    return false;
+  }
+
+  if (firstScene.type !== "video-scene") {
+    return false;
+  }
+
+  return (
+    firstScene.layout.displayLayout === null &&
+    secondScene.layout.displayLayout !== null
+  );
+};
+
 export const isGrowingOrShrinkingToMiniature = ({
   currentScene,
   otherScene,
@@ -22,15 +65,24 @@ export const isGrowingOrShrinkingToMiniature = ({
     return false;
   }
 
-  const toMiniature =
-    currentScene.layout.displayLayout === null &&
-    otherScene.layout.displayLayout !== null;
-
-  const fromMiniature =
-    currentScene.layout.displayLayout !== null &&
-    otherScene.layout.displayLayout === null;
-
-  return toMiniature || fromMiniature;
+  return (
+    isGrowingFromMiniature({
+      firstScene: currentScene,
+      secondScene: otherScene,
+    }) ||
+    isShrinkingToMiniature({
+      firstScene: currentScene,
+      secondScene: otherScene,
+    }) ||
+    isGrowingFromMiniature({
+      firstScene: otherScene,
+      secondScene: currentScene,
+    }) ||
+    isShrinkingToMiniature({
+      firstScene: otherScene,
+      secondScene: currentScene,
+    })
+  );
 };
 
 const getDisplayExit = ({
@@ -568,10 +620,20 @@ const getSubtitleEnter = ({
 
   if (
     previousScene &&
-    isGrowingOrShrinkingToMiniature({ currentScene, otherScene: previousScene })
+    previousScene.type === "video-scene" &&
+    isShrinkingToMiniature({
+      firstScene: previousScene,
+      secondScene: currentScene,
+    })
   ) {
+    const isWebcamLeft = !isWebCamRight(currentScene.finalWebcamPosition);
+
     return {
-      translationX: 0,
+      translationX: interpolate(
+        enter,
+        [0, 1],
+        [isWebcamLeft ? width : -width, 0],
+      ),
       translationY: 0,
     };
   }
