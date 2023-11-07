@@ -81,8 +81,6 @@ export const videoScene = z.object({
   webcamPosition: z.enum(availablePositionsAndPrevious),
   trimStart: z.number(),
   duration: z.number().nullable().default(null),
-  zoomInAtStart: z.boolean().default(false),
-  zoomInAtEnd: z.boolean().default(false),
   transitionToNextScene: z.boolean().default(false),
   newChapter: z.string().optional(),
   stopChapteringAfterThis: z.boolean().optional(),
