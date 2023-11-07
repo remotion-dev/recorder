@@ -6,7 +6,7 @@ import {
   delayRender,
   useVideoConfig,
 } from "remotion";
-import { getSubtitleTranslation } from "../animations/camera-scene-transitions";
+import { getSubtitleTranslation } from "../animations/subtitle-transitions";
 import type {
   CanvasLayout,
   SceneAndMetadata,
