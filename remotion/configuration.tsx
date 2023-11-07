@@ -19,7 +19,6 @@ export type VideoSceneAndMetadata = {
   type: "video-scene";
   scene: VideoScene;
   durationInFrames: number;
-  sumUpDuration: number;
   videos: SceneVideos;
   layout: CameraSceneLayout;
   pair: Pair;
@@ -31,7 +30,6 @@ export type SceneAndMetadata =
       type: "other-scene";
       scene: SceneType;
       durationInFrames: number;
-      sumUpDuration: number;
     };
 
 const webcamPosition = z.enum([

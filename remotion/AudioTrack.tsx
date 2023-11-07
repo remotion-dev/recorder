@@ -25,6 +25,7 @@ const AudioClip: React.FC<{
       volume={(f) => {
         let isLoudPart: null | [number, number] = null;
         for (let i = 0; i < loudParts.length; i++) {
+          // @ts-expect-error
           const [from, to] = loudParts[i];
           if (f >= from && f <= to) {
             isLoudPart = [from, to];
@@ -76,28 +77,29 @@ export const AudioTrack: React.FC<{
 
     const from = addedUpDurations;
     addedUpDurations += metadataForScene.durationInFrames;
-    const isTransitioningOut = getIsTransitioningOut(
-      scenesAndMetadata.map((s) => s.scene),
-      i,
-    );
+    const isTransitioningOut = getIsTransitioningOut({
+      sceneAndMetadata: scene,
+      nextScene: scenesAndMetadata[i + 1] ?? null,
+    });
     if (isTransitioningOut) {
       addedUpDurations -= transitionDuration;
     }
 
-    const isLoud = isATextCard(scene.scene);
+    const isLoud = isATextCard(scene);
 
     const { music } = scene.scene;
 
     if (music === "previous") {
       if (audioClips.length > 0) {
-        audioClips[audioClips.length - 1].duration +=
+        (audioClips[audioClips.length - 1] as TAudioTrack).duration +=
           metadataForScene.durationInFrames;
         if (isTransitioningOut) {
-          audioClips[audioClips.length - 1].duration -= transitionDuration;
+          (audioClips[audioClips.length - 1] as TAudioTrack).duration -=
+            transitionDuration;
         }
 
         if (isLoud) {
-          audioClips[audioClips.length - 1].loudParts.push([
+          (audioClips[audioClips.length - 1] as TAudioTrack).loudParts.push([
             from,
             from + metadataForScene.durationInFrames,
           ]);

@@ -45,14 +45,14 @@ export const All: React.FC<AllProps> = ({
       }}
     >
       {scenesAndMetadata.map((sceneAndMetadata, i) => {
-        const isTransitioningIn = getIsTransitioningIn(
-          scenesAndMetadata.map((s) => s.scene),
-          i,
-        );
-        const isTransitioningOut = getIsTransitioningOut(
-          scenesAndMetadata.map((s) => s.scene),
-          i,
-        );
+        const isTransitioningIn = getIsTransitioningIn({
+          scene: sceneAndMetadata,
+          previousScene: scenesAndMetadata[i - 1] ?? null,
+        });
+        const isTransitioningOut = getIsTransitioningOut({
+          sceneAndMetadata,
+          nextScene: scenesAndMetadata[i + 1] ?? null,
+        });
 
         const from = addedUpDurations;
         addedUpDurations += sceneAndMetadata.durationInFrames;
