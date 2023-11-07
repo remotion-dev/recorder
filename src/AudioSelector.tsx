@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 
 import type { SetStateAction } from "react";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import {
   Select,
   SelectContent,
@@ -23,6 +23,9 @@ export const AudioSelector: React.FC<{
     },
     [setSelectedAudioSource],
   );
+  const currentDeviceName = useMemo(() => {
+    return devices.find((d) => d.deviceId === audioSource)?.label;
+  }, [audioSource, devices]);
 
   return (
     <Select
@@ -32,7 +35,7 @@ export const AudioSelector: React.FC<{
     >
       <SelectTrigger style={{ maxWidth: 200 }}>
         <SelectValue placeholder="Select audio">
-          {audioSource?.toString() ?? "Select audio"}
+          {currentDeviceName ?? "Select audio"}
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
