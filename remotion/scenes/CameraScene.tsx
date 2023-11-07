@@ -10,10 +10,7 @@ import {
 } from "remotion";
 import { SquareChapter } from "../chapters/SquareChapter";
 import type { CanvasLayout, SceneAndMetadata } from "../configuration";
-import {
-  transitionDuration,
-  TRANSITION_EXTRA_DURATION,
-} from "../configuration";
+import { transitionDuration } from "../configuration";
 import { Subs } from "../Subs/Subs";
 import { WebcamVideo } from "../WebcamVideo";
 import { DisplayVideo } from "./DisplayVideo";
@@ -45,7 +42,7 @@ const Inner: React.FC<{
       const spr = spring({
         fps,
         frame,
-        durationInFrames: transitionDuration + TRANSITION_EXTRA_DURATION,
+        durationInFrames: transitionDuration,
         config: {
           damping: 200,
         },
@@ -61,7 +58,7 @@ const Inner: React.FC<{
       const spr = spring({
         fps,
         frame,
-        durationInFrames: transitionDuration + TRANSITION_EXTRA_DURATION,
+        durationInFrames: transitionDuration,
         config: {
           damping: 200,
         },
@@ -89,6 +86,7 @@ const Inner: React.FC<{
             previousScene={previousScene}
             startFrom={startFrom}
             endAt={endAt}
+            canvasLayout={canvasLayout}
           />
         ) : null}
         <WebcamVideo
