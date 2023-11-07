@@ -1,5 +1,5 @@
 import { OffthreadVideo, useVideoConfig } from "remotion";
-import { getDisplayTranslation } from "../animations/camera-scene-transitions";
+import { getDisplayPosition } from "../animations/camera-scene-transitions";
 import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
 
 export const DisplayVideo: React.FC<{
@@ -21,7 +21,7 @@ export const DisplayVideo: React.FC<{
 
   const { width } = useVideoConfig();
 
-  const displayTranslation = getDisplayTranslation({
+  const displayTranslation = getDisplayPosition({
     enter,
     exit,
     width,
@@ -35,12 +35,11 @@ export const DisplayVideo: React.FC<{
       style={{
         width: scene.layout.displayLayout.width,
         height: scene.layout.displayLayout.height,
-        left: scene.layout.displayLayout.x,
-        top: scene.layout.displayLayout.y,
+        left: displayTranslation.translationX,
+        top: displayTranslation.translationY,
         position: "absolute",
         borderRadius: scene.layout.displayLayout.borderRadius,
         opacity: displayTranslation.opacity,
-        translate: `${displayTranslation.translationX}px ${displayTranslation.translationY}px`,
       }}
     >
       <OffthreadVideo
