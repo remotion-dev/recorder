@@ -5,6 +5,9 @@ import type { CameraSceneLayout } from "./layout/get-layout";
 import { music } from "./layout/music";
 import { linkType } from "./scenes/EndCard/LeftSide";
 
+// Already begin the next clip before the transition is over
+export const TRANSITION_EXTRA_DURATION = 10;
+
 export type Dimensions = {
   width: number;
   height: number;
