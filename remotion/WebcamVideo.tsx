@@ -8,7 +8,6 @@ import {
 import { getWebcamPosition } from "./animations/camera-scene-transitions";
 import type {
   CanvasLayout,
-  Pair,
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "./configuration";
@@ -21,7 +20,6 @@ export const WebcamVideo: React.FC<{
   exit: number;
   startFrom: number;
   endAt: number | undefined;
-  pair: Pair;
   zoomInAtStart: boolean;
   zoomInAtEnd: boolean;
   shouldExit: boolean;
@@ -37,7 +35,6 @@ export const WebcamVideo: React.FC<{
   zoomInAtEnd,
   startFrom,
   endAt,
-  pair,
   nextScene,
   previousScene,
   shouldExit,
@@ -108,7 +105,7 @@ export const WebcamVideo: React.FC<{
             transformOrigin: "50% 0%",
             scale: String(zoomIn * 0.4 + 1),
           }}
-          src={pair.webcam.src}
+          src={currentScene.pair.webcam.src}
         />
       </div>
     </div>

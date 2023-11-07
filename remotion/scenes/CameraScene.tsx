@@ -2,22 +2,20 @@ import React from "react";
 import {
   AbsoluteFill,
   Audio,
-  OffthreadVideo,
   Sequence,
   spring,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { getDisplayTranslation } from "../animations/camera-scene-transitions";
 import { SquareChapter } from "../chapters/SquareChapter";
-import type { CanvasLayout, Pair, SceneAndMetadata } from "../configuration";
+import type { CanvasLayout, SceneAndMetadata } from "../configuration";
 import { transitionDuration } from "../configuration";
 import { Subs } from "../Subs/Subs";
 import { WebcamVideo } from "../WebcamVideo";
+import { DisplayVideo } from "./DisplayVideo";
 
 const Inner: React.FC<{
-  pair: Pair;
   startFrom: number;
   endAt: number | undefined;
   shouldEnter: boolean;
@@ -30,14 +28,13 @@ const Inner: React.FC<{
   endAt,
   shouldEnter,
   shouldExit,
-  pair,
   startFrom,
   scene,
   canvasLayout,
   nextScene,
   previousScene,
 }) => {
-  const { fps, width, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
 
   const enter = (() => {
@@ -77,48 +74,25 @@ const Inner: React.FC<{
     throw new Error("Not a camera scene");
   }
 
-  const displayTranslation = getDisplayTranslation({
-    enter,
-    exit,
-    width,
-    nextScene,
-    previousScene,
-    currentScene: scene,
-  });
-
   return (
     <>
       <AbsoluteFill>
-        {scene.layout.displayLayout && pair.display ? (
-          <div
-            style={{
-              width: scene.layout.displayLayout.width,
-              height: scene.layout.displayLayout.height,
-              left: scene.layout.displayLayout.x,
-              top: scene.layout.displayLayout.y,
-              position: "absolute",
-              borderRadius: scene.layout.displayLayout.borderRadius,
-              opacity: displayTranslation.opacity,
-              translate: `${displayTranslation.translationX}px ${displayTranslation.translationY}px`,
-            }}
-          >
-            <OffthreadVideo
-              startFrom={startFrom}
-              endAt={endAt}
-              src={pair.display.src}
-              style={{
-                maxWidth: "100%",
-                borderRadius: scene.layout.displayLayout.borderRadius,
-              }}
-            />
-          </div>
+        {scene.layout.displayLayout && scene.pair.display ? (
+          <DisplayVideo
+            scene={scene}
+            enter={enter}
+            exit={exit}
+            nextScene={nextScene}
+            previousScene={previousScene}
+            startFrom={startFrom}
+            endAt={endAt}
+          />
         ) : null}
         <WebcamVideo
           currentScene={scene}
           endAt={endAt}
           enter={enter}
           exit={exit}
-          pair={pair}
           zoomInAtStart={scene.scene.zoomInAtStart ?? false}
           startFrom={startFrom}
           webcamLayout={scene.layout.webcamLayout}
@@ -129,11 +103,11 @@ const Inner: React.FC<{
           previousScene={previousScene}
         />
       </AbsoluteFill>
-      {pair.sub ? (
+      {scene.pair.sub ? (
         <Subs
           canvasLayout={canvasLayout}
           trimStart={startFrom}
-          file={pair.sub}
+          file={scene.pair.sub}
           enter={enter}
           exit={exit}
           scene={scene}
@@ -156,7 +130,6 @@ const Inner: React.FC<{
 
 export const CameraScene: React.FC<{
   sceneAndMetadata: SceneAndMetadata;
-  pair: Pair;
   start: number;
   index: number;
   shouldEnter: boolean;
@@ -165,7 +138,6 @@ export const CameraScene: React.FC<{
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
 }> = ({
-  pair,
   start,
   index,
   shouldEnter,
@@ -197,7 +169,6 @@ export const CameraScene: React.FC<{
       <Inner
         canvasLayout={canvasLayout}
         endAt={endAt}
-        pair={pair}
         shouldEnter={shouldEnter}
         shouldExit={shouldExit}
         startFrom={startFrom}

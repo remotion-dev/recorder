@@ -10,7 +10,6 @@ import { WideScreenChapters } from "./chapters/WideScreenChapters";
 import { COLORS } from "./colors";
 import type {
   CanvasLayout,
-  Pair,
   SceneAndMetadata,
   SceneType,
 } from "./configuration";
@@ -22,7 +21,6 @@ import { TitleCard } from "./scenes/TitleCard";
 import { UpdateScene } from "./scenes/UpdateScene";
 
 export type AllProps = {
-  pairs: Pair[];
   prefix: string;
   canvasLayout: CanvasLayout;
   scenes: SceneType[];
@@ -30,7 +28,6 @@ export type AllProps = {
 };
 
 export const All: React.FC<AllProps> = ({
-  pairs,
   scenesAndMetadata,
   canvasLayout,
 }) => {
@@ -129,12 +126,10 @@ export const All: React.FC<AllProps> = ({
         }
 
         videoCounter += 1;
-        const pair = pairs[videoCounter];
         return (
           <CameraScene
             key={videoCounter}
             start={from}
-            pair={pair}
             index={i}
             shouldEnter={isTransitioningIn}
             canvasLayout={canvasLayout}
