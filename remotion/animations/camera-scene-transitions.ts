@@ -485,12 +485,25 @@ const getSubtitleExit = ({
   width: number;
   height: number;
   canvasLayout: CanvasLayout;
-  scene: SceneAndMetadata;
+  scene: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
 }) => {
   if (nextScene === null || nextScene.type !== "video-scene") {
     return {
       translationX: interpolate(exit, [0, 1], [0, -width]),
+      translationY: 0,
+    };
+  }
+
+  if (
+    nextScene &&
+    isGrowingOrShrinkingToMiniature({
+      currentScene: scene,
+      otherScene: nextScene,
+    })
+  ) {
+    return {
+      translationX: 0,
       translationY: 0,
     };
   }
@@ -548,6 +561,16 @@ const getSubtitleEnter = ({
 }) => {
   if (currentScene.type !== "video-scene") {
     throw new Error("no subtitles on non-video scenes");
+  }
+
+  if (
+    previousScene &&
+    isGrowingOrShrinkingToMiniature({ currentScene, otherScene: previousScene })
+  ) {
+    return {
+      translationX: 0,
+      translationY: 0,
+    };
   }
 
   if (previousScene === null || previousScene.type !== "video-scene") {
@@ -624,7 +647,7 @@ export const getSubtitleTranslation = ({
   width: number;
   height: number;
   canvasLayout: CanvasLayout;
-  scene: SceneAndMetadata;
+  scene: VideoSceneAndMetadata;
   previousScene: SceneAndMetadata | null;
   nextScene: SceneAndMetadata | null;
 }) => {
@@ -636,6 +659,7 @@ export const getSubtitleTranslation = ({
     currentScene: scene,
     previousScene,
   });
+
   const _exit = getSubtitleExit({
     canvasLayout,
     exit,
