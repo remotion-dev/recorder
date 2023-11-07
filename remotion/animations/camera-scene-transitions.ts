@@ -67,10 +67,12 @@ const getDisplayEnter = ({
   currentScene,
   previousScene,
   width,
+  height,
 }: {
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
+  height: number;
 }) => {
   if (
     currentScene.type !== "video-scene" ||
@@ -80,11 +82,23 @@ const getDisplayEnter = ({
   }
 
   const currentandPreviousAreVideoScenes =
-    previousScene &&
-    previousScene.type === "video-scene" &&
-    previousScene.layout.displayLayout !== null;
+    previousScene && previousScene.type === "video-scene";
 
   if (currentandPreviousAreVideoScenes) {
+    if (
+      isGrowingOrShrinkingToMiniature({
+        currentScene,
+        otherScene: previousScene,
+      }) &&
+      previousScene.layout.displayLayout === null
+    ) {
+      return {
+        enterStartX: (currentScene.layout.displayLayout as Layout).x,
+        // TODO: What if the display is at the top
+        enterStartY: height,
+      };
+    }
+
     return {
       enterStartX: (previousScene.layout.displayLayout as Layout).x,
       enterStartY: (previousScene.layout.displayLayout as Layout).y,
@@ -102,16 +116,19 @@ const getDisplayTransitionOrigins = ({
   nextScene,
   previousScene,
   width,
+  height,
 }: {
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
+  height: number;
 }) => {
   const { enterStartX, enterStartY } = getDisplayEnter({
     currentScene,
     previousScene,
     width,
+    height,
   });
 
   const { exitEndX, exitEndY } = getDisplayExit({
@@ -132,6 +149,7 @@ export const getDisplayPosition = ({
   enter,
   exit,
   width,
+  height,
   nextScene,
   previousScene,
   currentScene,
@@ -139,6 +157,7 @@ export const getDisplayPosition = ({
   enter: number;
   exit: number;
   width: number;
+  height: number;
   previousScene: SceneAndMetadata | null;
   nextScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
@@ -156,6 +175,7 @@ export const getDisplayPosition = ({
       nextScene,
       previousScene,
       width,
+      height,
     });
 
   const startOpacity = currentScene && previousScene ? 0 : 1;
