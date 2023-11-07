@@ -100,9 +100,17 @@ export const Subs: React.FC<{
             subtitleType,
             scene.layout.displayLayout,
           ),
+          canvasLayout,
+          subtitleType,
         })
       : null;
-  }, [data, scene.layout.displayLayout, subsLayout.width, subtitleType]);
+  }, [
+    canvasLayout,
+    data,
+    scene.layout.displayLayout,
+    subsLayout.width,
+    subtitleType,
+  ]);
 
   if (!postprocessed) {
     return null;

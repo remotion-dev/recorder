@@ -1,9 +1,12 @@
 import { fillTextBox } from "@remotion/layout-utils";
+import type { CanvasLayout } from "../configuration";
+import { safeSpace } from "../layout/get-layout";
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { hasMonoSpaceInIt } from "../layout/monospace";
 import { wordsTogether } from "../layout/words-together";
 import type { Segment, SubTypes, Word } from "../sub-types";
 import { remapWord } from "./remap-words";
+import type { SubtitleType } from "./Segment";
 import {
   monospaceFont,
   monospaceFontWeight,
@@ -129,16 +132,31 @@ export const ensureMaxWords = ({
   };
 };
 
+export const getHorizontalPaddingForSubtitles = (
+  subtitleType: SubtitleType,
+  canvasLayout: CanvasLayout,
+) => {
+  if (subtitleType === "boxed") {
+    return safeSpace(canvasLayout);
+  }
+
+  return 0;
+};
+
 export const postprocessSubtitles = ({
   subTypes,
   boxWidth,
   maxLines,
   fontSize,
+  canvasLayout,
+  subtitleType,
 }: {
   subTypes: SubTypes;
   boxWidth: number;
   maxLines: number;
   fontSize: number;
+  canvasLayout: CanvasLayout;
+  subtitleType: SubtitleType;
 }): SubTypes => {
   const mappedSubTypes: SubTypes = {
     ...subTypes,
@@ -152,7 +170,9 @@ export const postprocessSubtitles = ({
 
   const maxWords = ensureMaxWords({
     subTypes: mappedSubTypes,
-    boxWidth,
+    boxWidth:
+      boxWidth -
+      getHorizontalPaddingForSubtitles(subtitleType, canvasLayout) * 2,
     maxLines,
     fontSize,
   });

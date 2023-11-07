@@ -420,10 +420,10 @@ const getWebCamStartOffset = ({
   return {
     ...currentLayout,
     x: samePositionHorizontal
-      ? previousScene.layout.webcamLayout.x - currentScene.layout.webcamLayout.x
-      : 0,
+      ? previousScene.layout.webcamLayout.x
+      : currentLayout.x,
     y: samePositionHorizontal
-      ? 0
+      ? currentLayout.y
       : isWebCamAtBottom(currentScene.finalWebcamPosition)
       ? height
       : -height,

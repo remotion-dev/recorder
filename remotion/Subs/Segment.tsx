@@ -11,6 +11,7 @@ import type { Layout } from "../layout/get-layout";
 import { borderRadius, safeSpace } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type { Segment } from "../sub-types";
+import { getHorizontalPaddingForSubtitles } from "./postprocess-subs";
 import { useSequenceDuration, useTime, WordComp } from "./Word";
 
 loadFont();
@@ -137,22 +138,13 @@ export const getSubsBox = ({
 
 const getSubsLayout = ({
   canvasLayout,
-  subsBox,
   subtitleType,
-  displayLayout,
 }: {
   canvasLayout: CanvasLayout;
-  subsBox: Layout;
   subtitleType: SubtitleType;
-  displayLayout: Layout | null;
 }): React.CSSProperties => {
   if (subtitleType === "overlayed-center") {
     return {
-      left: subsBox.x,
-      top: subsBox.y,
-      width: subsBox.width,
-      height: subsBox.height,
-      borderRadius: subsBox.borderRadius,
       textAlign: "center",
       justifyContent: "center",
       alignItems: "center",
@@ -161,11 +153,6 @@ const getSubsLayout = ({
 
   if (canvasLayout === "wide") {
     return {
-      left: subsBox.x,
-      top: subsBox.y,
-      width: subsBox.width,
-      height: subsBox.height,
-      borderRadius: subsBox.borderRadius,
       maxLines: 2,
       textAlign: "center",
       justifyContent: "center",
@@ -174,12 +161,7 @@ const getSubsLayout = ({
   }
 
   return {
-    left: subsBox.x,
-    top: subsBox.y,
-    width: subsBox.width,
-    height: subsBox.height,
-    borderRadius: subsBox.borderRadius,
-    paddingTop: displayLayout === null ? 0 : safeSpace(canvasLayout),
+    justifyContent: "center",
   };
 };
 
@@ -202,6 +184,8 @@ const inlineSubsLayout = ({
 
   return {};
 };
+
+const LINE_HEIGHT = 1.2;
 
 const getOpacity = ({
   segment,
@@ -274,32 +258,45 @@ export const SegmentComp: React.FC<{
   return (
     <AbsoluteFill
       style={{
-        top: "auto",
         fontSize: getSubtitlesFontSize(subtitleType, displayLayout),
         display: "flex",
-        lineHeight: 1.2,
+        lineHeight: LINE_HEIGHT,
         opacity,
         // @ts-expect-error
         textWrap: "balance",
         border: "3px solid " + COLORS.BORDER_COLOR,
         backgroundColor: COLORS.SUBTITLES_BACKGROUND,
         boxShadow: "0px 2px 2px rgba(0,0,0,.04)",
+        paddingLeft: getHorizontalPaddingForSubtitles(
+          subtitleType,
+          canvasLayout,
+        ),
+        left: subsBox.x,
+        top: subsBox.y,
+        width: subsBox.width,
+        height: subsBox.height,
+        borderRadius: subsBox.borderRadius,
         ...getSubsLayout({
           canvasLayout,
-          subsBox,
           subtitleType,
-          displayLayout,
         }),
       }}
     >
-      <div>
+      <div
+        style={{
+          height:
+            getSubtitlesLines(subtitleType) *
+            getSubtitlesFontSize(subtitleType, displayLayout) *
+            LINE_HEIGHT,
+        }}
+      >
         <span
           style={{
             textShadow:
               subtitleType === "overlayed-center"
                 ? "0px 0px 30px rgba(0, 0, 0, 0.5)"
                 : undefined,
-            lineHeight: 1.2,
+            lineHeight: LINE_HEIGHT,
             display: "inline-block",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
