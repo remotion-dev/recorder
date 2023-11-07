@@ -1,7 +1,7 @@
 import React from "react";
 import { Audio, interpolate, Sequence, useVideoConfig } from "remotion";
 import { getIsTransitioningOut, isATextCard } from "./animations/transitions";
-import type { SceneMetadata, SceneType } from "./configuration";
+import type { SceneAndMetadata } from "./configuration";
 import { transitionDuration } from "./configuration";
 import { getAudioSource } from "./layout/music";
 
@@ -25,6 +25,7 @@ const AudioClip: React.FC<{
       volume={(f) => {
         let isLoudPart: null | [number, number] = null;
         for (let i = 0; i < loudParts.length; i++) {
+          // @ts-expect-error
           const [from, to] = loudParts[i];
           if (f >= from && f <= to) {
             isLoudPart = [from, to];
@@ -39,7 +40,7 @@ const AudioClip: React.FC<{
           {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
-          }
+          },
         );
 
         if (isLoudPart) {
@@ -51,7 +52,7 @@ const AudioClip: React.FC<{
               isLoudPart[1] - FADE,
               isLoudPart[1],
             ],
-            [regularVolume, 1, 1, regularVolume]
+            [regularVolume, 1, 1, regularVolume],
           );
         }
 
@@ -63,39 +64,42 @@ const AudioClip: React.FC<{
 };
 
 export const AudioTrack: React.FC<{
-  scenes: SceneType[];
-  metadata: SceneMetadata[];
-}> = ({ metadata, scenes }) => {
+  scenesAndMetadata: SceneAndMetadata[];
+}> = ({ scenesAndMetadata }) => {
   let addedUpDurations = 0;
   const audioClips: TAudioTrack[] = [];
 
-  scenes.forEach((scene, i) => {
-    const metadataForScene = metadata[i];
+  scenesAndMetadata.forEach((scene, i) => {
+    const metadataForScene = scenesAndMetadata[i];
     if (!metadataForScene) {
       return null;
     }
 
     const from = addedUpDurations;
     addedUpDurations += metadataForScene.durationInFrames;
-    const isTransitioningOut = getIsTransitioningOut(scenes, i);
+    const isTransitioningOut = getIsTransitioningOut({
+      sceneAndMetadata: scene,
+      nextScene: scenesAndMetadata[i + 1] ?? null,
+    });
     if (isTransitioningOut) {
       addedUpDurations -= transitionDuration;
     }
 
     const isLoud = isATextCard(scene);
 
-    const { music } = scene;
+    const { music } = scene.scene;
 
     if (music === "previous") {
       if (audioClips.length > 0) {
-        audioClips[audioClips.length - 1].duration +=
+        (audioClips[audioClips.length - 1] as TAudioTrack).duration +=
           metadataForScene.durationInFrames;
         if (isTransitioningOut) {
-          audioClips[audioClips.length - 1].duration -= transitionDuration;
+          (audioClips[audioClips.length - 1] as TAudioTrack).duration -=
+            transitionDuration;
         }
 
         if (isLoud) {
-          audioClips[audioClips.length - 1].loudParts.push([
+          (audioClips[audioClips.length - 1] as TAudioTrack).loudParts.push([
             from,
             from + metadataForScene.durationInFrames,
           ]);

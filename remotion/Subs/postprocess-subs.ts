@@ -2,7 +2,7 @@ import { fillTextBox } from "@remotion/layout-utils";
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { hasMonoSpaceInIt } from "../layout/monospace";
 import { wordsTogether } from "../layout/words-together";
-import type { Segment, SubTypes } from "../sub-types";
+import type { Segment, SubTypes, Word } from "../sub-types";
 import { remapWord } from "./remap-words";
 import {
   monospaceFont,
@@ -53,7 +53,7 @@ const cutWords = ({
 
   for (let i = 1; i < 4; i++) {
     const index = bestCut - i;
-    const word = segment.words[index].word.trim();
+    const word = (segment.words[index] as Word).word.trim();
     if (word.endsWith(",") || word.endsWith(".")) {
       bestCut = index + 1;
       break;
@@ -61,8 +61,8 @@ const cutWords = ({
   }
 
   while (
-    hasMonoSpaceInIt(segment.words[bestCut - 1]) ||
-    segment.words[bestCut - 1].word.trim() === ""
+    hasMonoSpaceInIt(segment.words[bestCut - 1] as Word) ||
+    (segment.words[bestCut - 1] as Word).word.trim() === ""
   ) {
     bestCut--;
   }
@@ -73,15 +73,15 @@ const cutWords = ({
   return [
     {
       ...segment,
-      start: firstHalf[0].start,
-      end: firstHalf[firstHalf.length - 1].end,
+      start: (firstHalf[0] as Word).start,
+      end: (firstHalf[firstHalf.length - 1] as Word).end,
       words: firstHalf,
     },
     ...cutWords({
       segment: {
         ...segment,
-        start: secondHalf[0].start,
-        end: secondHalf[secondHalf.length - 1].end,
+        start: (secondHalf[0] as Word).start,
+        end: (secondHalf[secondHalf.length - 1] as Word).end,
         words: secondHalf,
       },
       boxWidth,
@@ -102,10 +102,19 @@ export const ensureMaxWords = ({
   boxWidth: number;
   fontSize: number;
 }): SubTypes => {
+  if (subTypes.segments.length === 0) {
+    return subTypes;
+  }
+
+  const firstSegment = subTypes.segments[0] as Segment;
+  const lastSegment = subTypes.segments[
+    subTypes.segments.length - 1
+  ] as Segment;
+
   const masterSegment: Segment = {
-    id: subTypes.segments[0].id,
-    start: subTypes.segments[0].start,
-    end: subTypes.segments[subTypes.segments.length - 1].end,
+    id: firstSegment.id,
+    start: firstSegment.start,
+    end: lastSegment.end,
     words: subTypes.segments.flatMap((s) => s.words),
   };
 

@@ -1,6 +1,7 @@
 import type { StaticFile } from "remotion";
 import { getStaticFiles, staticFile } from "remotion";
 import { z } from "zod";
+import type { CameraSceneLayout } from "./layout/get-layout";
 import { music } from "./layout/music";
 import { linkType } from "./scenes/EndCard/LeftSide";
 
@@ -14,11 +15,22 @@ export type SceneVideos = {
   display: Dimensions | null;
 };
 
-export type SceneMetadata = {
+export type VideoSceneAndMetadata = {
+  type: "video-scene";
+  scene: VideoScene;
   durationInFrames: number;
-  sumUpDuration: number;
-  videos: SceneVideos | null;
+  videos: SceneVideos;
+  layout: CameraSceneLayout;
+  pair: Pair;
 };
+
+export type SceneAndMetadata =
+  | VideoSceneAndMetadata
+  | {
+      type: "other-scene";
+      scene: SceneType;
+      durationInFrames: number;
+    };
 
 const webcamPosition = z.enum([
   "top-left",
@@ -59,19 +71,23 @@ export const avatars: { [key in Channel]: string } = {
   remotion: staticFile("logo-on-white.png"),
 };
 
+export const videoScene = z.object({
+  type: z.literal("scene"),
+  webcamPosition,
+  trimStart: z.number(),
+  duration: z.number().nullable().default(null),
+  zoomInAtStart: z.boolean().default(false),
+  zoomInAtEnd: z.boolean().default(false),
+  transitionToNextScene: z.boolean().default(false),
+  newChapter: z.string().optional(),
+  stopChapteringAfterThis: z.boolean().optional(),
+  music,
+});
+
+export type VideoScene = z.infer<typeof videoScene>;
+
 export const configuration = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal("scene"),
-    webcamPosition,
-    trimStart: z.number(),
-    duration: z.number().nullable().default(null),
-    zoomInAtStart: z.boolean().default(false),
-    zoomInAtEnd: z.boolean().default(false),
-    transitionToNextScene: z.boolean().default(false),
-    newChapter: z.string().optional(),
-    stopChapteringAfterThis: z.boolean().optional(),
-    music,
-  }),
+  videoScene,
   z.object({
     type: z.literal("title"),
     title: z.string(),
