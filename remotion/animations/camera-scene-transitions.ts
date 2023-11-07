@@ -22,47 +22,75 @@ export const getDisplayTranslation = ({
   nextScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
 }) => {
+  if (
+    currentLayout.type !== "video-scene" ||
+    currentLayout.layout.displayLayout === null
+  ) {
+    throw new Error("no transitions on non-video scenes");
+  }
+
   const currentandPreviousAreVideoScenes =
     previousLayout &&
-    currentLayout.type === "video-scene" &&
-    previousLayout.type === "video-scene";
+    previousLayout.type === "video-scene" &&
+    previousLayout.layout.displayLayout !== null;
   const nextAndCurrentAreVideoScenes =
     nextLayout &&
-    currentLayout.type === "video-scene" &&
-    nextLayout.type === "video-scene";
+    nextLayout.type === "video-scene" &&
+    nextLayout.layout.displayLayout !== null;
 
   const enterStartX = currentandPreviousAreVideoScenes
-    ? previousLayout.layout.webcamLayout.x - currentLayout.layout.webcamLayout.x
-    : width;
+    ? (previousLayout.layout.displayLayout as Layout).x
+    : currentLayout.layout.displayLayout.x + width;
 
   const enterStartY = currentandPreviousAreVideoScenes
-    ? previousLayout.layout.webcamLayout.y - currentLayout.layout.webcamLayout.y
-    : 0;
+    ? (previousLayout.layout.displayLayout as Layout).y
+    : currentLayout.layout.displayLayout.y;
 
   const exitEndX = nextAndCurrentAreVideoScenes
-    ? nextLayout.layout.webcamLayout.x - currentLayout.layout.webcamLayout.x
-    : -width;
+    ? (nextLayout.layout.displayLayout as Layout).x
+    : currentLayout.layout.displayLayout.x - width;
 
   const exitEndY = nextAndCurrentAreVideoScenes
-    ? nextLayout.layout.webcamLayout.y - currentLayout.layout.webcamLayout.y
-    : 0;
+    ? (nextLayout.layout.displayLayout as Layout).y
+    : currentLayout.layout.displayLayout.y;
 
   const startOpacity = currentLayout && previousLayout ? 0 : 1;
-
-  const enterX = interpolate(enter, [0, 1], [enterStartX, 0]);
-  const enterY = interpolate(enter, [0, 1], [enterStartY, 0]);
-
-  const exitX = interpolate(exit, [0, 1], [0, exitEndX]);
-  const exitY = interpolate(exit, [0, 1], [0, exitEndY]);
-
   const opacity = interpolate(enter, [0, 0.5], [startOpacity, 1]);
 
-  const translationX = enterX + exitX;
-  const translationY = enterY + exitY;
+  if (exit > 0) {
+    return {
+      translationX: Math.round(
+        interpolate(
+          exit,
+          [0, 1],
+          [currentLayout.layout.displayLayout.x, exitEndX],
+        ),
+      ),
+      translationY: Math.round(
+        interpolate(
+          exit,
+          [0, 1],
+          [currentLayout.layout.displayLayout.y, exitEndY],
+        ),
+      ),
+      opacity,
+    };
+  }
+
+  const enterX = interpolate(
+    enter,
+    [0, 1],
+    [enterStartX, currentLayout.layout.displayLayout.x],
+  );
+  const enterY = interpolate(
+    enter,
+    [0, 1],
+    [enterStartY, currentLayout.layout.displayLayout.y],
+  );
 
   return {
-    translationX: Math.round(translationX),
-    translationY: Math.round(translationY),
+    translationX: Math.round(enterX),
+    translationY: Math.round(enterY),
     opacity,
   };
 };

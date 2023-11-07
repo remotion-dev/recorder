@@ -45,7 +45,6 @@ export const Root = () => {
           canvasLayout: "wide",
           prefix: "day2",
           scenesAndMetadata: [],
-          pairs: [],
           scenes: [
             {
               type: "scene",
@@ -177,7 +176,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -461,7 +459,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -687,7 +684,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -871,7 +867,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -948,7 +943,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -1065,7 +1059,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -1282,7 +1275,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -1369,7 +1361,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -1576,7 +1567,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -1733,7 +1723,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -1917,7 +1906,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -2081,7 +2069,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -2207,7 +2194,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />
@@ -2399,7 +2385,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -2613,7 +2598,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -2817,7 +2801,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -2989,7 +2972,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -3004,7 +2986,6 @@ export const Root = () => {
           prefix: "karaoketeaser",
           scenesAndMetadata: [],
           scenes: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -3196,7 +3177,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -3368,7 +3348,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -3512,7 +3491,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -3637,7 +3615,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -3745,7 +3722,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -3904,7 +3880,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -3919,7 +3894,6 @@ export const Root = () => {
           prefix: "court",
           scenesAndMetadata: [],
           scenes: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -4075,7 +4049,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -4291,7 +4264,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -4451,7 +4423,6 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
@@ -4466,7 +4437,6 @@ export const Root = () => {
           prefix: "empty",
           scenesAndMetadata: [],
           scenes: [],
-          pairs: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}

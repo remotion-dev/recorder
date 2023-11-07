@@ -75,6 +75,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
             videos,
             canvasLayout: props.canvasLayout,
           }),
+          pair: p,
         };
       }),
     )

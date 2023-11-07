@@ -22,6 +22,7 @@ export type VideoSceneAndMetadata = {
   sumUpDuration: number;
   videos: SceneVideos;
   layout: CameraSceneLayout;
+  pair: Pair;
 };
 
 export type SceneAndMetadata =
