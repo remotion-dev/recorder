@@ -3405,12 +3405,12 @@ export const Root = () => {
         id="transitions"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "square" as const,
+          canvasLayout: "wide" as const,
           prefix: "transitions",
           scenes: [
             {
               type: "scene" as const,
-              webcamPosition: "top-left" as const,
+              webcamPosition: "bottom-left" as const,
               trimStart: 0,
               duration: null,
               transitionToNextScene: true,
@@ -3420,7 +3420,7 @@ export const Root = () => {
             },
             {
               type: "scene" as const,
-              webcamPosition: "top-left" as const,
+              webcamPosition: "bottom-left" as const,
               trimStart: 0,
               duration: null,
               transitionToNextScene: false,
