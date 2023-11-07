@@ -3413,7 +3413,7 @@ export const Root = () => {
               webcamPosition: "top-left" as const,
               trimStart: 0,
               duration: null,
-              transitionToNextScene: false,
+              transitionToNextScene: true,
               newChapter: "",
               stopChapteringAfterThis: false,
               music: "previous" as const,
@@ -3588,7 +3588,7 @@ export const Root = () => {
         id="mistakes"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "square" as const,
+          canvasLayout: "wide" as const,
           prefix: "mistakes",
           scenes: [
             {

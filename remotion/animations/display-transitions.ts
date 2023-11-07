@@ -87,10 +87,14 @@ const getDisplayEnter = ({
   currentScene,
   previousScene,
   width,
+  canvasLayout,
+  height,
 }: {
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
+  canvasLayout: CanvasLayout;
+  height: number;
 }) => {
   if (
     currentScene.type !== "video-scene" ||
@@ -101,15 +105,40 @@ const getDisplayEnter = ({
 
   if (
     previousScene &&
+    previousScene.type === "video-scene" &&
     isShrinkingToMiniature({
       firstScene: previousScene,
       secondScene: currentScene,
     })
   ) {
+    const previouslyAtBottom = isWebCamAtBottom(
+      previousScene.finalWebcamPosition,
+    );
+    const currentlyAtBottom = isWebCamAtBottom(
+      currentScene.finalWebcamPosition,
+    );
+    const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
+
     const translationY = currentScene.layout.displayLayout.height;
     const y = isWebCamAtBottom(currentScene.finalWebcamPosition)
-      ? -translationY
-      : translationY;
+      ? changedVerticalPosition
+        ? -translationY
+        : height
+      : changedVerticalPosition
+      ? translationY
+      : height;
+
+    const wideX = isWebCamRight(currentScene.finalWebcamPosition)
+      ? -width
+      : width;
+
+    if (canvasLayout === "wide") {
+      return {
+        enterStartX: wideX,
+        enterStartY: 0,
+      };
+    }
+
     return {
       enterStartX: (currentScene.layout.displayLayout as Layout).x,
       enterStartY: y,
@@ -150,6 +179,8 @@ const getDisplayTransitionOrigins = ({
     currentScene,
     previousScene,
     width,
+    canvasLayout,
+    height,
   });
 
   const { exitEndX, exitEndY } = getDisplayExit({
