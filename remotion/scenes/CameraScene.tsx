@@ -117,7 +117,7 @@ const Inner: React.FC<{
       ) : null}
       {scene.scene.newChapter && canvasLayout === "square" ? (
         <SquareChapter
-          webcamPosition={scene.scene.webcamPosition}
+          webcamPosition={scene.finalWebcamPosition}
           title={scene.scene.newChapter}
         />
       ) : null}

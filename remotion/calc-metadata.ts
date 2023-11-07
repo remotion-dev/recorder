@@ -4,6 +4,7 @@ import type { AllProps } from "./All";
 import { getSumUpDuration } from "./animations/transitions";
 import type {
   SceneAndMetadata,
+  SceneType,
   SceneVideos,
   WebcamPosition,
 } from "./configuration";
@@ -18,11 +19,10 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   const pairs = getPairs(props.prefix);
 
   let videoIndex = -1;
-  let currentWebcamPosition: WebcamPosition = "top-left";
 
   const scenesAndMetadata = (
     await Promise.all(
-      props.scenes.map(async (scene): Promise<SceneAndMetadata | null> => {
+      props.scenes.map(async (scene, i): Promise<SceneAndMetadata | null> => {
         if (
           scene.type === "title" ||
           scene.type === "titlecard" ||
@@ -37,9 +37,6 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
         }
 
         videoIndex += 1;
-        if (scene.webcamPosition !== "previous") {
-          currentWebcamPosition = scene.webcamPosition;
-        }
 
         const p = pairs[videoIndex];
         if (!p) {
@@ -68,18 +65,32 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           },
         };
 
+        let { webcamPosition } = scene;
+        let idx = i;
+        while (webcamPosition === "previous" && idx > 0) {
+          idx -= 1;
+          const prevScene = props.scenes[idx] as SceneType;
+          if (prevScene.type === "scene") {
+            webcamPosition = prevScene.webcamPosition;
+          }
+
+          if (webcamPosition === "previous" && idx === 0) {
+            webcamPosition = "top-left";
+          }
+        }
+
         return {
           type: "video-scene",
           scene,
           videos,
           durationInFrames: duration,
           layout: getLayout({
-            webcamPosition: currentWebcamPosition,
+            webcamPosition: webcamPosition as WebcamPosition,
             videos,
             canvasLayout: props.canvasLayout,
           }),
           pair: p,
-          finalWebcamPosition: currentWebcamPosition,
+          finalWebcamPosition: webcamPosition as WebcamPosition,
         };
       }),
     )

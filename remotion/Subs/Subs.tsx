@@ -87,7 +87,7 @@ export const Subs: React.FC<{
     subtitleType,
     displayLayout: scene.layout.displayLayout,
     webcamLayout: scene.layout.webcamLayout,
-    webcamPosition: scene.scene.webcamPosition,
+    webcamPosition: scene.finalWebcamPosition,
   });
 
   const postprocessed = useMemo(() => {

@@ -77,7 +77,7 @@ export const generateChapters = ({
       const lastChapter = chapters[chapters.length - 1] as ChapterType;
       if (sceneAndMetadata.type === "video-scene") {
         if (
-          sceneAndMetadata.scene.webcamPosition ===
+          sceneAndMetadata.finalWebcamPosition ===
           (
             lastChapter.webcamPositions[
               lastChapter.webcamPositions.length - 1
