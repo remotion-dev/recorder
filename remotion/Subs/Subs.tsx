@@ -5,6 +5,7 @@ import {
   continueRender,
   delayRender,
   useVideoConfig,
+  watchStaticFile,
 } from "remotion";
 import { getSubtitleTranslation } from "../animations/camera-scene-transitions";
 import type {
@@ -44,15 +45,26 @@ export const Subs: React.FC<{
   const [data, setData] = useState<SubTypes | null>(null);
   const { width, height } = useVideoConfig();
   const [handle] = useState(() => delayRender());
+  const [changeStatus, setChangeStatus] = useState<
+    "initial" | "changed" | "unchanged"
+  >("initial");
+  watchStaticFile(file.name, (newData: StaticFile | null) => {
+    if (newData) {
+      setChangeStatus("changed");
+    }
+  });
 
   useEffect(() => {
-    fetch(file.src)
-      .then((res) => res.json())
-      .then((d) => {
-        continueRender(handle);
-        setData(d);
-      });
-  }, [file.src, handle]);
+    if (changeStatus === "initial" || changeStatus === "changed") {
+      fetch(file.src)
+        .then((res) => res.json())
+        .then((d) => {
+          continueRender(handle);
+          setData(d);
+        });
+      setChangeStatus("unchanged");
+    }
+  }, [changeStatus, file.src, handle]);
 
   const subtitleTranslation = useMemo(() => {
     return getSubtitleTranslation({
