@@ -1,7 +1,13 @@
 import { interpolate } from "remotion";
-import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
+import type {
+  CanvasLayout,
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../configuration";
 import type { Layout } from "../layout/get-layout";
+import { safeSpace } from "../layout/get-layout";
 import {
+  isGrowingFromMiniature,
   isShrinkingToMiniature,
   isWebCamAtBottom,
 } from "./camera-scene-transitions";
@@ -10,9 +16,11 @@ const getDisplayExit = ({
   currentScene,
   nextScene,
   width,
+  canvasLayout,
 }: {
   nextScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
+  canvasLayout: CanvasLayout;
   width: number;
 }) => {
   if (
@@ -31,6 +39,19 @@ const getDisplayExit = ({
     return {
       exitEndX: (nextScene.layout.displayLayout as Layout).x,
       exitEndY: (nextScene.layout.displayLayout as Layout).y,
+    };
+  }
+
+  if (
+    nextScene &&
+    isGrowingFromMiniature({ firstScene: currentScene, secondScene: nextScene })
+  ) {
+    const y = isWebCamAtBottom(currentScene.finalWebcamPosition)
+      ? -currentScene.layout.displayLayout.height
+      : currentScene.layout.displayLayout.height + safeSpace(canvasLayout) * 2;
+    return {
+      exitEndX: currentScene.layout.displayLayout.x,
+      exitEndY: y,
     };
   }
 
@@ -95,12 +116,14 @@ const getDisplayTransitionOrigins = ({
   previousScene,
   width,
   height,
+  canvasLayout,
 }: {
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
   height: number;
+  canvasLayout: CanvasLayout;
 }) => {
   const { enterStartX, enterStartY } = getDisplayEnter({
     currentScene,
@@ -113,6 +136,7 @@ const getDisplayTransitionOrigins = ({
     currentScene,
     nextScene,
     width,
+    canvasLayout,
   });
 
   return {
@@ -131,6 +155,7 @@ export const getDisplayPosition = ({
   nextScene,
   previousScene,
   currentScene,
+  canvasLayout,
 }: {
   enter: number;
   exit: number;
@@ -139,6 +164,7 @@ export const getDisplayPosition = ({
   previousScene: SceneAndMetadata | null;
   nextScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
+  canvasLayout: CanvasLayout;
 }) => {
   if (
     currentScene.type !== "video-scene" ||
@@ -154,6 +180,7 @@ export const getDisplayPosition = ({
       previousScene,
       width,
       height,
+      canvasLayout,
     });
 
   const startOpacity = currentScene && previousScene ? 0 : 1;

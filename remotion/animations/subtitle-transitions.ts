@@ -7,6 +7,7 @@ import type {
 import type { Layout } from "../layout/get-layout";
 import { safeSpace } from "../layout/get-layout";
 import {
+  isGrowingFromMiniature,
   isGrowingOrShrinkingToMiniature,
   isShrinkingToMiniature,
   isWebCamAtBottom,
@@ -42,6 +43,18 @@ const getSubtitleExit = ({
       otherScene: nextScene,
     })
   ) {
+    if (isGrowingFromMiniature({ firstScene: scene, secondScene: nextScene })) {
+      const isLeft = !isWebCamRight(scene.finalWebcamPosition);
+      const webcamTranslation =
+        nextScene.layout.webcamLayout.y - scene.layout.webcamLayout.y;
+      return {
+        translationX: isLeft
+          ? currentLayout.width + safeSpace(canvasLayout)
+          : -width,
+        translationY: webcamTranslation,
+      };
+    }
+
     if (isShrinkingToMiniature({ firstScene: scene, secondScene: nextScene })) {
       const isAtBottomBefore = isWebCamAtBottom(scene.finalWebcamPosition);
       const isAtBottomAfter = isWebCamAtBottom(nextScene.finalWebcamPosition);
