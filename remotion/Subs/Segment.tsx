@@ -283,6 +283,7 @@ export const SegmentComp: React.FC<{
         textWrap: "balance",
         border: "3px solid " + COLORS.BORDER_COLOR,
         backgroundColor: COLORS.SUBTITLES_BACKGROUND,
+        boxShadow: "0px 2px 2px rgba(0,0,0,.04)",
         ...getSubsLayout({
           canvasLayout,
           subsBox,
