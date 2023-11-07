@@ -167,5 +167,5 @@ export type Pair = {
   sub: StaticFile | null;
 };
 
-export const transitionDuration = 20;
+export const transitionDuration = 15;
 export const fps = 30;
