@@ -330,7 +330,7 @@ export const getSubtitleTranslation = ({
               extrapolateLeft: "clamp",
               extrapolateRight: "clamp",
             })
-          : 0,
+          : 1,
     };
   }
 
@@ -352,6 +352,6 @@ export const getSubtitleTranslation = ({
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
           })
-        : 0,
+        : 1,
   };
 };
