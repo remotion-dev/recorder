@@ -3423,7 +3423,7 @@ export const Root = () => {
               webcamPosition: "bottom-left" as const,
               trimStart: 0,
               duration: null,
-              transitionToNextScene: false,
+              transitionToNextScene: true,
               newChapter: "",
               stopChapteringAfterThis: false,
               music: "previous" as const,
@@ -3603,7 +3603,7 @@ export const Root = () => {
             },
             {
               type: "scene" as const,
-              webcamPosition: "bottom-left" as const,
+              webcamPosition: "top-right" as const,
               trimStart: 0,
               duration: null,
               transitionToNextScene: true,
@@ -3613,7 +3613,7 @@ export const Root = () => {
             },
             {
               type: "scene" as const,
-              webcamPosition: "top-right" as const,
+              webcamPosition: "bottom-left" as const,
               trimStart: 0,
               duration: null,
               transitionToNextScene: true,

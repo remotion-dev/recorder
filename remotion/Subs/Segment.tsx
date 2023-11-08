@@ -300,7 +300,7 @@ export const SegmentComp: React.FC<{
           style={{
             textShadow:
               subtitleType === "overlayed-center"
-                ? "0px 0px 30px rgba(0, 0, 0, 0.5)"
+                ? "0px 0px 30px rgba(0, 0, 0, 1)"
                 : undefined,
             lineHeight: LINE_HEIGHT,
             display: "inline-block",
