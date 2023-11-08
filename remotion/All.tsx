@@ -17,6 +17,7 @@ import type {
 import { transitionDuration } from "./configuration";
 import { CameraScene } from "./scenes/CameraScene";
 import { EndCard } from "./scenes/EndCard";
+import { TableOfContents } from "./scenes/TableOfContents";
 import { Title } from "./scenes/Title";
 import { TitleCard } from "./scenes/TitleCard";
 import { UpdateScene } from "./scenes/UpdateScene";
@@ -121,6 +122,22 @@ export const All: React.FC<AllProps> = ({
                 channel={sceneAndMetadata.scene.channel}
                 isTransitioningIn={isTransitioningIn}
                 links={sceneAndMetadata.scene.links}
+              />
+            </Sequence>
+          );
+        }
+
+        if (sceneAndMetadata.scene.type === "tableofcontents") {
+          return (
+            <Sequence
+              // eslint-disable-next-line react/no-array-index-key
+              key={i}
+              from={from}
+              durationInFrames={sceneAndMetadata.scene.durationInFrames}
+            >
+              <TableOfContents
+                canvasLayout={canvasLayout}
+                isTransitioningIn={isTransitioningIn}
               />
             </Sequence>
           );
