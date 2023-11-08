@@ -20,7 +20,6 @@ const storeLabelsToLS = (devices: MediaDeviceInfo[]) => {
     const { label } = device;
     const id = device.deviceId;
     const cleanLabel = label.split("(")[0] || "";
-    console.log("adjustedLabel", cleanLabel);
 
     if (!labels.some((l) => l.id === id) && cleanLabel !== "") {
       labels.push({ id, label: cleanLabel });
