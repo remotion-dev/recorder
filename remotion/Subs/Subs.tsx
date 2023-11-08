@@ -5,6 +5,7 @@ import {
   continueRender,
   delayRender,
   useVideoConfig,
+  watchStaticFile,
 } from "remotion";
 import { getSubtitleTranslation } from "../animations/subtitle-transitions";
 import type {
@@ -44,15 +45,35 @@ export const Subs: React.FC<{
   const [data, setData] = useState<SubTypes | null>(null);
   const { width, height } = useVideoConfig();
   const [handle] = useState(() => delayRender());
+  const [changeStatus, setChangeStatus] = useState<
+    "initial" | "changed" | "unchanged"
+  >("initial");
 
   useEffect(() => {
-    fetch(file.src)
-      .then((res) => res.json())
-      .then((d) => {
-        continueRender(handle);
-        setData(d);
-      });
-  }, [file.src, handle]);
+    const { cancel } = watchStaticFile(
+      file.name,
+      (newData: StaticFile | null) => {
+        if (newData) {
+          setChangeStatus("changed");
+        }
+      },
+    );
+    return () => {
+      cancel();
+    };
+  }, [file.name]);
+
+  useEffect(() => {
+    if (changeStatus === "initial" || changeStatus === "changed") {
+      fetch(file.src)
+        .then((res) => res.json())
+        .then((d) => {
+          continueRender(handle);
+          setData(d);
+        });
+      setChangeStatus("unchanged");
+    }
+  }, [changeStatus, file.src, handle]);
 
   const subtitleType = getSubtitlesType({
     canvasLayout,
