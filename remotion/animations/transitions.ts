@@ -19,12 +19,12 @@ export const getIsTransitioningOut = ({
   sceneAndMetadata: SceneAndMetadata;
   nextScene: SceneAndMetadata | null;
 }) => {
-  if (isATextCard(sceneAndMetadata.scene)) {
-    return true;
-  }
-
   if (nextScene === null) {
     return false;
+  }
+
+  if (isATextCard(sceneAndMetadata.scene)) {
+    return true;
   }
 
   if (isATextCard(nextScene.scene)) {

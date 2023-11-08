@@ -15,10 +15,11 @@ import { borderRadius, safeSpace } from "../layout/get-layout";
 
 export const TitleCard: React.FC<{
   title: string;
-  durationInFrames: number;
   image: string;
   youTubePlug: boolean;
-}> = ({ title, durationInFrames, image, youTubePlug }) => {
+  enter: number;
+  exit: number;
+}> = ({ title, image, youTubePlug, enter, exit }) => {
   const { fps, width, height } = useVideoConfig();
   const frame = useCurrentFrame();
 
@@ -33,20 +34,10 @@ export const TitleCard: React.FC<{
       delay,
     });
 
-  const hide = spring({
-    fps,
-    frame,
-    durationInFrames: transitionDuration,
-    config: {
-      damping: 200,
-    },
-    delay: durationInFrames - transitionDuration,
-  });
-
   const desiredImageWidth = width - safeSpace("square") * 2;
   const actualImageHeight = Math.min(
     height * 0.7,
-    (desiredImageWidth / 16) * 9
+    (desiredImageWidth / 16) * 9,
   );
   const actualImageWidth = (actualImageHeight / 9) * 16;
 
@@ -54,8 +45,8 @@ export const TitleCard: React.FC<{
     <AbsoluteFill
       style={{
         translate:
-          interpolate(hide, [0, 1], [0, -width]) +
-          interpolate(show(0), [0, 1], [width, 0]) +
+          interpolate(exit, [0, 1], [0, -width]) +
+          interpolate(enter, [0, 1], [width, 0]) +
           "px 0",
       }}
     >
