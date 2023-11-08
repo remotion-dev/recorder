@@ -55,7 +55,7 @@ export const WideScreenChapters: React.FC<{
           previousScene?.chapterId !== chapterScene.chapterId;
 
         const noTransition =
-          previousScene &&
+          previousScene !== null &&
           !previousScene.webcamInformation.scene.scene.transitionToNextScene;
 
         const shouldSlideY =
