@@ -3,6 +3,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, useVideoConfig } from "remotion";
 import type { ChapterType } from "../../chapters/make-chapters";
 import { COLORS } from "../../colors";
+import { TableOfContentItem } from "./item";
 
 loadFont();
 
@@ -22,10 +23,19 @@ export const TableOfContents: React.FC<{
           [0, 1],
           [width, 0],
         )}px)`,
+        justifyContent: "center",
+        paddingLeft: 80,
+        paddingRight: 80,
       }}
     >
       {chapters.map((chapter) => {
-        return <div key={chapter.id}>{chapter.title}</div>;
+        return (
+          <TableOfContentItem
+            key={chapter.id}
+            startTime={chapter.start}
+            title={chapter.title}
+          />
+        );
       })}
     </AbsoluteFill>
   );
