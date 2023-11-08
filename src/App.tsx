@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { onVideo } from "./on-video";
 import { TopBar } from "./TopBar";
+import { useKeyPress } from "./use-key-press";
 import type { Prefix, prefixes } from "./Views";
 import { View } from "./Views";
 
@@ -87,6 +88,20 @@ const App = () => {
     endDate = Date.now();
     setRecording(false);
   };
+
+  const onPressR = () => {
+    if (mediaSources.webcam === null || !mediaSources.webcam.active) {
+      return;
+    }
+
+    if (recording) {
+      stop();
+    } else {
+      start();
+    }
+  };
+
+  useKeyPress(["r"], onPressR);
 
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then((_devices) => {
