@@ -2,6 +2,7 @@
 
 import type { SetStateAction } from "react";
 import { useCallback, useMemo } from "react";
+import { getDeviceLabel } from "./App";
 import {
   Select,
   SelectContent,
@@ -42,9 +43,10 @@ export const AudioSelector: React.FC<{
         {devices
           .filter((d) => d.kind === "audioinput")
           .map((d) => {
+            const label = getDeviceLabel(d.deviceId);
             return (
               <SelectItem key={d.deviceId} value={d.deviceId}>
-                {d.label}
+                {label}
               </SelectItem>
             );
           })}
