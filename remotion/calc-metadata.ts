@@ -127,7 +127,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   const durations = scenesAndMetadata.map((s, i) => {
     return getSumUpDuration({
       scene: s,
-      previousScene: scenesAndMetadata[i + 1] ?? null,
+      previousScene: scenesAndMetadata[i - 1] ?? null,
     });
   });
 
