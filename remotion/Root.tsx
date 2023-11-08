@@ -3405,7 +3405,7 @@ export const Root = () => {
         id="transitions"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "wide" as const,
+          canvasLayout: "square" as const,
           prefix: "transitions",
           scenes: [
             {
