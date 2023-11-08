@@ -85,7 +85,7 @@ export const AudioTrack: React.FC<{
       addedUpDurations -= transitionDuration;
     }
 
-    const isLoud = isATextCard(scene);
+    const isLoud = isATextCard(scene.scene);
 
     const { music } = scene.scene;
 

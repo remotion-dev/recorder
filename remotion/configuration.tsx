@@ -119,6 +119,11 @@ export const configuration = z.discriminatedUnion("type", [
     platform,
     links: z.array(linkType),
   }),
+  z.object({
+    type: z.literal("tableofcontents"),
+    durationInFrames: z.number().int().default(200),
+    music,
+  }),
 ]);
 
 export const canvasLayout = z.enum(["wide", "tall", "square"]);
