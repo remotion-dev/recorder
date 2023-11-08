@@ -29,7 +29,7 @@ const gridContainer: React.CSSProperties = {
 
 const mediaRecorderOptions: MediaRecorderOptions = {
   audioBitsPerSecond: 128000,
-  mimeType: "video/webm;codecs=vp8,opus",
+  // mimeType: "video/webm;codecs=vp8",
   videoBitsPerSecond: 8 * 4000000,
 };
 
@@ -38,7 +38,6 @@ const App = () => {
 
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
-
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
   }>({ webcam: null, display: null, alternative1: null, alternative2: null });
@@ -61,11 +60,20 @@ const App = () => {
         continue;
       }
 
-      const recorder = new MediaRecorder(source, mediaRecorderOptions);
+      const mimeType =
+        prefix === "webcam"
+          ? "video/webm;codecs=vp8,opus"
+          : "video/webm;codecs=vp8";
+
+      const completeMediaRecorderOptions = {
+        ...mediaRecorderOptions,
+        mimeType,
+      };
+
+      const recorder = new MediaRecorder(source, completeMediaRecorderOptions);
       newRecorders.push(recorder);
 
       recorder.addEventListener("dataavailable", ({ data }) => {
-        console.log("prefix: ", prefix);
         onVideo(data, endDate, prefix);
       });
 
@@ -73,15 +81,9 @@ const App = () => {
         console.log("error: ", prefix, event);
       });
 
-      recorder.addEventListener("start", (event) => {
-        console.log("start: ", prefix, event);
+      toStart.push(() => {
+        return recorder.start();
       });
-
-      recorder.addEventListener("stop", (event) => {
-        console.log("stop: ", prefix, event);
-      });
-
-      toStart.push(() => recorder.start());
     }
 
     setRecorders(newRecorders);
@@ -111,7 +113,7 @@ const App = () => {
         start={start}
         stop={stop}
         recording={recording}
-        disabledByParent={!mediaSources.webcam}
+        disabledByParent={false}
       />
 
       <div style={gridContainer}>
