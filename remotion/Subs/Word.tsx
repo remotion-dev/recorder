@@ -7,7 +7,6 @@ import {
 } from "remotion";
 import { COLORS } from "../colors";
 import type { Word } from "../sub-types";
-import type { SubtitleType } from "./Segment";
 
 const style: React.CSSProperties = {
   display: "inline",
@@ -65,31 +64,22 @@ const getShownWordColor = ({
 };
 
 const getWordColor = ({
-  subtitleLayout,
   appeared,
   monospace,
 }: {
-  subtitleLayout: SubtitleType;
   monospace: boolean;
   appeared: boolean;
 }): { appeared: string; greyed: string } => {
-  const normalWordColor =
-    subtitleLayout === "overlayed-center"
-      ? {
-          appeared: COLORS.WORD_COLOR_ON_VIDEO_APPEARED,
-          greyed: COLORS.WORD_COLOR_ON_VIDEO_GREYED,
-        }
-      : {
-          appeared: COLORS.WORD_COLOR_ON_BG_APPEARED,
-          greyed: COLORS.WORD_COLOR_ON_BG_GREYED,
-        };
+  const normalWordColor = {
+    appeared: COLORS.WORD_COLOR_ON_BG_APPEARED,
+    greyed: COLORS.WORD_COLOR_ON_BG_GREYED,
+  };
 
   const wordColor =
     monospace && appeared
       ? {
           appeared: COLORS.WORD_HIGHLIGHT_COLOR,
-          // TODO: Not sure if this is the right color
-          greyed: COLORS.WORD_COLOR_ON_VIDEO_GREYED,
+          greyed: COLORS.WORD_COLOR_ON_BG_GREYED,
         }
       : normalWordColor;
   return wordColor;
@@ -101,12 +91,13 @@ export const regularFont = "Inter";
 export const monospaceFontWeight = 500;
 export const monospaceFont = "GT Planar";
 
+export const WORD_HIGHLIGHT_BORDER_RADIUS = 10;
+
 export const WordComp: React.FC<{
   word: Word;
   trimStart: number;
   isLast: boolean;
-  subtitleLayout: SubtitleType;
-}> = ({ word, trimStart, isLast, subtitleLayout }) => {
+}> = ({ word, trimStart, isLast }) => {
   const time = useTime(trimStart);
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -133,7 +124,6 @@ export const WordComp: React.FC<{
 
   const wordColor = getWordColor({
     appeared,
-    subtitleLayout,
     monospace: word.monospace ?? false,
   });
 
@@ -164,7 +154,7 @@ export const WordComp: React.FC<{
           fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
           backgroundColor,
           outline: active ? "5px solid " + backgroundColor : "none",
-          borderRadius: 10,
+          borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS,
           scale: String(scale),
           display: "inline-block",
         }}
