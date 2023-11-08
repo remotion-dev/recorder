@@ -22,11 +22,7 @@ export type ChapterType = {
   webcamPositions: WebcamInformation[];
 };
 
-export const generateChapters = ({
-  scenes,
-}: {
-  scenes: SceneAndMetadata[];
-}) => {
+export const makeChapters = ({ scenes }: { scenes: SceneAndMetadata[] }) => {
   let passedDuration = 0;
   const chapters: ChapterType[] = [];
 
