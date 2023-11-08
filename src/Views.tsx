@@ -137,6 +137,7 @@ export const View: React.FC<{
     },
     [],
   );
+
   useEffect(() => {
     if (recordAudio) {
       return () => {
