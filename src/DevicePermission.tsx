@@ -83,11 +83,13 @@ const Permission: React.FC<{
     if (!result && deviceState === "initial") {
       // probe for permission
       try {
-        await navigator.mediaDevices.getUserMedia({
+        const stream = await navigator.mediaDevices.getUserMedia({
           video: type === "video",
           audio: type === "audio",
         });
         setDeviceState("prompt");
+        stream.getVideoTracks().forEach((track) => track.stop());
+        stream.getAudioTracks().forEach((track) => track.stop());
       } catch (err) {
         console.log("Error on getUserMedia", err);
         setDeviceState("denied");

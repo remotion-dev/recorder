@@ -30,7 +30,6 @@ const gridContainer: React.CSSProperties = {
 
 const mediaRecorderOptions: MediaRecorderOptions = {
   audioBitsPerSecond: 128000,
-  // mimeType: "video/webm;codecs=vp8",
   videoBitsPerSecond: 8 * 4000000,
 };
 
@@ -42,6 +41,7 @@ const App = () => {
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
   }>({ webcam: null, display: null, alternative1: null, alternative2: null });
+
   const setMediaStream = useCallback(
     (prefix: Prefix, source: MediaStream | null) => {
       setMediaSources((prevMediaSources) => ({
