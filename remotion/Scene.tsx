@@ -24,7 +24,6 @@ export const Scene: React.FC<{
   index: number;
   canvasLayout: CanvasLayout;
   chapters: ChapterType[];
-  addedUpDurations: number;
 }> = ({
   index,
   nextScene,
