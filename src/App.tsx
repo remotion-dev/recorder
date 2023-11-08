@@ -7,6 +7,37 @@ import { useKeyPress } from "./use-key-press";
 import type { Prefix, prefixes } from "./Views";
 import { View } from "./Views";
 
+type Label = { id: string; label: string };
+
+export const getDeviceLabel = (id: string): string => {
+  const labels: Label[] = JSON.parse(localStorage.getItem("labels") || "[]");
+  return labels.find((l) => l.id === id)?.label || "";
+};
+
+const storeLabelsToLS = (devices: MediaDeviceInfo[]) => {
+  const labels: Label[] = JSON.parse(localStorage.getItem("labels") || "[]");
+  devices.forEach((device) => {
+    const { label } = device;
+    const id = device.deviceId;
+
+    if (!labels.some((l) => l.id === id) && label !== "") {
+      labels.push({ id, label });
+    }
+  });
+
+  localStorage.setItem("labels", JSON.stringify(labels));
+};
+
+const hasNewDevices = (devices: MediaDeviceInfo[]): boolean => {
+  const labels: Label[] = JSON.parse(localStorage.getItem("labels") || "[]");
+
+  const hasNew = !devices.every((device) => {
+    return labels.some((l) => l.id === device.deviceId);
+  });
+
+  return hasNew;
+};
+
 let endDate = 0;
 
 const outer: React.CSSProperties = {
@@ -51,7 +82,6 @@ const App = () => {
     },
     [],
   );
-
   const start = () => {
     setRecording(() => Date.now());
     const toStart = [];
@@ -115,12 +145,25 @@ const App = () => {
   };
 
   useKeyPress(["r"], onPressR);
-
   useEffect(() => {
-    navigator.mediaDevices.enumerateDevices().then((_devices) => {
-      setDevices(_devices);
-    });
-  }, []);
+    const checkDeviceLabels = async () => {
+      const devicesWOLabel = await navigator.mediaDevices.enumerateDevices();
+      if (hasNewDevices(devicesWOLabel)) {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        const _devices = await navigator.mediaDevices.enumerateDevices();
+        storeLabelsToLS(_devices);
+        stream.getAudioTracks().forEach((track) => track.stop());
+        stream.getVideoTracks().forEach((track) => track.stop());
+      }
+
+      setDevices(devicesWOLabel);
+    };
+
+    checkDeviceLabels();
+  }, [devices]);
 
   return (
     <div style={outer}>
