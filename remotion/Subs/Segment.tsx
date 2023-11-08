@@ -53,10 +53,10 @@ export const getSubtitlesFontSize = (
   }
 
   if (subtitleType === "overlayed-center") {
-    return 48;
+    return 56;
   }
 
-  return 40;
+  return 48;
 };
 
 export const getSubtitlesLines = (subtitleType: SubtitleType) => {
@@ -64,7 +64,7 @@ export const getSubtitlesLines = (subtitleType: SubtitleType) => {
     return 4;
   }
 
-  return 2;
+  return 1;
 };
 
 export const getSubsBox = ({
