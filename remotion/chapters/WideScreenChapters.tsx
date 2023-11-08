@@ -30,31 +30,32 @@ export const WideScreenChapters: React.FC<{
         const previousScene: ChapterScene | null = chapterScenes[i - 1] ?? null;
 
         const outTransition = transitionOut({
-          currentWebcamPosition: chapterScene.webcamInformation.webcamPosition,
-          nextWebcamPosition: nextChapterScene
-            ? nextChapterScene.webcamInformation.webcamPosition
+          currentWebcamPosition:
+            chapterScene.webcamInformation.scene.finalWebcamPosition,
+          nextScene: nextChapterScene
+            ? nextChapterScene.webcamInformation.scene
             : null,
           transitionToNextScene:
-            chapterScene.webcamInformation.transitionToNextScene,
+            chapterScene.webcamInformation.scene.scene.transitionToNextScene,
         });
 
         const inTransition = transitionIn({
-          currentWebcamPosition: chapterScene.webcamInformation.webcamPosition,
+          currentScene: chapterScene.webcamInformation.scene,
           previousWebcamPosition: previousScene
-            ? previousScene.webcamInformation.webcamPosition
+            ? previousScene.webcamInformation.scene.finalWebcamPosition
             : null,
           previousTransitionToNextScene: previousScene
-            ? previousScene.webcamInformation.transitionToNextScene
+            ? previousScene.webcamInformation.scene.scene.transitionToNextScene
             : false,
         });
 
         const isSameWebcamPositionAsBefore =
-          previousScene?.webcamInformation?.webcamPosition ===
-          chapterScene.webcamInformation.webcamPosition;
+          previousScene?.webcamInformation?.scene.finalWebcamPosition ===
+          chapterScene.webcamInformation.scene.finalWebcamPosition;
 
         const isSameWebcamPositionAsNext =
-          nextChapterScene?.webcamInformation?.webcamPosition ===
-          chapterScene.webcamInformation.webcamPosition;
+          nextChapterScene?.webcamInformation?.scene.finalWebcamPosition ===
+          chapterScene.webcamInformation.scene.finalWebcamPosition;
 
         const isDifferentChapterThanPrevious =
           previousScene?.chapterId !== chapterScene.chapterId;

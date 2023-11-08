@@ -2,16 +2,13 @@ import {
   getIsTransitioningIn,
   getSumUpDuration,
 } from "../animations/transitions";
-import type { SceneAndMetadata, WebcamPosition } from "../configuration";
+import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
 import { transitionDuration } from "../configuration";
-import type { CameraSceneLayout } from "../layout/get-layout";
 
 export type WebcamInformation = {
-  webcamPosition: WebcamPosition;
+  scene: VideoSceneAndMetadata;
   start: number;
   end: number;
-  layout: CameraSceneLayout;
-  transitionToNextScene: boolean;
 };
 
 export type ChapterType = {
@@ -64,10 +61,8 @@ export const generateChapters = ({
         webcamPositions: [
           {
             start,
-            webcamPosition: sceneAndMetadata.finalWebcamPosition,
             end,
-            layout: sceneAndMetadata.layout,
-            transitionToNextScene: sceneAndMetadata.scene.transitionToNextScene,
+            scene: sceneAndMetadata,
           },
         ],
       };
@@ -81,9 +76,9 @@ export const generateChapters = ({
         ] as WebcamInformation;
         if (
           sceneAndMetadata.finalWebcamPosition ===
-          lastWebcamPosition.webcamPosition
+          lastWebcamPosition.scene.finalWebcamPosition
         ) {
-          lastWebcamPosition.transitionToNextScene =
+          lastWebcamPosition.scene.scene.transitionToNextScene =
             sceneAndMetadata.scene.transitionToNextScene;
           lastWebcamPosition.end += sumUpDuration;
         } else {
@@ -92,9 +87,7 @@ export const generateChapters = ({
               ? lastChapter.end - transitionDuration
               : lastChapter.end,
             end: lastChapter.end + sumUpDuration,
-            webcamPosition: sceneAndMetadata.finalWebcamPosition,
-            layout: sceneAndMetadata.layout,
-            transitionToNextScene: sceneAndMetadata.scene.transitionToNextScene,
+            scene: sceneAndMetadata,
           });
         }
       }

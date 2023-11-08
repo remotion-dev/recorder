@@ -1,6 +1,5 @@
 import { interpolate } from "remotion";
-import type { WebcamPosition } from "../configuration";
-import type { CameraSceneLayout } from "../layout/get-layout";
+import type { VideoSceneAndMetadata, WebcamPosition } from "../configuration";
 
 export type OutTransition = "none" | "up" | "down" | "left" | "right";
 export type InTransition =
@@ -12,11 +11,11 @@ export type InTransition =
 
 export const transitionOut = ({
   currentWebcamPosition,
-  nextWebcamPosition,
+  nextScene,
   transitionToNextScene,
 }: {
   currentWebcamPosition: WebcamPosition;
-  nextWebcamPosition: WebcamPosition | null;
+  nextScene: VideoSceneAndMetadata | null;
   transitionToNextScene: boolean;
 }): OutTransition => {
   if (!transitionToNextScene) {
@@ -32,12 +31,14 @@ export const transitionOut = ({
     currentWebcamPosition === "top-right";
 
   const isNextLeft =
-    nextWebcamPosition === "bottom-left" || nextWebcamPosition === "top-left";
+    nextScene?.finalWebcamPosition === "bottom-left" ||
+    nextScene?.finalWebcamPosition === "top-left";
 
   const isNextTop =
-    nextWebcamPosition === "top-left" || nextWebcamPosition === "top-right";
+    nextScene?.finalWebcamPosition === "top-left" ||
+    nextScene?.finalWebcamPosition === "top-right";
 
-  if (nextWebcamPosition === null) {
+  if (nextScene === null) {
     if (isCurrentlyLeft) {
       return "left";
     }
@@ -65,18 +66,18 @@ export const transitionOut = ({
 };
 
 export const transitionIn = ({
-  currentWebcamPosition,
+  currentScene,
   previousWebcamPosition,
   previousTransitionToNextScene,
 }: {
-  currentWebcamPosition: WebcamPosition;
+  currentScene: VideoSceneAndMetadata;
   previousWebcamPosition: WebcamPosition | null;
   previousTransitionToNextScene: boolean;
 }): InTransition => {
   if (previousWebcamPosition === null) {
     if (
-      currentWebcamPosition === "bottom-left" ||
-      currentWebcamPosition === "top-left"
+      currentScene.finalWebcamPosition === "bottom-left" ||
+      currentScene.finalWebcamPosition === "top-left"
     ) {
       return "from-left";
     }
@@ -86,7 +87,7 @@ export const transitionIn = ({
 
   const outTransition = transitionOut({
     currentWebcamPosition: previousWebcamPosition,
-    nextWebcamPosition: currentWebcamPosition,
+    nextScene: currentScene,
     transitionToNextScene: previousTransitionToNextScene,
   });
 
@@ -152,13 +153,11 @@ export const makeInTransition = ({
   width,
   height,
   progress,
-  layout,
 }: {
   inTransition: InTransition;
   width: number;
   height: number;
   progress: number;
-  layout: CameraSceneLayout;
 }): { x: number; y: number } => {
   if (inTransition === "none") {
     return { x: 0, y: 0 };

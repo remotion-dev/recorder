@@ -75,7 +75,6 @@ export const SelectedChapters: React.FC<{
     inTransition,
     progress: jumpIn,
     width,
-    layout: chapterScene.webcamInformation.layout,
   });
 
   const { x: xOut, y: yOut } = makeOutTransition({
@@ -95,14 +94,14 @@ export const SelectedChapters: React.FC<{
   const { webcamInformation } = chapterScene;
 
   const rightAligned =
-    webcamInformation.webcamPosition === "top-right" ||
-    webcamInformation.webcamPosition === "bottom-right";
+    webcamInformation.scene.scene.webcamPosition === "top-right" ||
+    webcamInformation.scene.scene.webcamPosition === "bottom-right";
 
   const styles = useMemo((): React.CSSProperties => {
-    const { layout, webcamPosition } = webcamInformation;
+    const { layout, finalWebcamPosition } = webcamInformation.scene;
 
     const topAligned =
-      webcamPosition === "top-left" || webcamPosition === "top-right";
+      finalWebcamPosition === "top-left" || finalWebcamPosition === "top-right";
 
     const style: React.CSSProperties = {
       ...(rightAligned
