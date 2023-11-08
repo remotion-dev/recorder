@@ -22,10 +22,6 @@ export const transitionOut = ({
     return "none";
   }
 
-  if (currentWebcamPosition === "center" || nextWebcamPosition === "center") {
-    return "none";
-  }
-
   const isCurrentlyLeft =
     currentWebcamPosition === "bottom-left" ||
     currentWebcamPosition === "top-left";

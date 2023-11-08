@@ -5,8 +5,9 @@ import {
   continueRender,
   delayRender,
   useVideoConfig,
+  watchStaticFile,
 } from "remotion";
-import { getSubtitleTranslation } from "../animations/camera-scene-transitions";
+import { getSubtitleTranslation } from "../animations/subtitle-transitions";
 import type {
   CanvasLayout,
   SceneAndMetadata,
@@ -44,37 +45,35 @@ export const Subs: React.FC<{
   const [data, setData] = useState<SubTypes | null>(null);
   const { width, height } = useVideoConfig();
   const [handle] = useState(() => delayRender());
+  const [changeStatus, setChangeStatus] = useState<
+    "initial" | "changed" | "unchanged"
+  >("initial");
 
   useEffect(() => {
-    fetch(file.src)
-      .then((res) => res.json())
-      .then((d) => {
-        continueRender(handle);
-        setData(d);
-      });
-  }, [file.src, handle]);
+    const { cancel } = watchStaticFile(
+      file.name,
+      (newData: StaticFile | null) => {
+        if (newData) {
+          setChangeStatus("changed");
+        }
+      },
+    );
+    return () => {
+      cancel();
+    };
+  }, [file.name]);
 
-  const subtitleTranslation = useMemo(() => {
-    return getSubtitleTranslation({
-      enter,
-      exit,
-      height,
-      width,
-      canvasLayout,
-      nextScene,
-      previousScene,
-      scene,
-    });
-  }, [
-    canvasLayout,
-    enter,
-    exit,
-    height,
-    nextScene,
-    previousScene,
-    scene,
-    width,
-  ]);
+  useEffect(() => {
+    if (changeStatus === "initial" || changeStatus === "changed") {
+      fetch(file.src)
+        .then((res) => res.json())
+        .then((d) => {
+          continueRender(handle);
+          setData(d);
+        });
+      setChangeStatus("unchanged");
+    }
+  }, [changeStatus, file.src, handle]);
 
   const subtitleType = getSubtitlesType({
     canvasLayout,
@@ -87,43 +86,60 @@ export const Subs: React.FC<{
     subtitleType,
     displayLayout: scene.layout.displayLayout,
     webcamLayout: scene.layout.webcamLayout,
-    webcamPosition: scene.scene.webcamPosition,
+    webcamPosition: scene.finalWebcamPosition,
+  });
+
+  const animatedSubLayout = getSubtitleTranslation({
+    enter,
+    exit,
+    height,
+    width,
+    canvasLayout,
+    nextScene,
+    previousScene,
+    scene,
+    currentLayout: subsLayout,
   });
 
   const postprocessed = useMemo(() => {
     return data
       ? postprocessSubtitles({
           subTypes: data,
-          boxWidth: subsLayout.width,
+          boxWidth: animatedSubLayout.width,
           maxLines: getSubtitlesLines(subtitleType),
           fontSize: getSubtitlesFontSize(
             subtitleType,
             scene.layout.displayLayout,
           ),
+          canvasLayout,
+          subtitleType,
         })
       : null;
-  }, [data, scene.layout.displayLayout, subsLayout.width, subtitleType]);
+  }, [
+    animatedSubLayout.width,
+    canvasLayout,
+    data,
+    scene.layout.displayLayout,
+    subtitleType,
+  ]);
 
   if (!postprocessed) {
     return null;
   }
 
   return (
-    <AbsoluteFill
-      style={{
-        transform: `translateX(${subtitleTranslation.translationX}px) translateY(${subtitleTranslation.translationY}px)`,
-      }}
-    >
+    <AbsoluteFill>
       {postprocessed.segments.map((segment, index) => {
         return (
           <SegmentComp
             // eslint-disable-next-line react/no-array-index-key
             key={index}
             isLast={index === postprocessed.segments.length - 1}
+            isFirst={index === 0}
             segment={segment}
             trimStart={trimStart}
             canvasLayout={canvasLayout}
-            subsBox={subsLayout}
+            subsBox={animatedSubLayout}
             subtitleType={subtitleType}
             displayLayout={scene.layout.displayLayout}
           />

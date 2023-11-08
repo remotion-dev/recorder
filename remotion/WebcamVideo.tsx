@@ -1,17 +1,11 @@
 import React from "react";
-import {
-  OffthreadVideo,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { OffthreadVideo, useVideoConfig } from "remotion";
 import { getWebcamPosition } from "./animations/camera-scene-transitions";
 import type {
   CanvasLayout,
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "./configuration";
-import { transitionDuration } from "./configuration";
 import type { Layout } from "./layout/get-layout";
 
 export const WebcamVideo: React.FC<{
@@ -20,9 +14,6 @@ export const WebcamVideo: React.FC<{
   exit: number;
   startFrom: number;
   endAt: number | undefined;
-  zoomInAtStart: boolean;
-  zoomInAtEnd: boolean;
-  shouldExit: boolean;
   canvasLayout: CanvasLayout;
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
@@ -31,37 +22,14 @@ export const WebcamVideo: React.FC<{
   webcamLayout,
   enter,
   exit,
-  zoomInAtStart,
-  zoomInAtEnd,
   startFrom,
   endAt,
   nextScene,
   previousScene,
-  shouldExit,
   canvasLayout,
   currentScene,
 }) => {
-  const { height, width, fps, durationInFrames } = useVideoConfig();
-  const frame = useCurrentFrame();
-
-  const zoomIn = zoomInAtEnd
-    ? spring({
-        fps,
-        frame,
-        config: { damping: 200 },
-        durationInFrames: 10,
-        delay: durationInFrames - 15 - (shouldExit ? transitionDuration : 0),
-      })
-    : zoomInAtStart
-    ? spring({
-        fps,
-        frame,
-        config: {
-          damping: 200,
-        },
-        durationInFrames: 10,
-      })
-    : 0;
+  const { height, width } = useVideoConfig();
 
   const webcamLayoutWithTransitions = getWebcamPosition({
     enter,
@@ -89,6 +57,7 @@ export const WebcamVideo: React.FC<{
           height: webcamLayoutWithTransitions.height,
           left: webcamLayoutWithTransitions.x,
           top: webcamLayoutWithTransitions.y,
+          opacity: webcamLayoutWithTransitions.opacity,
           position: "relative",
         }}
       >
@@ -103,7 +72,6 @@ export const WebcamVideo: React.FC<{
             borderRadius: webcamLayout.borderRadius,
             overflow: "hidden",
             transformOrigin: "50% 0%",
-            scale: String(zoomIn * 0.4 + 1),
           }}
           src={currentScene.pair.webcam.src}
         />

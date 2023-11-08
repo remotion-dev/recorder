@@ -93,10 +93,6 @@ export const SelectedChapters: React.FC<{
   const styles = useMemo((): React.CSSProperties => {
     const { layout, webcamPosition } = webcamInformation;
 
-    if (webcamPosition === "center") {
-      throw new Error("no subs in center layout");
-    }
-
     const topAligned =
       webcamPosition === "top-left" || webcamPosition === "top-right";
 

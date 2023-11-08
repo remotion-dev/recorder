@@ -8,6 +8,10 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import {
+  isGrowingFromMiniature,
+  isShrinkingToMiniature,
+} from "../animations/camera-scene-transitions";
 import { SquareChapter } from "../chapters/SquareChapter";
 import type { CanvasLayout, SceneAndMetadata } from "../configuration";
 import { transitionDuration } from "../configuration";
@@ -86,6 +90,7 @@ const Inner: React.FC<{
             previousScene={previousScene}
             startFrom={startFrom}
             endAt={endAt}
+            canvasLayout={canvasLayout}
           />
         ) : null}
         <WebcamVideo
@@ -93,11 +98,8 @@ const Inner: React.FC<{
           endAt={endAt}
           enter={enter}
           exit={exit}
-          zoomInAtStart={scene.scene.zoomInAtStart ?? false}
           startFrom={startFrom}
           webcamLayout={scene.layout.webcamLayout}
-          zoomInAtEnd={scene.scene.zoomInAtEnd}
-          shouldExit={shouldExit}
           canvasLayout={canvasLayout}
           nextScene={nextScene}
           previousScene={previousScene}
@@ -117,11 +119,23 @@ const Inner: React.FC<{
       ) : null}
       {scene.scene.newChapter && canvasLayout === "square" ? (
         <SquareChapter
-          webcamPosition={scene.scene.webcamPosition}
+          webcamPosition={scene.finalWebcamPosition}
           title={scene.scene.newChapter}
         />
       ) : null}
-      {shouldEnter ? (
+      {previousScene &&
+      isShrinkingToMiniature({
+        firstScene: previousScene,
+        secondScene: scene,
+      }) ? (
+        <Audio src={staticFile("sounds/shrink.m4a")} volume={0.2} />
+      ) : previousScene &&
+        isGrowingFromMiniature({
+          firstScene: previousScene,
+          secondScene: scene,
+        }) ? (
+        <Audio src={staticFile("sounds/grow.m4a")} volume={0.2} />
+      ) : shouldEnter ? (
         <Audio src={staticFile("sounds/whipwhoosh.mp3")} volume={0.1} />
       ) : null}
     </>

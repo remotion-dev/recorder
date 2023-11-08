@@ -36,7 +36,7 @@ export const getIsTransitioningOut = ({
     sceneAndMetadata.scene.transitionToNextScene
   ) {
     const samePosition =
-      nextScene.scene.webcamPosition !== sceneAndMetadata.scene.webcamPosition;
+      nextScene.finalWebcamPosition !== sceneAndMetadata.finalWebcamPosition;
 
     const isShrinkingOrGrowing = isGrowingOrShrinkingToMiniature({
       currentScene: sceneAndMetadata,
