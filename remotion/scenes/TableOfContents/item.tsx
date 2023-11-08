@@ -39,11 +39,11 @@ export const TableOfContentItem: React.FC<{
         fontWeight: 500,
         display: "flex",
         flexDirection: "row",
-        border: "3px solid black",
         width: "100%",
+        lineHeight: 1.3,
       }}
     >
-      <div style={{ width: 200, fontVariantNumeric: "tabular-nums" }}>
+      <div style={{ width: 250, fontVariantNumeric: "tabular-nums" }}>
         {formatTime(time)}
       </div>
       {title}
