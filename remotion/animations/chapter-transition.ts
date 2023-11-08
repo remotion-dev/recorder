@@ -1,5 +1,9 @@
 import { interpolate } from "remotion";
 import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
+import {
+  isShrinkingToMiniature,
+  isWebCamAtBottom,
+} from "./camera-scene-transitions";
 
 export type OutTransition = "none" | "up" | "down" | "left" | "right";
 export type InTransition =
@@ -79,6 +83,20 @@ export const transitionIn = ({
     }
 
     return "from-right";
+  }
+
+  if (
+    previousScene?.type === "video-scene" &&
+    isShrinkingToMiniature({
+      firstScene: previousScene,
+      secondScene: currentScene,
+    })
+  ) {
+    if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
+      return "from-top";
+    }
+
+    return "from-bottom";
   }
 
   const outTransition = transitionOut({
