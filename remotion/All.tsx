@@ -22,8 +22,6 @@ export const All: React.FC<AllProps> = ({
   scenesAndMetadata,
   canvasLayout,
 }) => {
-  const addedUpDurations = 0;
-
   const chapters = useMemo(() => {
     return makeChapters({ scenes: scenesAndMetadata });
   }, [scenesAndMetadata]);
@@ -45,7 +43,6 @@ export const All: React.FC<AllProps> = ({
             chapters={chapters}
             canvasLayout={canvasLayout}
             sceneAndMetadata={sceneAndMetadata}
-            addedUpDurations={addedUpDurations}
           />
         );
       })}

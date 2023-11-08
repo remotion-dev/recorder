@@ -10,7 +10,6 @@ import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "./configuration";
-import { transitionDuration } from "./configuration";
 import { CameraScene } from "./scenes/CameraScene";
 import { EndCard } from "./scenes/EndCard";
 import { TableOfContents } from "./scenes/TableOfContents";
@@ -33,7 +32,6 @@ export const Scene: React.FC<{
   sceneAndMetadata,
   canvasLayout,
   chapters,
-  addedUpDurations,
 }) => {
   const isTransitioningIn = getIsTransitioningIn({
     scene: sceneAndMetadata,
@@ -44,17 +42,11 @@ export const Scene: React.FC<{
     nextScene,
   });
 
-  const from = addedUpDurations;
-  addedUpDurations += sceneAndMetadata.durationInFrames;
-  if (isTransitioningOut) {
-    addedUpDurations -= transitionDuration;
-  }
-
   if (sceneAndMetadata.scene.type === "title") {
     return (
       <Sequence
         key={sceneAndMetadata.scene.title}
-        from={from}
+        from={sceneAndMetadata.from}
         durationInFrames={sceneAndMetadata.scene.durationInFrames}
       >
         <Title
@@ -70,7 +62,7 @@ export const Scene: React.FC<{
     return (
       <Sequence
         key={"update"}
-        from={from}
+        from={sceneAndMetadata.from}
         durationInFrames={sceneAndMetadata.scene.durationInFrames}
       >
         <UpdateScene />
@@ -81,7 +73,7 @@ export const Scene: React.FC<{
   if (sceneAndMetadata.scene.type === "titlecard") {
     return (
       <Sequence
-        from={from}
+        from={sceneAndMetadata.from}
         durationInFrames={sceneAndMetadata.scene.durationInFrames}
       >
         <TitleCard
@@ -97,7 +89,7 @@ export const Scene: React.FC<{
   if (sceneAndMetadata.scene.type === "endcard") {
     return (
       <Sequence
-        from={from}
+        from={sceneAndMetadata.from}
         durationInFrames={sceneAndMetadata.scene.durationInFrames}
       >
         <EndCard
@@ -114,7 +106,7 @@ export const Scene: React.FC<{
   if (sceneAndMetadata.scene.type === "tableofcontents") {
     return (
       <Sequence
-        from={from}
+        from={sceneAndMetadata.from}
         durationInFrames={sceneAndMetadata.scene.durationInFrames}
       >
         <TableOfContents
@@ -131,7 +123,7 @@ export const Scene: React.FC<{
   return (
     <Sequence
       name={`Scene ${index}`}
-      from={from}
+      from={sceneAndMetadata.from}
       durationInFrames={Math.max(1, durationInFrames)}
     >
       <CameraScene
