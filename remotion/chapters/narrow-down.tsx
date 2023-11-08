@@ -16,7 +16,7 @@ export type ChapterScene = {
 
 const narrowDownChapters = (
   chapters: ChapterType[],
-  activeChapterIndex: number
+  activeChapterIndex: number,
 ): ChapterType[] => {
   const availableChaptersAfter = chapters.filter((_, i) => {
     return i > activeChapterIndex;
@@ -52,9 +52,10 @@ export const makeChapterScences = (chapters: ChapterType[]): ChapterScene[] => {
             end: webcamInformation.end,
             chapterIndex: chapter.index,
             webcamIndex: index,
-            transitionToNextScene: webcamInformation.transitionToNextScene,
+            transitionToNextScene:
+              webcamInformation.scene.scene.transitionToNextScene,
           };
-        }
+        },
       );
     })
     .flat(1);
