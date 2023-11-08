@@ -52,7 +52,7 @@ export const WideScreenChapters: React.FC<{
           previousScene?.webcamInformation?.webcamPosition ===
           chapterScene.webcamInformation.webcamPosition;
 
-        const isSameWebcamPostiionAsNext =
+        const isSameWebcamPositionAsNext =
           nextChapterScene?.webcamInformation?.webcamPosition ===
           chapterScene.webcamInformation.webcamPosition;
 
@@ -86,7 +86,7 @@ export const WideScreenChapters: React.FC<{
                 chapterScene.chapterIndex > 0 &&
                 chapterScene.chapterIndex < chapters.length - 2 &&
                 outTransition === "none" &&
-                isSameWebcamPostiionAsNext
+                isSameWebcamPositionAsNext
               }
               chapterScene={chapterScene}
               shouldSlideY={shouldSlideY}
