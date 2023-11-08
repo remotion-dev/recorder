@@ -1,10 +1,10 @@
 import React from "react";
 import { AbsoluteFill, Sequence, useCurrentFrame } from "remotion";
+import { transitionIn, transitionOut } from "../animations/chapter-transition";
 import type { ChapterType } from "./make-chapters";
 import type { ChapterScene } from "./narrow-down";
 import { makeChapterScences } from "./narrow-down";
 import { SelectedChapters } from "./SelectedChapters";
-import { transitionIn, transitionOut } from "./transition";
 
 export const WideScreenChapters: React.FC<{
   chapters: ChapterType[];

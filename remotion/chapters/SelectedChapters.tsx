@@ -5,12 +5,18 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import type {
+  InTransition,
+  OutTransition,
+} from "../animations/chapter-transition";
+import {
+  makeInTransition,
+  makeOutTransition,
+} from "../animations/chapter-transition";
 import { transitionDuration } from "../configuration";
 import { safeSpace } from "../layout/get-layout";
 import type { ChapterType } from "./make-chapters";
 import type { ChapterScene } from "./narrow-down";
-import type { InTransition, OutTransition } from "./transition";
-import { makeInTransition, makeOutTransition } from "./transition";
 import {
   CHAPTER_HEIGHT,
   CHAPTER_VERTICAL_MARGIN,
@@ -69,6 +75,7 @@ export const SelectedChapters: React.FC<{
     inTransition,
     progress: jumpIn,
     width,
+    layout: chapterScene.webcamInformation.layout,
   });
 
   const { x: xOut, y: yOut } = makeOutTransition({
