@@ -1,13 +1,14 @@
-import type { SceneAndMetadata } from "../configuration";
+import type { SceneAndMetadata, SceneType } from "../configuration";
 import { transitionDuration } from "../configuration";
 import { isGrowingOrShrinkingToMiniature } from "./camera-scene-transitions";
 
-export const isATextCard = (scene: SceneAndMetadata) => {
+export const isATextCard = (scene: SceneType) => {
   return (
-    scene.scene.type === "title" ||
-    scene.scene.type === "titlecard" ||
-    scene.scene.type === "endcard" ||
-    scene.scene.type === "remotionupdate"
+    scene.type === "title" ||
+    scene.type === "titlecard" ||
+    scene.type === "endcard" ||
+    scene.type === "tableofcontents" ||
+    scene.type === "remotionupdate"
   );
 };
 
@@ -18,7 +19,7 @@ export const getIsTransitioningOut = ({
   sceneAndMetadata: SceneAndMetadata;
   nextScene: SceneAndMetadata | null;
 }) => {
-  if (isATextCard(sceneAndMetadata)) {
+  if (isATextCard(sceneAndMetadata.scene)) {
     return true;
   }
 
@@ -26,7 +27,7 @@ export const getIsTransitioningOut = ({
     return false;
   }
 
-  if (isATextCard(nextScene)) {
+  if (isATextCard(nextScene.scene)) {
     return true;
   }
 
