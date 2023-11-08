@@ -8,7 +8,6 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { transitionDuration } from "../configuration";
 
 const size = 180;
 const padding = 20;
@@ -141,31 +140,13 @@ const RandomPie: React.FC<{
   );
 };
 
-export const UpdateScene: React.FC = () => {
+export const UpdateScene: React.FC<{
+  enter: number;
+  exit: number;
+}> = ({ enter, exit }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames, width } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
   const posterizedFrame = Math.floor(frame / 5) * 5;
-
-  const show = (delay: number) =>
-    spring({
-      fps,
-      frame,
-      durationInFrames: transitionDuration,
-      config: {
-        damping: 200,
-      },
-      delay,
-    });
-
-  const hide = spring({
-    fps,
-    frame,
-    durationInFrames: transitionDuration,
-    config: {
-      damping: 200,
-    },
-    delay: durationInFrames - transitionDuration,
-  });
 
   const prog = (delay: number) =>
     spring({
@@ -185,8 +166,8 @@ export const UpdateScene: React.FC = () => {
         justifyContent: "center",
         alignItems: "center",
         translate:
-          interpolate(hide, [0, 1], [0, -width]) +
-          interpolate(show(0), [0, 1], [width, 0]) +
+          interpolate(exit, [0, 1], [0, -width]) +
+          interpolate(enter, [0, 1], [width, 0]) +
           "px 0",
       }}
     >
@@ -198,7 +179,7 @@ export const UpdateScene: React.FC = () => {
               transform: `translateY(${interpolate(
                 prog(0),
                 [0, 1],
-                [500, 0]
+                [500, 0],
               )}px)`,
             }}
           >
@@ -234,7 +215,7 @@ export const UpdateScene: React.FC = () => {
               transform: `translateX(${interpolate(
                 prog(20),
                 [0, 1],
-                [700, 0]
+                [700, 0],
               )}px)`,
             }}
           >

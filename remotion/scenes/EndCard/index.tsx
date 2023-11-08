@@ -1,15 +1,8 @@
 import { loadFont } from "@remotion/google-fonts/RobotoCondensed";
 import React from "react";
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { AbsoluteFill, interpolate, useVideoConfig } from "remotion";
 import { COLORS } from "../../colors";
 import type { CanvasLayout, Channel, Platform } from "../../configuration";
-import { transitionDuration } from "../../configuration";
 import type { LinkType } from "./LeftSide";
 import { LeftSide } from "./LeftSide";
 import { ThumbnailContainers } from "./RightSide";
@@ -22,26 +15,20 @@ export const EndCard: React.FC<{
   platform: Platform;
   links: LinkType[];
   isTransitioningIn: boolean;
-}> = ({ canvasLayout, platform, channel, links, isTransitioningIn }) => {
-  const frame = useCurrentFrame();
-  const { fps, width } = useVideoConfig();
-
-  const swipe = isTransitioningIn
-    ? spring({
-        fps,
-        frame,
-        config: {
-          damping: 200,
-        },
-        durationInFrames: transitionDuration,
-      })
-    : 1;
+  enter: number;
+  exit: number;
+}> = ({ canvasLayout, platform, channel, links, enter, exit }) => {
+  const { width } = useVideoConfig();
 
   return (
     <AbsoluteFill
       style={{
         backgroundColor: COLORS.BACKGROUND,
-        transform: `translateX(${interpolate(swipe, [0, 1], [width, 0])}px)`,
+        transform: `translateX(${interpolate(
+          enter - exit,
+          [0, 1],
+          [width, 0],
+        )}px)`,
       }}
     >
       <LeftSide links={links} channel={channel} platform={platform} />

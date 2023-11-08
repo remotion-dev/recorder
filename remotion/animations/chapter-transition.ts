@@ -1,5 +1,9 @@
 import { interpolate } from "remotion";
-import type { WebcamPosition } from "../configuration";
+import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
+import {
+  isShrinkingToMiniature,
+  isWebCamAtBottom,
+} from "./camera-scene-transitions";
 
 export type OutTransition = "none" | "up" | "down" | "left" | "right";
 export type InTransition =
@@ -10,39 +14,39 @@ export type InTransition =
   | "from-right";
 
 export const transitionOut = ({
-  currentWebcamPosition,
-  nextWebcamPosition,
-  transitionToNextScene,
+  currentScene,
+  nextScene,
 }: {
-  currentWebcamPosition: WebcamPosition;
-  nextWebcamPosition: WebcamPosition | null;
-  transitionToNextScene: boolean;
+  currentScene: VideoSceneAndMetadata;
+  nextScene: SceneAndMetadata | null;
 }): OutTransition => {
-  if (!transitionToNextScene) {
-    return "none";
-  }
-
   const isCurrentlyLeft =
-    currentWebcamPosition === "bottom-left" ||
-    currentWebcamPosition === "top-left";
+    currentScene.finalWebcamPosition === "bottom-left" ||
+    currentScene.finalWebcamPosition === "top-left";
 
-  const isCurrentlyTop =
-    currentWebcamPosition === "top-left" ||
-    currentWebcamPosition === "top-right";
-
-  const isNextLeft =
-    nextWebcamPosition === "bottom-left" || nextWebcamPosition === "top-left";
-
-  const isNextTop =
-    nextWebcamPosition === "top-left" || nextWebcamPosition === "top-right";
-
-  if (nextWebcamPosition === null) {
+  if (nextScene === null || nextScene.type !== "video-scene") {
     if (isCurrentlyLeft) {
       return "left";
     }
 
     return "right";
   }
+
+  if (!currentScene.scene.transitionToNextScene) {
+    return "none";
+  }
+
+  const isCurrentlyTop =
+    currentScene.finalWebcamPosition === "top-left" ||
+    currentScene.finalWebcamPosition === "top-right";
+
+  const isNextLeft =
+    nextScene?.finalWebcamPosition === "bottom-left" ||
+    nextScene?.finalWebcamPosition === "top-left";
+
+  const isNextTop =
+    nextScene?.finalWebcamPosition === "top-left" ||
+    nextScene?.finalWebcamPosition === "top-right";
 
   if (isCurrentlyLeft && !isNextLeft) {
     return "left";
@@ -64,29 +68,33 @@ export const transitionOut = ({
 };
 
 export const transitionIn = ({
-  currentWebcamPosition,
-  previousWebcamPosition,
-  previousTransitionToNextScene,
+  currentScene,
+  previousScene,
 }: {
-  currentWebcamPosition: WebcamPosition;
-  previousWebcamPosition: WebcamPosition | null;
-  previousTransitionToNextScene: boolean;
+  currentScene: VideoSceneAndMetadata;
+  previousScene: SceneAndMetadata | null;
 }): InTransition => {
-  if (previousWebcamPosition === null) {
-    if (
-      currentWebcamPosition === "bottom-left" ||
-      currentWebcamPosition === "top-left"
-    ) {
-      return "from-left";
-    }
-
+  if (previousScene === null || previousScene.type !== "video-scene") {
     return "from-right";
   }
 
+  if (
+    previousScene?.type === "video-scene" &&
+    isShrinkingToMiniature({
+      firstScene: previousScene,
+      secondScene: currentScene,
+    })
+  ) {
+    if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
+      return "from-top";
+    }
+
+    return "from-bottom";
+  }
+
   const outTransition = transitionOut({
-    currentWebcamPosition: previousWebcamPosition,
-    nextWebcamPosition: currentWebcamPosition,
-    transitionToNextScene: previousTransitionToNextScene,
+    currentScene: previousScene,
+    nextScene: currentScene,
   });
 
   if (outTransition === "none") {
@@ -162,11 +170,17 @@ export const makeInTransition = ({
   }
 
   if (inTransition === "from-top") {
-    return { x: 0, y: interpolate(progress, [0, 1], [-height, 0]) };
+    return {
+      x: 0,
+      y: interpolate(progress, [0, 1], [-height, 0]),
+    };
   }
 
   if (inTransition === "from-bottom") {
-    return { x: 0, y: interpolate(progress, [0, 1], [height, 0]) };
+    return {
+      x: 0,
+      y: interpolate(progress, [0, 1], [height, 0]),
+    };
   }
 
   if (inTransition === "from-left") {

@@ -126,13 +126,22 @@ const getDisplayEnter = ({
       ? translationY
       : height;
 
-    const wideX = isWebCamRight(currentScene.finalWebcamPosition)
-      ? -width - safeSpace(canvasLayout)
-      : width + safeSpace(canvasLayout);
+    // Wide, Slide in from left
+    if (
+      canvasLayout === "wide" &&
+      isWebCamRight(currentScene.finalWebcamPosition)
+    ) {
+      return {
+        enterStartX:
+          -currentScene.layout.displayLayout.width - safeSpace(canvasLayout),
+        enterStartY: 0,
+      };
+    }
 
+    // Slide in from right
     if (canvasLayout === "wide") {
       return {
-        enterStartX: wideX,
+        enterStartX: width + safeSpace(canvasLayout),
         enterStartY: 0,
       };
     }

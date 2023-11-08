@@ -1,14 +1,17 @@
 import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import type { AllProps } from "./All";
-import { getSumUpDuration } from "./animations/transitions";
+import {
+  getIsTransitioningOut,
+  getSumUpDuration,
+} from "./animations/transitions";
 import type {
   SceneAndMetadata,
   SceneType,
   SceneVideos,
   WebcamPosition,
 } from "./configuration";
-import { fps, getPairs } from "./configuration";
+import { fps, getPairs, transitionDuration } from "./configuration";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
 import { truthy } from "./truthy";
@@ -20,19 +23,21 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
   let videoIndex = -1;
 
-  const scenesAndMetadata = (
+  const scenesAndMetadataWithoutDuration = (
     await Promise.all(
       props.scenes.map(async (scene, i): Promise<SceneAndMetadata | null> => {
         if (
           scene.type === "title" ||
           scene.type === "titlecard" ||
           scene.type === "endcard" ||
+          scene.type === "tableofcontents" ||
           scene.type === "remotionupdate"
         ) {
           return {
             type: "other-scene",
             scene,
             durationInFrames: scene.durationInFrames,
+            from: 0, // Placeholder
           };
         }
 
@@ -91,15 +96,38 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           }),
           pair: p,
           finalWebcamPosition: webcamPosition as WebcamPosition,
+          from: 0,
         };
       }),
     )
   ).filter(truthy);
 
+  let addedUpDurations = 0;
+
+  const scenesAndMetadata = scenesAndMetadataWithoutDuration.map(
+    (sceneAndMetadata, i) => {
+      const from = addedUpDurations;
+      addedUpDurations += sceneAndMetadata.durationInFrames;
+      if (
+        getIsTransitioningOut({
+          sceneAndMetadata,
+          nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
+        })
+      ) {
+        addedUpDurations -= transitionDuration;
+      }
+
+      return {
+        ...sceneAndMetadata,
+        from,
+      };
+    },
+  );
+
   const durations = scenesAndMetadata.map((s, i) => {
     return getSumUpDuration({
       scene: s,
-      previousScene: scenesAndMetadata[i + 1] ?? null,
+      previousScene: scenesAndMetadata[i - 1] ?? null,
     });
   });
 

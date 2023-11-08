@@ -133,11 +133,18 @@ const getWebcamEndOffset = ({
 
   if (canvasLayout === "wide") {
     if (!isSamePositionVertical) {
+      // Wide, moving to the right
+      if (isWebCamRight(currentScene.finalWebcamPosition)) {
+        return {
+          ...currentLayout,
+          x: width,
+        };
+      }
+
+      // Wide, moving to the left
       return {
         ...currentLayout,
-        x:
-          currentLayout.x +
-          (isWebCamRight(currentScene.finalWebcamPosition) ? width : -width),
+        x: -currentLayout.width,
       };
     }
 
@@ -206,11 +213,18 @@ const getWebCamStartOffset = ({
 
   if (canvasLayout === "wide") {
     if (!isSamePositionVertical) {
+      // Wide layout, flying in from the right
+      if (isWebCamRight(currentScene.finalWebcamPosition)) {
+        return {
+          ...currentLayout,
+          x: width,
+        };
+      }
+
+      // Wide layout, flying in from the left
       return {
         ...currentLayout,
-        x:
-          currentLayout.x +
-          (isWebCamRight(currentScene.finalWebcamPosition) ? width : -width),
+        x: -currentLayout.width,
       };
     }
 
@@ -227,16 +241,26 @@ const getWebCamStartOffset = ({
     };
   }
 
+  // Square layout, only moving from left to right
+  if (samePositionHorizontal) {
+    return {
+      ...currentLayout,
+      x: previousScene.layout.webcamLayout.x,
+    };
+  }
+
+  // Square, moving bottom up
+  if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
+    return {
+      ...currentLayout,
+      y: height + safeSpace(canvasLayout),
+    };
+  }
+
+  // Square, moving top down
   return {
     ...currentLayout,
-    x: samePositionHorizontal
-      ? previousScene.layout.webcamLayout.x
-      : currentLayout.x,
-    y: samePositionHorizontal
-      ? currentLayout.y
-      : isWebCamAtBottom(currentScene.finalWebcamPosition)
-      ? height + safeSpace(canvasLayout)
-      : -currentLayout.height - safeSpace(canvasLayout),
+    y: -currentLayout.height - safeSpace(canvasLayout),
   };
 };
 
@@ -333,9 +357,16 @@ export const getWebcamPosition = ({
       [startLayout.width, currentScene.layout.webcamLayout.width],
     ),
     // Make opacity go twice as fast
-    opacity: interpolate(enter, [0.4, 0.6], [0, 1], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    }),
+    opacity:
+      previousScene &&
+      isGrowingOrShrinkingToMiniature({
+        otherScene: previousScene,
+        currentScene,
+      })
+        ? interpolate(enter, [0.4, 0.6], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          })
+        : 1,
   };
 };

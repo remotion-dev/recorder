@@ -19,6 +19,7 @@ export type VideoSceneAndMetadata = {
   type: "video-scene";
   scene: VideoScene;
   durationInFrames: number;
+  from: number;
   videos: SceneVideos;
   layout: CameraSceneLayout;
   pair: Pair;
@@ -31,6 +32,7 @@ export type SceneAndMetadata =
       type: "other-scene";
       scene: SceneType;
       durationInFrames: number;
+      from: number;
     };
 
 const availablePositions = [
@@ -118,6 +120,11 @@ export const configuration = z.discriminatedUnion("type", [
     channel,
     platform,
     links: z.array(linkType),
+  }),
+  z.object({
+    type: z.literal("tableofcontents"),
+    durationInFrames: z.number().int().default(200),
+    music,
   }),
 ]);
 

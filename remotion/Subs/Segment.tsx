@@ -12,7 +12,12 @@ import { borderRadius, safeSpace } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type { Segment } from "../sub-types";
 import { getHorizontalPaddingForSubtitles } from "./postprocess-subs";
-import { useSequenceDuration, useTime, WordComp } from "./Word";
+import {
+  useSequenceDuration,
+  useTime,
+  WordComp,
+  WORD_HIGHLIGHT_BORDER_RADIUS,
+} from "./Word";
 
 loadFont();
 
@@ -166,20 +171,16 @@ const getSubsLayout = ({
 };
 
 const inlineSubsLayout = ({
-  canvasLayout,
   subtitleType,
 }: {
-  canvasLayout: CanvasLayout;
   subtitleType: SubtitleType;
 }): React.CSSProperties => {
   if (subtitleType === "overlayed-center") {
+    const padding = 20;
     return {
-      borderRadius: borderRadius - safeSpace("tall") / 4,
+      padding,
+      borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS + padding,
     };
-  }
-
-  if (canvasLayout === "wide") {
-    return {};
   }
 
   return {};
@@ -298,15 +299,13 @@ export const SegmentComp: React.FC<{
       >
         <span
           style={{
-            textShadow:
-              subtitleType === "overlayed-center"
-                ? "0px 0px 30px rgba(0, 0, 0, 0.5)"
-                : undefined,
             lineHeight: LINE_HEIGHT,
             display: "inline-block",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
-            ...inlineSubsLayout({ canvasLayout, subtitleType }),
+            backgroundColor:
+              subtitleType === "overlayed-center" ? "white" : undefined,
+            ...inlineSubsLayout({ subtitleType }),
           }}
         >
           {segment.words.map((word, index) => {
@@ -317,7 +316,6 @@ export const SegmentComp: React.FC<{
                 isLast={index === segment.words.length - 1}
                 trimStart={trimStart}
                 word={word}
-                subtitleLayout={subtitleType}
               />
             );
           })}
