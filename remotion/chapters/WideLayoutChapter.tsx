@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { transitionDuration } from "../configuration";
 import type { ChapterType } from "./make-chapters";
 
 export const CHAPTER_HEIGHT = 80;
@@ -36,8 +37,7 @@ export const WideLayoutChapter: React.FC<{
     frame,
     fps,
     config: { damping: 200 },
-    durationInFrames: 10,
-    delay: 10,
+    durationInFrames: transitionDuration,
   });
 
   const slide = slideHighlight ? animation : 1;
@@ -45,7 +45,7 @@ export const WideLayoutChapter: React.FC<{
     ? interpolate(
         animation,
         [0, 1],
-        [CHAPTER_HEIGHT + CHAPTER_VERTICAL_MARGIN * 2, 0]
+        [CHAPTER_HEIGHT + CHAPTER_VERTICAL_MARGIN * 2, 0],
       )
     : 0;
 
@@ -73,7 +73,7 @@ export const WideLayoutChapter: React.FC<{
       return interpolate(
         frame,
         [durationInFrames - 5, durationInFrames],
-        [1, 0]
+        [1, 0],
       );
     }
 
