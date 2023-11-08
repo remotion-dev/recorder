@@ -1,5 +1,5 @@
 import { interpolate } from "remotion";
-import type { VideoSceneAndMetadata, WebcamPosition } from "../configuration";
+import type { VideoSceneAndMetadata } from "../configuration";
 
 export type OutTransition = "none" | "up" | "down" | "left" | "right";
 export type InTransition =
@@ -10,25 +10,23 @@ export type InTransition =
   | "from-right";
 
 export const transitionOut = ({
-  currentWebcamPosition,
+  currentScene,
   nextScene,
-  transitionToNextScene,
 }: {
-  currentWebcamPosition: WebcamPosition;
+  currentScene: VideoSceneAndMetadata;
   nextScene: VideoSceneAndMetadata | null;
-  transitionToNextScene: boolean;
 }): OutTransition => {
-  if (!transitionToNextScene) {
+  if (!currentScene.scene.transitionToNextScene) {
     return "none";
   }
 
   const isCurrentlyLeft =
-    currentWebcamPosition === "bottom-left" ||
-    currentWebcamPosition === "top-left";
+    currentScene.finalWebcamPosition === "bottom-left" ||
+    currentScene.finalWebcamPosition === "top-left";
 
   const isCurrentlyTop =
-    currentWebcamPosition === "top-left" ||
-    currentWebcamPosition === "top-right";
+    currentScene.finalWebcamPosition === "top-left" ||
+    currentScene.finalWebcamPosition === "top-right";
 
   const isNextLeft =
     nextScene?.finalWebcamPosition === "bottom-left" ||
@@ -67,14 +65,12 @@ export const transitionOut = ({
 
 export const transitionIn = ({
   currentScene,
-  previousWebcamPosition,
-  previousTransitionToNextScene,
+  previousScene,
 }: {
   currentScene: VideoSceneAndMetadata;
-  previousWebcamPosition: WebcamPosition | null;
-  previousTransitionToNextScene: boolean;
+  previousScene: VideoSceneAndMetadata | null;
 }): InTransition => {
-  if (previousWebcamPosition === null) {
+  if (previousScene === null) {
     if (
       currentScene.finalWebcamPosition === "bottom-left" ||
       currentScene.finalWebcamPosition === "top-left"
@@ -86,9 +82,8 @@ export const transitionIn = ({
   }
 
   const outTransition = transitionOut({
-    currentWebcamPosition: previousWebcamPosition,
+    currentScene: previousScene,
     nextScene: currentScene,
-    transitionToNextScene: previousTransitionToNextScene,
   });
 
   if (outTransition === "none") {

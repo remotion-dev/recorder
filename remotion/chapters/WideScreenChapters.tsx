@@ -30,23 +30,17 @@ export const WideScreenChapters: React.FC<{
         const previousScene: ChapterScene | null = chapterScenes[i - 1] ?? null;
 
         const outTransition = transitionOut({
-          currentWebcamPosition:
-            chapterScene.webcamInformation.scene.finalWebcamPosition,
+          currentScene: chapterScene.webcamInformation.scene,
           nextScene: nextChapterScene
             ? nextChapterScene.webcamInformation.scene
             : null,
-          transitionToNextScene:
-            chapterScene.webcamInformation.scene.scene.transitionToNextScene,
         });
 
         const inTransition = transitionIn({
           currentScene: chapterScene.webcamInformation.scene,
-          previousWebcamPosition: previousScene
-            ? previousScene.webcamInformation.scene.finalWebcamPosition
+          previousScene: previousScene
+            ? previousScene.webcamInformation.scene
             : null,
-          previousTransitionToNextScene: previousScene
-            ? previousScene.webcamInformation.scene.scene.transitionToNextScene
-            : false,
         });
 
         const isSameWebcamPositionAsBefore =
