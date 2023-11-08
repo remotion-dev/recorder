@@ -7,16 +7,17 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import type { ChapterType } from "../../chapters/make-chapters";
 import { COLORS } from "../../colors";
-import type { CanvasLayout } from "../../configuration";
 import { transitionDuration } from "../../configuration";
 
 loadFont();
 
 export const TableOfContents: React.FC<{
-  canvasLayout: CanvasLayout;
   isTransitioningIn: boolean;
-}> = ({ isTransitioningIn }) => {
+  isTransitioningOut: boolean;
+  chapters: ChapterType[];
+}> = ({ isTransitioningIn, chapters, isTransitioningOut }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
 
@@ -38,7 +39,9 @@ export const TableOfContents: React.FC<{
         transform: `translateX(${interpolate(swipe, [0, 1], [width, 0])}px)`,
       }}
     >
-      transitions
+      {chapters.map((chapter) => {
+        return <div key={chapter.id}>{chapter.title}</div>;
+      })}
     </AbsoluteFill>
   );
 };
