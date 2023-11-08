@@ -23,15 +23,13 @@ export const WideScreenChapters: React.FC<{
   return (
     <AbsoluteFill>
       {chapterScenes.map((chapterScene, i) => {
-        const previousScene = chapterScenes[i - 1] ?? null;
-        const nextChapterScene = chapterScenes[i + 1] ?? null;
+        const previousChapterScene = chapterScenes[i - 1] ?? null;
 
         return (
           <ChapterSceneComponent
             key={chapterScene.chapterId + chapterScene.webcamIndex}
-            scene={chapterScene}
-            previousScene={previousScene}
-            nextScene={nextChapterScene}
+            chapterScene={chapterScene}
+            previousChapterScene={previousChapterScene}
             amountOfChapters={chapters.length}
           />
         );

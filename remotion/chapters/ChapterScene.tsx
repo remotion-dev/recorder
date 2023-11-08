@@ -5,39 +5,47 @@ import type { ChapterScene } from "./narrow-down";
 import { SelectedChapters } from "./SelectedChapters";
 
 export const ChapterSceneComponent: React.FC<{
-  scene: ChapterScene;
+  chapterScene: ChapterScene;
+  previousChapterScene: ChapterScene | null;
   amountOfChapters: number;
-  nextScene: ChapterScene | null;
-  previousScene: ChapterScene | null;
-}> = ({ scene, amountOfChapters, nextScene, previousScene }) => {
+}> = ({ chapterScene, amountOfChapters, previousChapterScene }) => {
+  const {
+    scene: currentScene,
+    nextScene,
+    previousScene,
+  } = chapterScene.webcamInformation;
+
   const outTransition = transitionOut({
-    currentScene: scene.webcamInformation.scene,
-    nextScene: nextScene ? nextScene.webcamInformation.scene : null,
+    currentScene,
+    nextScene,
   });
 
   const inTransition = transitionIn({
-    currentScene: scene.webcamInformation.scene,
-    previousScene: previousScene ? previousScene.webcamInformation.scene : null,
+    currentScene,
+    previousScene,
   });
 
   const isSameWebcamPositionAsBefore =
-    previousScene?.webcamInformation?.scene.finalWebcamPosition ===
-    scene.webcamInformation.scene.finalWebcamPosition;
+    previousScene !== null &&
+    previousScene.type === "video-scene" &&
+    previousScene.finalWebcamPosition === currentScene.finalWebcamPosition;
 
   const isSameWebcamPositionAsNext =
-    nextScene?.webcamInformation?.scene.finalWebcamPosition ===
-    scene.webcamInformation.scene.finalWebcamPosition;
+    nextScene !== null &&
+    nextScene.type === "video-scene" &&
+    nextScene.finalWebcamPosition === currentScene.finalWebcamPosition;
 
   const isDifferentChapterThanPrevious =
-    previousScene?.chapterId !== scene.chapterId;
+    previousChapterScene?.chapterId !== chapterScene.chapterId;
 
   const noTransition =
     previousScene !== null &&
-    !previousScene.webcamInformation.scene.scene.transitionToNextScene;
+    previousScene.type === "video-scene" &&
+    !previousScene.scene.transitionToNextScene;
 
   const shouldSlideY =
-    scene.chapterIndex > 1 &&
-    scene.chapterIndex < amountOfChapters - 1 &&
+    chapterScene.chapterIndex > 1 &&
+    chapterScene.chapterIndex < amountOfChapters - 1 &&
     isDifferentChapterThanPrevious &&
     noTransition &&
     isSameWebcamPositionAsBefore;
@@ -49,22 +57,22 @@ export const ChapterSceneComponent: React.FC<{
 
   return (
     <Sequence
-      key={scene.chapterId + scene.webcamIndex}
-      from={scene.start}
-      durationInFrames={scene.end - scene.start}
+      key={chapterScene.chapterId + chapterScene.webcamIndex}
+      from={chapterScene.start}
+      durationInFrames={chapterScene.end - chapterScene.start}
     >
       <SelectedChapters
         inTransition={inTransition}
         outTransition={outTransition}
-        shownChapters={scene.shownChapters}
-        activeIndex={scene.chapterIndex}
+        shownChapters={chapterScene.shownChapters}
+        activeIndex={chapterScene.chapterIndex}
         shouldFadeFirstOut={
-          scene.chapterIndex > 0 &&
-          scene.chapterIndex < amountOfChapters - 2 &&
+          chapterScene.chapterIndex > 0 &&
+          chapterScene.chapterIndex < amountOfChapters - 2 &&
           outTransition === "none" &&
           isSameWebcamPositionAsNext
         }
-        chapterScene={scene}
+        chapterScene={chapterScene}
         shouldSlideY={shouldSlideY}
         shouldSlideHighlight={shouldSlideHighlight}
       />

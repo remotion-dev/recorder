@@ -1,5 +1,5 @@
 import { interpolate } from "remotion";
-import type { VideoSceneAndMetadata } from "../configuration";
+import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
 
 export type OutTransition = "none" | "up" | "down" | "left" | "right";
 export type InTransition =
@@ -14,7 +14,7 @@ export const transitionOut = ({
   nextScene,
 }: {
   currentScene: VideoSceneAndMetadata;
-  nextScene: VideoSceneAndMetadata | null;
+  nextScene: SceneAndMetadata | null;
 }): OutTransition => {
   if (!currentScene.scene.transitionToNextScene) {
     return "none";
@@ -23,6 +23,14 @@ export const transitionOut = ({
   const isCurrentlyLeft =
     currentScene.finalWebcamPosition === "bottom-left" ||
     currentScene.finalWebcamPosition === "top-left";
+
+  if (nextScene === null || nextScene.type !== "video-scene") {
+    if (isCurrentlyLeft) {
+      return "left";
+    }
+
+    return "right";
+  }
 
   const isCurrentlyTop =
     currentScene.finalWebcamPosition === "top-left" ||
@@ -35,14 +43,6 @@ export const transitionOut = ({
   const isNextTop =
     nextScene?.finalWebcamPosition === "top-left" ||
     nextScene?.finalWebcamPosition === "top-right";
-
-  if (nextScene === null) {
-    if (isCurrentlyLeft) {
-      return "left";
-    }
-
-    return "right";
-  }
 
   if (isCurrentlyLeft && !isNextLeft) {
     return "left";
@@ -68,9 +68,9 @@ export const transitionIn = ({
   previousScene,
 }: {
   currentScene: VideoSceneAndMetadata;
-  previousScene: VideoSceneAndMetadata | null;
+  previousScene: SceneAndMetadata | null;
 }): InTransition => {
-  if (previousScene === null) {
+  if (previousScene === null || previousScene.type !== "video-scene") {
     if (
       currentScene.finalWebcamPosition === "bottom-left" ||
       currentScene.finalWebcamPosition === "top-left"
