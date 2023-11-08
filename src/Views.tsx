@@ -97,11 +97,13 @@ export const View: React.FC<{
     }
   }, [mediaStream]);
 
-  useEffect(() => {
+  const derivedResolutionString = useMemo(() => {
     if (!mediaStream) {
-      setResolutionString("");
+      return "";
     }
-  }, [mediaStream]);
+
+    return resolutionString;
+  }, [mediaStream, resolutionString]);
 
   const handleChange = useCallback(() => {
     setShowCropIndicator((prev) => !prev);
@@ -232,7 +234,7 @@ export const View: React.FC<{
         >
           {prefix}
           <br />
-          {resolutionString}
+          {derivedResolutionString}
         </div>
         {prefix === "webcam" ? (
           <ToggleCrop
