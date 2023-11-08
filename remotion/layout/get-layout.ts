@@ -2,7 +2,6 @@ import type {
   CanvasLayout,
   Dimensions,
   SceneVideos,
-  VideoScene,
   WebcamPosition,
 } from "../configuration";
 import { getDimensionsForLayout } from "./dimensions";
@@ -16,6 +15,7 @@ export type Layout = {
   width: number;
   height: number;
   borderRadius: number;
+  opacity: number;
 };
 
 const webcamRatio = 400 / 350;
@@ -89,6 +89,7 @@ const fullscreenLayout = ({
       width: actualWidth,
       height,
       borderRadius,
+      opacity: 1,
     };
   }
 
@@ -98,6 +99,7 @@ const fullscreenLayout = ({
     width: canvasSize.width,
     height: canvasSize.height,
     borderRadius: 0,
+    opacity: 1,
   };
 };
 
@@ -145,6 +147,7 @@ const wideLayout = ({
     width: newWidth,
     height: newHeight,
     borderRadius,
+    opacity: 1,
   };
 };
 
@@ -222,6 +225,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
         webcamSize.height -
         getBottomSafeSpace(canvasLayout),
       borderRadius,
+      opacity: 1,
     };
   }
 
@@ -234,6 +238,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
         webcamSize.height -
         getBottomSafeSpace(canvasLayout),
       borderRadius,
+      opacity: 1,
     };
   }
 
@@ -243,6 +248,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
       x: safeSpace(canvasLayout),
       y: safeSpace(canvasLayout),
       borderRadius,
+      opacity: 1,
     };
   }
 
@@ -252,6 +258,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
       x: canvasSize.width - webcamSize.width - safeSpace(canvasLayout),
       y: safeSpace(canvasLayout),
       borderRadius,
+      opacity: 1,
     };
   }
 
@@ -261,6 +268,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
     x: 0,
     y: 0,
     borderRadius,
+    opacity: 1,
   };
 };
 
@@ -316,11 +324,11 @@ export type CameraSceneLayout = {
 export const getLayout = ({
   canvasLayout,
   videos,
-  scene,
+  webcamPosition,
 }: {
   videos: SceneVideos;
-  scene: VideoScene;
   canvasLayout: CanvasLayout;
+  webcamPosition: WebcamPosition;
 }): CameraSceneLayout => {
   const canvasSize = getDimensionsForLayout(canvasLayout);
   const displayLayout = videos.display
@@ -329,7 +337,7 @@ export const getLayout = ({
         videoHeight: videos.display.height,
         canvasSize,
         canvasLayout,
-        webcamPosition: scene.webcamPosition,
+        webcamPosition,
       })
     : null;
 
@@ -342,7 +350,7 @@ export const getLayout = ({
 
   const webcamLayout = videos.display
     ? makeWebcamLayoutBasedOnWebcamPosition({
-        webcamPosition: scene.webcamPosition,
+        webcamPosition,
         canvasSize,
         canvasLayout,
         webcamSize,
@@ -351,7 +359,7 @@ export const getLayout = ({
         canvasSize,
         canvasLayout,
         webcamSize,
-        webcamPosition: scene.webcamPosition,
+        webcamPosition,
       });
 
   return {
@@ -360,7 +368,7 @@ export const getLayout = ({
           canvasLayout,
           layout: shiftDisplayLayoutBasedOnWebcamPosition({
             layout: displayLayout,
-            webcamPosition: scene.webcamPosition,
+            webcamPosition,
             webcamSize,
             canvasLayout,
           }),

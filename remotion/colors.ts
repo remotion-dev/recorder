@@ -1,5 +1,7 @@
 export const COLORS = {
-  BACKGROUND: "#fff",
+  BACKGROUND: "#FAFAFA",
+  SUBTITLES_BACKGROUND: "#fff",
+  BORDER_COLOR: "#EBEBEB",
   WORD_COLOR_ON_BG_APPEARED: "black",
   WORD_COLOR_ON_BG_GREYED: "rgba(0, 0, 0, 0.3)",
   WORD_COLOR_ON_VIDEO_APPEARED: "white",
