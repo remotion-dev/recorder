@@ -357,10 +357,16 @@ export const getWebcamPosition = ({
       [startLayout.width, currentScene.layout.webcamLayout.width],
     ),
     // Make opacity go twice as fast
-    // TODO: Bug: Should only fade in when the position is the same (growing / shrinking)
-    opacity: interpolate(enter, [0.4, 0.6], [0, 1], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    }),
+    opacity:
+      previousScene &&
+      isGrowingOrShrinkingToMiniature({
+        otherScene: previousScene,
+        currentScene,
+      })
+        ? interpolate(enter, [0.4, 0.6], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          })
+        : 1,
   };
 };
