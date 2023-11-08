@@ -12,6 +12,7 @@ import type {
   CanvasLayout,
   SceneAndMetadata,
   SceneType,
+  VideoSceneAndMetadata,
 } from "./configuration";
 import { transitionDuration } from "./configuration";
 import { CameraScene } from "./scenes/CameraScene";
@@ -126,18 +127,24 @@ export const All: React.FC<AllProps> = ({
         }
 
         videoCounter += 1;
+        const { durationInFrames } = sceneAndMetadata;
+
         return (
-          <CameraScene
+          <Sequence
             key={videoCounter}
-            start={from}
-            index={i}
-            shouldEnter={isTransitioningIn}
-            canvasLayout={canvasLayout}
-            shouldExit={isTransitioningOut}
-            nextScene={scenesAndMetadata[i + 1] ?? null}
-            previousScene={scenesAndMetadata[i - 1] ?? null}
-            sceneAndMetadata={sceneAndMetadata}
-          />
+            name={`Scene ${i}`}
+            from={from}
+            durationInFrames={Math.max(1, durationInFrames)}
+          >
+            <CameraScene
+              shouldEnter={isTransitioningIn}
+              canvasLayout={canvasLayout}
+              shouldExit={isTransitioningOut}
+              nextScene={scenesAndMetadata[i + 1] ?? null}
+              previousScene={scenesAndMetadata[i - 1] ?? null}
+              sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
+            />
+          </Sequence>
         );
       })}
       {canvasLayout === "wide" ? (

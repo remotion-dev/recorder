@@ -2,7 +2,6 @@ import React from "react";
 import {
   AbsoluteFill,
   Audio,
-  Sequence,
   spring,
   staticFile,
   useCurrentFrame,
@@ -13,31 +12,36 @@ import {
   isShrinkingToMiniature,
 } from "../animations/camera-scene-transitions";
 import { SquareChapter } from "../chapters/SquareChapter";
-import type { CanvasLayout, SceneAndMetadata } from "../configuration";
+import type {
+  CanvasLayout,
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../configuration";
 import { transitionDuration } from "../configuration";
 import { Subs } from "../Subs/Subs";
 import { WebcamVideo } from "../WebcamVideo";
 import { DisplayVideo } from "./DisplayVideo";
 
-const Inner: React.FC<{
-  startFrom: number;
-  endAt: number | undefined;
+export const CameraScene: React.FC<{
   shouldEnter: boolean;
   shouldExit: boolean;
   canvasLayout: CanvasLayout;
-  scene: SceneAndMetadata;
+  sceneAndMetadata: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
 }> = ({
-  endAt,
   shouldEnter,
   shouldExit,
-  startFrom,
-  scene,
+  sceneAndMetadata,
   canvasLayout,
   nextScene,
   previousScene,
 }) => {
+  const { scene } = sceneAndMetadata;
+
+  const startFrom = scene.trimStart ?? 0;
+  const endAt = scene.duration ? startFrom + scene.duration : undefined;
+
   const { fps, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
 
@@ -74,16 +78,17 @@ const Inner: React.FC<{
     return 0;
   })();
 
-  if (scene.type !== "video-scene") {
+  if (sceneAndMetadata.type !== "video-scene") {
     throw new Error("Not a camera scene");
   }
 
   return (
     <>
       <AbsoluteFill>
-        {scene.layout.displayLayout && scene.pair.display ? (
+        {sceneAndMetadata.layout.displayLayout &&
+        sceneAndMetadata.pair.display ? (
           <DisplayVideo
-            scene={scene}
+            scene={sceneAndMetadata}
             enter={enter}
             exit={exit}
             nextScene={nextScene}
@@ -94,103 +99,51 @@ const Inner: React.FC<{
           />
         ) : null}
         <WebcamVideo
-          currentScene={scene}
+          currentScene={sceneAndMetadata}
           endAt={endAt}
           enter={enter}
           exit={exit}
           startFrom={startFrom}
-          webcamLayout={scene.layout.webcamLayout}
+          webcamLayout={sceneAndMetadata.layout.webcamLayout}
           canvasLayout={canvasLayout}
           nextScene={nextScene}
           previousScene={previousScene}
         />
       </AbsoluteFill>
-      {scene.pair.sub ? (
+      {sceneAndMetadata.pair.sub ? (
         <Subs
           canvasLayout={canvasLayout}
           trimStart={startFrom}
-          file={scene.pair.sub}
+          file={sceneAndMetadata.pair.sub}
           enter={enter}
           exit={exit}
-          scene={scene}
+          scene={sceneAndMetadata}
           nextScene={nextScene}
           previousScene={previousScene}
         />
       ) : null}
-      {scene.scene.newChapter && canvasLayout === "square" ? (
+      {sceneAndMetadata.scene.newChapter && canvasLayout === "square" ? (
         <SquareChapter
-          webcamPosition={scene.finalWebcamPosition}
-          title={scene.scene.newChapter}
+          webcamPosition={sceneAndMetadata.finalWebcamPosition}
+          title={sceneAndMetadata.scene.newChapter}
         />
       ) : null}
 
       {previousScene &&
       isShrinkingToMiniature({
         firstScene: previousScene,
-        secondScene: scene,
+        secondScene: sceneAndMetadata,
       }) ? (
         <Audio src={staticFile("sounds/shrink.m4a")} volume={0.2} />
       ) : previousScene &&
         isGrowingFromMiniature({
           firstScene: previousScene,
-          secondScene: scene,
+          secondScene: sceneAndMetadata,
         }) ? (
         <Audio src={staticFile("sounds/grow.m4a")} volume={0.2} />
       ) : shouldEnter ? (
         <Audio src={staticFile("sounds/whipwhoosh.mp3")} volume={0.1} />
       ) : null}
     </>
-  );
-};
-
-export const CameraScene: React.FC<{
-  sceneAndMetadata: SceneAndMetadata;
-  start: number;
-  index: number;
-  shouldEnter: boolean;
-  shouldExit: boolean;
-  canvasLayout: CanvasLayout;
-  nextScene: SceneAndMetadata | null;
-  previousScene: SceneAndMetadata | null;
-}> = ({
-  start,
-  index,
-  shouldEnter,
-  shouldExit,
-  canvasLayout,
-  nextScene,
-  previousScene,
-  sceneAndMetadata,
-}) => {
-  if (sceneAndMetadata.type !== "video-scene") {
-    throw new Error("Not a camera scene");
-  }
-
-  if (sceneAndMetadata.scene.type !== "scene") {
-    throw new Error("Not a scene");
-  }
-
-  const { scene, durationInFrames } = sceneAndMetadata;
-
-  const startFrom = scene.trimStart ?? 0;
-  const endAt = scene.duration ? startFrom + scene.duration : undefined;
-
-  return (
-    <Sequence
-      name={`Scene ${index}`}
-      from={start}
-      durationInFrames={Math.max(1, durationInFrames)}
-    >
-      <Inner
-        canvasLayout={canvasLayout}
-        endAt={endAt}
-        shouldEnter={shouldEnter}
-        shouldExit={shouldExit}
-        startFrom={startFrom}
-        scene={sceneAndMetadata}
-        nextScene={nextScene}
-        previousScene={previousScene}
-      />
-    </Sequence>
   );
 };
