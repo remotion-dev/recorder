@@ -27,6 +27,43 @@ export const useSequenceDuration = (trimStart: number) => {
   return sequenceDuration;
 };
 
+type WordColor = {
+  appeared: string;
+  greyed: string;
+};
+
+const getShownWordColor = ({
+  appeared,
+  word,
+  time,
+  wordColor,
+  active,
+}: {
+  appeared: boolean;
+  word: Word;
+  time: number;
+  wordColor: WordColor;
+  active: boolean;
+}) => {
+  if (!appeared) {
+    return wordColor.greyed;
+  }
+
+  if (word.monospace) {
+    if (active) {
+      return "white";
+    }
+
+    return wordColor.appeared;
+  }
+
+  return interpolateColors(
+    time,
+    [word.start, word.start + 0.1],
+    [wordColor.greyed, wordColor.appeared],
+  );
+};
+
 const getWordColor = ({
   subtitleLayout,
   appeared,
@@ -100,15 +137,13 @@ export const WordComp: React.FC<{
     monospace: word.monospace ?? false,
   });
 
-  const shownWordColor = appeared
-    ? word.monospace
-      ? wordColor.appeared
-      : interpolateColors(
-          time,
-          [word.start, word.start + 0.1],
-          [wordColor.greyed, wordColor.appeared],
-        )
-    : wordColor.greyed;
+  const shownWordColor = getShownWordColor({
+    appeared,
+    time,
+    word,
+    wordColor,
+    active,
+  });
 
   const backgroundColor = active
     ? word.monospace
