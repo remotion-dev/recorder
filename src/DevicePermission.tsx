@@ -81,7 +81,6 @@ const Permission: React.FC<{
 
     // firefox case
     if (!result && deviceState === "initial") {
-      console.log("deviceState", deviceState);
       // probe for permission
       try {
         await navigator.mediaDevices.getUserMedia({
