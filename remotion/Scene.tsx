@@ -1,5 +1,5 @@
 import React from "react";
-import { Sequence } from "remotion";
+import { Sequence, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import {
   getIsTransitioningIn,
   getIsTransitioningOut,
@@ -10,6 +10,7 @@ import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "./configuration";
+import { transitionDuration } from "./configuration";
 import { CameraScene } from "./scenes/CameraScene";
 import { EndCard } from "./scenes/EndCard";
 import { TableOfContents } from "./scenes/TableOfContents";
@@ -17,21 +18,24 @@ import { Title } from "./scenes/Title";
 import { TitleCard } from "./scenes/TitleCard";
 import { UpdateScene } from "./scenes/UpdateScene";
 
-export const Scene: React.FC<{
+type Props = {
   sceneAndMetadata: SceneAndMetadata;
   previousScene: SceneAndMetadata | null;
   nextScene: SceneAndMetadata | null;
   index: number;
   canvasLayout: CanvasLayout;
   chapters: ChapterType[];
-}> = ({
-  index,
+};
+
+const InnerScene: React.FC<Props> = ({
+  canvasLayout,
+  chapters,
   nextScene,
   previousScene,
   sceneAndMetadata,
-  canvasLayout,
-  chapters,
 }) => {
+  const { fps } = useVideoConfig();
+  const frame = useCurrentFrame();
   const isTransitioningIn = getIsTransitioningIn({
     scene: sceneAndMetadata,
     previousScene,
@@ -41,97 +45,114 @@ export const Scene: React.FC<{
     nextScene,
   });
 
+  const enter = isTransitioningIn
+    ? spring({
+        fps,
+        frame,
+        config: {
+          damping: 200,
+        },
+        durationInFrames: transitionDuration,
+      })
+    : 1;
+
+  const exit = isTransitioningOut
+    ? spring({
+        fps,
+        frame,
+        durationInFrames: transitionDuration,
+        config: {
+          damping: 200,
+        },
+        delay: sceneAndMetadata.durationInFrames - transitionDuration,
+      })
+    : 0;
+
   if (sceneAndMetadata.scene.type === "title") {
     return (
-      <Sequence
-        key={sceneAndMetadata.scene.title}
-        from={sceneAndMetadata.from}
+      <Title
         durationInFrames={sceneAndMetadata.scene.durationInFrames}
-      >
-        <Title
-          durationInFrames={sceneAndMetadata.scene.durationInFrames}
-          subtitle={sceneAndMetadata.scene.subtitle}
-          title={sceneAndMetadata.scene.title}
-        />
-      </Sequence>
+        subtitle={sceneAndMetadata.scene.subtitle}
+        title={sceneAndMetadata.scene.title}
+      />
     );
   }
 
   if (sceneAndMetadata.scene.type === "remotionupdate") {
-    return (
-      <Sequence
-        key={"update"}
-        from={sceneAndMetadata.from}
-        durationInFrames={sceneAndMetadata.scene.durationInFrames}
-      >
-        <UpdateScene />
-      </Sequence>
-    );
+    return <UpdateScene enter={enter} exit={exit} />;
   }
 
   if (sceneAndMetadata.scene.type === "titlecard") {
     return (
-      <Sequence
-        from={sceneAndMetadata.from}
-        durationInFrames={sceneAndMetadata.scene.durationInFrames}
-      >
-        <TitleCard
-          durationInFrames={sceneAndMetadata.scene.durationInFrames}
-          title={sceneAndMetadata.scene.title}
-          image={sceneAndMetadata.scene.image}
-          youTubePlug={sceneAndMetadata.scene.youTubePlug}
-        />
-      </Sequence>
+      <TitleCard
+        title={sceneAndMetadata.scene.title}
+        image={sceneAndMetadata.scene.image}
+        youTubePlug={sceneAndMetadata.scene.youTubePlug}
+        enter={enter}
+        exit={exit}
+      />
     );
   }
 
   if (sceneAndMetadata.scene.type === "endcard") {
     return (
-      <Sequence
-        from={sceneAndMetadata.from}
-        durationInFrames={sceneAndMetadata.scene.durationInFrames}
-      >
-        <EndCard
-          platform={sceneAndMetadata.scene.platform}
-          canvasLayout={canvasLayout}
-          channel={sceneAndMetadata.scene.channel}
-          isTransitioningIn={isTransitioningIn}
-          links={sceneAndMetadata.scene.links}
-        />
-      </Sequence>
+      <EndCard
+        platform={sceneAndMetadata.scene.platform}
+        canvasLayout={canvasLayout}
+        channel={sceneAndMetadata.scene.channel}
+        isTransitioningIn={isTransitioningIn}
+        links={sceneAndMetadata.scene.links}
+        enter={enter}
+        exit={exit}
+      />
     );
   }
 
   if (sceneAndMetadata.scene.type === "tableofcontents") {
     return (
-      <Sequence
-        from={sceneAndMetadata.from}
-        durationInFrames={sceneAndMetadata.scene.durationInFrames}
-      >
-        <TableOfContents
-          isTransitioningIn={isTransitioningIn}
-          chapters={chapters}
-          isTransitioningOut={isTransitioningOut}
-        />
-      </Sequence>
+      <TableOfContents
+        isTransitioningIn={isTransitioningIn}
+        chapters={chapters}
+        isTransitioningOut={isTransitioningOut}
+        enter={enter}
+        exit={exit}
+      />
     );
   }
 
-  const { durationInFrames } = sceneAndMetadata;
+  return (
+    <CameraScene
+      shouldEnter={isTransitioningIn}
+      canvasLayout={canvasLayout}
+      shouldExit={isTransitioningOut}
+      nextScene={nextScene}
+      previousScene={previousScene}
+      sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
+    />
+  );
+};
 
+export const Scene: React.FC<Props> = ({
+  index,
+  nextScene,
+  previousScene,
+  sceneAndMetadata,
+  canvasLayout,
+  chapters,
+}) => {
   return (
     <Sequence
       name={`Scene ${index}`}
       from={sceneAndMetadata.from}
-      durationInFrames={Math.max(1, durationInFrames)}
+      durationInFrames={Math.max(1, sceneAndMetadata.durationInFrames)}
     >
-      <CameraScene
-        shouldEnter={isTransitioningIn}
+      <InnerScene
         canvasLayout={canvasLayout}
-        shouldExit={isTransitioningOut}
+        chapters={chapters}
         nextScene={nextScene}
+        index={index}
         previousScene={previousScene}
-        sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
+        sceneAndMetadata={sceneAndMetadata}
       />
     </Sequence>
   );

@@ -17,7 +17,9 @@ export const TableOfContents: React.FC<{
   isTransitioningIn: boolean;
   isTransitioningOut: boolean;
   chapters: ChapterType[];
-}> = ({ isTransitioningIn, chapters, isTransitioningOut }) => {
+  enter: number;
+  exit: number;
+}> = ({ isTransitioningIn, chapters }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
 
