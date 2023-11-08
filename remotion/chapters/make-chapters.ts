@@ -29,22 +29,19 @@ export const generateChapters = ({
   const chapters: ChapterType[] = [];
 
   for (let i = 0; i < scenes.length; i++) {
-    const sceneAndMetadata = scenes[i] as SceneAndMetadata;
+    const scene = scenes[i] as SceneAndMetadata;
     const previousScene = scenes[i - 1] ?? null;
 
     const isTransitioningIn = getIsTransitioningIn({
-      scene: sceneAndMetadata,
+      scene,
       previousScene,
     });
     const sumUpDuration = getSumUpDuration({
-      scene: sceneAndMetadata,
+      scene,
       previousScene,
     });
 
-    if (
-      sceneAndMetadata.type === "video-scene" &&
-      sceneAndMetadata.scene.newChapter
-    ) {
+    if (scene.type === "video-scene" && scene.scene.newChapter) {
       let start = passedDuration;
 
       const end = start + sumUpDuration;
@@ -53,7 +50,7 @@ export const generateChapters = ({
       }
 
       const chapter: ChapterType = {
-        title: sceneAndMetadata.scene.newChapter,
+        title: scene.scene.newChapter,
         start,
         end,
         id: passedDuration,
@@ -62,7 +59,7 @@ export const generateChapters = ({
           {
             start,
             end,
-            scene: sceneAndMetadata,
+            scene,
           },
         ],
       };
@@ -70,16 +67,16 @@ export const generateChapters = ({
       chapters.push(chapter);
     } else if (chapters.length > 0) {
       const lastChapter = chapters[chapters.length - 1] as ChapterType;
-      if (sceneAndMetadata.type === "video-scene") {
+      if (scene.type === "video-scene") {
         const lastWebcamPosition = lastChapter.webcamPositions[
           lastChapter.webcamPositions.length - 1
         ] as WebcamInformation;
         if (
-          sceneAndMetadata.finalWebcamPosition ===
+          scene.finalWebcamPosition ===
           lastWebcamPosition.scene.finalWebcamPosition
         ) {
           lastWebcamPosition.scene.scene.transitionToNextScene =
-            sceneAndMetadata.scene.transitionToNextScene;
+            scene.scene.transitionToNextScene;
           lastWebcamPosition.end += sumUpDuration;
         } else {
           lastChapter.webcamPositions.push({
@@ -87,7 +84,7 @@ export const generateChapters = ({
               ? lastChapter.end - transitionDuration
               : lastChapter.end,
             end: lastChapter.end + sumUpDuration,
-            scene: sceneAndMetadata,
+            scene,
           });
         }
       }
@@ -95,10 +92,7 @@ export const generateChapters = ({
       lastChapter.end += sumUpDuration;
     }
 
-    if (
-      sceneAndMetadata.type === "video-scene" &&
-      sceneAndMetadata.scene.stopChapteringAfterThis
-    ) {
+    if (scene.type === "video-scene" && scene.scene.stopChapteringAfterThis) {
       break;
     }
 

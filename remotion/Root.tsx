@@ -3565,7 +3565,7 @@ export const Root = () => {
               duration: null,
               transitionToNextScene: false,
               newChapter: "Example project",
-              stopChapteringAfterThis: false,
+              stopChapteringAfterThis: true,
               music: "previous" as const,
             },
             {
