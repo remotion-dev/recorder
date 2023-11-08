@@ -149,8 +149,12 @@ const App = () => {
   useKeyPress(["r"], onPressR);
   useEffect(() => {
     const checkDeviceLabels = async () => {
-      const devicesWOLabel = await navigator.mediaDevices.enumerateDevices();
-      if (hasNewDevices(devicesWOLabel)) {
+      const fetchedDevices = await navigator.mediaDevices.enumerateDevices();
+      const hasEmptyLabels = fetchedDevices.some(
+        (device) => device.label === "",
+      );
+      const hasNew = hasNewDevices(fetchedDevices);
+      if (hasNew && hasEmptyLabels) {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
           audio: true,
@@ -159,9 +163,11 @@ const App = () => {
         storeLabelsToLS(_devices);
         stream.getAudioTracks().forEach((track) => track.stop());
         stream.getVideoTracks().forEach((track) => track.stop());
+      } else if (hasNew) {
+        storeLabelsToLS(fetchedDevices);
       }
 
-      setDevices(devicesWOLabel);
+      setDevices(fetchedDevices);
     };
 
     checkDeviceLabels();
