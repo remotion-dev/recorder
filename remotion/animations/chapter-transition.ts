@@ -1,5 +1,6 @@
 import { interpolate } from "remotion";
 import type { WebcamPosition } from "../configuration";
+import type { CameraSceneLayout } from "../layout/get-layout";
 
 export type OutTransition = "none" | "up" | "down" | "left" | "right";
 export type InTransition =
@@ -151,22 +152,30 @@ export const makeInTransition = ({
   width,
   height,
   progress,
+  layout,
 }: {
   inTransition: InTransition;
   width: number;
   height: number;
   progress: number;
+  layout: CameraSceneLayout;
 }): { x: number; y: number } => {
   if (inTransition === "none") {
     return { x: 0, y: 0 };
   }
 
   if (inTransition === "from-top") {
-    return { x: 0, y: interpolate(progress, [0, 1], [-height, 0]) };
+    return {
+      x: 0,
+      y: interpolate(progress, [0, 1], [-height, 0]),
+    };
   }
 
   if (inTransition === "from-bottom") {
-    return { x: 0, y: interpolate(progress, [0, 1], [height, 0]) };
+    return {
+      x: 0,
+      y: interpolate(progress, [0, 1], [height, 0]),
+    };
   }
 
   if (inTransition === "from-left") {

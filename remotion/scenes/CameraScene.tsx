@@ -123,6 +123,7 @@ const Inner: React.FC<{
           title={scene.scene.newChapter}
         />
       ) : null}
+
       {previousScene &&
       isShrinkingToMiniature({
         firstScene: previousScene,
