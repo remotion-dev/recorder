@@ -54,16 +54,20 @@ export const WideScreenChapters: React.FC<{
         const isDifferentChapterThanPrevious =
           previousScene?.chapterId !== chapterScene.chapterId;
 
+        const noTransition =
+          previousScene &&
+          !previousScene.webcamInformation.scene.scene.transitionToNextScene;
+
         const shouldSlideY =
           chapterScene.chapterIndex > 1 &&
           chapterScene.chapterIndex < chapters.length - 1 &&
           isDifferentChapterThanPrevious &&
-          inTransition === "none" &&
+          noTransition &&
           isSameWebcamPositionAsBefore;
 
         const shouldSlideHighlight =
           isDifferentChapterThanPrevious &&
-          inTransition === "none" &&
+          noTransition &&
           isSameWebcamPositionAsBefore;
 
         return (
