@@ -20,10 +20,6 @@ export const transitionOut = ({
   currentScene: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
 }): OutTransition => {
-  if (!currentScene.scene.transitionToNextScene) {
-    return "none";
-  }
-
   const isCurrentlyLeft =
     currentScene.finalWebcamPosition === "bottom-left" ||
     currentScene.finalWebcamPosition === "top-left";
@@ -34,6 +30,10 @@ export const transitionOut = ({
     }
 
     return "right";
+  }
+
+  if (!currentScene.scene.transitionToNextScene) {
+    return "none";
   }
 
   const isCurrentlyTop =
