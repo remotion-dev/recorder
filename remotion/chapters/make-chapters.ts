@@ -9,6 +9,8 @@ export type WebcamInformation = {
   scene: VideoSceneAndMetadata;
   start: number;
   end: number;
+  previousScene: SceneAndMetadata | null;
+  nextScene: SceneAndMetadata | null;
 };
 
 export type ChapterType = {
@@ -60,6 +62,8 @@ export const generateChapters = ({
             start,
             end,
             scene,
+            nextScene: scenes[i + 1] ?? null,
+            previousScene: scenes[i - 1] ?? null,
           },
         ],
       };
@@ -85,6 +89,8 @@ export const generateChapters = ({
               : lastChapter.end,
             end: lastChapter.end + sumUpDuration,
             scene,
+            nextScene: scenes[i + 1] ?? null,
+            previousScene: scenes[i - 1] ?? null,
           });
         }
       }
