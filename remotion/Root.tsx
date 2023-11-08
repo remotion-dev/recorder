@@ -3419,6 +3419,11 @@ export const Root = () => {
               music: "previous" as const,
             },
             {
+              type: "tableofcontents" as const,
+              music: "previous" as const,
+              durationInFrames: 150,
+            },
+            {
               type: "scene" as const,
               webcamPosition: "bottom-left" as const,
               trimStart: 0,

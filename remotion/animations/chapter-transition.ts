@@ -75,13 +75,6 @@ export const transitionIn = ({
   previousScene: SceneAndMetadata | null;
 }): InTransition => {
   if (previousScene === null || previousScene.type !== "video-scene") {
-    if (
-      currentScene.finalWebcamPosition === "bottom-left" ||
-      currentScene.finalWebcamPosition === "top-left"
-    ) {
-      return "from-left";
-    }
-
     return "from-right";
   }
 
