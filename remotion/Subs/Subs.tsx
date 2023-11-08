@@ -48,11 +48,20 @@ export const Subs: React.FC<{
   const [changeStatus, setChangeStatus] = useState<
     "initial" | "changed" | "unchanged"
   >("initial");
-  watchStaticFile(file.name, (newData: StaticFile | null) => {
-    if (newData) {
-      setChangeStatus("changed");
-    }
-  });
+
+  useEffect(() => {
+    const { cancel } = watchStaticFile(
+      file.name,
+      (newData: StaticFile | null) => {
+        if (newData) {
+          setChangeStatus("changed");
+        }
+      },
+    );
+    return () => {
+      cancel();
+    };
+  }, [file.name]);
 
   useEffect(() => {
     if (changeStatus === "initial" || changeStatus === "changed") {
