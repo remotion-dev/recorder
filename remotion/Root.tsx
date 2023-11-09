@@ -3421,7 +3421,7 @@ export const Root = () => {
         id="transitions"
         schema={videoConf}
         defaultProps={{
-          theme: "light",
+          theme: "light" as const,
           canvasLayout: "square" as const,
           prefix: "transitions",
           scenes: [
@@ -3435,11 +3435,7 @@ export const Root = () => {
               stopChapteringAfterThis: false,
               music: "previous" as const,
             },
-            {
-              type: "tableofcontents" as const,
-              music: "previous" as const,
-              durationInFrames: 110,
-            },
+
             {
               type: "scene" as const,
               webcamPosition: "bottom-left" as const,
@@ -3595,7 +3591,7 @@ export const Root = () => {
               durationInFrames: 200,
               music: "previous" as const,
               channel: "remotion" as const,
-              platform: "x" as const,
+              platform: "linkedin" as const,
               links: [{ link: "remotion.dev/transitions" }],
             },
           ],
