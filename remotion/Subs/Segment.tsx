@@ -224,6 +224,14 @@ const getOpacity = ({
   return fadeIn - fadeOut;
 };
 
+export const getBorderWidthForSubtitles = (subtitleType: SubtitleType) => {
+  if (subtitleType === "boxed") {
+    return 3;
+  }
+
+  return 0;
+};
+
 export const SegmentComp: React.FC<{
   segment: Segment;
   isLast: boolean;
@@ -264,17 +272,18 @@ export const SegmentComp: React.FC<{
         display: "flex",
         lineHeight: LINE_HEIGHT,
         opacity,
-        // @ts-expect-error
-        textWrap: "balance",
-        border:
-          subtitleType === "boxed"
-            ? `3px solid ${COLORS.BORDER_COLOR}`
-            : undefined,
+        border: `${getBorderWidthForSubtitles(subtitleType)}px solid ${
+          COLORS.BORDER_COLOR
+        }`,
         backgroundColor:
           subtitleType === "boxed" ? COLORS.SUBTITLES_BACKGROUND : undefined,
         boxShadow:
           subtitleType === "boxed" ? "0px 2px 2px rgba(0,0,0,.04)" : undefined,
         paddingLeft: getHorizontalPaddingForSubtitles(
+          subtitleType,
+          canvasLayout,
+        ),
+        paddingRight: getHorizontalPaddingForSubtitles(
           subtitleType,
           canvasLayout,
         ),
@@ -295,6 +304,7 @@ export const SegmentComp: React.FC<{
             getSubtitlesLines(subtitleType) *
             getSubtitlesFontSize(subtitleType, displayLayout) *
             LINE_HEIGHT,
+          marginTop: subtitleType === "boxed" ? -5 : 0,
         }}
       >
         <span

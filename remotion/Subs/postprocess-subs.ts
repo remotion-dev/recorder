@@ -7,6 +7,7 @@ import { wordsTogether } from "../layout/words-together";
 import type { Segment, SubTypes, Word } from "../sub-types";
 import { remapWord } from "./remap-words";
 import type { SubtitleType } from "./Segment";
+import { getBorderWidthForSubtitles } from "./Segment";
 import {
   monospaceFont,
   monospaceFontWeight,
@@ -172,7 +173,8 @@ export const postprocessSubtitles = ({
     subTypes: mappedSubTypes,
     boxWidth:
       boxWidth -
-      getHorizontalPaddingForSubtitles(subtitleType, canvasLayout) * 2,
+      getHorizontalPaddingForSubtitles(subtitleType, canvasLayout) * 2 -
+      getBorderWidthForSubtitles(subtitleType) * 2,
     maxLines,
     fontSize,
   });

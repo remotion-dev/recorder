@@ -3399,7 +3399,7 @@ export const Root = () => {
           scenes: [
             {
               type: "scene" as const,
-              webcamPosition: "bottom-left" as const,
+              webcamPosition: "top-right" as const,
               trimStart: 0,
               duration: null,
               transitionToNextScene: true,
@@ -3566,8 +3566,8 @@ export const Root = () => {
               type: "endcard" as const,
               durationInFrames: 200,
               music: "previous" as const,
-              channel: "jonny" as const,
-              platform: "youtube" as const,
+              channel: "remotion" as const,
+              platform: "x" as const,
               links: [{ link: "remotion.dev/transitions" }],
             },
           ],
