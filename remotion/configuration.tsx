@@ -49,7 +49,7 @@ const availablePositionsAndPrevious = [
 
 const theme = z.enum(["light", "dark"]);
 export type Theme = z.infer<typeof theme>;
-const platform = z.enum(["youtube", "linkedin", "instagram", "x"]);
+const platform = z.enum(["youtube", "linkedin", "instagram", "discord", "x"]);
 
 export type Platform = z.infer<typeof platform>;
 
@@ -66,12 +66,14 @@ export const channels: { [key in Channel]: ChannelConfig } = {
     linkedin: "Jonny Burger",
     x: "@JNYBGR",
     youtube: "/JonnyBurger",
+    discord: null,
   },
   remotion: {
     instagram: "@remotion",
     linkedin: "Remotion",
     x: "@remotion",
     youtube: "@remotion_dev",
+    discord: null,
   },
 };
 
