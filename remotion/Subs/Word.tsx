@@ -6,6 +6,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { COLORS } from "../colors";
+import type { Theme } from "../configuration";
 import type { Word } from "../sub-types";
 
 const style: React.CSSProperties = {
@@ -66,20 +67,22 @@ const getShownWordColor = ({
 const getWordColor = ({
   appeared,
   monospace,
+  theme,
 }: {
   monospace: boolean;
   appeared: boolean;
+  theme: Theme;
 }): { appeared: string; greyed: string } => {
   const normalWordColor = {
-    appeared: COLORS.WORD_COLOR_ON_BG_APPEARED,
-    greyed: COLORS.WORD_COLOR_ON_BG_GREYED,
+    appeared: COLORS[theme].WORD_COLOR_ON_BG_APPEARED,
+    greyed: COLORS[theme].WORD_COLOR_ON_BG_GREYED,
   };
 
   const wordColor =
     monospace && appeared
       ? {
-          appeared: COLORS.WORD_HIGHLIGHT_COLOR,
-          greyed: COLORS.WORD_COLOR_ON_BG_GREYED,
+          appeared: COLORS[theme].WORD_HIGHLIGHT_COLOR,
+          greyed: COLORS[theme].WORD_COLOR_ON_BG_GREYED,
         }
       : normalWordColor;
   return wordColor;
@@ -97,7 +100,8 @@ export const WordComp: React.FC<{
   word: Word;
   trimStart: number;
   isLast: boolean;
-}> = ({ word, trimStart, isLast }) => {
+  theme: Theme;
+}> = ({ word, trimStart, isLast, theme }) => {
   const time = useTime(trimStart);
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -125,6 +129,7 @@ export const WordComp: React.FC<{
   const wordColor = getWordColor({
     appeared,
     monospace: word.monospace ?? false,
+    theme,
   });
 
   const shownWordColor = getShownWordColor({
@@ -137,7 +142,7 @@ export const WordComp: React.FC<{
 
   const backgroundColor = active
     ? word.monospace
-      ? COLORS.WORD_HIGHLIGHT_COLOR
+      ? COLORS[theme].WORD_HIGHLIGHT_COLOR
       : "transparent"
     : "transparent";
 

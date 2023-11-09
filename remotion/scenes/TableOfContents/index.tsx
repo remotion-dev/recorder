@@ -3,6 +3,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, useVideoConfig } from "remotion";
 import type { ChapterType } from "../../chapters/make-chapters";
 import { COLORS } from "../../colors";
+import type { Theme } from "../../configuration";
 import { TableOfContentItem } from "./item";
 
 loadFont();
@@ -11,13 +12,14 @@ export const TableOfContents: React.FC<{
   chapters: ChapterType[];
   enter: number;
   exit: number;
-}> = ({ chapters, enter, exit }) => {
+  theme: Theme;
+}> = ({ chapters, theme, enter, exit }) => {
   const { width } = useVideoConfig();
 
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: COLORS.BACKGROUND,
+        backgroundColor: COLORS[theme].BACKGROUND,
         transform: `translateX(${interpolate(
           enter + exit,
           [0, 1],

@@ -15,6 +15,7 @@ import { SquareChapter } from "../chapters/SquareChapter";
 import type {
   CanvasLayout,
   SceneAndMetadata,
+  Theme,
   VideoSceneAndMetadata,
 } from "../configuration";
 import { transitionDuration } from "../configuration";
@@ -29,6 +30,7 @@ export const CameraScene: React.FC<{
   sceneAndMetadata: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
+  theme: Theme;
 }> = ({
   shouldEnter,
   shouldExit,
@@ -36,6 +38,7 @@ export const CameraScene: React.FC<{
   canvasLayout,
   nextScene,
   previousScene,
+  theme,
 }) => {
   const { scene } = sceneAndMetadata;
 
@@ -120,6 +123,7 @@ export const CameraScene: React.FC<{
           scene={sceneAndMetadata}
           nextScene={nextScene}
           previousScene={previousScene}
+          theme={theme}
         />
       ) : null}
       {sceneAndMetadata.scene.newChapter && canvasLayout === "square" ? (

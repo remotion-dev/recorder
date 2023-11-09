@@ -11,7 +11,7 @@ import {
 } from "remotion";
 import { z } from "zod";
 import { COLORS } from "../../colors";
-import type { Channel, Platform } from "../../configuration";
+import type { Channel, Platform, Theme } from "../../configuration";
 import { avatars, channels, transitionDuration } from "../../configuration";
 import { FollowButton, followButtonHeight } from "./FollowButton";
 import {
@@ -24,14 +24,15 @@ import {
 
 const Avatar: React.FC<{
   avatar: string;
-}> = ({ avatar }) => {
+  theme: Theme;
+}> = ({ avatar, theme }) => {
   return (
     <Img
       style={{
         height: followButtonHeight,
         width: followButtonHeight,
         borderRadius: "50%",
-        border: "6px solid " + COLORS.WORD_COLOR_ON_BG_APPEARED,
+        border: "6px solid " + COLORS[theme].WORD_COLOR_ON_BG_APPEARED,
       }}
       src={avatar}
     />
@@ -48,12 +49,13 @@ const spaceBetweenAvatarAndCta = 30;
 const FollowCTA: React.FC<{
   platform: Platform;
   avatar: string;
-}> = ({ platform, avatar }) => {
+  theme: Theme;
+}> = ({ platform, avatar, theme }) => {
   return (
     <div style={style}>
-      <Avatar avatar={avatar} />
+      <Avatar theme={theme} avatar={avatar} />
       <div style={{ width: spaceBetweenAvatarAndCta }} />
-      <FollowButton platform={platform} />
+      <FollowButton theme={theme} platform={platform} />
     </div>
   );
 };
@@ -74,27 +76,31 @@ const iconRow: React.CSSProperties = {
   paddingBottom: 20,
 };
 
-const labelStyle: React.CSSProperties = {
-  fontSize: 50,
-  fontFamily: "GT Planar",
-  fontWeight: 500,
-  marginLeft: 20,
-  color: COLORS.ENDCARD_TEXT_COLOR,
-};
-
 const IconRow: React.FC<{
   type: Platform | "link";
   label: string;
   opacity: number;
-}> = ({ type, label, opacity }) => {
+  theme: Theme;
+}> = ({ type, label, opacity, theme }) => {
+  const labelStyle: React.CSSProperties = {
+    fontSize: 50,
+    fontFamily: "GT Planar",
+    fontWeight: 500,
+    marginLeft: 20,
+    color: COLORS[theme].ENDCARD_TEXT_COLOR,
+  };
   return (
     <div style={{ ...iconRow, opacity }}>
       <div style={iconContainer}>
-        {type === "link" ? <LinkIcon height={60} /> : null}
-        {type === "youtube" ? <YouTubeIcon height={60} /> : null}
-        {type === "x" ? <XIcon height={60} /> : null}
-        {type === "instagram" ? <InstagramIcon height={70} /> : null}
-        {type === "linkedin" ? <LinkedInIcon height={60} /> : null}
+        {type === "link" ? <LinkIcon theme={theme} height={60} /> : null}
+        {type === "youtube" ? <YouTubeIcon theme={theme} height={60} /> : null}
+        {type === "x" ? <XIcon theme={theme} height={60} /> : null}
+        {type === "instagram" ? (
+          <InstagramIcon theme={theme} height={70} />
+        ) : null}
+        {type === "linkedin" ? (
+          <LinkedInIcon theme={theme} height={60} />
+        ) : null}
       </div>
       <div style={{ width: spaceBetweenAvatarAndCta }} />
       <div style={labelStyle}>{label}</div>
@@ -112,7 +118,8 @@ export const LeftSide: React.FC<{
   platform: Platform;
   channel: Channel;
   links: LinkType[];
-}> = ({ platform, channel, links }) => {
+  theme: Theme;
+}> = ({ platform, channel, links, theme }) => {
   const ref = useRef<HTMLDivElement>(null);
   const scaler = useRef<HTMLDivElement>(null);
   const [handle] = useState(() => delayRender());
@@ -203,7 +210,11 @@ export const LeftSide: React.FC<{
           )}px)`,
         }}
       >
-        <FollowCTA avatar={avatars[channel]} platform={platform} />
+        <FollowCTA
+          theme={theme}
+          avatar={avatars[channel]}
+          platform={platform}
+        />
       </div>
       <div ref={ref}>
         <div style={{ height: 80 }} />
@@ -227,6 +238,7 @@ export const LeftSide: React.FC<{
               opacity={opacity}
               type={p.platform}
               label={p.name}
+              theme={theme}
             />
           );
         })}
@@ -251,6 +263,7 @@ export const LeftSide: React.FC<{
               opacity={opacity}
               type="link"
               label={l.link}
+              theme={theme}
             />
           );
         })}

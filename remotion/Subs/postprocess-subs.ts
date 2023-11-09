@@ -141,6 +141,10 @@ export const getHorizontalPaddingForSubtitles = (
     return safeSpace(canvasLayout);
   }
 
+  if (subtitleType === "overlayed-center") {
+    return 20;
+  }
+
   return 0;
 };
 
