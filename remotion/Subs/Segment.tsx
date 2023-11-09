@@ -292,7 +292,9 @@ export const SegmentComp: React.FC<{
             ? COLORS[theme].SUBTITLES_BACKGROUND
             : undefined,
         boxShadow:
-          subtitleType === "boxed" ? "0px 2px 2px rgba(0,0,0,.04)" : undefined,
+          subtitleType === "boxed"
+            ? `0px 2px 2px ${COLORS[theme].BOX_SHADOW_COLOR}`
+            : undefined,
         left: subsBox.x,
         top: subsBox.y,
         width: subsBox.width,
@@ -320,7 +322,9 @@ export const SegmentComp: React.FC<{
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
             backgroundColor:
-              subtitleType === "overlayed-center" ? "white" : undefined,
+              subtitleType === "overlayed-center"
+                ? COLORS[theme].SUBTITLES_BACKGROUND
+                : undefined,
             ...inlineSubsLayout({ subtitleType, canvasLayout }),
           }}
         >

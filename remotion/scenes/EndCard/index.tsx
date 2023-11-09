@@ -43,7 +43,7 @@ export const EndCard: React.FC<{
         channel={channel}
         platform={platform}
       />
-      {canvasLayout === "wide" ? <ThumbnailContainers /> : null}
+      {canvasLayout === "wide" ? <ThumbnailContainers theme={theme} /> : null}
     </AbsoluteFill>
   );
 };

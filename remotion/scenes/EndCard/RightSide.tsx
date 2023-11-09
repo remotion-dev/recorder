@@ -1,5 +1,7 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
+import { COLORS } from "../../colors";
+import type { Theme } from "../../configuration";
 
 const border = 6;
 
@@ -7,19 +9,23 @@ const border = 6;
 const YOUTUBE_END_SCREEN_SAFE_AREA_HEIGHT = 790;
 const YOUTUBE_END_SCREEN_SAFE_AREA_TOP = 135;
 
-const ThumbnailPreview: React.FC = () => {
+const ThumbnailPreview: React.FC<{
+  theme: Theme;
+}> = ({ theme }) => {
   return (
     <div
       style={{
         width: 613 + border * 3,
         height: 343 + border * 3,
-        border: `${border}px solid black`,
+        border: `${border}px solid ${COLORS[theme].ENDCARD_TEXT_COLOR}`,
       }}
     />
   );
 };
 
-export const ThumbnailContainers: React.FC = () => {
+export const ThumbnailContainers: React.FC<{
+  theme: Theme;
+}> = ({ theme }) => {
   // These thumbnails are optimized for YouTube and fit perfectly if:
   // - All thumbnails are made the minimum size
   // - The upper thumbnail is positioned at the highest point allowed
@@ -40,9 +46,9 @@ export const ThumbnailContainers: React.FC = () => {
           flexDirection: "column",
         }}
       >
-        <ThumbnailPreview />
+        <ThumbnailPreview theme={theme} />
         <div style={{ flex: 1 }} />
-        <ThumbnailPreview />
+        <ThumbnailPreview theme={theme} />
       </div>
     </AbsoluteFill>
   );

@@ -28,6 +28,7 @@ export const TableOfContents: React.FC<{
         justifyContent: "center",
         paddingLeft: 80,
         paddingRight: 80,
+        color: COLORS[theme].ENDCARD_TEXT_COLOR,
       }}
     >
       <strong
