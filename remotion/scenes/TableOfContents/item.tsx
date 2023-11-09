@@ -14,7 +14,7 @@ const formatTime = (seconds: number) => {
     timeArray.push(hours.toString().padStart(2, "0"));
   }
 
-  timeArray.push(formattedMinutes.toString().padStart(2, "0"));
+  timeArray.push(formattedMinutes);
   timeArray.push(formattedSeconds.toString().padStart(2, "0"));
 
   return timeArray.join(":");
@@ -42,10 +42,16 @@ export const TableOfContentItem: React.FC<{
         lineHeight: 1.5,
       }}
     >
-      <div style={{ width: 250, fontVariantNumeric: "tabular-nums" }}>
+      <div style={{ flex: 1 }}>{title}</div>
+      <div
+        style={{
+          width: 150,
+          textAlign: "right",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
         {formatTime(time)}
       </div>
-      {title}
     </div>
   );
 };
