@@ -6,7 +6,6 @@ import {
   useVideoConfig,
 } from "remotion";
 import { COLORS } from "../colors";
-import type { Layout } from "../layout/get-layout";
 import type { Word } from "../sub-types";
 
 const style: React.CSSProperties = {
@@ -27,32 +26,60 @@ export const useSequenceDuration = (trimStart: number) => {
   return sequenceDuration;
 };
 
+type WordColor = {
+  appeared: string;
+  greyed: string;
+};
+
+const getShownWordColor = ({
+  appeared,
+  word,
+  time,
+  wordColor,
+  active,
+}: {
+  appeared: boolean;
+  word: Word;
+  time: number;
+  wordColor: WordColor;
+  active: boolean;
+}) => {
+  if (!appeared) {
+    return wordColor.greyed;
+  }
+
+  if (word.monospace) {
+    if (active) {
+      return "white";
+    }
+
+    return wordColor.appeared;
+  }
+
+  return interpolateColors(
+    time,
+    [word.start, word.start + 0.1],
+    [wordColor.greyed, wordColor.appeared],
+  );
+};
+
 const getWordColor = ({
-  displayLayout,
   appeared,
   monospace,
 }: {
-  displayLayout: Layout | null;
   monospace: boolean;
   appeared: boolean;
 }): { appeared: string; greyed: string } => {
-  const normalWordColor =
-    displayLayout === null
-      ? {
-          appeared: COLORS.WORD_COLOR_ON_VIDEO_APPEARED,
-          greyed: COLORS.WORD_COLOR_ON_VIDEO_GREYED,
-        }
-      : {
-          appeared: COLORS.WORD_COLOR_ON_BG_APPEARED,
-          greyed: COLORS.WORD_COLOR_ON_BG_GREYED,
-        };
+  const normalWordColor = {
+    appeared: COLORS.WORD_COLOR_ON_BG_APPEARED,
+    greyed: COLORS.WORD_COLOR_ON_BG_GREYED,
+  };
 
   const wordColor =
     monospace && appeared
       ? {
           appeared: COLORS.WORD_HIGHLIGHT_COLOR,
-          // TODO: Not sure if this is the right color
-          greyed: COLORS.WORD_COLOR_ON_VIDEO_GREYED,
+          greyed: COLORS.WORD_COLOR_ON_BG_GREYED,
         }
       : normalWordColor;
   return wordColor;
@@ -64,12 +91,13 @@ export const regularFont = "Inter";
 export const monospaceFontWeight = 500;
 export const monospaceFont = "GT Planar";
 
+export const WORD_HIGHLIGHT_BORDER_RADIUS = 10;
+
 export const WordComp: React.FC<{
   word: Word;
   trimStart: number;
   isLast: boolean;
-  displayLayout: Layout | null;
-}> = ({ word, trimStart, isLast, displayLayout }) => {
+}> = ({ word, trimStart, isLast }) => {
   const time = useTime(trimStart);
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -96,19 +124,16 @@ export const WordComp: React.FC<{
 
   const wordColor = getWordColor({
     appeared,
-    displayLayout,
     monospace: word.monospace ?? false,
   });
 
-  const shownWordColor = appeared
-    ? word.monospace
-      ? wordColor.appeared
-      : interpolateColors(
-          time,
-          [word.start, word.start + 0.1],
-          [wordColor.greyed, wordColor.appeared],
-        )
-    : wordColor.greyed;
+  const shownWordColor = getShownWordColor({
+    appeared,
+    time,
+    word,
+    wordColor,
+    active,
+  });
 
   const backgroundColor = active
     ? word.monospace
@@ -129,7 +154,7 @@ export const WordComp: React.FC<{
           fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
           backgroundColor,
           outline: active ? "5px solid " + backgroundColor : "none",
-          borderRadius: 10,
+          borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS,
           scale: String(scale),
           display: "inline-block",
         }}

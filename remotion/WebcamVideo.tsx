@@ -1,13 +1,11 @@
 import React from "react";
-import {
-  OffthreadVideo,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
-import { getWebcamTranslation } from "./animations/camera-scene-transitions";
-import type { CanvasLayout, Pair, WebcamPosition } from "./configuration";
-import { transitionDuration } from "./configuration";
+import { OffthreadVideo, useVideoConfig } from "remotion";
+import { getWebcamPosition } from "./animations/camera-scene-transitions";
+import type {
+  CanvasLayout,
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "./configuration";
 import type { Layout } from "./layout/get-layout";
 
 export const WebcamVideo: React.FC<{
@@ -16,66 +14,31 @@ export const WebcamVideo: React.FC<{
   exit: number;
   startFrom: number;
   endAt: number | undefined;
-  pair: Pair;
-  zoomInAtStart: boolean;
-  zoomInAtEnd: boolean;
-  webcamPosition: WebcamPosition;
-  shouldExit: boolean;
-  nextLayout: Layout | null;
-  previousLayout: Layout | null;
-  previousWebcamPosition: WebcamPosition | null;
-  nextWebcamPosition: WebcamPosition | null;
   canvasLayout: CanvasLayout;
+  nextScene: SceneAndMetadata | null;
+  previousScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
 }> = ({
   webcamLayout,
   enter,
   exit,
-  zoomInAtStart,
-  zoomInAtEnd,
   startFrom,
   endAt,
-  pair,
-  webcamPosition,
-  shouldExit,
-  nextLayout,
-  previousLayout,
-  nextWebcamPosition,
-  previousWebcamPosition,
+  nextScene,
+  previousScene,
   canvasLayout,
+  currentScene,
 }) => {
-  const { height, width, fps, durationInFrames } = useVideoConfig();
-  const frame = useCurrentFrame();
+  const { height, width } = useVideoConfig();
 
-  const zoomIn = zoomInAtEnd
-    ? spring({
-        fps,
-        frame,
-        config: { damping: 200 },
-        durationInFrames: 10,
-        delay: durationInFrames - 15 - (shouldExit ? transitionDuration : 0),
-      })
-    : zoomInAtStart
-    ? spring({
-        fps,
-        frame,
-        config: {
-          damping: 200,
-        },
-        durationInFrames: 10,
-      })
-    : 0;
-
-  const webcamTranslation = getWebcamTranslation({
+  const webcamLayoutWithTransitions = getWebcamPosition({
     enter,
     exit,
     height,
     width,
-    webcamPosition,
-    currentLayout: webcamLayout,
-    nextLayout,
-    previousLayout,
-    nextWebcamPosition,
-    previousWebcamPosition,
+    currentScene,
+    nextScene,
+    previousScene,
     canvasLayout,
   });
 
@@ -88,14 +51,14 @@ export const WebcamVideo: React.FC<{
     >
       <div
         style={{
-          borderRadius: webcamLayout.borderRadius,
+          borderRadius: webcamLayoutWithTransitions.borderRadius,
           overflow: "hidden",
-          width: webcamLayout.width,
-          height: webcamLayout.height,
-          left: webcamLayout.x,
-          top: webcamLayout.y,
+          width: webcamLayoutWithTransitions.width,
+          height: webcamLayoutWithTransitions.height,
+          left: webcamLayoutWithTransitions.x,
+          top: webcamLayoutWithTransitions.y,
+          opacity: webcamLayoutWithTransitions.opacity,
           position: "relative",
-          translate: `${webcamTranslation.translationX}px ${webcamTranslation.translationY}px`,
         }}
       >
         <OffthreadVideo
@@ -109,9 +72,8 @@ export const WebcamVideo: React.FC<{
             borderRadius: webcamLayout.borderRadius,
             overflow: "hidden",
             transformOrigin: "50% 0%",
-            scale: String(zoomIn * 0.4 + 1),
           }}
-          src={pair.webcam.src}
+          src={currentScene.pair.webcam.src}
         />
       </div>
     </div>

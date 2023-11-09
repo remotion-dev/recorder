@@ -78,6 +78,7 @@ export const TopBar: React.FC<{
             disabled={!recording}
             onClick={stop}
             style={{ display: "flex", alignItems: "center", gap: 10 }}
+            title="Press R to stop recording"
           >
             Stop recording
           </Button>
@@ -85,16 +86,25 @@ export const TopBar: React.FC<{
           {formatTime(Date.now() - recording)}
         </>
       ) : (
-        <Button
-          variant={"outline"}
-          type="button"
-          disabled={disabled}
-          onClick={start}
-          style={{ display: "flex", alignItems: "center", gap: 10 }}
+        <div
+          title={
+            disabled
+              ? "A webcam has to be selected to start the recording"
+              : undefined
+          }
         >
-          {recordCircle}
-          Start recording
-        </Button>
+          <Button
+            variant={"outline"}
+            type="button"
+            disabled={disabled}
+            onClick={start}
+            style={{ display: "flex", alignItems: "center", gap: 10 }}
+            title="Press R to start recording"
+          >
+            {recordCircle}
+            Start recording
+          </Button>
+        </div>
       )}
     </div>
   );

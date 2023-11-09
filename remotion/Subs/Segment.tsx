@@ -1,6 +1,7 @@
 import { loadFont } from "@remotion/google-fonts/Inter";
 import React from "react";
 import { AbsoluteFill, interpolate } from "remotion";
+import { COLORS } from "../colors";
 import type {
   CanvasLayout,
   Dimensions,
@@ -10,11 +11,17 @@ import type { Layout } from "../layout/get-layout";
 import { borderRadius, safeSpace } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type { Segment } from "../sub-types";
-import { useSequenceDuration, useTime, WordComp } from "./Word";
+import { getHorizontalPaddingForSubtitles } from "./postprocess-subs";
+import {
+  useSequenceDuration,
+  useTime,
+  WordComp,
+  WORD_HIGHLIGHT_BORDER_RADIUS,
+} from "./Word";
 
 loadFont();
 
-type SubtitleType = "below-video" | "overlayed-center" | "boxed";
+export type SubtitleType = "below-video" | "overlayed-center" | "boxed";
 
 export const getSubtitlesType = ({
   canvasLayout,
@@ -24,6 +31,10 @@ export const getSubtitlesType = ({
   displayLayout: Layout | null;
 }): SubtitleType => {
   if (displayLayout === null) {
+    if (canvasLayout === "square") {
+      return "boxed";
+    }
+
     return "overlayed-center";
   }
 
@@ -34,16 +45,23 @@ export const getSubtitlesType = ({
   return "below-video";
 };
 
-export const getSubtitlesFontSize = (subtitleType: SubtitleType) => {
+export const getSubtitlesFontSize = (
+  subtitleType: SubtitleType,
+  displayLayout: Layout | null,
+) => {
   if (subtitleType === "boxed") {
+    if (displayLayout === null) {
+      return 64;
+    }
+
     return 56;
   }
 
   if (subtitleType === "overlayed-center") {
-    return 48;
+    return 56;
   }
 
-  return 40;
+  return 48;
 };
 
 export const getSubtitlesLines = (subtitleType: SubtitleType) => {
@@ -51,23 +69,25 @@ export const getSubtitlesLines = (subtitleType: SubtitleType) => {
     return 4;
   }
 
-  return 2;
+  return 1;
 };
 
 export const getSubsBox = ({
-  displayLayout,
+  subtitleType,
   canvasLayout,
   canvasSize,
   webcamLayout,
   webcamPosition,
+  displayLayout,
 }: {
-  displayLayout: Layout | null;
+  subtitleType: SubtitleType;
   canvasLayout: CanvasLayout;
   canvasSize: Dimensions;
   webcamLayout: Layout;
   webcamPosition: WebcamPosition;
+  displayLayout: Layout | null;
 }): Layout => {
-  if (displayLayout === null) {
+  if (subtitleType === "overlayed-center") {
     const height = getBottomSafeSpace("square") * 2;
     return {
       height,
@@ -75,6 +95,7 @@ export const getSubsBox = ({
       borderRadius: 0,
       width: (canvasSize.width / 3) * 2,
       x: canvasSize.width / 6,
+      opacity: 1,
     };
   }
 
@@ -86,6 +107,24 @@ export const getSubsBox = ({
       y: canvasSize.height - height,
       width: (canvasSize.width / 3) * 2,
       borderRadius: 0,
+      opacity: 1,
+    };
+  }
+
+  if (displayLayout === null) {
+    const isTopAligned =
+      webcamPosition === "top-left" || webcamPosition === "top-right";
+
+    return {
+      height:
+        canvasSize.height - webcamLayout.height - safeSpace(canvasLayout) * 3,
+      y: isTopAligned
+        ? webcamLayout.height + safeSpace(canvasLayout) * 2
+        : safeSpace(canvasLayout),
+      x: safeSpace(canvasLayout),
+      width: canvasSize.width - safeSpace(canvasLayout) * 2,
+      borderRadius,
+      opacity: 1,
     };
   }
 
@@ -97,25 +136,20 @@ export const getSubsBox = ({
         ? webcamLayout.width + safeSpace(canvasLayout) * 2
         : safeSpace(canvasLayout),
     width: canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
-    borderRadius: 0,
+    borderRadius,
+    opacity: 1,
   };
 };
 
 const getSubsLayout = ({
   canvasLayout,
-  displayLayout,
-  subsBox,
+  subtitleType,
 }: {
   canvasLayout: CanvasLayout;
-  displayLayout: Layout | null;
-  subsBox: Layout;
+  subtitleType: SubtitleType;
 }): React.CSSProperties => {
-  if (displayLayout === null) {
+  if (subtitleType === "overlayed-center") {
     return {
-      left: subsBox.x,
-      top: subsBox.y,
-      width: subsBox.width,
-      height: subsBox.height,
       textAlign: "center",
       justifyContent: "center",
       alignItems: "center",
@@ -124,10 +158,6 @@ const getSubsLayout = ({
 
   if (canvasLayout === "wide") {
     return {
-      left: subsBox.x,
-      top: subsBox.y,
-      width: subsBox.width,
-      height: subsBox.height,
       maxLines: 2,
       textAlign: "center",
       justifyContent: "center",
@@ -136,39 +166,83 @@ const getSubsLayout = ({
   }
 
   return {
-    left: subsBox.x,
-    top: subsBox.y,
-    width: subsBox.width,
-    height: subsBox.height,
-    paddingTop: safeSpace(canvasLayout),
+    justifyContent: "center",
   };
 };
 
-const inlineSubsLayout = (
-  canvasLayout: CanvasLayout,
-  displayLayout: Layout | null,
-): React.CSSProperties => {
-  if (displayLayout === null) {
+const inlineSubsLayout = ({
+  subtitleType,
+}: {
+  subtitleType: SubtitleType;
+}): React.CSSProperties => {
+  if (subtitleType === "overlayed-center") {
+    const padding = 20;
     return {
-      borderRadius: borderRadius - safeSpace("tall") / 4,
+      padding,
+      borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS + padding,
     };
-  }
-
-  if (canvasLayout === "wide") {
-    return {};
   }
 
   return {};
 };
 
+const LINE_HEIGHT = 1.2;
+
+const getOpacity = ({
+  segment,
+  time,
+  isLast,
+  duration,
+  isFirst,
+}: {
+  segment: Segment;
+  time: number;
+  isLast: boolean;
+  isFirst: boolean;
+  duration: number;
+}) => {
+  const end = isLast ? duration : segment.end;
+
+  const start = Math.min(segment.start + 0.2, end - 0.1 - 0.000000001);
+
+  const fadeIn = interpolate(time, [start - 0.2, start], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  if (isLast) {
+    return fadeIn;
+  }
+
+  const fadeOut = interpolate(time, [end - 0.1, end], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  if (isFirst) {
+    return 1 - fadeOut;
+  }
+
+  return fadeIn - fadeOut;
+};
+
 export const SegmentComp: React.FC<{
   segment: Segment;
   isLast: boolean;
+  isFirst: boolean;
   trimStart: number;
   canvasLayout: CanvasLayout;
-  displayLayout: Layout | null;
   subsBox: Layout;
-}> = ({ segment, isLast, trimStart, canvasLayout, subsBox, displayLayout }) => {
+  subtitleType: SubtitleType;
+  displayLayout: Layout | null;
+}> = ({
+  segment,
+  isLast,
+  trimStart,
+  canvasLayout,
+  subsBox,
+  subtitleType,
+  displayLayout,
+  isFirst,
+}) => {
   const time = useTime(trimStart);
   const duration = useSequenceDuration(trimStart);
 
@@ -180,49 +254,58 @@ export const SegmentComp: React.FC<{
     return null;
   }
 
-  const end = isLast ? duration : segment.end;
-
-  const fadeOutAt = end - 0.1;
-
-  const start = Math.min(segment.start + 0.2, fadeOutAt - 0.000000001);
-
-  const opacity = interpolate(
-    time,
-    [start - 0.2, Math.min(start), fadeOutAt, fadeOutAt + 0.1],
-    [0, 1, 1, 0],
-  );
+  const opacity =
+    getOpacity({ duration, isLast, segment, time, isFirst }) * subsBox.opacity;
 
   return (
     <AbsoluteFill
       style={{
-        top: "auto",
-        fontSize: getSubtitlesFontSize(
-          getSubtitlesType({ canvasLayout, displayLayout }),
-        ),
+        fontSize: getSubtitlesFontSize(subtitleType, displayLayout),
         display: "flex",
-        lineHeight: 1.2,
+        lineHeight: LINE_HEIGHT,
         opacity,
         // @ts-expect-error
         textWrap: "balance",
+        border:
+          subtitleType === "boxed"
+            ? `3px solid ${COLORS.BORDER_COLOR}`
+            : undefined,
+        backgroundColor:
+          subtitleType === "boxed" ? COLORS.SUBTITLES_BACKGROUND : undefined,
+        boxShadow:
+          subtitleType === "boxed" ? "0px 2px 2px rgba(0,0,0,.04)" : undefined,
+        paddingLeft: getHorizontalPaddingForSubtitles(
+          subtitleType,
+          canvasLayout,
+        ),
+        left: subsBox.x,
+        top: subsBox.y,
+        width: subsBox.width,
+        height: subsBox.height,
+        borderRadius: subsBox.borderRadius,
         ...getSubsLayout({
           canvasLayout,
-          subsBox,
-          displayLayout,
+          subtitleType,
         }),
       }}
     >
-      <div>
+      <div
+        style={{
+          height:
+            getSubtitlesLines(subtitleType) *
+            getSubtitlesFontSize(subtitleType, displayLayout) *
+            LINE_HEIGHT,
+        }}
+      >
         <span
           style={{
-            textShadow:
-              displayLayout === null
-                ? "0px 0px 30px rgba(0, 0, 0, 0.5)"
-                : undefined,
-            lineHeight: 1.2,
+            lineHeight: LINE_HEIGHT,
             display: "inline-block",
             boxDecorationBreak: "clone",
             WebkitBoxDecorationBreak: "clone",
-            ...inlineSubsLayout(canvasLayout, displayLayout),
+            backgroundColor:
+              subtitleType === "overlayed-center" ? "white" : undefined,
+            ...inlineSubsLayout({ subtitleType }),
           }}
         >
           {segment.words.map((word, index) => {
@@ -233,7 +316,6 @@ export const SegmentComp: React.FC<{
                 isLast={index === segment.words.length - 1}
                 trimStart={trimStart}
                 word={word}
-                displayLayout={displayLayout}
               />
             );
           })}

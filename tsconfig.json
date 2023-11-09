@@ -16,7 +16,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strictNullChecks": true,
-    "alwaysStrict": true
+    "alwaysStrict": true,
+    "noUncheckedIndexedAccess": true
   },
   "include": ["src", "remotion"],
   "references": [{ "path": "./tsconfig.node.json" }]
