@@ -28,6 +28,15 @@ export const TableOfContents: React.FC<{
         paddingRight: 80,
       }}
     >
+      <strong
+        style={{
+          fontFamily: "GT Planar",
+          fontSize: 46,
+          marginBottom: 30,
+        }}
+      >
+        Table of contents
+      </strong>
       {chapters.map((chapter) => {
         return (
           <TableOfContentItem

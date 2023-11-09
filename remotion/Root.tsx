@@ -3421,7 +3421,7 @@ export const Root = () => {
             {
               type: "tableofcontents" as const,
               music: "previous" as const,
-              durationInFrames: 150,
+              durationInFrames: 110,
             },
             {
               type: "scene" as const,
