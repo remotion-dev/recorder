@@ -109,15 +109,7 @@ const InnerScene: React.FC<Props> = ({
   }
 
   if (sceneAndMetadata.scene.type === "tableofcontents") {
-    return (
-      <TableOfContents
-        isTransitioningIn={isTransitioningIn}
-        chapters={chapters}
-        isTransitioningOut={isTransitioningOut}
-        enter={enter}
-        exit={exit}
-      />
-    );
+    return <TableOfContents chapters={chapters} enter={enter} exit={exit} />;
   }
 
   return (

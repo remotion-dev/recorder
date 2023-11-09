@@ -72,8 +72,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
 
         let { webcamPosition } = scene;
         let idx = i;
-        while (webcamPosition === "previous" && idx > 0) {
-          idx -= 1;
+        while (webcamPosition === "previous" && idx >= 0) {
           const prevScene = props.scenes[idx] as SceneType;
           if (prevScene.type === "scene") {
             webcamPosition = prevScene.webcamPosition;
@@ -82,6 +81,8 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           if (webcamPosition === "previous" && idx === 0) {
             webcamPosition = "top-left";
           }
+
+          idx -= 1;
         }
 
         return {
