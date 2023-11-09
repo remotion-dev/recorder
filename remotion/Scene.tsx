@@ -8,6 +8,7 @@ import type { ChapterType } from "./chapters/make-chapters";
 import type {
   CanvasLayout,
   SceneAndMetadata,
+  Theme,
   VideoSceneAndMetadata,
 } from "./configuration";
 import { transitionDuration } from "./configuration";
@@ -25,6 +26,7 @@ type Props = {
   index: number;
   canvasLayout: CanvasLayout;
   chapters: ChapterType[];
+  theme: Theme;
 };
 
 const InnerScene: React.FC<Props> = ({
@@ -33,6 +35,7 @@ const InnerScene: React.FC<Props> = ({
   nextScene,
   previousScene,
   sceneAndMetadata,
+  theme,
 }) => {
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -97,6 +100,7 @@ const InnerScene: React.FC<Props> = ({
   if (sceneAndMetadata.scene.type === "endcard") {
     return (
       <EndCard
+        theme={theme}
         platform={sceneAndMetadata.scene.platform}
         canvasLayout={canvasLayout}
         channel={sceneAndMetadata.scene.channel}
@@ -109,7 +113,14 @@ const InnerScene: React.FC<Props> = ({
   }
 
   if (sceneAndMetadata.scene.type === "tableofcontents") {
-    return <TableOfContents chapters={chapters} enter={enter} exit={exit} />;
+    return (
+      <TableOfContents
+        theme={theme}
+        chapters={chapters}
+        enter={enter}
+        exit={exit}
+      />
+    );
   }
 
   return (
@@ -120,6 +131,7 @@ const InnerScene: React.FC<Props> = ({
       nextScene={nextScene}
       previousScene={previousScene}
       sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
+      theme={theme}
     />
   );
 };
@@ -131,6 +143,7 @@ export const Scene: React.FC<Props> = ({
   sceneAndMetadata,
   canvasLayout,
   chapters,
+  theme,
 }) => {
   return (
     <Sequence
@@ -145,6 +158,7 @@ export const Scene: React.FC<Props> = ({
         index={index}
         previousScene={previousScene}
         sceneAndMetadata={sceneAndMetadata}
+        theme={theme}
       />
     </Sequence>
   );

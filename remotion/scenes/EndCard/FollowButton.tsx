@@ -1,19 +1,20 @@
 import { COLORS } from "../../colors";
-import type { Platform } from "../../configuration";
+import type { Platform, Theme } from "../../configuration";
 
 export const followButtonHeight = 140;
 
 export const FollowButton: React.FC<{
   platform: Platform;
-}> = ({ platform }) => {
+  theme: Theme;
+}> = ({ platform, theme }) => {
   return (
     <div
       style={{
         height: followButtonHeight,
         borderRadius: followButtonHeight / 2,
         width: 400,
-        backgroundColor: COLORS.CTA_BUTTON_BACKGROUND_COLOR,
-        color: COLORS.CTA_BUTTON_COLOR,
+        backgroundColor: COLORS[theme].CTA_BUTTON_BACKGROUND_COLOR,
+        color: COLORS[theme].CTA_BUTTON_COLOR,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

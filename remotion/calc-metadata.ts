@@ -147,6 +147,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
       fps,
       pairs,
       scenesAndMetadata,
+      theme: props.theme,
     },
   };
 };

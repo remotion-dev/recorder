@@ -8,6 +8,7 @@ import type {
   CanvasLayout,
   SceneAndMetadata,
   SceneType,
+  Theme,
 } from "./configuration";
 import { Scene } from "./Scene";
 
@@ -16,11 +17,13 @@ export type AllProps = {
   canvasLayout: CanvasLayout;
   scenes: SceneType[];
   scenesAndMetadata: SceneAndMetadata[];
+  theme: Theme;
 };
 
 export const All: React.FC<AllProps> = ({
   scenesAndMetadata,
   canvasLayout,
+  theme,
 }) => {
   const chapters = useMemo(() => {
     return makeChapters({ scenes: scenesAndMetadata });
@@ -29,7 +32,7 @@ export const All: React.FC<AllProps> = ({
   return (
     <AbsoluteFill
       style={{
-        background: COLORS.BACKGROUND,
+        background: COLORS[theme].BACKGROUND,
       }}
     >
       {scenesAndMetadata.map((sceneAndMetadata, i) => {
@@ -43,6 +46,7 @@ export const All: React.FC<AllProps> = ({
             chapters={chapters}
             canvasLayout={canvasLayout}
             sceneAndMetadata={sceneAndMetadata}
+            theme={theme}
           />
         );
       })}

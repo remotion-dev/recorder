@@ -11,6 +11,7 @@ import { getSubtitleTranslation } from "../animations/subtitle-transitions";
 import type {
   CanvasLayout,
   SceneAndMetadata,
+  Theme,
   VideoSceneAndMetadata,
 } from "../configuration";
 import type { SubTypes } from "../sub-types";
@@ -32,6 +33,7 @@ export const Subs: React.FC<{
   exit: number;
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
+  theme: Theme;
 }> = ({
   file,
   trimStart,
@@ -41,6 +43,7 @@ export const Subs: React.FC<{
   exit,
   nextScene,
   previousScene,
+  theme,
 }) => {
   const [data, setData] = useState<SubTypes | null>(null);
   const { width, height } = useVideoConfig();
@@ -141,6 +144,7 @@ export const Subs: React.FC<{
             canvasLayout={canvasLayout}
             subsBox={animatedSubLayout}
             subtitleType={subtitleType}
+            theme={theme}
             displayLayout={scene.layout.displayLayout}
           />
         );

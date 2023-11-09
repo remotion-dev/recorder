@@ -5,6 +5,7 @@ import { COLORS } from "../colors";
 import type {
   CanvasLayout,
   Dimensions,
+  Theme,
   WebcamPosition,
 } from "../configuration";
 import type { Layout } from "../layout/get-layout";
@@ -172,18 +173,27 @@ const getSubsLayout = ({
 
 const inlineSubsLayout = ({
   subtitleType,
+  canvasLayout,
 }: {
   subtitleType: SubtitleType;
+  canvasLayout: CanvasLayout;
 }): React.CSSProperties => {
+  const padding = getHorizontalPaddingForSubtitles(subtitleType, canvasLayout);
+
   if (subtitleType === "overlayed-center") {
-    const padding = 20;
     return {
-      padding,
+      paddingLeft: padding,
+      paddingRight: padding,
+      paddingTop: padding,
+      paddingBottom: padding,
       borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS + padding,
     };
   }
 
-  return {};
+  return {
+    paddingLeft: padding,
+    paddingRight: padding,
+  };
 };
 
 const LINE_HEIGHT = 1.2;
@@ -241,6 +251,7 @@ export const SegmentComp: React.FC<{
   subsBox: Layout;
   subtitleType: SubtitleType;
   displayLayout: Layout | null;
+  theme: Theme;
 }> = ({
   segment,
   isLast,
@@ -250,6 +261,7 @@ export const SegmentComp: React.FC<{
   subtitleType,
   displayLayout,
   isFirst,
+  theme,
 }) => {
   const time = useTime(trimStart);
   const duration = useSequenceDuration(trimStart);
@@ -273,20 +285,14 @@ export const SegmentComp: React.FC<{
         lineHeight: LINE_HEIGHT,
         opacity,
         border: `${getBorderWidthForSubtitles(subtitleType)}px solid ${
-          COLORS.BORDER_COLOR
+          COLORS[theme].BORDER_COLOR
         }`,
         backgroundColor:
-          subtitleType === "boxed" ? COLORS.SUBTITLES_BACKGROUND : undefined,
+          subtitleType === "boxed"
+            ? COLORS[theme].SUBTITLES_BACKGROUND
+            : undefined,
         boxShadow:
           subtitleType === "boxed" ? "0px 2px 2px rgba(0,0,0,.04)" : undefined,
-        paddingLeft: getHorizontalPaddingForSubtitles(
-          subtitleType,
-          canvasLayout,
-        ),
-        paddingRight: getHorizontalPaddingForSubtitles(
-          subtitleType,
-          canvasLayout,
-        ),
         left: subsBox.x,
         top: subsBox.y,
         width: subsBox.width,
@@ -315,7 +321,7 @@ export const SegmentComp: React.FC<{
             WebkitBoxDecorationBreak: "clone",
             backgroundColor:
               subtitleType === "overlayed-center" ? "white" : undefined,
-            ...inlineSubsLayout({ subtitleType }),
+            ...inlineSubsLayout({ subtitleType, canvasLayout }),
           }}
         >
           {segment.words.map((word, index) => {
@@ -326,6 +332,7 @@ export const SegmentComp: React.FC<{
                 isLast={index === segment.words.length - 1}
                 trimStart={trimStart}
                 word={word}
+                theme={theme}
               />
             );
           })}

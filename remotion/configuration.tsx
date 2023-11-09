@@ -47,6 +47,8 @@ const availablePositionsAndPrevious = [
   ...availablePositions,
 ] as const;
 
+const theme = z.enum(["light", "dark"]);
+export type Theme = z.infer<typeof theme>;
 const platform = z.enum(["youtube", "linkedin", "instagram", "x"]);
 
 export type Platform = z.infer<typeof platform>;
@@ -135,6 +137,7 @@ const scenes = z.array(configuration);
 export type SceneType = z.infer<typeof configuration>;
 
 export const videoConf = z.object({
+  theme,
   canvasLayout,
   scenes,
 });
