@@ -1,4 +1,3 @@
-import { fontFamily } from "@remotion/google-fonts/Inter";
 import { useMemo } from "react";
 import { useVideoConfig } from "remotion";
 
@@ -34,13 +33,13 @@ export const TableOfContentItem: React.FC<{
   return (
     <div
       style={{
-        fontFamily,
-        fontSize: 50,
-        fontWeight: 500,
+        fontFamily: "GT Planar",
+        fontSize: 46,
+        fontWeight: 400,
         display: "flex",
         flexDirection: "row",
         width: "100%",
-        lineHeight: 1.3,
+        lineHeight: 1.5,
       }}
     >
       <div style={{ width: 250, fontVariantNumeric: "tabular-nums" }}>
