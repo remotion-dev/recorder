@@ -291,10 +291,6 @@ export const SegmentComp: React.FC<{
           subtitleType === "boxed"
             ? COLORS[theme].SUBTITLES_BACKGROUND
             : undefined,
-        boxShadow:
-          subtitleType === "boxed"
-            ? `0px 2px 2px ${COLORS[theme].BOX_SHADOW_COLOR}`
-            : undefined,
         left: subsBox.x,
         top: subsBox.y,
         width: subsBox.width,
