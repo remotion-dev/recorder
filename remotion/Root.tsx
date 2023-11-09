@@ -4472,6 +4472,21 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       />{" "}
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="test"
+        schema={videoConf}
+        defaultProps={{
+          canvasLayout: "wide",
+          prefix: "test",
+          scenes: [],
+          metadata: [],
+          pairs: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />{" "}
     </>
   );
 };
