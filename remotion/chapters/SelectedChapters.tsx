@@ -5,11 +5,18 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import type {
+  InTransition,
+  OutTransition,
+} from "../animations/chapter-transition";
+import {
+  makeInTransition,
+  makeOutTransition,
+} from "../animations/chapter-transition";
+import { transitionDuration } from "../configuration";
 import { safeSpace } from "../layout/get-layout";
 import type { ChapterType } from "./make-chapters";
 import type { ChapterScene } from "./narrow-down";
-import type { InTransition, OutTransition } from "./transition";
-import { makeInTransition, makeOutTransition } from "./transition";
 import {
   CHAPTER_HEIGHT,
   CHAPTER_VERTICAL_MARGIN,
@@ -47,7 +54,7 @@ export const SelectedChapters: React.FC<{
           config: {
             damping: 200,
           },
-          durationInFrames: 10,
+          durationInFrames: transitionDuration,
         });
 
   const jumpOut =
@@ -59,8 +66,8 @@ export const SelectedChapters: React.FC<{
           config: {
             damping: 200,
           },
-          durationInFrames: 10,
-          delay: durationInFrames - 10,
+          durationInFrames: transitionDuration,
+          delay: durationInFrames - transitionDuration,
         });
 
   const { x: xIn, y: yIn } = makeInTransition({
@@ -87,18 +94,14 @@ export const SelectedChapters: React.FC<{
   const { webcamInformation } = chapterScene;
 
   const rightAligned =
-    webcamInformation.webcamPosition === "top-right" ||
-    webcamInformation.webcamPosition === "bottom-right";
+    webcamInformation.scene.scene.webcamPosition === "top-right" ||
+    webcamInformation.scene.scene.webcamPosition === "bottom-right";
 
   const styles = useMemo((): React.CSSProperties => {
-    const { layout, webcamPosition } = webcamInformation;
-
-    if (webcamPosition === "center") {
-      throw new Error("no subs in center layout");
-    }
+    const { layout, finalWebcamPosition } = webcamInformation.scene;
 
     const topAligned =
-      webcamPosition === "top-left" || webcamPosition === "top-right";
+      finalWebcamPosition === "top-left" || finalWebcamPosition === "top-right";
 
     const style: React.CSSProperties = {
       ...(rightAligned
