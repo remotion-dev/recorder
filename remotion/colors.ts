@@ -10,7 +10,6 @@ type ColorTheme = {
   CTA_BUTTON_COLOR: string;
   CTA_BUTTON_BACKGROUND_COLOR: string;
   ENDCARD_TEXT_COLOR: string;
-  BOX_SHADOW_COLOR: string;
 };
 
 export const COLORS: { [key in Theme]: ColorTheme } = {
@@ -24,7 +23,6 @@ export const COLORS: { [key in Theme]: ColorTheme } = {
     CTA_BUTTON_COLOR: "white",
     CTA_BUTTON_BACKGROUND_COLOR: "black",
     ENDCARD_TEXT_COLOR: "black",
-    BOX_SHADOW_COLOR: "rgba(0,0,0,.04)",
   },
   dark: {
     BACKGROUND: "#000000",
@@ -36,6 +34,5 @@ export const COLORS: { [key in Theme]: ColorTheme } = {
     CTA_BUTTON_COLOR: "black",
     CTA_BUTTON_BACKGROUND_COLOR: "white",
     ENDCARD_TEXT_COLOR: "white",
-    BOX_SHADOW_COLOR: "rgba(255,255,255,.04)",
   },
 };
