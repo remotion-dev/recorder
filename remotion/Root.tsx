@@ -8,20 +8,9 @@ import { fps, videoConf } from "./configuration";
 
 import { Title } from "./scenes/Title";
 
-import { UpdateScene } from "./scenes/UpdateScene";
-
 export const Root = () => {
   return (
     <>
-      <Composition
-        component={UpdateScene}
-        fps={fps}
-        durationInFrames={100}
-        id="Update"
-        height={1080}
-        width={1080}
-        defaultProps={{}}
-      />{" "}
       <Composition
         component={Title}
         durationInFrames={100}
@@ -3750,11 +3739,21 @@ export const Root = () => {
         id="test"
         schema={videoConf}
         defaultProps={{
-          canvasLayout: "wide",
+          canvasLayout: "square" as const,
           prefix: "test",
-          scenes: [],
-          metadata: [],
-          pairs: [],
+          scenes: [
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+          ],
+          scenesAndMetadata: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
