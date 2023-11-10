@@ -3784,6 +3784,90 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       />{" "}
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="webzurich"
+        schema={videoConf}
+        defaultProps={{
+          theme: "light" as const,
+          canvasLayout: "square" as const,
+          prefix: "webzurich",
+          scenes: [
+            {
+              type: "scene" as const,
+              webcamPosition: "top-right" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "dancelikemike" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "bottom-left" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "dancelikemike" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: 141,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "euphoric" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "euphoric" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "endcard" as const,
+              durationInFrames: 200,
+              music: "previous" as const,
+              channel: "jonny" as const,
+              platform: "youtube" as const,
+              links: [{ link: "webzurich.ch" }],
+            },
+          ],
+          scenesAndMetadata: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />{" "}
     </>
   );
 };
