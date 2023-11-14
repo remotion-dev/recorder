@@ -60,13 +60,18 @@ export type Channel = z.infer<typeof channel>;
 
 type ChannelConfig = { [key in Platform]: string | null };
 
-export const channels: { [key in Channel]: ChannelConfig } = {
+export const channels: {
+  [key in Channel]: ChannelConfig & {
+    isLinkedInBusinessPage: boolean;
+  };
+} = {
   jonny: {
     instagram: null,
     linkedin: "Jonny Burger",
     x: "@JNYBGR",
     youtube: "/JonnyBurger",
     discord: null,
+    isLinkedInBusinessPage: false,
   },
   remotion: {
     instagram: "@remotion",
@@ -74,6 +79,7 @@ export const channels: { [key in Channel]: ChannelConfig } = {
     x: "@remotion",
     youtube: "@remotion_dev",
     discord: null,
+    isLinkedInBusinessPage: true,
   },
 };
 
