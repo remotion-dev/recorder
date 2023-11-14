@@ -162,6 +162,7 @@ export const View: React.FC<{
         ? {
             video: {
               deviceId: selectedVideoSource,
+              width: { ideal: 1920 },
             },
             audio: { deviceId: actualAudioSource },
           }
