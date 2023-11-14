@@ -58,9 +58,15 @@ const getDisplayExit = ({
     );
     const currentlyAtBottom = isWebCamAtBottom(nextScene.finalWebcamPosition);
     const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
-    const y = isWebCamAtBottom(nextScene.finalWebcamPosition)
-      ? height
-      : nextScene.layout.webcamLayout.height + 2 * safeSpace(canvasLayout);
+    const y =
+      canvasLayout === "wide"
+        ? height - currentScene.layout.displayLayout.height
+        : isWebCamAtBottom(nextScene.finalWebcamPosition)
+        ? height -
+          nextScene.layout.webcamLayout.height -
+          currentScene.layout.displayLayout.height -
+          safeSpace(canvasLayout) * 2
+        : nextScene.layout.webcamLayout.height + 2 * safeSpace(canvasLayout);
 
     if (changedVerticalPosition) {
       return {
@@ -72,7 +78,7 @@ const getDisplayExit = ({
     return {
       exitEndX: isWebCamRight(currentScene.finalWebcamPosition)
         ? -(width - safeSpace(canvasLayout) * 2)
-        : width,
+        : width + safeSpace(canvasLayout),
       exitEndY: y,
     };
   }
