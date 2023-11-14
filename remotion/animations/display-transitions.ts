@@ -72,7 +72,7 @@ const getDisplayExit = ({
     return {
       exitEndX: isWebCamRight(currentScene.finalWebcamPosition)
         ? -(width - safeSpace(canvasLayout) * 2)
-        : width - safeSpace(canvasLayout) * 2,
+        : width,
       exitEndY: y,
     };
   }
