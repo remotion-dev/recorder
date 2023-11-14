@@ -3865,6 +3865,11 @@ export const Root = () => {
           prefix: "october",
           scenes: [
             {
+              type: "remotionupdate" as const,
+              durationInFrames: 100,
+              music: "dancelikemike" as const,
+            },
+            {
               type: "scene" as const,
               webcamPosition: "previous" as const,
               trimStart: 0,
@@ -3872,12 +3877,7 @@ export const Root = () => {
               transitionToNextScene: false,
               newChapter: "",
               stopChapteringAfterThis: false,
-              music: "previous" as const,
-            },
-            {
-              type: "remotionupdate" as const,
-              durationInFrames: 100,
-              music: "dancelikemike" as const,
+              music: "none" as const,
             },
             {
               type: "scene" as const,
