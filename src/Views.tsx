@@ -1,6 +1,7 @@
 /* eslint-disable no-negated-condition */
 /* eslint-disable no-alert */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
 import { Spinner } from "./components/Spinner";
 import { Button } from "./components/ui/button";
@@ -137,6 +138,7 @@ export const View: React.FC<{
     },
     [],
   );
+
   useEffect(() => {
     if (recordAudio) {
       return () => {
@@ -186,13 +188,12 @@ export const View: React.FC<{
           alert(
             "The selected device is not readable. Is the device already in use by another program?",
           );
-        } else {
-          alert(e);
+        } else if (e.name === "NotAllowedError") {
+          console.log(e);
         }
 
         setMediaStream(prefix, null);
         setStreamState("initial");
-        alert(e);
       });
   }, [
     actualAudioSource,
@@ -253,9 +254,10 @@ export const View: React.FC<{
             {devices
               .filter((d) => d.kind === "videoinput")
               .map((d) => {
+                const label = getDeviceLabel(d.deviceId);
                 return (
                   <SelectItem key={d.deviceId} value={d.deviceId}>
-                    {d.label}
+                    {label}
                   </SelectItem>
                 );
               })}
