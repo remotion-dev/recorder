@@ -89,10 +89,22 @@ export const View: React.FC<{
   const [resolutionString, setResolutionString] = useState<string>("");
   const [streamState, setStreamState] = useState<StreamState>("initial");
   const onLoadedMetadata = useCallback(() => {
-    setResolutionString(
-      `${sourceRef.current?.videoWidth}x${sourceRef.current?.videoHeight}`,
-    );
-  }, []);
+    if (mediaStream) {
+      setResolutionString(
+        `${sourceRef.current?.videoWidth}x${sourceRef.current?.videoHeight}`,
+      );
+    } else {
+      setResolutionString("");
+    }
+  }, [mediaStream]);
+
+  const derivedResolutionString = useMemo(() => {
+    if (!mediaStream) {
+      return "";
+    }
+
+    return resolutionString;
+  }, [mediaStream, resolutionString]);
 
   const handleChange = useCallback(() => {
     setShowCropIndicator((prev) => !prev);
@@ -229,7 +241,7 @@ export const View: React.FC<{
         >
           {prefix}
           <br />
-          {resolutionString}
+          {derivedResolutionString}
         </div>
         {prefix === "webcam" ? (
           <ToggleCrop
