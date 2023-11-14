@@ -29,7 +29,7 @@ export const remapWord = (word: Word): Word => {
     };
   }
 
-  if (word.word.match(/ remotion.$/)) {
+  if (word.word.match(/ remotion\.$/)) {
     return {
       ...word,
       word: word.word.replace(/ remotion.$/, " Remotion."),
