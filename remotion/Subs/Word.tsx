@@ -159,6 +159,9 @@ export const WordComp: React.FC<{
           fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
           backgroundColor,
           outline: active ? "5px solid " + backgroundColor : "none",
+          // Fix gap inbetween background and outline
+          boxShadow:
+            active && word.monospace ? `0 0 0 1px ${backgroundColor}` : "none",
           borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS,
           scale: String(scale),
           display: "inline-block",
