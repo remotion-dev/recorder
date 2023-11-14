@@ -3751,21 +3751,6 @@ export const Root = () => {
         component={All}
         fps={fps}
         durationInFrames={100}
-        id="empty"
-        schema={videoConf}
-        defaultProps={{
-          theme: "light",
-          canvasLayout: "wide",
-          prefix: "empty",
-          scenesAndMetadata: [],
-          scenes: [],
-        }}
-        calculateMetadata={calcMetadata}
-      />{" "}
-      <Composition
-        component={All}
-        fps={fps}
-        durationInFrames={100}
         id="test"
         schema={videoConf}
         defaultProps={{
@@ -3785,6 +3770,21 @@ export const Root = () => {
             },
           ],
           scenesAndMetadata: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />{" "}
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="october"
+        schema={videoConf}
+        defaultProps={{
+          theme: "light",
+          canvasLayout: "wide",
+          prefix: "october",
+          scenesAndMetadata: [],
+          scenes: [],
         }}
         calculateMetadata={calcMetadata}
       />{" "}
