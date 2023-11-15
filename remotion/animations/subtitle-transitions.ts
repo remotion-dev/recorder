@@ -110,7 +110,7 @@ const getSubtitleExit = ({
     return {
       translationX: 0,
       translationY: isWebCamAtBottom(scene.finalWebcamPosition)
-        ? currentLayout.height + safeSpace(canvasLayout)
+        ? scene.layout.webcamLayout.height + safeSpace(canvasLayout)
         : -(currentLayout.height + safeSpace(canvasLayout) * 2),
     };
   }
@@ -253,7 +253,7 @@ const getSubtitleEnter = ({
       translationX: 0,
       translationY: isWebCamAtBottom(currentScene.finalWebcamPosition)
         ? currentLayout.height + safeSpace(canvasLayout)
-        : -(currentLayout.height + safeSpace(canvasLayout) * 2),
+        : -(currentScene.layout.webcamLayout.height + safeSpace(canvasLayout)),
     };
   }
 
