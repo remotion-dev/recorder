@@ -4111,7 +4111,69 @@ export const Root = () => {
           scenesAndMetadata: [],
         }}
         calculateMetadata={calcMetadata}
-      />{" "}
+      />
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="tibo"
+        schema={videoConf}
+        defaultProps={{
+          theme: "light" as const,
+          canvasLayout: "square" as const,
+          prefix: "tibo",
+          scenes: [
+            {
+              type: "scene" as const,
+              webcamPosition: "bottom-left" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "soft" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "top-left" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "endcard" as const,
+              durationInFrames: 200,
+              music: "previous" as const,
+              channel: "jonny" as const,
+              platform: "x" as const,
+              links: [
+                { link: "remotion.dev/success-stories" },
+                { link: "typeframes.com" },
+              ],
+            },
+          ],
+          scenesAndMetadata: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="empty"
+        schema={videoConf}
+        defaultProps={{
+          theme: "light" as const,
+          canvasLayout: "wide" as const,
+          prefix: "empty",
+          scenes: [],
+          scenesAndMetadata: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
     </>
   );
 };
