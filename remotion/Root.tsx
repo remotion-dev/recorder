@@ -4174,6 +4174,175 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       />
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="dm"
+        schema={videoConf}
+        defaultProps={{
+          theme: "light" as const,
+          canvasLayout: "square" as const,
+          prefix: "dm",
+          scenes: [
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "scene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: false,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+            {
+              type: "endcard" as const,
+              durationInFrames: 200,
+              music: "previous" as const,
+              channel: "jonny" as const,
+              platform: "x" as const,
+              links: [],
+            },
+          ],
+          scenesAndMetadata: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="sbf"
+        schema={videoConf}
+        defaultProps={{
+          theme: "light" as const,
+          canvasLayout: "wide" as const,
+          prefix: "sbf",
+          scenes: [],
+          scenesAndMetadata: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
     </>
   );
 };
