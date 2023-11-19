@@ -50,12 +50,17 @@ const FollowCTA: React.FC<{
   platform: Platform;
   avatar: string;
   theme: Theme;
-}> = ({ platform, avatar, theme }) => {
+  isLinkedInBusinessPage: boolean;
+}> = ({ platform, avatar, theme, isLinkedInBusinessPage }) => {
   return (
     <div style={style}>
       <Avatar theme={theme} avatar={avatar} />
       <div style={{ width: spaceBetweenAvatarAndCta }} />
-      <FollowButton theme={theme} platform={platform} />
+      <FollowButton
+        theme={theme}
+        platform={platform}
+        isLinkedInBusinessPage={isLinkedInBusinessPage}
+      />
     </div>
   );
 };
@@ -214,6 +219,7 @@ export const LeftSide: React.FC<{
           theme={theme}
           avatar={avatars[channel]}
           platform={platform}
+          isLinkedInBusinessPage={channels[channel].isLinkedInBusinessPage}
         />
       </div>
       <div ref={ref}>

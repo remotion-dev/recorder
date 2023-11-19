@@ -7,6 +7,38 @@ import { useKeyPress } from "./use-key-press";
 import type { Prefix, prefixes } from "./Views";
 import { View } from "./Views";
 
+type Label = { id: string; label: string };
+
+export const getDeviceLabel = (id: string): string => {
+  const labels: Label[] = JSON.parse(localStorage.getItem("labels") || "[]");
+  return labels.find((l) => l.id === id)?.label || "";
+};
+
+const storeLabelsToLS = (devices: MediaDeviceInfo[]) => {
+  const labels: Label[] = JSON.parse(localStorage.getItem("labels") || "[]");
+  devices.forEach((device) => {
+    const { label } = device;
+    const id = device.deviceId;
+    const cleanLabel = label.split("(")[0] || "";
+
+    if (!labels.some((l) => l.id === id) && cleanLabel !== "") {
+      labels.push({ id, label: cleanLabel });
+    }
+  });
+
+  localStorage.setItem("labels", JSON.stringify(labels));
+};
+
+const hasNewDevices = (devices: MediaDeviceInfo[]): boolean => {
+  const labels: Label[] = JSON.parse(localStorage.getItem("labels") || "[]");
+
+  const hasNew = !devices.every((device) => {
+    return labels.some((l) => l.id === device.deviceId);
+  });
+
+  return hasNew;
+};
+
 let endDate = 0;
 
 const outer: React.CSSProperties = {
@@ -30,7 +62,6 @@ const gridContainer: React.CSSProperties = {
 
 const mediaRecorderOptions: MediaRecorderOptions = {
   audioBitsPerSecond: 128000,
-  mimeType: "video/webm;codecs=h264,opus",
   videoBitsPerSecond: 8 * 4000000,
 };
 
@@ -39,7 +70,6 @@ const App = () => {
 
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
-
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
   }>({ webcam: null, display: null, alternative1: null, alternative2: null });
@@ -53,10 +83,8 @@ const App = () => {
     },
     [],
   );
-
   const start = () => {
     setRecording(() => Date.now());
-
     const toStart = [];
     const newRecorders: MediaRecorder[] = [];
     for (const [prefix, source] of Object.entries(mediaSources)) {
@@ -64,17 +92,33 @@ const App = () => {
         continue;
       }
 
-      const recorder = new MediaRecorder(source, mediaRecorderOptions);
+      const mimeType =
+        prefix === "webcam"
+          ? "video/webm;codecs=vp8,opus"
+          : "video/webm;codecs=vp8";
+
+      const completeMediaRecorderOptions = {
+        ...mediaRecorderOptions,
+        mimeType,
+      };
+
+      const recorder = new MediaRecorder(source, completeMediaRecorderOptions);
       newRecorders.push(recorder);
+
       recorder.addEventListener("dataavailable", ({ data }) => {
         onVideo(data, endDate, prefix);
       });
 
-      toStart.push(() => recorder.start());
+      recorder.addEventListener("error", (event) => {
+        console.log("error: ", prefix, event);
+      });
+
+      toStart.push(() => {
+        return recorder.start();
+      });
     }
 
     setRecorders(newRecorders);
-
     toStart.forEach((f) => f());
   };
 
@@ -102,12 +146,31 @@ const App = () => {
   };
 
   useKeyPress(["r"], onPressR);
-
   useEffect(() => {
-    navigator.mediaDevices.enumerateDevices().then((_devices) => {
-      setDevices(_devices);
-    });
-  }, []);
+    const checkDeviceLabels = async () => {
+      const fetchedDevices = await navigator.mediaDevices.enumerateDevices();
+      const hasEmptyLabels = fetchedDevices.some(
+        (device) => device.label === "",
+      );
+      const hasNew = hasNewDevices(fetchedDevices);
+      if (hasNew && hasEmptyLabels) {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        const _devices = await navigator.mediaDevices.enumerateDevices();
+        storeLabelsToLS(_devices);
+        stream.getAudioTracks().forEach((track) => track.stop());
+        stream.getVideoTracks().forEach((track) => track.stop());
+      } else if (hasNew) {
+        storeLabelsToLS(fetchedDevices);
+      }
+
+      setDevices(fetchedDevices);
+    };
+
+    checkDeviceLabels();
+  }, [devices]);
 
   return (
     <div style={outer}>
@@ -115,7 +178,7 @@ const App = () => {
         start={start}
         stop={stop}
         recording={recording}
-        disabledByParent={!mediaSources.webcam}
+        disabledByParent={false}
       />
 
       <div style={gridContainer}>

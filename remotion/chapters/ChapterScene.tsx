@@ -1,6 +1,7 @@
 import React from "react";
 import { Sequence } from "remotion";
 import { transitionIn, transitionOut } from "../animations/chapter-transition";
+import { getIsTransitioningIn } from "../animations/transitions";
 import type { ChapterScene } from "./narrow-down";
 import { SelectedChapters } from "./SelectedChapters";
 
@@ -38,21 +39,21 @@ export const ChapterSceneComponent: React.FC<{
   const isDifferentChapterThanPrevious =
     previousChapterScene?.chapterId !== chapterScene.chapterId;
 
-  const noTransition =
-    previousScene !== null &&
-    previousScene.type === "video-scene" &&
-    !previousScene.scene.transitionToNextScene;
+  const isTransitioningIn = getIsTransitioningIn({
+    scene: currentScene,
+    previousScene,
+  });
 
   const shouldSlideY =
     chapterScene.chapterIndex > 1 &&
     chapterScene.chapterIndex < amountOfChapters - 1 &&
     isDifferentChapterThanPrevious &&
-    noTransition &&
+    !isTransitioningIn &&
     isSameWebcamPositionAsBefore;
 
   const shouldSlideHighlight =
     isDifferentChapterThanPrevious &&
-    noTransition &&
+    !isTransitioningIn &&
     isSameWebcamPositionAsBefore;
 
   return (

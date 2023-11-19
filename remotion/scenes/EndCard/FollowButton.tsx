@@ -6,7 +6,8 @@ export const followButtonHeight = 140;
 export const FollowButton: React.FC<{
   platform: Platform;
   theme: Theme;
-}> = ({ platform, theme }) => {
+  isLinkedInBusinessPage: boolean;
+}> = ({ platform, theme, isLinkedInBusinessPage }) => {
   return (
     <div
       style={{
@@ -26,7 +27,9 @@ export const FollowButton: React.FC<{
       {platform === "youtube"
         ? "Subscribe"
         : platform === "linkedin"
-        ? "Connect"
+        ? isLinkedInBusinessPage
+          ? "Follow"
+          : "Connect"
         : "Follow"}
     </div>
   );

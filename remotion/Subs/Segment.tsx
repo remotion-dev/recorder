@@ -266,42 +266,40 @@ export const SegmentComp: React.FC<{
   const time = useTime(trimStart);
   const duration = useSequenceDuration(trimStart);
 
+  const opacity =
+    getOpacity({ duration, isLast, segment, time, isFirst }) * subsBox.opacity;
+
+  const outer: React.CSSProperties = {
+    fontSize: getSubtitlesFontSize(subtitleType, displayLayout),
+    display: "flex",
+    lineHeight: LINE_HEIGHT,
+    border: `${getBorderWidthForSubtitles(subtitleType)}px solid ${
+      COLORS[theme].BORDER_COLOR
+    }`,
+    backgroundColor:
+      subtitleType === "boxed" ? COLORS[theme].SUBTITLES_BACKGROUND : undefined,
+    left: subsBox.x,
+    top: subsBox.y,
+    width: subsBox.width,
+    height: subsBox.height,
+    borderRadius: subsBox.borderRadius,
+    opacity: subtitleType === "boxed" ? 1 : opacity,
+    ...getSubsLayout({
+      canvasLayout,
+      subtitleType,
+    }),
+  };
+
   if (time < segment.start) {
     return null;
   }
 
   if (time >= segment.end && !isLast) {
-    return null;
+    return <AbsoluteFill style={outer} />;
   }
 
-  const opacity =
-    getOpacity({ duration, isLast, segment, time, isFirst }) * subsBox.opacity;
-
   return (
-    <AbsoluteFill
-      style={{
-        fontSize: getSubtitlesFontSize(subtitleType, displayLayout),
-        display: "flex",
-        lineHeight: LINE_HEIGHT,
-        opacity,
-        border: `${getBorderWidthForSubtitles(subtitleType)}px solid ${
-          COLORS[theme].BORDER_COLOR
-        }`,
-        backgroundColor:
-          subtitleType === "boxed"
-            ? COLORS[theme].SUBTITLES_BACKGROUND
-            : undefined,
-        left: subsBox.x,
-        top: subsBox.y,
-        width: subsBox.width,
-        height: subsBox.height,
-        borderRadius: subsBox.borderRadius,
-        ...getSubsLayout({
-          canvasLayout,
-          subtitleType,
-        }),
-      }}
-    >
+    <AbsoluteFill style={outer}>
       <div
         style={{
           height:
@@ -309,6 +307,7 @@ export const SegmentComp: React.FC<{
             getSubtitlesFontSize(subtitleType, displayLayout) *
             LINE_HEIGHT,
           marginTop: subtitleType === "boxed" ? -5 : 0,
+          opacity: subtitleType === "boxed" ? opacity : 1,
         }}
       >
         <span
