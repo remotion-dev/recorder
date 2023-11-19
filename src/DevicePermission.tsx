@@ -51,22 +51,60 @@ const peripheral: React.CSSProperties = {
 
 const Permission: React.FC<{
   type: "audio" | "video";
+  deviceState: PermissionState;
   setDeviceState: (newState: PermissionState) => void;
-}> = ({ type, setDeviceState }) => {
-  const [state, setState] = useState<PermissionState>("initial");
-
+  isInitialState: boolean;
+}> = ({ type, deviceState, setDeviceState, isInitialState }) => {
   const dynamicStyle: React.CSSProperties = useMemo(() => {
     return {
-      color: state === "granted" ? "white" : "red",
+      color: deviceState === "denied" ? "red" : "white",
     };
-  }, [state]);
+  }, [deviceState]);
+
   const run = useCallback(async () => {
     const name =
       type === "audio"
         ? ("microphone" as PermissionName)
         : ("camera" as PermissionName);
-    const result = await navigator.permissions.query({ name });
-    setState(result.state);
+    const result = await navigator.permissions
+      .query({ name })
+      .then((res) => res)
+      .catch((e) => {
+        // firefox doesn't support microphone and camera as valid property
+        if (e instanceof TypeError) {
+          return null;
+        }
+
+        console.log(e);
+        return null;
+      });
+
+    // firefox case
+    if (!result && deviceState === "initial") {
+      // probe for permission
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: type === "video",
+          audio: type === "audio",
+        });
+        setDeviceState("prompt");
+        stream.getVideoTracks().forEach((track) => track.stop());
+        stream.getAudioTracks().forEach((track) => track.stop());
+      } catch (err) {
+        console.log("Error on getUserMedia", err);
+        setDeviceState("denied");
+        return;
+      }
+
+      setDeviceState("granted");
+      return;
+    }
+
+    if (!result) {
+      return;
+    }
+
+    setDeviceState(result.state);
 
     if (result.state === "prompt") {
       try {
@@ -75,7 +113,8 @@ const Permission: React.FC<{
           audio: type === "audio",
         });
       } catch (err) {
-        setState("denied");
+        console.log("Error on getUserMedia", err);
+        setDeviceState("denied");
         return;
       }
     }
@@ -85,20 +124,23 @@ const Permission: React.FC<{
     } else if (result.state === "denied") {
       setDeviceState("denied");
     }
-  }, [setDeviceState, type]);
+  }, [deviceState, setDeviceState, type]);
 
   useEffect(() => {
     run();
   }, [run]);
 
-  if (state === "initial") return null;
+  const accessInformation = useMemo(() => {
+    if (deviceState === "prompt") return "acces requested";
+    if (deviceState === "denied") return "access denied";
+    if (deviceState === "granted") return "access granted";
+  }, [deviceState]);
 
+  if (isInitialState) return null;
   return (
     <div style={peripheral}>
       <div>{type === "audio" ? "Microphone:" : "Camera:"}</div>
-      <div style={dynamicStyle}>
-        {state === "granted" ? "access granted" : "access denied"}
-      </div>
+      <div style={dynamicStyle}>{accessInformation}</div>
     </div>
   );
 };
@@ -110,8 +152,15 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
   const [videoState, setVideoState] = useState<PermissionState>("initial");
 
   const isInitialState = useMemo(() => {
-    return audioState === "initial" && videoState === "initial";
+    return audioState === "initial" || videoState === "initial";
   }, [audioState, videoState]);
+
+  const dynamicContainer: React.CSSProperties = useMemo(() => {
+    return {
+      ...container,
+      borderColor: isInitialState ? "black" : "white",
+    };
+  }, [isInitialState]);
 
   if (audioState === "granted" && videoState === "granted") {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -120,17 +169,21 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
 
   return (
     <div style={largeContainer}>
-      <div style={container}>
+      <div style={dynamicContainer}>
         {isInitialState ? null : (
           <div style={title}>Required peripheral permissions</div>
         )}
         <div style={innerContainer}>
           <Permission
+            isInitialState={isInitialState}
             type="audio"
+            deviceState={audioState}
             setDeviceState={(newState) => setAudioState(newState)}
           />
           <Permission
+            isInitialState={isInitialState}
             type="video"
+            deviceState={videoState}
             setDeviceState={(newState) => setVideoState(newState)}
           />
         </div>
