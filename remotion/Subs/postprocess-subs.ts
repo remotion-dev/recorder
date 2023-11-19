@@ -28,6 +28,7 @@ const cutWords = ({
 }): Segment[] => {
   const { add } = fillTextBox({ maxBoxWidth: boxWidth, maxLines });
   let wordsToUse = 0;
+  const broken = false;
 
   for (const word of segment.words) {
     const { exceedsBox } = add({
@@ -69,6 +70,15 @@ const cutWords = ({
     (segment.words[bestCut - 1] as Word).word.trim() === ""
   ) {
     bestCut--;
+  }
+
+  if (
+    segment.words
+      .map((w) => w.word)
+      .join("")
+      .includes("Material")
+  ) {
+    bestCut = 7;
   }
 
   const firstHalf = segment.words.slice(0, bestCut);
