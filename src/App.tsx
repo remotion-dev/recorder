@@ -9,17 +9,27 @@ import { View } from "./Views";
 
 type Label = { id: string; label: string };
 
-export const getDeviceLabel = (id: string): string => {
-  const labels: Label[] = JSON.parse(localStorage.getItem("labels") || "[]");
-  return labels.find((l) => l.id === id)?.label || "";
+const formatLabel = (device: MediaDeviceInfo) => {
+  const { label } = device;
+  const cleanLabel = label.split("(")[0] ?? label;
+  return cleanLabel;
+};
+
+export const getDeviceLabel = (device: MediaDeviceInfo): string => {
+  const labels: Label[] = JSON.parse(localStorage.getItem("labels") ?? "[]");
+  const found = labels.find((l) => l.id === device.deviceId);
+  if (found) {
+    return found.label;
+  }
+
+  return formatLabel(device);
 };
 
 const storeLabelsToLS = (devices: MediaDeviceInfo[]) => {
-  const labels: Label[] = JSON.parse(localStorage.getItem("labels") || "[]");
+  const labels: Label[] = JSON.parse(localStorage.getItem("labels") ?? "[]");
   devices.forEach((device) => {
-    const { label } = device;
     const id = device.deviceId;
-    const cleanLabel = label.split("(")[0] || "";
+    const cleanLabel = formatLabel(device);
 
     if (!labels.some((l) => l.id === id) && cleanLabel !== "") {
       labels.push({ id, label: cleanLabel });
