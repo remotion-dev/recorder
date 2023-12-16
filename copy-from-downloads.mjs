@@ -3,7 +3,7 @@ import { execSync } from "child_process";
 import fs, { existsSync, mkdirSync } from "fs";
 import path from "path";
 
-const prefix = "sbf";
+const prefix = "costs";
 
 const downloadsDir =
   process.platform === "win32"
