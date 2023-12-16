@@ -12,7 +12,7 @@ type Label = { id: string; label: string };
 const formatLabel = (device: MediaDeviceInfo) => {
   const { label } = device;
   if (window.navigator.platform === "Win32") {
-    const match = label.match(/(.*)/)?.[1] ?? label;
+    const match = label.match(/\((.*)\)/)?.[1] ?? label;
     return match;
   }
 
