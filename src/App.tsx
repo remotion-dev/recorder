@@ -146,6 +146,7 @@ const App = () => {
   };
 
   useKeyPress(["r"], onPressR);
+
   useEffect(() => {
     const checkDeviceLabels = async () => {
       const fetchedDevices = await navigator.mediaDevices.enumerateDevices();
@@ -170,7 +171,7 @@ const App = () => {
     };
 
     checkDeviceLabels();
-  }, [devices]);
+  }, []);
 
   return (
     <div style={outer}>
