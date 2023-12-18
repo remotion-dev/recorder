@@ -3,7 +3,6 @@ import { getStaticFiles, staticFile } from "remotion";
 import { z } from "zod";
 import type { CameraSceneLayout } from "./layout/get-layout";
 import { music } from "./layout/music";
-import { linkType } from "./scenes/EndCard/LeftSide";
 
 export type Dimensions = {
   width: number;
@@ -100,6 +99,12 @@ export const videoScene = z.object({
 });
 
 export type VideoScene = z.infer<typeof videoScene>;
+
+export const linkType = z.object({
+  link: z.string(),
+});
+
+export type LinkType = z.infer<typeof linkType>;
 
 export const configuration = z.discriminatedUnion("type", [
   videoScene,

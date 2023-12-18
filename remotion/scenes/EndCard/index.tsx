@@ -5,10 +5,10 @@ import { COLORS } from "../../colors";
 import type {
   CanvasLayout,
   Channel,
+  LinkType,
   Platform,
   Theme,
 } from "../../configuration";
-import type { LinkType } from "./LeftSide";
 import { LeftSide } from "./LeftSide";
 import { ThumbnailContainers } from "./RightSide";
 
