@@ -9,9 +9,8 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { z } from "zod";
 import { COLORS } from "../../colors";
-import type { Channel, Platform, Theme } from "../../configuration";
+import type { Channel, LinkType, Platform, Theme } from "../../configuration";
 import { avatars, channels, transitionDuration } from "../../configuration";
 import { FollowButton, followButtonHeight } from "./FollowButton";
 import {
@@ -113,12 +112,6 @@ const IconRow: React.FC<{
   );
 };
 
-export const linkType = z.object({
-  link: z.string(),
-});
-
-export type LinkType = z.infer<typeof linkType>;
-
 export const LeftSide: React.FC<{
   platform: Platform;
   channel: Channel;
@@ -130,7 +123,7 @@ export const LeftSide: React.FC<{
   const [handle] = useState(() => delayRender());
   const [contentHeight, setHeight] = useState(0);
 
-  const { fps } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
   const frame = useCurrentFrame();
 
   const slideDelay = transitionDuration + 20;
@@ -195,11 +188,14 @@ export const LeftSide: React.FC<{
 
   const totalLinks = links.length + otherPlatforms.length;
 
+  const padding = 80;
+  const maxWidth = width - padding * 2;
   return (
     <AbsoluteFill
       style={{
         left: 80,
         justifyContent: "center",
+        maxWidth: Math.min(maxWidth, 1000),
       }}
     >
       <div
