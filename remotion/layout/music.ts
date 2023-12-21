@@ -9,6 +9,7 @@ export const music = z.enum([
   "weird",
   "epic",
   "euphoric",
+  "alittlesmile",
 ]);
 export type Music = z.infer<typeof music>;
 
@@ -31,6 +32,10 @@ export const getAudioSource = (track: Music) => {
 
   if (track === "epic") {
     return staticFile("sounds/epic.wav");
+  }
+
+  if (track === "alittlesmile") {
+    return staticFile("sounds/alittlesmile.wav");
   }
 
   if (track === "dancelikemike") {
