@@ -34,7 +34,7 @@ export const Title: React.FC<{
     config: {
       damping: 200,
     },
-    delay: durationInFrames,
+    delay: durationInFrames - transitionDuration,
   });
 
   return (
@@ -60,7 +60,8 @@ export const Title: React.FC<{
           marginLeft: subtitle ? 30 : 0,
           position: "absolute",
           marginTop: subtitle ? 100 : 0,
-          translate: interpolate(show(6), [0, 1], [width, 0]) + "px",
+          translate:
+            interpolate(show(subtitle ? 6 : 0), [0, 1], [width, 0]) + "px",
         }}
       >
         {title}
