@@ -1,29 +1,20 @@
 /* eslint-disable no-alert */
 import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
+import type { Label } from "./helpers";
+import { formatLabel } from "./helpers";
 import { onVideo } from "./on-video";
 import { TopBar } from "./TopBar";
 import { useKeyPress } from "./use-key-press";
 import type { Prefix, prefixes } from "./Views";
 import { View } from "./Views";
 
-type Label = { id: string; label: string };
-
-const formatLabel = (device: MediaDeviceInfo) => {
-  const { label } = device;
-  if (window.navigator.platform === "Win32") {
-    const match = label.match(/\((.*?)\)/)?.[1] ?? label;
-    return match;
-  }
-
-  const cleanLabel = label.split("(")[0] ?? label;
-  return cleanLabel;
-};
-
 export const getDeviceLabel = (device: MediaDeviceInfo): string => {
   const labels: Label[] = JSON.parse(localStorage.getItem("labels") ?? "[]");
+  console.log(labels);
   const found = labels.find((l) => l.id === device.deviceId);
   if (found) {
+    console.log("found label: ", found.label);
     return found.label;
   }
 

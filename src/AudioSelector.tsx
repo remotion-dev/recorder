@@ -25,7 +25,13 @@ export const AudioSelector: React.FC<{
     [setSelectedAudioSource],
   );
   const currentDeviceName = useMemo(() => {
-    return devices.find((d) => d.deviceId === audioSource)?.label;
+    const currentDevice = devices.find((d) => d.deviceId === audioSource);
+
+    if (!currentDevice) {
+      return null;
+    }
+
+    return getDeviceLabel(currentDevice);
   }, [audioSource, devices]);
 
   return (

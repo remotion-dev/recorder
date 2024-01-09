@@ -1,4 +1,4 @@
-type Label = { id: string; label: string };
+export type Label = { id: string; label: string };
 
 const removeUsbIdentifier = (label: string) => {
   return label.replace(/\(\w{4}:\w{4}\)/, "").trim();
