@@ -1,6 +1,65 @@
+import { expect, test } from "bun:test";
+import { formatLabel } from "../src/helpers";
 type SimpleMediaDeviceInfo = Omit<MediaDeviceInfo, "toJSON">;
 
-const devices: SimpleMediaDeviceInfo[] = [
+const devicesFromMacOs: SimpleMediaDeviceInfo[] = [
+  {
+    deviceId: "default",
+    kind: "audioinput",
+    label: "Default - MacBook Pro Microphone (Built-in)",
+    groupId: "b19e9eca3ebcf5031b4daa3c37d90d1d2fe321e6df7b70d288b7b068d98e762c",
+  },
+  {
+    deviceId:
+      "2d069938f7622f880bc279fc81021f97b469839c8aadbc1dd942393c72700a95",
+    kind: "audioinput",
+    label: "MacBook Pro Microphone (Built-in)",
+    groupId: "b19e9eca3ebcf5031b4daa3c37d90d1d2fe321e6df7b70d288b7b068d98e762c",
+  },
+  {
+    deviceId:
+      "85ab9579e48914aeb630250c61ff7986b9f615c92762ce549cb53ebed346c327",
+    kind: "audioinput",
+    label: "Microsoft Teams Audio Device (Virtual)",
+    groupId: "93813575f4c5246a408e2f25764c747a5bb0936f7861a95e4ab67d19ca581b7d",
+  },
+  {
+    deviceId:
+      "dc1cdbc69d0aa62f2268026df6613b2d9f3dff499864e3a71485d93177298549",
+    kind: "videoinput",
+    label: "FaceTime HD Camera (1C1C:B782)",
+    groupId: "e0448126bddc405488ab7dc9b2ea1cc0f81152d0ff42a87883acb20bf2639ea3",
+  },
+  {
+    deviceId: "default",
+    kind: "audiooutput",
+    label: "Default - MacBook Pro Speakers (Built-in)",
+    groupId: "b19e9eca3ebcf5031b4daa3c37d90d1d2fe321e6df7b70d288b7b068d98e762c",
+  },
+  {
+    deviceId:
+      "1c8284790737f9dcc249bbb4ec195024d9f29dcfe37f6cf83046acb63d975c38",
+    kind: "audiooutput",
+    label: "C34H89x (DisplayPort)",
+    groupId: "787489bddecadddd21f7c6b80061605b128f788e2f191392e32febebeb2f69bf",
+  },
+  {
+    deviceId:
+      "87c999d3111e54ea65d26ace5f502d57953b73de0e49905dddc8af4642ab7157",
+    kind: "audiooutput",
+    label: "MacBook Pro Speakers (Built-in)",
+    groupId: "b19e9eca3ebcf5031b4daa3c37d90d1d2fe321e6df7b70d288b7b068d98e762c",
+  },
+  {
+    deviceId:
+      "85ab9579e48914aeb630250c61ff7986b9f615c92762ce549cb53ebed346c327",
+    kind: "audiooutput",
+    label: "Microsoft Teams Audio Device (Virtual)",
+    groupId: "93813575f4c5246a408e2f25764c747a5bb0936f7861a95e4ab67d19ca581b7d",
+  },
+];
+
+const devicesFromWindows: SimpleMediaDeviceInfo[] = [
   {
     deviceId: "default",
     kind: "audioinput",
@@ -131,3 +190,67 @@ const devices: SimpleMediaDeviceInfo[] = [
     groupId: "ff79c7568dede39d6f434e7b3f25be43225468a5a111ece2f810e25b1b185d42",
   },
 ];
+
+test("remove usb identifier ", () => {
+  expect(
+    formatLabel({
+      deviceId:
+        "dc1cdbc69d0aa62f2268026df6613b2d9f3dff499864e3a71485d93177298549",
+      kind: "videoinput",
+      label: "FaceTime HD Camera (1C1C:B782)",
+      groupId:
+        "e0448126bddc405488ab7dc9b2ea1cc0f81152d0ff42a87883acb20bf2639ea3",
+    }),
+  ).toEqual("FaceTime HD Camera");
+});
+
+test("remove Speaker tag ", () => {
+  expect(
+    formatLabel({
+      deviceId:
+        "4d1eadce39fe6b8f80ccb8289da7b75c2ad498b49d908309bb03d498d36cdecd",
+      kind: "audiooutput",
+      label: "6- RODE NT-USB (19f7:0003)",
+      groupId:
+        "ff79c7568dede39d6f434e7b3f25be43225468a5a111ece2f810e25b1b185d42",
+    }),
+  ).toEqual("6- RODE NT-USB");
+});
+
+test("remove (Built-in) ", () => {
+  expect(
+    formatLabel({
+      deviceId: "default",
+      kind: "audioinput",
+      label: "Default - MacBook Pro Microphone (Built-in)",
+      groupId:
+        "b19e9eca3ebcf5031b4daa3c37d90d1d2fe321e6df7b70d288b7b068d98e762c",
+    }),
+  ).toEqual("Default - MacBook Pro Microphone");
+});
+
+test("remove (Virtual) ", () => {
+  expect(
+    formatLabel({
+      deviceId:
+        "85ab9579e48914aeb630250c61ff7986b9f615c92762ce549cb53ebed346c327",
+      kind: "audioinput",
+      label: "Microsoft Teams Audio Device (Virtual)",
+      groupId:
+        "93813575f4c5246a408e2f25764c747a5bb0936f7861a95e4ab67d19ca581b7d",
+    }),
+  ).toEqual("Microsoft Teams Audio Device");
+});
+
+test("Simple label should stay unaffected ", () => {
+  expect(
+    formatLabel({
+      deviceId:
+        "931f56f2372d9681293bad225147f488dc7f49c4bf319d55abf01afbb601b1bd",
+      kind: "videoinput",
+      label: "LUMIX Webcam Software",
+      groupId:
+        "30f1fb14b04c7c76a0c73775b2c1eb46361215dd6f6c4c4e94f0c9c777382f01",
+    }),
+  ).toEqual("LUMIX Webcam Software");
+});
