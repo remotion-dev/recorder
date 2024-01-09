@@ -11,10 +11,8 @@ import { View } from "./Views";
 
 export const getDeviceLabel = (device: MediaDeviceInfo): string => {
   const labels: Label[] = JSON.parse(localStorage.getItem("labels") ?? "[]");
-  console.log(labels);
   const found = labels.find((l) => l.id === device.deviceId);
   if (found) {
-    console.log("found label: ", found.label);
     return found.label;
   }
 
