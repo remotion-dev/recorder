@@ -1,6 +1,13 @@
 /* eslint-disable no-negated-condition */
 /* eslint-disable no-alert */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
 import { Spinner } from "./components/Spinner";
@@ -34,15 +41,6 @@ const cropIndicator: React.CSSProperties = {
   height: "100%",
   borderRadius: 10,
   aspectRatio: 350 / 400,
-};
-
-const dynamicCropIndicator: React.CSSProperties = {
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  justifyContent: "center",
-  alignContent: "center",
-  position: "absolute",
 };
 
 const videoWrapper: React.CSSProperties = {
@@ -88,6 +86,22 @@ export const View: React.FC<{
   const recordAudio = prefix === "webcam";
   const [resolutionString, setResolutionString] = useState<string>("");
   const [streamState, setStreamState] = useState<StreamState>("initial");
+
+  const videoWidth = document.querySelector("video")?.videoWidth;
+  const videoHeight = document.querySelector("video")?.videoHeight;
+
+  const dynamicCropIndicator: CSSProperties = useMemo(() => {
+    return {
+      flex: 1,
+      display: "flex",
+      justifyContent: "center",
+      alignContent: "center",
+      aspectRatio:
+        videoWidth && videoHeight ? videoWidth / videoHeight : 16 / 9,
+      maxHeight: "100%",
+    };
+  }, [videoHeight, videoWidth]);
+
   const onLoadedMetadata = useCallback(() => {
     if (mediaStream) {
       setResolutionString(
@@ -299,8 +313,19 @@ export const View: React.FC<{
         />
         {streamState === "loading" ? <Spinner /> : null}
         {showCropIndicator ? (
-          <div style={dynamicCropIndicator}>
-            <div style={cropIndicator} />
+          <div
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+            }}
+          >
+            <div style={dynamicCropIndicator}>
+              <div style={cropIndicator} />
+            </div>
           </div>
         ) : null}
       </div>
