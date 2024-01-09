@@ -1,12 +1,12 @@
 import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "child_process";
-import downloadsFolder from "downloads-folder";
 import fs, { existsSync, mkdirSync } from "fs";
 import path from "path";
+import { getDownloadsFolder } from "./src/get-downloads-folder.js";
 
 const prefix = "reacthack";
 
-const downloadsDir = downloadsFolder();
+const downloadsDir = getDownloadsFolder();
 
 const filesFromDownloads = await fs.readdirSync(downloadsDir);
 
