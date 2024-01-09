@@ -25,6 +25,7 @@
     "bun-types": "^1.0.4-canary.20231004T140131",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "downloads-folder": "^3.0.3",
     "eslint": "^8.50.0",
     "lucide-react": "^0.290.0",
     "prettier": "^3.0.3",
