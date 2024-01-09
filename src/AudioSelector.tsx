@@ -25,7 +25,13 @@ export const AudioSelector: React.FC<{
     [setSelectedAudioSource],
   );
   const currentDeviceName = useMemo(() => {
-    return devices.find((d) => d.deviceId === audioSource)?.label;
+    const currentDevice = devices.find((d) => d.deviceId === audioSource);
+
+    if (!currentDevice) {
+      return null;
+    }
+
+    return getDeviceLabel(currentDevice);
   }, [audioSource, devices]);
 
   return (
@@ -43,7 +49,6 @@ export const AudioSelector: React.FC<{
         {devices
           .filter((d) => d.kind === "audioinput")
           .map((d) => {
-            console.log(d);
             const label = getDeviceLabel(d);
             return (
               <SelectItem key={d.deviceId} value={d.deviceId}>
