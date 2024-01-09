@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { formatLabel } from "../src/helpers";
 type SimpleMediaDeviceInfo = Omit<MediaDeviceInfo, "toJSON">;
 
-const devicesFromMacOs: SimpleMediaDeviceInfo[] = [
+const exampleDevicesFromMacOs: SimpleMediaDeviceInfo[] = [
   {
     deviceId: "default",
     kind: "audioinput",
@@ -59,7 +59,7 @@ const devicesFromMacOs: SimpleMediaDeviceInfo[] = [
   },
 ];
 
-const devicesFromWindows: SimpleMediaDeviceInfo[] = [
+const exampleDevicesFromWindows: SimpleMediaDeviceInfo[] = [
   {
     deviceId: "default",
     kind: "audioinput",
