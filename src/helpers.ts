@@ -1,0 +1,43 @@
+export type Label = { id: string; label: string };
+
+const removeUsbIdentifier = (label: string) => {
+  return label.replace(/\(\w{4}:\w{4}\)/, "").trim();
+};
+
+const removeBuiltIn = (label: string) => {
+  return label.replace(/\(Built-in\)/, "").trim();
+};
+
+const removeVirtual = (label: string) => {
+  return label.replace(/\(Virtual\)/, "").trim();
+};
+
+const takeStringInBraces = (label: string): string => {
+  const match = label.match(/\((.*)\)/);
+  if (!match) {
+    return label;
+  }
+
+  return match[1] as string;
+};
+
+export const formatLabel = (device: Omit<MediaDeviceInfo, "toJSON">) => {
+  const { label } = device;
+
+  const withoutUsb = removeUsbIdentifier(label);
+  const withoutBuiltIn = removeBuiltIn(withoutUsb);
+  const withoutVirtual = removeVirtual(withoutBuiltIn);
+  const remaining = takeStringInBraces(withoutVirtual);
+
+  return remaining;
+};
+
+export const getDeviceLabel = (device: MediaDeviceInfo): string => {
+  const labels: Label[] = JSON.parse(localStorage.getItem("labels") ?? "[]");
+  const found = labels.find((l) => l.id === device.deviceId);
+  if (found) {
+    return found.label;
+  }
+
+  return formatLabel(device);
+};
