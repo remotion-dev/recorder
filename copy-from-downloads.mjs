@@ -2,13 +2,12 @@ import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "child_process";
 import fs, { existsSync, mkdirSync } from "fs";
 import path from "path";
+import { getDownloadsFolder } from "./src/get-downloads-folder.js";
 
 const prefix = "reacthack";
 
-const downloadsDir =
-  process.platform === "win32"
-    ? "C:\\Users\\Jonny\\Downloads"
-    : "/Users/jonathanburger/Downloads";
+const downloadsDir = getDownloadsFolder();
+
 const filesFromDownloads = await fs.readdirSync(downloadsDir);
 
 const webcam = filesFromDownloads.filter((file) => file.includes("webcam"));
