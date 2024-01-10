@@ -1,31 +1,30 @@
 import { execSync } from "node:child_process";
-import {
-  existsSync,
-  lstatSync,
-  readdirSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, lstatSync, readdirSync } from "node:fs";
 import path from "path";
-import * as prettier from "prettier";
+
+const extractToTempAudioFile = async (fileToTranscribe, tempOutFile) => {
+  execSync(
+    `npx remotion ffmpeg -i ${fileToTranscribe} -ar 16000 ${tempOutFile}`,
+  );
+};
 
 const subFile = async (file) => {
+  console.log("file: ", file);
+  const fileWOExt = file.split(".")[0];
+  console.log("file without extension: ", fileWOExt);
+  console.log("CWD: ", process.cwd());
   execSync(
-    `whisper --language=English --model=small.en --word_timestamps True --output_format=json --output_dir=${path.dirname(
-      file,
-    )} ${file}`,
-    {
-      stdio: "inherit",
-    },
+    ` cd whisper.cpp && ./main -f ${file} --output-file ${fileWOExt} --output-json --max-len 1 `,
   );
 
-  const output = file.replace(".mp4", ".json");
-  const json = readFileSync(output, "utf8");
-  const options = await prettier.resolveConfig(".");
-  const formatted = await prettier.format(json, { ...options, parser: "json" });
-  writeFileSync(output.replace("webcam", "subs"), formatted);
-  rmSync(output);
+  console.log("after execSync");
+  // const output = file.replace(".wav", ".json");
+  // console.log("output: ", output);
+  // const json = readFileSync(output, "utf8");
+  // const options = await prettier.resolveConfig(".");
+  // const formatted = await prettier.format(json, { ...options, parser: "json" });
+  // writeFileSync(output.replace("webcam", "subs"), formatted);
+  // rmSync(output);
 };
 
 const folders = readdirSync("public").filter((f) => f !== ".DS_Store");
@@ -55,8 +54,18 @@ for (const folder of folders) {
       continue;
     }
 
-    console.log(fileToTranscribe);
-    await subFile(fileToTranscribe);
+    if (!existsSync(path.join(process.cwd(), "temp"))) {
+      execSync(`mkdir temp`);
+    }
+
+    const tempOutFile = path.join(
+      process.cwd(),
+      `temp/${file.split(".")[0] + ".wav"}`,
+    );
+
+    extractToTempAudioFile(fileToTranscribe, tempOutFile);
+
+    await subFile(tempOutFile);
   }
 }
 
