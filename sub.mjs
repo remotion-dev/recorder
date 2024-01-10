@@ -1,30 +1,44 @@
 import { execSync } from "node:child_process";
-import { existsSync, lstatSync, readdirSync } from "node:fs";
+import {
+  existsSync,
+  lstatSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import path from "path";
+import * as prettier from "prettier";
 
 const extractToTempAudioFile = async (fileToTranscribe, tempOutFile) => {
+  // extracting audio from mp4 and save it as 16khz wav file
   execSync(
     `npx remotion ffmpeg -i ${fileToTranscribe} -ar 16000 ${tempOutFile}`,
   );
 };
 
-const subFile = async (file) => {
-  console.log("file: ", file);
-  const fileWOExt = file.split(".")[0];
-  console.log("file without extension: ", fileWOExt);
-  console.log("CWD: ", process.cwd());
-  execSync(
-    ` cd whisper.cpp && ./main -f ${file} --output-file ${fileWOExt} --output-json --max-len 1 `,
+const subFile = async (filePath, fileName, folder) => {
+  // defining the output file location and name
+  console.log("filepath", filePath);
+  const outPath = path.join(
+    process.cwd(),
+    `public/${folder}/${fileName.replace(".wav", ".json")}`,
   );
 
-  console.log("after execSync");
-  // const output = file.replace(".wav", ".json");
-  // console.log("output: ", output);
-  // const json = readFileSync(output, "utf8");
-  // const options = await prettier.resolveConfig(".");
-  // const formatted = await prettier.format(json, { ...options, parser: "json" });
-  // writeFileSync(output.replace("webcam", "subs"), formatted);
-  // rmSync(output);
+  // transcribing the audiofile and saving the json to the public folder as defined in outPath
+  execSync(
+    ` cd whisper.cpp && ./main -f ${filePath} --output-file ${
+      outPath.split(".")[0]
+    } --output-json --max-len 1 `,
+  );
+
+  const json = readFileSync(outPath, "utf8");
+  const options = await prettier.resolveConfig(".");
+  const formatted = await prettier.format(json, { ...options, parser: "json" });
+
+  writeFileSync(outPath.replace("webcam", "subs"), formatted);
+  rmSync(outPath);
+  rmSync(filePath);
 };
 
 const folders = readdirSync("public").filter((f) => f !== ".DS_Store");
@@ -58,15 +72,12 @@ for (const folder of folders) {
       execSync(`mkdir temp`);
     }
 
-    const tempOutFile = path.join(
-      process.cwd(),
-      `temp/${file.split(".")[0] + ".wav"}`,
-    );
+    const tempWavFileName = file.split(".")[0] + ".wav";
 
-    extractToTempAudioFile(fileToTranscribe, tempOutFile);
+    const tempOutFilePath = path.join(process.cwd(), `temp/${tempWavFileName}`);
 
-    await subFile(tempOutFile);
+    extractToTempAudioFile(fileToTranscribe, tempOutFilePath);
+
+    await subFile(tempOutFilePath, tempWavFileName, folder);
   }
 }
-
-console.log(folders);
