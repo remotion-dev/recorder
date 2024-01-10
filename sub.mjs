@@ -10,6 +10,23 @@ import {
 import path from "path";
 import * as prettier from "prettier";
 
+const isWhisperInstalled = () => {
+  return existsSync(path.join(process.cwd(), "whisper.cpp"));
+};
+
+const installWhisper = () => {
+  execSync(`git clone https://github.com/ggerganov/whisper.cpp.git`);
+
+  execSync(`cd whisper.cpp && make`);
+
+  if (!existsSync(path.join(process.cwd(), "whisper.cpp", "models"))) {
+    execSync(`bash ./models/download-ggml-model.sh base.en`);
+  }
+
+  // download whisper model
+  execSync(`bash ./models/download-ggml-model.sh base.en`);
+};
+
 const extractToTempAudioFile = async (fileToTranscribe, tempOutFile) => {
   // extracting audio from mp4 and save it as 16khz wav file
   execSync(
@@ -19,7 +36,6 @@ const extractToTempAudioFile = async (fileToTranscribe, tempOutFile) => {
 
 const subFile = async (filePath, fileName, folder) => {
   // defining the output file location and name
-  console.log("filepath", filePath);
   const outPath = path.join(
     process.cwd(),
     `public/${folder}/${fileName.replace(".wav", ".json")}`,
@@ -42,6 +58,9 @@ const subFile = async (filePath, fileName, folder) => {
 };
 
 const folders = readdirSync("public").filter((f) => f !== ".DS_Store");
+if (!isWhisperInstalled()) {
+  installWhisper();
+}
 
 for (const folder of folders) {
   if (!lstatSync(`public/${folder}`).isDirectory()) {
