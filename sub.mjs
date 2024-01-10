@@ -14,19 +14,6 @@ const isWhisperInstalled = () => {
   return existsSync(path.join(process.cwd(), "whisper.cpp"));
 };
 
-const installWhisper = () => {
-  execSync(`git clone https://github.com/ggerganov/whisper.cpp.git`);
-
-  execSync(`cd whisper.cpp && make`);
-
-  if (!existsSync(path.join(process.cwd(), "whisper.cpp", "models"))) {
-    execSync(`bash ./models/download-ggml-model.sh base.en`);
-  }
-
-  // download whisper model
-  execSync(`bash ./models/download-ggml-model.sh base.en`);
-};
-
 const extractToTempAudioFile = async (fileToTranscribe, tempOutFile) => {
   // extracting audio from mp4 and save it as 16khz wav file
   execSync(
@@ -43,9 +30,10 @@ const subFile = async (filePath, fileName, folder) => {
 
   // transcribing the audiofile and saving the json to the public folder as defined in outPath
   execSync(
-    ` cd whisper.cpp && ./main -f ${filePath} --output-file ${
+    `./main -f ${filePath} --output-file ${
       outPath.split(".")[0]
     } --output-json --max-len 1 `,
+    { cwd: path.join(process.cwd(), "whisper.cpp") },
   );
 
   const json = readFileSync(outPath, "utf8");
@@ -59,7 +47,7 @@ const subFile = async (filePath, fileName, folder) => {
 
 const folders = readdirSync("public").filter((f) => f !== ".DS_Store");
 if (!isWhisperInstalled()) {
-  installWhisper();
+  execSync(`node whisper-init.mjs`);
 }
 
 for (const folder of folders) {
