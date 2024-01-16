@@ -7,11 +7,18 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
+import os from "node:os";
 import path from "path";
 import * as prettier from "prettier";
 
 const isWhisperInstalled = () => {
-  return existsSync(path.join(process.cwd(), "whisper.cpp"));
+  if (os.platform() === "darwin") {
+    return existsSync(path.join(process.cwd(), "whisper.cpp"));
+  }
+
+  if (os.platform() === "win32") {
+    return existsSync(path.join(process.cwd(), "whisper-bin-x64"));
+  }
 };
 
 const extractToTempAudioFile = async (fileToTranscribe, tempOutFile) => {
