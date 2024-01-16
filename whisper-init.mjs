@@ -28,30 +28,11 @@ const downloadWindowsBinary = async () => {
   const url =
     "https://github.com/ggerganov/whisper.cpp/releases/download/v1.5.4/whisper-bin-x64.zip";
 
-  const res = await fetch(url);
-
-  if (!res.ok) {
-    throw new Error(`Failed to download binary. Status code ${res.status}`);
-  }
-
-  const filePath = path.join(process.cwd());
+  const filePath = path.join(process.cwd(), "whisper-bin-x64.zip");
   const fileStream = fs.createWriteStream(filePath);
 
-  return new Promise((resolve, reject) => {
-    res.body.pipe(fileStream);
-
-    res.body.on("error", (err) => {
-      reject(err);
-    });
-
-    fileStream.on("finish", () => {
-      resolve();
-    });
-
-    fileStream.on("error", (err) => {
-      reject(err);
-    });
-  });
+  const { body } = await fetch(url);
+  await finished(Readable.fromWeb(body).pipe(fileStream));
 };
 
 const downloadWhisperBaseModel = async () => {
