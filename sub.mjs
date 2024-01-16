@@ -28,25 +28,22 @@ const subFile = async (filePath, fileName, folder) => {
     `public/${folder}/${fileName.replace(".wav", ".json")}`,
   );
 
-  /* Comment out for windows test
-
-  execSync(
-    `./main -f ${filePath} --output-file ${
-      outPath.split(".")[0]
-    } --output-json --max-len 1 `,
-    { cwd: path.join(process.cwd(), "whisper.cpp") },
-  );
-
-  */
-  // transcribing the audiofile and saving the json to the public folder as defined in outPath
-  // url to fetch base model on windows: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
-  console.log("Transcribing audio file");
-  execSync(
-    `main.exe -f ${filePath} --output-file ${
-      outPath.split(".")[0]
-    } --output-json --max-len 1 `,
-    { cwd: path.join(process.cwd(), "whisper-bin-x64") },
-  );
+  if (os.platform() === "darwin") {
+    execSync(
+      `./main -f ${filePath} --output-file ${
+        outPath.split(".")[0]
+      } --output-json --max-len 1 `,
+      { cwd: path.join(process.cwd(), "whisper.cpp") },
+    );
+  } else if (os.platform() === "win32") {
+    // url to fetch base model on windows: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+    execSync(
+      `main.exe -f ${filePath} --output-file ${
+        outPath.split(".")[0]
+      } --output-json --max-len 1 `,
+      { cwd: path.join(process.cwd(), "whisper-bin-x64") },
+    );
+  }
 
   const json = readFileSync(outPath, "utf8");
   const options = await prettier.resolveConfig(".");
