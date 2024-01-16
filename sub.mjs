@@ -28,12 +28,24 @@ const subFile = async (filePath, fileName, folder) => {
     `public/${folder}/${fileName.replace(".wav", ".json")}`,
   );
 
-  // transcribing the audiofile and saving the json to the public folder as defined in outPath
+  /* Comment out for windows test
+
   execSync(
     `./main -f ${filePath} --output-file ${
       outPath.split(".")[0]
     } --output-json --max-len 1 `,
     { cwd: path.join(process.cwd(), "whisper.cpp") },
+  );
+
+  */
+  // transcribing the audiofile and saving the json to the public folder as defined in outPath
+  // url to fetch base model on windows: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+  console.log("Transcribing audio file");
+  execSync(
+    `main.exe -f ${filePath} --output-file ${
+      outPath.split(".")[0]
+    } --output-json --max-len 1 `,
+    { cwd: path.join(process.cwd(), "whisper-bin-x64") },
   );
 
   const json = readFileSync(outPath, "utf8");
@@ -51,6 +63,7 @@ if (!isWhisperInstalled()) {
 }
 
 for (const folder of folders) {
+  console.log("folder", folder);
   if (!lstatSync(`public/${folder}`).isDirectory()) {
     continue;
   }
@@ -84,7 +97,6 @@ for (const folder of folders) {
     const tempOutFilePath = path.join(process.cwd(), `temp/${tempWavFileName}`);
 
     extractToTempAudioFile(fileToTranscribe, tempOutFilePath);
-
     await subFile(tempOutFilePath, tempWavFileName, folder);
   }
 }
