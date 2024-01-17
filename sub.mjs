@@ -62,8 +62,17 @@ const subFile = async (filePath, fileName, folder) => {
 };
 
 const folders = readdirSync("public").filter((f) => f !== ".DS_Store");
+
 if (!isWhisperInstalled()) {
-  execSync(`node whisper-init.mjs`);
+  console.log("Whisper not installed");
+  execSync(`node whisper-init.mjs`, { stdio: "inherit" });
+}
+
+console.log("between ifs");
+
+if (!isWhisperInstalled()) {
+  console.log("Whisper not installed. Exiting...");
+  process.exit(1);
 }
 
 for (const folder of folders) {
