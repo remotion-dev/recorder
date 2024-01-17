@@ -18,7 +18,7 @@ export const useTime = (trimStart: number) => {
   const { fps } = useVideoConfig();
   const time = (frame + trimStart) / fps;
 
-  return time;
+  return time * 1000;
 };
 
 export const useSequenceDuration = (trimStart: number) => {

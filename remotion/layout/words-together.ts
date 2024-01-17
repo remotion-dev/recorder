@@ -1,6 +1,6 @@
 import type { Word } from "../sub-types";
 
-export const wordsTogether = (words: Word[]) => {
+export const wordsTogether = (words: Word[]): Word[] => {
   const newWords: Word[] = [];
 
   for (let i = 0; i < words.length; i++) {
