@@ -35,7 +35,7 @@ const subFile = async (filePath, fileName, folder) => {
     `public/${folder}/${fileName.replace(".wav", ".json")}`,
   );
 
-  if (os.platform() === "darwin") {
+  if (os.platform() === "darwin" || os.platform() === "linux") {
     execSync(
       `./main -f ${filePath} --output-file ${
         outPath.split(".")[0]
