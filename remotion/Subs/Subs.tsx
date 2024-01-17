@@ -14,7 +14,7 @@ import type {
   Theme,
   VideoSceneAndMetadata,
 } from "../configuration";
-import type { SubTypes } from "../sub-types";
+import type { WhisperOutput } from "../sub-types";
 import { postprocessSubtitles } from "./postprocess-subs";
 import {
   getSubsBox,
@@ -45,7 +45,7 @@ export const Subs: React.FC<{
   previousScene,
   theme,
 }) => {
-  const [data, setData] = useState<SubTypes | null>(null);
+  const [data, setData] = useState<WhisperOutput | null>(null);
   const { width, height } = useVideoConfig();
   const [handle] = useState(() => delayRender());
   const [changeStatus, setChangeStatus] = useState<
