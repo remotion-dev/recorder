@@ -64,6 +64,8 @@ export type Prefix = (typeof prefixes)[number];
 
 type StreamState = "initial" | "loading" | "loaded";
 
+const localStorageKey = "showCropIndicator";
+
 export const View: React.FC<{
   devices: MediaDeviceInfo[];
   setMediaStream: (prefix: Prefix, source: MediaStream | null) => void;
@@ -74,8 +76,7 @@ export const View: React.FC<{
 
   const initialCropIndicatorState = useMemo(() => {
     return (
-      localStorage.getItem("showCropIndicator") === "true" &&
-      prefix === "webcam"
+      localStorage.getItem(localStorageKey) === "true" && prefix === "webcam"
     );
   }, [prefix]);
 
@@ -125,12 +126,11 @@ export const View: React.FC<{
   }, [mediaStream, resolutionString]);
 
   const handleChange = useCallback(() => {
-    window.localStorage.setItem(
-      "showCropIndicator",
-      String(!showCropIndicator),
-    );
-    setShowCropIndicator((prev) => !prev);
-  }, [showCropIndicator]);
+    setShowCropIndicator((prev) => {
+      window.localStorage.setItem(localStorageKey, String(!prev));
+      return !prev;
+    });
+  }, []);
 
   const actualAudioSource: string | undefined = useMemo(() => {
     if (selectedAudioSource) {
