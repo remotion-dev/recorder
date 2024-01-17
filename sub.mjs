@@ -12,7 +12,7 @@ import path from "path";
 import * as prettier from "prettier";
 
 const isWhisperInstalled = () => {
-  if (os.platform() === "darwin") {
+  if (os.platform() === "darwin" || os.platform() === "linux") {
     return existsSync(path.join(process.cwd(), "whisper.cpp"));
   }
 
@@ -68,15 +68,12 @@ if (!isWhisperInstalled()) {
   execSync(`node whisper-init.mjs`, { stdio: "inherit" });
 }
 
-console.log("between ifs");
-
 if (!isWhisperInstalled()) {
   console.log("Whisper not installed. Exiting...");
   process.exit(1);
 }
 
 for (const folder of folders) {
-  console.log("folder", folder);
   if (!lstatSync(`public/${folder}`).isDirectory()) {
     continue;
   }
