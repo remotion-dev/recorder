@@ -3,7 +3,6 @@ import type { CanvasLayout } from "../configuration";
 import { safeSpace } from "../layout/get-layout";
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { hasMonoSpaceInIt } from "../layout/monospace";
-import { wordsTogether } from "../layout/words-together";
 import type { Segment, SubTypes, Word } from "../sub-types";
 import { remapWord } from "./remap-words";
 import type { SubtitleType } from "./Segment";
@@ -28,7 +27,6 @@ const cutWords = ({
 }): Segment[] => {
   const { add } = fillTextBox({ maxBoxWidth: boxWidth, maxLines });
   let wordsToUse = 0;
-  const broken = false;
 
   for (const word of segment.words) {
     const { exceedsBox } = add({
@@ -178,7 +176,7 @@ export const postprocessSubtitles = ({
     segments: subTypes.segments.map((segment) => {
       return {
         ...segment,
-        words: wordsTogether(segment.words.map((w) => remapWord(w))),
+        words: segment.words.map((w) => remapWord(w)),
       };
     }),
   };
