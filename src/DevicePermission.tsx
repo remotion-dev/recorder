@@ -131,9 +131,9 @@ const Permission: React.FC<{
   }, [run]);
 
   const accessInformation = useMemo(() => {
-    if (deviceState === "prompt") return "acces requested";
-    if (deviceState === "denied") return "access denied";
-    if (deviceState === "granted") return "access granted";
+    if (deviceState === "prompt") return "Access requested";
+    if (deviceState === "denied") return "Access denied";
+    if (deviceState === "granted") return "Access granted";
   }, [deviceState]);
 
   if (isInitialState) return null;
