@@ -1,13 +1,7 @@
 /* eslint-disable no-negated-condition */
 /* eslint-disable no-alert */
-import {
-  CSSProperties,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import type { CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
 import { Spinner } from "./components/Spinner";
@@ -70,6 +64,8 @@ export type Prefix = (typeof prefixes)[number];
 
 type StreamState = "initial" | "loading" | "loaded";
 
+const localStorageKey = "showCropIndicator";
+
 export const View: React.FC<{
   devices: MediaDeviceInfo[];
   setMediaStream: (prefix: Prefix, source: MediaStream | null) => void;
@@ -78,7 +74,16 @@ export const View: React.FC<{
 }> = ({ devices, setMediaStream, prefix, mediaStream }) => {
   const sourceRef = useRef<HTMLVideoElement>(null);
 
-  const [showCropIndicator, setShowCropIndicator] = useState(false);
+  const initialCropIndicatorState = useMemo(() => {
+    return (
+      localStorage.getItem(localStorageKey) === "true" && prefix === "webcam"
+    );
+  }, [prefix]);
+
+  const [showCropIndicator, setShowCropIndicator] = useState(
+    initialCropIndicatorState,
+  );
+
   const [selectedAudioSource, setSelectedAudioSource] =
     useState<ConstrainDOMString | null>(null);
   const [selectedVideoSource, setSelectedVideoSource] =
@@ -121,7 +126,10 @@ export const View: React.FC<{
   }, [mediaStream, resolutionString]);
 
   const handleChange = useCallback(() => {
-    setShowCropIndicator((prev) => !prev);
+    setShowCropIndicator((prev) => {
+      window.localStorage.setItem(localStorageKey, String(!prev));
+      return !prev;
+    });
   }, []);
 
   const actualAudioSource: string | undefined = useMemo(() => {
