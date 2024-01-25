@@ -37,7 +37,7 @@ const overrideYForAltLayouts = ({
   canvasSize: Dimensions;
   newHeight: number;
 }): number => {
-  if (canvasLayout === "wide") {
+  if (canvasLayout === "landscape") {
     return y;
   }
 
@@ -158,7 +158,7 @@ const shiftLayoutIfTallMode = ({
   layout: Layout;
   canvasLayout: CanvasLayout;
 }) => {
-  if (canvasLayout !== "tall") {
+  if (canvasLayout !== "portrait") {
     return layout;
   }
 
@@ -166,7 +166,7 @@ const shiftLayoutIfTallMode = ({
     ...layout,
     y:
       layout.y +
-      (getDimensionsForLayout("tall").height -
+      (getDimensionsForLayout("portrait").height -
         getDimensionsForLayout("square").height) /
         2,
     height: layout.height,
@@ -184,7 +184,7 @@ const shiftDisplayLayoutBasedOnWebcamPosition = ({
   webcamSize: Dimensions;
   canvasLayout: CanvasLayout;
 }): Layout => {
-  if (canvasLayout === "square" || canvasLayout === "tall") {
+  if (canvasLayout === "square" || canvasLayout === "portrait") {
     return layout;
   }
 
@@ -296,7 +296,7 @@ const getWebcamSize = ({
     };
   }
 
-  if (canvasLayout === "square" || canvasLayout === "tall") {
+  if (canvasLayout === "square" || canvasLayout === "portrait") {
     const remainingHeight =
       canvasSize.height - displayLayout.height - safeSpace(canvasLayout) * 3;
 

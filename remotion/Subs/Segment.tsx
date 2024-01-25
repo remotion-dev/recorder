@@ -55,7 +55,7 @@ export const getSubtitlesType = ({
     return "overlayed-center";
   }
 
-  if (canvasLayout === "square" || canvasLayout === "tall") {
+  if (canvasLayout === "square" || canvasLayout === "portrait") {
     return "boxed";
   }
 
@@ -116,7 +116,7 @@ export const getSubsBox = ({
     };
   }
 
-  if (canvasLayout === "wide") {
+  if (canvasLayout === "landscape") {
     const height = getBottomSafeSpace(canvasLayout);
     return {
       height,
@@ -173,7 +173,7 @@ const getSubsLayout = ({
     };
   }
 
-  if (canvasLayout === "wide") {
+  if (canvasLayout === "landscape") {
     return {
       maxLines: 2,
       textAlign: "center",

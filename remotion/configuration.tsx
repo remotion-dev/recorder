@@ -143,7 +143,7 @@ export const configuration = z.discriminatedUnion("type", [
   }),
 ]);
 
-export const canvasLayout = z.enum(["wide", "tall", "square"]);
+export const canvasLayout = z.enum(["landscape", "portrait", "square"]);
 export type CanvasLayout = z.infer<typeof canvasLayout>;
 
 const scenes = z.array(configuration);
