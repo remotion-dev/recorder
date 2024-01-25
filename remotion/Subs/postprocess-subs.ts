@@ -3,7 +3,14 @@ import type { CanvasLayout } from "../configuration";
 import { safeSpace } from "../layout/get-layout";
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { hasMonoSpaceInIt } from "../layout/monospace";
-import type { Segment, SubTypes, Word } from "../sub-types";
+import { wordsTogether } from "../layout/words-together";
+import {
+  whisperWordToWord,
+  type Segment,
+  type SubTypes,
+  type WhisperOutput,
+  type Word,
+} from "../sub-types";
 import { remapWord } from "./remap-words";
 import type { SubtitleType } from "./Segment";
 import { getBorderWidthForSubtitles } from "./Segment";
@@ -15,12 +22,12 @@ import {
 } from "./Word";
 
 const cutWords = ({
-  segment,
+  words,
   boxWidth,
   maxLines,
   fontSize,
 }: {
-  segment: Segment;
+  words: Word[];
   boxWidth: number;
   maxLines: number;
   fontSize: number;
@@ -28,7 +35,7 @@ const cutWords = ({
   const { add } = fillTextBox({ maxBoxWidth: boxWidth, maxLines });
   let wordsToUse = 0;
 
-  for (const word of segment.words) {
+  for (const word of words) {
     const { exceedsBox } = add({
       text: word.word,
       fontFamily: word.monospace ? monospaceFont : regularFont,
@@ -43,20 +50,20 @@ const cutWords = ({
     }
   }
 
-  if (wordsToUse === segment.words.length) {
-    return [segment];
+  if (wordsToUse === words.length) {
+    return [{ words }];
   }
 
   let bestCut = wordsToUse;
 
-  if (wordsToUse / segment.words.length > 0.9) {
+  if (wordsToUse / words.length > 0.9) {
     // Prevent a few hanging words at the end
-    bestCut = segment.words.length - 5;
+    bestCut = words.length - 5;
   }
 
   for (let i = 1; i < 4; i++) {
     const index = bestCut - i;
-    const word = (segment.words[index] as Word).word.trim();
+    const word = (words[index] as Word).word.trim();
     if (word.endsWith(",") || word.endsWith(".")) {
       bestCut = index + 1;
       break;
@@ -64,14 +71,14 @@ const cutWords = ({
   }
 
   while (
-    hasMonoSpaceInIt(segment.words[bestCut - 1] as Word) ||
-    (segment.words[bestCut - 1] as Word).word.trim() === ""
+    hasMonoSpaceInIt(words[bestCut - 1] as Word) ||
+    (words[bestCut - 1] as Word).word.trim() === ""
   ) {
     bestCut--;
   }
 
   if (
-    segment.words
+    words
       .map((w) => w.word)
       .join("")
       .includes("Material")
@@ -79,66 +86,18 @@ const cutWords = ({
     bestCut = 7;
   }
 
-  const firstHalf = segment.words.slice(0, bestCut);
-  const secondHalf = segment.words.slice(bestCut);
+  const firstHalf = words.slice(0, bestCut);
+  const secondHalf = words.slice(bestCut);
 
   return [
-    {
-      ...segment,
-      start: (firstHalf[0] as Word).start,
-      end: (firstHalf[firstHalf.length - 1] as Word).end,
-      words: firstHalf,
-    },
+    { words: firstHalf },
     ...cutWords({
-      segment: {
-        ...segment,
-        start: (secondHalf[0] as Word).start,
-        end: (secondHalf[secondHalf.length - 1] as Word).end,
-        words: secondHalf,
-      },
+      words: secondHalf,
       boxWidth,
       maxLines,
       fontSize,
     }),
   ];
-};
-
-export const ensureMaxWords = ({
-  subTypes,
-  maxLines,
-  boxWidth,
-  fontSize,
-}: {
-  subTypes: SubTypes;
-  maxLines: number;
-  boxWidth: number;
-  fontSize: number;
-}): SubTypes => {
-  if (subTypes.segments.length === 0) {
-    return subTypes;
-  }
-
-  const firstSegment = subTypes.segments[0] as Segment;
-  const lastSegment = subTypes.segments[
-    subTypes.segments.length - 1
-  ] as Segment;
-
-  const masterSegment: Segment = {
-    id: firstSegment.id,
-    start: firstSegment.start,
-    end: lastSegment.end,
-    words: subTypes.segments.flatMap((s) => s.words),
-  };
-
-  return {
-    ...subTypes,
-    segments: cutWords({
-      segment: masterSegment,
-      boxWidth,
-      maxLines,
-      fontSize,
-    }),
-  };
 };
 
 export const getHorizontalPaddingForSubtitles = (
@@ -164,25 +123,19 @@ export const postprocessSubtitles = ({
   canvasLayout,
   subtitleType,
 }: {
-  subTypes: SubTypes;
+  subTypes: WhisperOutput;
   boxWidth: number;
   maxLines: number;
   fontSize: number;
   canvasLayout: CanvasLayout;
   subtitleType: SubtitleType;
 }): SubTypes => {
-  const mappedSubTypes: SubTypes = {
-    ...subTypes,
-    segments: subTypes.segments.map((segment) => {
-      return {
-        ...segment,
-        words: segment.words.map((w) => remapWord(w)),
-      };
-    }),
-  };
+  const allWords = wordsTogether(
+    subTypes.transcription.map(whisperWordToWord).map(remapWord),
+  );
 
-  const maxWords = ensureMaxWords({
-    subTypes: mappedSubTypes,
+  const segments = cutWords({
+    words: allWords,
     boxWidth:
       boxWidth -
       getHorizontalPaddingForSubtitles(subtitleType, canvasLayout) * 2 -
@@ -192,12 +145,14 @@ export const postprocessSubtitles = ({
   });
 
   return {
-    ...maxWords,
-    segments: maxWords.segments.map((segment) => {
+    ...segments,
+    segments: segments.map((segment) => {
       return {
         ...segment,
         words: segment.words
-          .map((word) => splitWordIntoMonospaceSegment(word))
+          .map((word) => {
+            return splitWordIntoMonospaceSegment(word);
+          })
           .flat(1),
       };
     }),

@@ -1,13 +1,23 @@
-export interface SubTypes {
+interface WhisperWord {
+  offsets: {
+    from: number;
+    to: number;
+  };
   text: string;
+}
+
+export interface WhisperOutput {
+  transcription: WhisperWord[];
+  result: {
+    language: string;
+  };
+}
+
+export interface SubTypes {
   segments: Segment[];
-  language: string;
 }
 
 export interface Segment {
-  id: number;
-  start: number;
-  end: number;
   words: Word[];
 }
 
@@ -17,3 +27,11 @@ export interface Word {
   end: number;
   monospace?: boolean;
 }
+
+export const whisperWordToWord = (word: WhisperWord): Word => {
+  return {
+    word: word.text,
+    start: word.offsets.from,
+    end: word.offsets.to,
+  };
+};

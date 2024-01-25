@@ -7,28 +7,71 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
+import os from "node:os";
 import path from "path";
 import * as prettier from "prettier";
 
-const subFile = async (file) => {
+const isWhisperInstalled = () => {
+  if (os.platform() === "darwin" || os.platform() === "linux") {
+    return existsSync(path.join(process.cwd(), "whisper.cpp"));
+  }
+
+  if (os.platform() === "win32") {
+    return existsSync(path.join(process.cwd(), "whisper-bin-x64"));
+  }
+};
+
+const extractToTempAudioFile = async (fileToTranscribe, tempOutFile) => {
+  // extracting audio from mp4 and save it as 16khz wav file
   execSync(
-    `whisper --language=English --model=small.en --word_timestamps True --output_format=json --output_dir=${path.dirname(
-      file,
-    )} ${file}`,
-    {
-      stdio: "inherit",
-    },
+    `npx remotion ffmpeg -i ${fileToTranscribe} -ar 16000 ${tempOutFile}`,
+  );
+};
+
+const subFile = async (filePath, fileName, folder) => {
+  // defining the output file location and name
+  const outPath = path.join(
+    process.cwd(),
+    `public/${folder}/${fileName.replace(".wav", ".json")}`,
   );
 
-  const output = file.replace(".mp4", ".json");
-  const json = readFileSync(output, "utf8");
+  if (os.platform() === "darwin" || os.platform() === "linux") {
+    execSync(
+      `./main -f ${filePath} --output-file ${
+        outPath.split(".")[0]
+      } --output-json --max-len 1 `,
+      { cwd: path.join(process.cwd(), "whisper.cpp") },
+    );
+  } else if (os.platform() === "win32") {
+    // url to fetch base model on windows: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+    execSync(
+      `main.exe -f ${filePath} --output-file ${
+        outPath.split(".")[0]
+      } --output-json --max-len 1 `,
+      { cwd: path.join(process.cwd(), "whisper-bin-x64") },
+    );
+  }
+
+  const json = readFileSync(outPath, "utf8");
   const options = await prettier.resolveConfig(".");
   const formatted = await prettier.format(json, { ...options, parser: "json" });
-  writeFileSync(output.replace("webcam", "subs"), formatted);
-  rmSync(output);
+
+  writeFileSync(outPath.replace("webcam", "subs"), formatted);
+  rmSync(outPath);
+  rmSync(filePath);
 };
 
 const folders = readdirSync("public").filter((f) => f !== ".DS_Store");
+
+if (!isWhisperInstalled()) {
+  console.log("Whisper not installed");
+  execSync(`node whisper-init.mjs`, { stdio: "inherit" });
+}
+
+if (!isWhisperInstalled()) {
+  console.log("Whisper not installed. Exiting...");
+  process.exit(1);
+}
 
 for (const folder of folders) {
   if (!lstatSync(`public/${folder}`).isDirectory()) {
@@ -55,9 +98,15 @@ for (const folder of folders) {
       continue;
     }
 
-    console.log(fileToTranscribe);
-    await subFile(fileToTranscribe);
+    if (!existsSync(path.join(process.cwd(), "temp"))) {
+      execSync(`mkdir temp`);
+    }
+
+    const tempWavFileName = file.split(".")[0] + ".wav";
+
+    const tempOutFilePath = path.join(process.cwd(), `temp/${tempWavFileName}`);
+
+    extractToTempAudioFile(fileToTranscribe, tempOutFilePath);
+    await subFile(tempOutFilePath, tempWavFileName, folder);
   }
 }
-
-console.log(folders);

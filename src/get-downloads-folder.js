@@ -1,5 +1,5 @@
-import execSync from "child_process";
-import statSync from "fs";
+import { execSync } from "child_process";
+import { statSync } from "fs";
 import os from "os";
 
 function darwin() {
