@@ -131,9 +131,9 @@ const getWebcamEndOffset = ({
     isWebCamRight(nextScene.finalWebcamPosition) ===
     isWebCamRight(currentScene.finalWebcamPosition);
 
-  if (canvasLayout === "wide") {
+  if (canvasLayout === "landscape") {
     if (!isSamePositionVertical) {
-      // Wide, moving to the right
+      // landscape, moving to the right
       if (isWebCamRight(currentScene.finalWebcamPosition)) {
         return {
           ...currentLayout,
@@ -141,7 +141,7 @@ const getWebcamEndOffset = ({
         };
       }
 
-      // Wide, moving to the left
+      // landscape, moving to the left
       return {
         ...currentLayout,
         x: -currentLayout.width,
@@ -211,9 +211,9 @@ const getWebCamStartOffset = ({
     isWebCamRight(previousScene.finalWebcamPosition) ===
     isWebCamRight(currentScene.finalWebcamPosition);
 
-  if (canvasLayout === "wide") {
+  if (canvasLayout === "landscape") {
     if (!isSamePositionVertical) {
-      // Wide layout, flying in from the right
+      // landscape layout, flying in from the right
       if (isWebCamRight(currentScene.finalWebcamPosition)) {
         return {
           ...currentLayout,
@@ -221,7 +221,7 @@ const getWebCamStartOffset = ({
         };
       }
 
-      // Wide layout, flying in from the left
+      // landscape layout, flying in from the left
       return {
         ...currentLayout,
         x: -currentLayout.width,

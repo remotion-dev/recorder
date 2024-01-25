@@ -36,7 +36,7 @@ const getSubtitleExit = ({
     };
   }
 
-  if (canvasLayout === "wide" && scene.layout.displayLayout === null) {
+  if (canvasLayout === "landscape" && scene.layout.displayLayout === null) {
     return {
       translationX: 0,
       translationY: 0,
@@ -55,7 +55,7 @@ const getSubtitleExit = ({
       const webcamTranslation =
         nextScene.layout.webcamLayout.y - scene.layout.webcamLayout.y;
 
-      if (canvasLayout === "wide") {
+      if (canvasLayout === "landscape") {
         return {
           translationX: 0,
           translationY: height,
@@ -144,7 +144,10 @@ const getSubtitleEnter = ({
     throw new Error("no subtitles on non-video scenes");
   }
 
-  if (canvasLayout === "wide" && currentScene.layout.displayLayout === null) {
+  if (
+    canvasLayout === "landscape" &&
+    currentScene.layout.displayLayout === null
+  ) {
     return {
       translationX: 0,
       translationY: 0,
@@ -159,7 +162,7 @@ const getSubtitleEnter = ({
       secondScene: currentScene,
     })
   ) {
-    if (canvasLayout === "wide") {
+    if (canvasLayout === "landscape") {
       return {
         translationX: 0,
         translationY: height,
@@ -221,14 +224,14 @@ const getSubtitleEnter = ({
   }
 
   if (previousScene === null || previousScene.type !== "video-scene") {
-    if (canvasLayout === "wide") {
+    if (canvasLayout === "landscape") {
       return {
         translationX: 0,
         translationY: height,
       };
     }
 
-    if (canvasLayout === "square" || canvasLayout === "tall") {
+    if (canvasLayout === "square" || canvasLayout === "portrait") {
       return {
         translationX: width,
         translationY: 0,
@@ -247,7 +250,7 @@ const getSubtitleEnter = ({
 
   if (
     !isSamePositionHorizontal &&
-    (canvasLayout === "square" || canvasLayout === "tall")
+    (canvasLayout === "square" || canvasLayout === "portrait")
   ) {
     return {
       translationX: 0,
@@ -259,7 +262,7 @@ const getSubtitleEnter = ({
 
   if (
     !isSamePositionVertical &&
-    (canvasLayout === "square" || canvasLayout === "tall")
+    (canvasLayout === "square" || canvasLayout === "portrait")
   ) {
     return {
       translationX: isWebCamRight(currentScene.finalWebcamPosition)
@@ -325,7 +328,7 @@ export const getSubtitleTranslation = ({
         [currentLayout.y, currentLayout.y + _exit.translationY],
       ),
       opacity:
-        canvasLayout === "wide"
+        canvasLayout === "landscape"
           ? interpolate(exit, [0, 0.3], [1, 0], {
               extrapolateLeft: "clamp",
               extrapolateRight: "clamp",
@@ -347,7 +350,7 @@ export const getSubtitleTranslation = ({
       [currentLayout.y + _enter.translationY, currentLayout.y],
     ),
     opacity:
-      canvasLayout === "wide"
+      canvasLayout === "landscape"
         ? interpolate(enter, [0.7, 1], [0, 1], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",

@@ -59,7 +59,7 @@ const getDisplayExit = ({
     const currentlyAtBottom = isWebCamAtBottom(nextScene.finalWebcamPosition);
     const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
     const y =
-      canvasLayout === "wide"
+      canvasLayout === "landscape"
         ? height - currentScene.layout.displayLayout.height
         : isWebCamAtBottom(nextScene.finalWebcamPosition)
         ? height -
@@ -132,9 +132,9 @@ const getDisplayEnter = ({
       ? translationY
       : height;
 
-    // Wide, Slide in from left
+    // landscape, Slide in from left
     if (
-      canvasLayout === "wide" &&
+      canvasLayout === "landscape" &&
       isWebCamRight(currentScene.finalWebcamPosition)
     ) {
       return {
@@ -145,7 +145,7 @@ const getDisplayEnter = ({
     }
 
     // Slide in from right
-    if (canvasLayout === "wide") {
+    if (canvasLayout === "landscape") {
       return {
         enterStartX: width + safeSpace(canvasLayout),
         enterStartY: 0,
