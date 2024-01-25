@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { removeBlankWords } from "./postprocess-subs";
+import { removeWhisperBlankWords } from "./postprocess-subs";
 
 const example = [
   {
@@ -35,7 +35,7 @@ const example = [
 ];
 
 test("filter out [BLANK_AUDIO]", () => {
-  const words = removeBlankWords(example);
+  const words = removeWhisperBlankWords(example);
   expect(words).toEqual([
     {
       word: "",
@@ -89,7 +89,7 @@ const pauseExample = [
 ];
 
 test("filter out [PAUSE]", () => {
-  const words = removeBlankWords(pauseExample);
+  const words = removeWhisperBlankWords(pauseExample);
   expect(words).toEqual([
     {
       word: "",
@@ -143,7 +143,7 @@ const splittedBlankAudio = [
 ];
 
 test("filter out splitted [BLANK_AUDIO]", () => {
-  const words = removeBlankWords(splittedBlankAudio);
+  const words = removeWhisperBlankWords(splittedBlankAudio);
   expect(words).toEqual([
     {
       word: "",
@@ -197,7 +197,7 @@ const splittedPause = [
 ];
 
 test("filter out splitted [PAUSE]", () => {
-  const words = removeBlankWords(splittedPause);
+  const words = removeWhisperBlankWords(splittedPause);
   expect(words).toEqual([
     {
       word: "",
@@ -251,7 +251,7 @@ const splittedBlankAudioWithSpaces = [
 ];
 
 test("filter out splitted [BLANK_AUDIO] with spaces", () => {
-  const words = removeBlankWords(splittedBlankAudioWithSpaces);
+  const words = removeWhisperBlankWords(splittedBlankAudioWithSpaces);
   expect(words).toEqual([
     {
       word: "",
@@ -320,7 +320,7 @@ const wordsWrappedInBrackets = [
 ];
 
 test("should not filter out other words warpped in []", () => {
-  const words = removeBlankWords(wordsWrappedInBrackets);
+  const words = removeWhisperBlankWords(wordsWrappedInBrackets);
   expect(words).toEqual([
     {
       word: "[Some]",
