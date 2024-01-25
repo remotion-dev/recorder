@@ -11,7 +11,7 @@ import type {
 import type { Layout } from "../layout/get-layout";
 import { borderRadius, safeSpace } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
-import type { Segment } from "../sub-types";
+import type { Segment, Word } from "../sub-types";
 import { getHorizontalPaddingForSubtitles } from "./postprocess-subs";
 import {
   useSequenceDuration,
@@ -21,6 +21,22 @@ import {
 } from "./Word";
 
 loadFont();
+
+export const getStartOfSegment = (segment: Segment) => {
+  if (segment.words.length === 0) {
+    return 0;
+  }
+
+  return (segment.words[0] as Word).start;
+};
+
+export const getEndOfSegment = (segment: Segment) => {
+  if (segment.words.length === 0) {
+    return 0;
+  }
+
+  return (segment.words[segment.words.length - 1] as Word).end;
+};
 
 export type SubtitleType = "below-video" | "overlayed-center" | "boxed";
 
@@ -211,9 +227,12 @@ const getOpacity = ({
   isFirst: boolean;
   duration: number;
 }) => {
-  const end = isLast ? duration : segment.end;
+  const end = isLast ? duration : getEndOfSegment(segment);
 
-  const start = Math.min(segment.start + 0.2, end - 0.1 - 0.000000001);
+  const start = Math.min(
+    getStartOfSegment(segment) + 0.2,
+    end - 0.1 - 0.000000001,
+  );
 
   const fadeIn = interpolate(time, [start - 0.2, start], [0, 1], {
     extrapolateLeft: "clamp",
@@ -290,11 +309,11 @@ export const SegmentComp: React.FC<{
     }),
   };
 
-  if (time < segment.start) {
+  if (time < getStartOfSegment(segment)) {
     return null;
   }
 
-  if (time >= segment.end && !isLast) {
+  if (time >= getEndOfSegment(segment) && !isLast) {
     return <AbsoluteFill style={outer} />;
   }
 
