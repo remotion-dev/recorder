@@ -106,18 +106,20 @@ export const SelectedChapters: React.FC<{
     const style: React.CSSProperties = {
       ...(rightAligned
         ? {
-            paddingRight: safeSpace("wide"),
+            paddingRight: safeSpace("landscape"),
             alignSelf: "flex-end",
             alignItems: "flex-end",
           }
-        : { paddingLeft: safeSpace("wide") }),
+        : { paddingLeft: safeSpace("landscape") }),
       ...(topAligned
         ? {
-            paddingTop: safeSpace("wide") * 2 + layout.webcamLayout.height,
+            paddingTop: safeSpace("landscape") * 2 + layout.webcamLayout.height,
           }
         : {
             paddingTop:
-              layout.webcamLayout.y - tableOfContentHeight - safeSpace("wide"),
+              layout.webcamLayout.y -
+              tableOfContentHeight -
+              safeSpace("landscape"),
           }),
     };
 
