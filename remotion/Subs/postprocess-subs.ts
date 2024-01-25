@@ -100,6 +100,52 @@ const cutWords = ({
   ];
 };
 
+export const removeWhisperBlankWords = (original: Word[]): Word[] => {
+  let firstIdx = 0;
+  let concatentatedWord = "";
+  let inBlank = false;
+  const blankAudio = "[BLANK_AUDIO]";
+  const pause = "[PAUSE]";
+
+  const words = [...original];
+
+  words.forEach((word, index) => {
+    const wordCopy = { ...word };
+    wordCopy.word = wordCopy.word.trim();
+    if (wordCopy.word.includes("[")) {
+      inBlank = true;
+      firstIdx = index;
+    }
+
+    if (
+      inBlank &&
+      (blankAudio.includes(wordCopy.word) || pause.includes(wordCopy.word))
+    ) {
+      concatentatedWord += wordCopy.word;
+    }
+
+    if (inBlank && wordCopy.word.includes("]")) {
+      concatentatedWord += wordCopy.word;
+      if (
+        concatentatedWord.includes(blankAudio) ||
+        concatentatedWord.includes(pause)
+      ) {
+        for (let i = firstIdx; i <= index; i++) {
+          const currentWord = words[i];
+          if (currentWord?.word !== undefined) {
+            words[i] = {
+              ...currentWord,
+              word: "",
+            };
+          }
+        }
+      }
+    }
+  });
+
+  return words;
+};
+
 export const getHorizontalPaddingForSubtitles = (
   subtitleType: SubtitleType,
   canvasLayout: CanvasLayout,
@@ -133,9 +179,9 @@ export const postprocessSubtitles = ({
   const allWords = wordsTogether(
     subTypes.transcription.map(whisperWordToWord).map(remapWord),
   );
-
+  const preFilteredWords = removeWhisperBlankWords(allWords);
   const segments = cutWords({
-    words: allWords,
+    words: preFilteredWords,
     boxWidth:
       boxWidth -
       getHorizontalPaddingForSubtitles(subtitleType, canvasLayout) * 2 -
