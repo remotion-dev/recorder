@@ -50,7 +50,7 @@ export const All: React.FC<AllProps> = ({
           />
         );
       })}
-      {canvasLayout === "wide" ? (
+      {canvasLayout === "landscape" ? (
         <WideScreenChapters chapters={chapters} />
       ) : null}
       <AudioTrack scenesAndMetadata={scenesAndMetadata} />
