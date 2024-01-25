@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Spinner } from "./components/Spinner";
 
 type PermissionState = "granted" | "denied" | "prompt" | "initial";
 
@@ -169,6 +170,7 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
 
   return (
     <div style={largeContainer}>
+      {audioState === "prompt" || videoState === "prompt" ? <Spinner /> : null}
       <div style={dynamicContainer}>
         {isInitialState ? null : (
           <div style={title}>Required peripheral permissions</div>
