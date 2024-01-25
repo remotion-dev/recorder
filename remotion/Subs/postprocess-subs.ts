@@ -100,11 +100,11 @@ const cutWords = ({
   ];
 };
 
-export const removeBlankWords = (original: Word[]): Word[] => {
+export const removeWhisperBlankWords = (original: Word[]): Word[] => {
   let firstIdx = 0;
   let concatentatedWord = "";
   let inBlank = false;
-  const blank = "[BLANK_AUDIO]";
+  const blankAudio = "[BLANK_AUDIO]";
   const pause = "[PAUSE]";
 
   const words = [...original];
@@ -119,7 +119,7 @@ export const removeBlankWords = (original: Word[]): Word[] => {
 
     if (
       inBlank &&
-      (blank.includes(wordCopy.word) || pause.includes(wordCopy.word))
+      (blankAudio.includes(wordCopy.word) || pause.includes(wordCopy.word))
     ) {
       concatentatedWord += wordCopy.word;
     }
@@ -127,7 +127,7 @@ export const removeBlankWords = (original: Word[]): Word[] => {
     if (inBlank && wordCopy.word.includes("]")) {
       concatentatedWord += wordCopy.word;
       if (
-        concatentatedWord.includes(blank) ||
+        concatentatedWord.includes(blankAudio) ||
         concatentatedWord.includes(pause)
       ) {
         for (let i = firstIdx; i <= index; i++) {
@@ -179,7 +179,7 @@ export const postprocessSubtitles = ({
   const allWords = wordsTogether(
     subTypes.transcription.map(whisperWordToWord).map(remapWord),
   );
-  const preFilteredWords = removeBlankWords(allWords);
+  const preFilteredWords = removeWhisperBlankWords(allWords);
   const segments = cutWords({
     words: preFilteredWords,
     boxWidth:
