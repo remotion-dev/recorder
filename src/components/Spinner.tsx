@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 export const Spinner: React.FC = () => {
   return (
     <div className="spinner">
@@ -6,4 +8,10 @@ export const Spinner: React.FC = () => {
       <div className="spinner-item" />
     </div>
   );
+};
+
+export const CircleSpinner: React.FC<{ children?: ReactNode }> = ({
+  children,
+}) => {
+  return <span className="loader">{children} </span>;
 };
