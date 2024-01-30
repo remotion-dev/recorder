@@ -13,7 +13,6 @@ import type {
 import { Scene } from "./Scene";
 
 export type AllProps = {
-  prefix: string;
   canvasLayout: CanvasLayout;
   scenes: SceneType[];
   scenesAndMetadata: SceneAndMetadata[];
