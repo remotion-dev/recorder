@@ -18,7 +18,6 @@ export const Root = () => {
         defaultProps={{
           theme: "light",
           canvasLayout: "square" as const,
-          prefix: "augustupdate",
           scenes: [
             {
               type: "scene" as const,
@@ -180,7 +179,6 @@ export const Root = () => {
         defaultProps={{
           theme: "light" as const,
           canvasLayout: "square" as const,
-          prefix: "test",
           scenes: [
             {
               type: "title" as const,
