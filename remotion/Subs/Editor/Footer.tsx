@@ -1,7 +1,9 @@
 import React from "react";
 import { FOOTER_HEIGHT, SIDE_PADDING } from "./layout";
 
-export const SubsEditorFooter: React.FC = () => {
+export const SubsEditorFooter: React.FC<{
+  fileName: string;
+}> = ({ fileName }) => {
   return (
     <div
       style={{
@@ -26,7 +28,7 @@ export const SubsEditorFooter: React.FC = () => {
           flex: 1,
         }}
       >
-        Changes will be saved to subs/xxx.json.
+        Changes will be saved to {fileName}.
         <br />
         {"Don't"} edit the file manually while using this editor.
       </div>

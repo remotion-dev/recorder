@@ -10,7 +10,8 @@ import { FOOTER_HEIGHT, HEADER_HEIGHT, subEditorPortal } from "./layout";
 export const SubsEditor: React.FC<{
   whisperOutput: WhisperOutput;
   setWhisperOutput: React.Dispatch<React.SetStateAction<WhisperOutput>>;
-}> = ({ whisperOutput, setWhisperOutput }) => {
+  fileName: string;
+}> = ({ whisperOutput, setWhisperOutput, fileName }) => {
   const longestNumberLength = String(
     Math.max(...whisperOutput.transcription.map((t) => t.offsets.to)),
   ).length;
@@ -67,7 +68,7 @@ export const SubsEditor: React.FC<{
         })}
       </AbsoluteFill>
       <SubsEditorHeader />
-      <SubsEditorFooter />
+      <SubsEditorFooter fileName={fileName} />
     </AbsoluteFill>,
     subEditorPortal.current as HTMLDivElement,
   );
