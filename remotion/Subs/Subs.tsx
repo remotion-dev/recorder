@@ -46,7 +46,9 @@ export const Subs: React.FC<{
   previousScene,
   theme,
 }) => {
-  const [data, setData] = useState<WhisperOutput | null>(null);
+  const [whisperOutput, setWhisperOutput] = useState<WhisperOutput | null>(
+    null,
+  );
   const { width, height } = useVideoConfig();
   const [handle] = useState(() => delayRender());
   const [changeStatus, setChangeStatus] = useState<
@@ -73,7 +75,7 @@ export const Subs: React.FC<{
         .then((res) => res.json())
         .then((d) => {
           continueRender(handle);
-          setData(d);
+          setWhisperOutput(d);
         });
       setChangeStatus("unchanged");
     }
@@ -106,9 +108,9 @@ export const Subs: React.FC<{
   });
 
   const postprocessed = useMemo(() => {
-    return data
+    return whisperOutput
       ? postprocessSubtitles({
-          subTypes: data,
+          subTypes: whisperOutput,
           boxWidth: animatedSubLayout.width,
           maxLines: getSubtitlesLines(subtitleType),
           fontSize: getSubtitlesFontSize(
@@ -122,7 +124,7 @@ export const Subs: React.FC<{
   }, [
     animatedSubLayout.width,
     canvasLayout,
-    data,
+    whisperOutput,
     scene.layout.displayLayout,
     subtitleType,
   ]);
@@ -150,7 +152,16 @@ export const Subs: React.FC<{
           />
         );
       })}
-      {data ? <SubsEditor whisperOutput={data} /> : null}
+      {whisperOutput ? (
+        <SubsEditor
+          setWhisperOutput={
+            setWhisperOutput as React.Dispatch<
+              React.SetStateAction<WhisperOutput>
+            >
+          }
+          whisperOutput={whisperOutput}
+        />
+      ) : null}
     </AbsoluteFill>
   );
 };

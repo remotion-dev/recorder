@@ -35,7 +35,7 @@ export const SubsEditorHeader: React.FC = () => {
           width: FIRST_COLUMN_WIDTH * usableWidth,
         }}
       >
-        FRAMES
+        MILLISECONDS
       </div>
       <div
         style={{

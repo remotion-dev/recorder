@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import ReactDOM from "react-dom";
 import { AbsoluteFill } from "remotion";
 import type { WhisperOutput } from "../../sub-types";
@@ -9,14 +9,37 @@ import { FOOTER_HEIGHT, HEADER_HEIGHT, subEditorPortal } from "./layout";
 
 export const SubsEditor: React.FC<{
   whisperOutput: WhisperOutput;
-}> = ({ whisperOutput }) => {
-  if (!subEditorPortal.current) {
-    return null;
-  }
-
+  setWhisperOutput: React.Dispatch<React.SetStateAction<WhisperOutput>>;
+}> = ({ whisperOutput, setWhisperOutput }) => {
   const longestNumberLength = String(
     Math.max(...whisperOutput.transcription.map((t) => t.offsets.to)),
   ).length;
+
+  const onChangeText = useCallback(
+    (index: number, newText: string) => {
+      setWhisperOutput((old) => {
+        const newTranscription = old.transcription.map((t, i) => {
+          if (i === index) {
+            return {
+              ...t,
+              text: newText,
+            };
+          }
+
+          return t;
+        });
+        return {
+          ...old,
+          transcription: newTranscription,
+        };
+      });
+    },
+    [setWhisperOutput],
+  );
+
+  if (!subEditorPortal.current) {
+    return null;
+  }
 
   return ReactDOM.createPortal(
     <AbsoluteFill
@@ -31,10 +54,12 @@ export const SubsEditor: React.FC<{
           paddingBottom: FOOTER_HEIGHT,
         }}
       >
-        {whisperOutput.transcription.map((word) => {
+        {whisperOutput.transcription.map((word, i) => {
           return (
             <EditWord
-              key={word.offsets.from}
+              key={word.offsets.from + word.offsets.to}
+              onUpdateText={onChangeText}
+              index={i}
               longestWordLength={longestNumberLength}
               word={word}
             />
