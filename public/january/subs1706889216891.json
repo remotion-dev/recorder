@@ -1,0 +1,252 @@
+{
+  "systeminfo": "AVX = 0 | AVX2 = 0 | AVX512 = 0 | FMA = 0 | NEON = 1 | ARM_FMA = 1 | METAL = 1 | F16C = 0 | FP16_VA = 1 | WASM_SIMD = 0 | BLAS = 1 | SSE3 = 0 | SSSE3 = 0 | VSX = 0 | CUDA = 0 | COREML = 0 | OPENVINO = 0 | ",
+  "model": {
+    "type": "base",
+    "multilingual": false,
+    "vocab": 51864,
+    "audio": {
+      "ctx": 1500,
+      "state": 512,
+      "head": 8,
+      "layer": 6
+    },
+    "text": {
+      "ctx": 448,
+      "state": 512,
+      "head": 8,
+      "layer": 6
+    },
+    "mels": 80,
+    "ftype": 1
+  },
+  "params": {
+    "model": "models/ggml-base.en.bin",
+    "language": "en",
+    "translate": false
+  },
+  "result": {
+    "language": "en"
+  },
+  "transcription": [
+    {
+      "timestamps": {
+        "from": "00:00:00,000",
+        "to": "00:00:00,240"
+      },
+      "offsets": {
+        "from": 0,
+        "to": 240
+      },
+      "text": ""
+    },
+    {
+      "timestamps": {
+        "from": "00:00:00,240",
+        "to": "00:00:00,600"
+      },
+      "offsets": {
+        "from": 240,
+        "to": 600
+      },
+      "text": " Thanks"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:00,600",
+        "to": "00:00:00,810"
+      },
+      "offsets": {
+        "from": 600,
+        "to": 810
+      },
+      "text": " a"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:00,810",
+        "to": "00:00:01,000"
+      },
+      "offsets": {
+        "from": 810,
+        "to": 1000
+      },
+      "text": " lot"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:01,000",
+        "to": "00:00:01,300"
+      },
+      "offsets": {
+        "from": 1000,
+        "to": 1300
+      },
+      "text": " for"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:01,300",
+        "to": "00:00:02,100"
+      },
+      "offsets": {
+        "from": 1300,
+        "to": 2100
+      },
+      "text": " watching"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:02,100",
+        "to": "00:00:02,400"
+      },
+      "offsets": {
+        "from": 2100,
+        "to": 2400
+      },
+      "text": " and"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:02,400",
+        "to": "00:00:02,670"
+      },
+      "offsets": {
+        "from": 2400,
+        "to": 2670
+      },
+      "text": " see"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:02,670",
+        "to": "00:00:03,070"
+      },
+      "offsets": {
+        "from": 2670,
+        "to": 3070
+      },
+      "text": " you"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:03,070",
+        "to": "00:00:03,140"
+      },
+      "offsets": {
+        "from": 3070,
+        "to": 3140
+      },
+      "text": " in"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:03,140",
+        "to": "00:00:03,200"
+      },
+      "offsets": {
+        "from": 3140,
+        "to": 3200
+      },
+      "text": " a"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:03,200",
+        "to": "00:00:03,640"
+      },
+      "offsets": {
+        "from": 3200,
+        "to": 3640
+      },
+      "text": " month"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:03,640",
+        "to": "00:00:03,750"
+      },
+      "offsets": {
+        "from": 3640,
+        "to": 3750
+      },
+      "text": "'s"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:03,750",
+        "to": "00:00:04,350"
+      },
+      "offsets": {
+        "from": 3750,
+        "to": 4350
+      },
+      "text": " time"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:04,350",
+        "to": "00:00:04,370"
+      },
+      "offsets": {
+        "from": 4350,
+        "to": 4370
+      },
+      "text": " for"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:04,370",
+        "to": "00:00:04,620"
+      },
+      "offsets": {
+        "from": 4370,
+        "to": 4620
+      },
+      "text": " the"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:04,620",
+        "to": "00:00:05,050"
+      },
+      "offsets": {
+        "from": 4620,
+        "to": 5050
+      },
+      "text": " next"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:05,050",
+        "to": "00:00:05,510"
+      },
+      "offsets": {
+        "from": 5050,
+        "to": 5510
+      },
+      "text": " update"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:05,510",
+        "to": "00:00:05,950"
+      },
+      "offsets": {
+        "from": 5510,
+        "to": 5950
+      },
+      "text": " video"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:05,950",
+        "to": "00:00:06,240"
+      },
+      "offsets": {
+        "from": 5950,
+        "to": 6240
+      },
+      "text": "."
+    }
+  ]
+}

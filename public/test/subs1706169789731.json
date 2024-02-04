@@ -1,0 +1,219 @@
+{
+  "systeminfo": "AVX = 0 | AVX2 = 0 | AVX512 = 0 | FMA = 0 | NEON = 1 | ARM_FMA = 1 | METAL = 1 | F16C = 0 | FP16_VA = 1 | WASM_SIMD = 0 | BLAS = 1 | SSE3 = 0 | SSSE3 = 0 | VSX = 0 | CUDA = 0 | COREML = 0 | OPENVINO = 0 | ",
+  "model": {
+    "type": "base",
+    "multilingual": false,
+    "vocab": 51864,
+    "audio": {
+      "ctx": 1500,
+      "state": 512,
+      "head": 8,
+      "layer": 6
+    },
+    "text": {
+      "ctx": 448,
+      "state": 512,
+      "head": 8,
+      "layer": 6
+    },
+    "mels": 80,
+    "ftype": 1
+  },
+  "params": {
+    "model": "models/ggml-base.en.bin",
+    "language": "en",
+    "translate": false
+  },
+  "result": {
+    "language": "en"
+  },
+  "transcription": [
+    {
+      "timestamps": {
+        "from": "00:00:00,000",
+        "to": "00:00:00,000"
+      },
+      "offsets": {
+        "from": 0,
+        "to": 0
+      },
+      "text": ""
+    },
+    {
+      "timestamps": {
+        "from": "00:00:00,000",
+        "to": "00:00:00,570"
+      },
+      "offsets": {
+        "from": 0,
+        "to": 570
+      },
+      "text": " Test"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:00,570",
+        "to": "00:00:01,580"
+      },
+      "offsets": {
+        "from": 570,
+        "to": 1580
+      },
+      "text": "."
+    },
+    {
+      "timestamps": {
+        "from": "00:00:01,580",
+        "to": "00:00:02,570"
+      },
+      "offsets": {
+        "from": 1580,
+        "to": 2570
+      },
+      "text": " Hello"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:02,570",
+        "to": "00:00:03,240"
+      },
+      "offsets": {
+        "from": 2570,
+        "to": 3240
+      },
+      "text": "."
+    },
+    {
+      "timestamps": {
+        "from": "00:00:03,240",
+        "to": "00:00:03,540"
+      },
+      "offsets": {
+        "from": 3240,
+        "to": 3540
+      },
+      "text": " Hello"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:03,540",
+        "to": "00:00:03,710"
+      },
+      "offsets": {
+        "from": 3540,
+        "to": 3710
+      },
+      "text": "."
+    },
+    {
+      "timestamps": {
+        "from": "00:00:03,710",
+        "to": "00:00:04,000"
+      },
+      "offsets": {
+        "from": 3710,
+        "to": 4000
+      },
+      "text": " Test"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:04,000",
+        "to": "00:00:04,000"
+      },
+      "offsets": {
+        "from": 4000,
+        "to": 4000
+      },
+      "text": "."
+    },
+    {
+      "timestamps": {
+        "from": "00:00:04,000",
+        "to": "00:00:04,000"
+      },
+      "offsets": {
+        "from": 4000,
+        "to": 4000
+      },
+      "text": ""
+    },
+    {
+      "timestamps": {
+        "from": "00:00:04,000",
+        "to": "00:00:04,460"
+      },
+      "offsets": {
+        "from": 4000,
+        "to": 4460
+      },
+      "text": " ["
+    },
+    {
+      "timestamps": {
+        "from": "00:00:04,460",
+        "to": "00:00:05,380"
+      },
+      "offsets": {
+        "from": 4460,
+        "to": 5380
+      },
+      "text": "BL"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:05,380",
+        "to": "00:00:06,310"
+      },
+      "offsets": {
+        "from": 5380,
+        "to": 6310
+      },
+      "text": "ANK"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:06,310",
+        "to": "00:00:06,310"
+      },
+      "offsets": {
+        "from": 6310,
+        "to": 6310
+      },
+      "text": "_"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:06,310",
+        "to": "00:00:06,310"
+      },
+      "offsets": {
+        "from": 6310,
+        "to": 6310
+      },
+      "text": "AUD"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:06,310",
+        "to": "00:00:06,310"
+      },
+      "offsets": {
+        "from": 6310,
+        "to": 6310
+      },
+      "text": "IO"
+    },
+    {
+      "timestamps": {
+        "from": "00:00:06,310",
+        "to": "00:00:10,000"
+      },
+      "offsets": {
+        "from": 6310,
+        "to": 10000
+      },
+      "text": "]"
+    }
+  ]
+}
