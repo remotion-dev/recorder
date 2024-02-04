@@ -88,7 +88,7 @@ export const avatars: { [key in Channel]: string } = {
 };
 
 export const videoScene = z.object({
-  type: z.literal("scene"),
+  type: z.literal("videoscene"),
   webcamPosition: z.enum(availablePositionsAndPrevious),
   trimStart: z.number(),
   duration: z.number().nullable().default(null),
