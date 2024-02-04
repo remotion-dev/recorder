@@ -7,6 +7,7 @@ import {
   useVideoConfig,
   watchStaticFile,
 } from "remotion";
+import type { SaveSubtitlesPayload } from "../../server/constants";
 import { SAVE_SUBTITLES, SERVER_PORT } from "../../server/constants";
 import { getSubtitleTranslation } from "../animations/subtitle-transitions";
 import type {
@@ -58,6 +59,10 @@ export const Subs: React.FC<{
   const [subEditorOpen, setSubEditorOpen] = useState(false);
 
   useEffect(() => {
+    if (!subEditorOpen) {
+      return;
+    }
+
     const { cancel } = watchStaticFile(
       file.name,
       (newData: StaticFile | null) => {
@@ -69,7 +74,7 @@ export const Subs: React.FC<{
     return () => {
       cancel();
     };
-  }, [file.name]);
+  }, [file.name, subEditorOpen]);
 
   useEffect(() => {
     if (changeStatus === "initial" || changeStatus === "changed") {
@@ -146,18 +151,27 @@ export const Subs: React.FC<{
           return null;
         }
 
+        if (!window.remotion_publicFolderExists) {
+          throw new Error("window.remotion_publicFolderExists is not set");
+        }
+
         const newOutput = updater(old);
+        const payload: SaveSubtitlesPayload = {
+          filename: `${window.remotion_publicFolderExists}/${file.name}`,
+          data: newOutput,
+        };
+
         fetch(`http://localhost:${SERVER_PORT}${SAVE_SUBTITLES}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(newOutput),
+          body: JSON.stringify(payload),
         });
         return newOutput;
       });
     },
-    [],
+    [file.name],
   );
 
   if (!postprocessed) {
