@@ -271,6 +271,7 @@ export const SegmentComp: React.FC<{
   subtitleType: SubtitleType;
   displayLayout: Layout | null;
   theme: Theme;
+  onOpenSubEditor: () => void;
 }> = ({
   segment,
   isLast,
@@ -281,6 +282,7 @@ export const SegmentComp: React.FC<{
   displayLayout,
   isFirst,
   theme,
+  onOpenSubEditor,
 }) => {
   const time = useTime(trimStart);
   const duration = useSequenceDuration(trimStart);
@@ -307,6 +309,7 @@ export const SegmentComp: React.FC<{
       canvasLayout,
       subtitleType,
     }),
+    cursor: "pointer",
   };
 
   if (time < getStartOfSegment(segment)) {
@@ -318,7 +321,7 @@ export const SegmentComp: React.FC<{
   }
 
   return (
-    <AbsoluteFill style={outer}>
+    <AbsoluteFill style={outer} onClick={onOpenSubEditor}>
       <div
         style={{
           height:

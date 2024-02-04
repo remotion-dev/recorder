@@ -3,7 +3,8 @@ import { FOOTER_HEIGHT, SIDE_PADDING } from "./layout";
 
 export const SubsEditorFooter: React.FC<{
   fileName: string;
-}> = ({ fileName }) => {
+  onCloseSubEditor: () => void;
+}> = ({ fileName, onCloseSubEditor }) => {
   return (
     <div
       style={{
@@ -40,10 +41,12 @@ export const SubsEditorFooter: React.FC<{
             color: "white",
             borderRadius: 7,
             padding: "12px 30px",
+            cursor: "pointer",
           }}
           type={"button"}
+          onClick={onCloseSubEditor}
         >
-          Save
+          Done
         </button>
       </div>
     </div>

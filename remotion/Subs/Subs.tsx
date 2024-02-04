@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { StaticFile } from "remotion";
 import {
   AbsoluteFill,
@@ -7,6 +7,7 @@ import {
   useVideoConfig,
   watchStaticFile,
 } from "remotion";
+import { SAVE_SUBTITLES, SERVER_PORT } from "../../server/constants";
 import { getSubtitleTranslation } from "../animations/subtitle-transitions";
 import type {
   CanvasLayout,
@@ -54,6 +55,7 @@ export const Subs: React.FC<{
   const [changeStatus, setChangeStatus] = useState<
     "initial" | "changed" | "unchanged"
   >("initial");
+  const [subEditorOpen, setSubEditorOpen] = useState(false);
 
   useEffect(() => {
     const { cancel } = watchStaticFile(
@@ -129,6 +131,35 @@ export const Subs: React.FC<{
     subtitleType,
   ]);
 
+  const onOpenSubEditor = useCallback(() => {
+    setSubEditorOpen(true);
+  }, []);
+
+  const onCloseSubEditor = useCallback(() => {
+    setSubEditorOpen(false);
+  }, []);
+
+  const setAndSaveWhisperOutput = useCallback(
+    (updater: (old: WhisperOutput) => WhisperOutput) => {
+      setWhisperOutput((old) => {
+        if (old === null) {
+          return null;
+        }
+
+        const newOutput = updater(old);
+        fetch(`http://localhost:${SERVER_PORT}${SAVE_SUBTITLES}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newOutput),
+        });
+        return newOutput;
+      });
+    },
+    [],
+  );
+
   if (!postprocessed) {
     return null;
   }
@@ -149,18 +180,16 @@ export const Subs: React.FC<{
             subtitleType={subtitleType}
             theme={theme}
             displayLayout={scene.layout.displayLayout}
+            onOpenSubEditor={onOpenSubEditor}
           />
         );
       })}
-      {whisperOutput ? (
+      {whisperOutput && subEditorOpen ? (
         <SubsEditor
-          setWhisperOutput={
-            setWhisperOutput as React.Dispatch<
-              React.SetStateAction<WhisperOutput>
-            >
-          }
+          setWhisperOutput={setAndSaveWhisperOutput}
           whisperOutput={whisperOutput}
           fileName={file.name}
+          onCloseSubEditor={onCloseSubEditor}
         />
       ) : null}
     </AbsoluteFill>
