@@ -103,7 +103,7 @@
         "from": 1260,
         "to": 1470
       },
-      "text": " rem"
+      "text": " Rem"
     },
     {
       "timestamps": {
@@ -125,7 +125,7 @@
         "from": 1840,
         "to": 2400
       },
-      "text": " studio"
+      "text": " Studio"
     },
     {
       "timestamps": {
@@ -400,7 +400,7 @@
         "from": 10640,
         "to": 11280
       },
-      "text": " render"
+      "text": " Render"
     },
     {
       "timestamps": {
@@ -411,7 +411,7 @@
         "from": 11280,
         "to": 11800
       },
-      "text": " button"
+      "text": " Button"
     },
     {
       "timestamps": {
@@ -620,7 +620,7 @@
         "from": 19700,
         "to": 20190
       },
-      "text": " site"
+      "text": " side"
     },
     {
       "timestamps": {
@@ -774,7 +774,7 @@
         "from": 24980,
         "to": 25090
       },
-      "text": "st"
+      "text": "c"
     },
     {
       "timestamps": {
@@ -1346,7 +1346,7 @@
         "from": 43950,
         "to": 44040
       },
-      "text": "st"
+      "text": "c"
     },
     {
       "timestamps": {
@@ -1379,7 +1379,7 @@
         "from": 44740,
         "to": 44990
       },
-      "text": " get"
+      "text": " you get"
     },
     {
       "timestamps": {
@@ -1478,7 +1478,7 @@
         "from": 49040,
         "to": 49270
       },
-      "text": " rem"
+      "text": " Rem"
     },
     {
       "timestamps": {
@@ -1632,7 +1632,7 @@
         "from": 54470,
         "to": 54580
       },
-      "text": " NP"
+      "text": " `np`"
     },
     {
       "timestamps": {
@@ -1643,7 +1643,7 @@
         "from": 54580,
         "to": 54710
       },
-      "text": "X"
+      "text": "`x`"
     },
     {
       "timestamps": {
@@ -1654,7 +1654,7 @@
         "from": 54710,
         "to": 55090
       },
-      "text": " rem"
+      "text": "` rem`"
     },
     {
       "timestamps": {
@@ -1665,7 +1665,7 @@
         "from": 55090,
         "to": 55630
       },
-      "text": "otion"
+      "text": "`otion`"
     },
     {
       "timestamps": {
@@ -1676,7 +1676,7 @@
         "from": 55630,
         "to": 56340
       },
-      "text": " bundle"
+      "text": "` bundle`"
     },
     {
       "timestamps": {
@@ -1764,7 +1764,7 @@
         "from": 58480,
         "to": 58970
       },
-      "text": " build"
+      "text": " `build`"
     },
     {
       "timestamps": {
