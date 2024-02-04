@@ -309,7 +309,6 @@ export const SegmentComp: React.FC<{
       canvasLayout,
       subtitleType,
     }),
-    cursor: "pointer",
   };
 
   if (time < getStartOfSegment(segment)) {
@@ -321,7 +320,7 @@ export const SegmentComp: React.FC<{
   }
 
   return (
-    <AbsoluteFill style={outer} onClick={onOpenSubEditor}>
+    <AbsoluteFill style={outer}>
       <div
         style={{
           height:
@@ -354,6 +353,7 @@ export const SegmentComp: React.FC<{
                 trimStart={trimStart}
                 word={word}
                 theme={theme}
+                onOpenSubEditor={onOpenSubEditor}
               />
             );
           })}

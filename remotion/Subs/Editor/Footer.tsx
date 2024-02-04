@@ -29,7 +29,7 @@ export const SubsEditorFooter: React.FC<{
           flex: 1,
         }}
       >
-        Changes will be saved to {fileName}.
+        Changes will be auto-saved to {fileName}.
         <br />
         {"Don't"} edit the file manually while using this editor.
       </div>

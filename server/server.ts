@@ -12,10 +12,10 @@ const corsHeaders = {
 
 const saveSubtitles = async (req: Request): Promise<Response> => {
   const json = (await req.json()) as SaveSubtitlesPayload;
-  const publicFolder = path.join(__dirname, "..", "public");
+  const publicFolder = path.join(import.meta.dir, "..", "public");
   const relativeToPublic = path.relative(publicFolder, json.filename);
   if (relativeToPublic.startsWith("..")) {
-    return new Response("Invalid filename", {
+    return new Response("Can only save in public folder", {
       status: 400,
       headers: corsHeaders,
     });

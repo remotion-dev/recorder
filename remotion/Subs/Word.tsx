@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   interpolateColors,
   spring,
@@ -101,10 +101,12 @@ export const WordComp: React.FC<{
   trimStart: number;
   isLast: boolean;
   theme: Theme;
-}> = ({ word, trimStart, isLast, theme }) => {
+  onOpenSubEditor: () => void;
+}> = ({ word, trimStart, isLast, theme, onOpenSubEditor }) => {
   const time = useTime(trimStart);
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame();
+  const [hovered, setHovered] = useState(false);
 
   const scale = word.monospace
     ? word.start > time
@@ -152,13 +154,20 @@ export const WordComp: React.FC<{
     <>
       <span>{startsWithSpace && " "}</span>
       <span
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
+        onClick={onOpenSubEditor}
         style={{
           ...style,
           fontFamily: word.monospace ? monospaceFont : regularFont,
           color: shownWordColor,
           fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
           backgroundColor,
-          outline: active ? "5px solid " + backgroundColor : "none",
+          outline: hovered
+            ? "2px solid black"
+            : active
+              ? "5px solid " + backgroundColor
+              : "none",
           whiteSpace: word.monospace ? "nowrap" : undefined,
           // Fix gap inbetween background and outline
           boxShadow:
@@ -166,6 +175,7 @@ export const WordComp: React.FC<{
           borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS,
           scale: String(scale),
           display: "inline",
+          cursor: "pointer",
         }}
       >
         {word.word.trim()}
