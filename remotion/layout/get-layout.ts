@@ -151,28 +151,6 @@ const wideLayout = ({
   };
 };
 
-const shiftLayoutIfTallMode = ({
-  canvasLayout,
-  layout,
-}: {
-  layout: Layout;
-  canvasLayout: CanvasLayout;
-}) => {
-  if (canvasLayout !== "portrait") {
-    return layout;
-  }
-
-  return {
-    ...layout,
-    y:
-      layout.y +
-      (getDimensionsForLayout("portrait").height -
-        getDimensionsForLayout("square").height) /
-        2,
-    height: layout.height,
-  };
-};
-
 const shiftDisplayLayoutBasedOnWebcamPosition = ({
   layout,
   webcamPosition,
@@ -184,7 +162,7 @@ const shiftDisplayLayoutBasedOnWebcamPosition = ({
   webcamSize: Dimensions;
   canvasLayout: CanvasLayout;
 }): Layout => {
-  if (canvasLayout === "square" || canvasLayout === "portrait") {
+  if (canvasLayout === "square") {
     return layout;
   }
 
@@ -296,7 +274,7 @@ const getWebcamSize = ({
     };
   }
 
-  if (canvasLayout === "square" || canvasLayout === "portrait") {
+  if (canvasLayout === "square") {
     const remainingHeight =
       canvasSize.height - displayLayout.height - safeSpace(canvasLayout) * 3;
 
@@ -364,19 +342,13 @@ export const getLayout = ({
 
   return {
     displayLayout: displayLayout
-      ? shiftLayoutIfTallMode({
+      ? shiftDisplayLayoutBasedOnWebcamPosition({
+          layout: displayLayout,
+          webcamPosition,
+          webcamSize,
           canvasLayout,
-          layout: shiftDisplayLayoutBasedOnWebcamPosition({
-            layout: displayLayout,
-            webcamPosition,
-            webcamSize,
-            canvasLayout,
-          }),
         })
       : null,
-    webcamLayout: shiftLayoutIfTallMode({
-      canvasLayout,
-      layout: webcamLayout,
-    }),
+    webcamLayout,
   };
 };
