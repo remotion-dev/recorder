@@ -271,7 +271,7 @@ export const SegmentComp: React.FC<{
   subtitleType: SubtitleType;
   displayLayout: Layout | null;
   theme: Theme;
-  onOpenSubEditor: () => void;
+  onOpenSubEditor: (word: Word) => void;
 }> = ({
   segment,
   isLast,

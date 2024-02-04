@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import ReactDOM from "react-dom";
 import { AbsoluteFill } from "remotion";
-import type { WhisperOutput } from "../../sub-types";
+import type { WhisperOutput, Word } from "../../sub-types";
 import { EditWord } from "./EditWord";
 import { SubsEditorFooter } from "./Footer";
 import { SubsEditorHeader } from "./Header";
@@ -11,8 +11,15 @@ export const SubsEditor: React.FC<{
   whisperOutput: WhisperOutput;
   setWhisperOutput: (updater: (old: WhisperOutput) => WhisperOutput) => void;
   fileName: string;
+  initialWord: Word;
   onCloseSubEditor: () => void;
-}> = ({ whisperOutput, setWhisperOutput, fileName, onCloseSubEditor }) => {
+}> = ({
+  whisperOutput,
+  setWhisperOutput,
+  fileName,
+  onCloseSubEditor,
+  initialWord,
+}) => {
   const longestNumberLength = String(
     Math.max(...whisperOutput.transcription.map((t) => t.offsets.to)),
   ).length;
@@ -64,6 +71,8 @@ export const SubsEditor: React.FC<{
               index={i}
               longestWordLength={longestNumberLength}
               word={word}
+              isInitialWord={word.offsets.from === initialWord.start}
+              onCloseEditor={onCloseSubEditor}
             />
           );
         })}
