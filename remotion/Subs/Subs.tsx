@@ -160,6 +160,7 @@ export const Subs: React.FC<{
             >
           }
           whisperOutput={whisperOutput}
+          fileName={file.name}
         />
       ) : null}
     </AbsoluteFill>
