@@ -21,7 +21,7 @@ const isWhisperInstalled = () => {
   }
 };
 
-const extractToTempAudioFile = async (fileToTranscribe, tempOutFile) => {
+const extractToTempAudioFile = (fileToTranscribe, tempOutFile) => {
   // extracting audio from mp4 and save it as 16khz wav file
   execSync(
     `npx remotion ffmpeg -i ${fileToTranscribe} -ar 16000 ${tempOutFile}`,
