@@ -246,7 +246,7 @@
         "from": 6330,
         "to": 6520
       },
-      "text": " made"
+      "text": " made."
     },
     {
       "timestamps": {
@@ -257,7 +257,7 @@
         "from": 6520,
         "to": 7440
       },
-      "text": " most"
+      "text": " Most"
     },
     {
       "timestamps": {
@@ -312,7 +312,7 @@
         "from": 9450,
         "to": 9570
       },
-      "text": " or"
+      "text": " – or"
     },
     {
       "timestamps": {
@@ -356,7 +356,7 @@
         "from": 11850,
         "to": 12160
       },
-      "text": "."
+      "text": ","
     },
     {
       "timestamps": {
@@ -367,7 +367,7 @@
         "from": 12160,
         "to": 12720
       },
-      "text": " We"
+      "text": " we"
     },
     {
       "timestamps": {
@@ -389,7 +389,7 @@
         "from": 12750,
         "to": 13120
       },
-      "text": " see"
+      "text": " see –"
     },
     {
       "timestamps": {
@@ -433,7 +433,7 @@
         "from": 16000,
         "to": 16240
       },
-      "text": " rem"
+      "text": " Rem"
     },
     {
       "timestamps": {
@@ -455,7 +455,7 @@
         "from": 16650,
         "to": 17120
       },
-      "text": " lambda"
+      "text": " Lambda"
     },
     {
       "timestamps": {
@@ -532,7 +532,7 @@
         "from": 20090,
         "to": 20720
       },
-      "text": " video"
+      "text": "` <Video>`"
     },
     {
       "timestamps": {
@@ -840,7 +840,7 @@
         "from": 33190,
         "to": 33900
       },
-      "text": " request"
+      "text": "` request`"
     },
     {
       "timestamps": {
@@ -851,7 +851,7 @@
         "from": 33900,
         "to": 34490
       },
-      "text": " video"
+      "text": "`Video`"
     },
     {
       "timestamps": {
@@ -862,7 +862,7 @@
         "from": 34490,
         "to": 35030
       },
-      "text": " frame"
+      "text": "`Frame`"
     },
     {
       "timestamps": {
@@ -873,7 +873,7 @@
         "from": 35030,
         "to": 35840
       },
-      "text": " callback"
+      "text": "`Callback()`"
     },
     {
       "timestamps": {
@@ -972,7 +972,7 @@
         "from": 38930,
         "to": 39530
       },
-      "text": " that"
+      "text": " that."
     },
     {
       "timestamps": {
@@ -983,7 +983,7 @@
         "from": 39530,
         "to": 39630
       },
-      "text": " if"
+      "text": " If"
     },
     {
       "timestamps": {
@@ -1104,7 +1104,7 @@
         "from": 43330,
         "to": 43510
       },
-      "text": " log"
+      "text": "log"
     },
     {
       "timestamps": {
@@ -1137,7 +1137,7 @@
         "from": 43520,
         "to": 45520
       },
-      "text": " And"
+      "text": ""
     }
   ]
 }

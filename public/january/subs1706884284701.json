@@ -70,7 +70,7 @@
         "from": 600,
         "to": 1000
       },
-      "text": " make"
+      "text": "` make`"
     },
     {
       "timestamps": {
@@ -81,7 +81,7 @@
         "from": 1000,
         "to": 1910
       },
-      "text": " transform"
+      "text": "`Transform()`"
     },
     {
       "timestamps": {
@@ -334,7 +334,7 @@
         "from": 9790,
         "to": 10680
       },
-      "text": " transform"
+      "text": "` transform`"
     },
     {
       "timestamps": {
@@ -741,7 +741,7 @@
         "from": 25890,
         "to": 26350
       },
-      "text": " degree"
+      "text": "` deg`"
     },
     {
       "timestamps": {
@@ -763,7 +763,7 @@
         "from": 26820,
         "to": 27140
       },
-      "text": " pixel"
+      "text": "` px`"
     },
     {
       "timestamps": {
@@ -1269,7 +1269,7 @@
         "from": 44990,
         "to": 45240
       },
-      "text": "."
+      "text": ""
     },
     {
       "timestamps": {
@@ -1280,7 +1280,7 @@
         "from": 45240,
         "to": 45500
       },
-      "text": " And"
+      "text": " and"
     },
     {
       "timestamps": {

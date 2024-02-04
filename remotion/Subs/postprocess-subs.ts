@@ -77,15 +77,6 @@ const cutWords = ({
     bestCut--;
   }
 
-  if (
-    words
-      .map((w) => w.word)
-      .join("")
-      .includes("Material")
-  ) {
-    bestCut = 7;
-  }
-
   const firstHalf = words.slice(0, bestCut);
   const secondHalf = words.slice(bestCut);
 

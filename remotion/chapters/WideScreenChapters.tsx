@@ -21,7 +21,7 @@ export const WideScreenChapters: React.FC<{
   const chapterScenes = makeChapterScences(chapters);
 
   return (
-    <AbsoluteFill>
+    <AbsoluteFill style={{ pointerEvents: "none" }}>
       {chapterScenes.map((chapterScene, i) => {
         const previousChapterScene = chapterScenes[i - 1] ?? null;
 

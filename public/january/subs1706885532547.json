@@ -499,7 +499,7 @@
         "from": 15650,
         "to": 16630
       },
-      "text": " sequence"
+      "text": "` <Sequence>`"
     },
     {
       "timestamps": {
@@ -906,7 +906,7 @@
         "from": 32470,
         "to": 32810
       },
-      "text": " rem"
+      "text": " Rem"
     },
     {
       "timestamps": {
@@ -928,7 +928,7 @@
         "from": 33230,
         "to": 33880
       },
-      "text": " studio"
+      "text": " Studio"
     },
     {
       "timestamps": {
@@ -983,7 +983,7 @@
         "from": 35750,
         "to": 37180
       },
-      "text": " sequences"
+      "text": " `<Sequence>`s"
     },
     {
       "timestamps": {

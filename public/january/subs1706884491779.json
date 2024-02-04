@@ -92,7 +92,7 @@
         "from": 1570,
         "to": 2250
       },
-      "text": " interpol"
+      "text": "` interpol`"
     },
     {
       "timestamps": {
@@ -103,7 +103,7 @@
         "from": 2250,
         "to": 2530
       },
-      "text": "ate"
+      "text": "`ate()`"
     },
     {
       "timestamps": {
@@ -147,7 +147,7 @@
         "from": 3790,
         "to": 4320
       },
-      "text": " interpol"
+      "text": "` interpol`"
     },
     {
       "timestamps": {
@@ -158,7 +158,7 @@
         "from": 4320,
         "to": 4610
       },
-      "text": "ate"
+      "text": "`ate`"
     },
     {
       "timestamps": {
@@ -169,7 +169,7 @@
         "from": 4610,
         "to": 4970
       },
-      "text": " colors"
+      "text": "`Colors()`"
     },
     {
       "timestamps": {
@@ -268,7 +268,7 @@
         "from": 8060,
         "to": 8760
       },
-      "text": " interpol"
+      "text": "` interpol`"
     },
     {
       "timestamps": {
@@ -279,7 +279,7 @@
         "from": 8760,
         "to": 9240
       },
-      "text": "ate"
+      "text": "`ate`"
     },
     {
       "timestamps": {
@@ -290,7 +290,7 @@
         "from": 9240,
         "to": 9780
       },
-      "text": " styles"
+      "text": "`Styles()`"
     },
     {
       "timestamps": {
@@ -510,7 +510,7 @@
         "from": 18340,
         "to": 18950
       },
-      "text": " style"
+      "text": "` style`"
     },
     {
       "timestamps": {
@@ -1038,7 +1038,7 @@
         "from": 40400,
         "to": 40830
       },
-      "text": " one"
+      "text": " 1"
     },
     {
       "timestamps": {
@@ -1258,7 +1258,7 @@
         "from": 48620,
         "to": 49340
       },
-      "text": " interpol"
+      "text": "` interpol`"
     },
     {
       "timestamps": {
@@ -1269,7 +1269,7 @@
         "from": 49340,
         "to": 49530
       },
-      "text": "ate"
+      "text": "`ate`"
     },
     {
       "timestamps": {
@@ -1280,7 +1280,7 @@
         "from": 49530,
         "to": 50090
       },
-      "text": " styles"
+      "text": "`Styles()`"
     },
     {
       "timestamps": {
@@ -1599,7 +1599,7 @@
         "from": 61760,
         "to": 61830
       },
-      "text": "ank"
+      "text": "an"
     },
     {
       "timestamps": {
@@ -1610,7 +1610,7 @@
         "from": 61830,
         "to": 62160
       },
-      "text": "ara"
+      "text": " Karwa"
     },
     {
       "timestamps": {
@@ -1676,7 +1676,7 @@
         "from": 63750,
         "to": 64610
       },
-      "text": " interpol"
+      "text": "` interpol`"
     },
     {
       "timestamps": {
@@ -1687,7 +1687,7 @@
         "from": 64610,
         "to": 64990
       },
-      "text": "ate"
+      "text": "`ate`"
     },
     {
       "timestamps": {
@@ -1698,7 +1698,7 @@
         "from": 64990,
         "to": 65810
       },
-      "text": " styles"
+      "text": "`Styles()`"
     },
     {
       "timestamps": {
@@ -1731,7 +1731,7 @@
         "from": 66240,
         "to": 66720
       },
-      "text": " make"
+      "text": "` make`"
     },
     {
       "timestamps": {
@@ -1742,7 +1742,7 @@
         "from": 66720,
         "to": 67530
       },
-      "text": " transform"
+      "text": "`Transform()`"
     },
     {
       "timestamps": {

@@ -23,6 +23,38 @@ import { Subs } from "../Subs/Subs";
 import { WebcamVideo } from "../WebcamVideo";
 import { DisplayVideo } from "./DisplayVideo";
 
+const AudioEffects: React.FC<{
+  previousScene: SceneAndMetadata | null;
+  sceneAndMetadata: VideoSceneAndMetadata;
+  shouldEnter: boolean;
+}> = ({ previousScene, sceneAndMetadata, shouldEnter }) => {
+  if (!shouldEnter) {
+    return null;
+  }
+
+  if (
+    previousScene &&
+    isShrinkingToMiniature({
+      firstScene: previousScene,
+      secondScene: sceneAndMetadata,
+    })
+  ) {
+    return <Audio src={staticFile("sounds/shrink.m4a")} volume={0.2} />;
+  }
+
+  if (
+    previousScene &&
+    isGrowingFromMiniature({
+      firstScene: previousScene,
+      secondScene: sceneAndMetadata,
+    })
+  ) {
+    return <Audio src={staticFile("sounds/grow.m4a")} volume={0.2} />;
+  }
+
+  return <Audio src={staticFile("sounds/whipwhoosh.mp3")} volume={0.1} />;
+};
+
 export const CameraScene: React.FC<{
   shouldEnter: boolean;
   shouldExit: boolean;
@@ -132,22 +164,11 @@ export const CameraScene: React.FC<{
           title={sceneAndMetadata.scene.newChapter}
         />
       ) : null}
-
-      {previousScene &&
-      isShrinkingToMiniature({
-        firstScene: previousScene,
-        secondScene: sceneAndMetadata,
-      }) ? (
-        <Audio src={staticFile("sounds/shrink.m4a")} volume={0.2} />
-      ) : previousScene &&
-        isGrowingFromMiniature({
-          firstScene: previousScene,
-          secondScene: sceneAndMetadata,
-        }) ? (
-        <Audio src={staticFile("sounds/grow.m4a")} volume={0.2} />
-      ) : shouldEnter ? (
-        <Audio src={staticFile("sounds/whipwhoosh.mp3")} volume={0.1} />
-      ) : null}
+      <AudioEffects
+        previousScene={previousScene}
+        sceneAndMetadata={sceneAndMetadata}
+        shouldEnter={shouldEnter}
+      />
     </>
   );
 };
