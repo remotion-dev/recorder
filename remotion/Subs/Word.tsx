@@ -101,7 +101,7 @@ export const WordComp: React.FC<{
   trimStart: number;
   isLast: boolean;
   theme: Theme;
-  onOpenSubEditor: () => void;
+  onOpenSubEditor: (word: Word) => void;
 }> = ({ word, trimStart, isLast, theme, onOpenSubEditor }) => {
   const time = useTime(trimStart);
   const { fps } = useVideoConfig();
@@ -156,7 +156,7 @@ export const WordComp: React.FC<{
       <span
         onPointerEnter={() => setHovered(true)}
         onPointerLeave={() => setHovered(false)}
-        onClick={onOpenSubEditor}
+        onClick={() => onOpenSubEditor(word)}
         style={{
           ...style,
           fontFamily: word.monospace ? monospaceFont : regularFont,

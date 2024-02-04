@@ -27,7 +27,16 @@ export const EditWord: React.FC<{
   longestWordLength: number;
   index: number;
   onUpdateText: (index: number, newText: string) => void;
-}> = ({ word, longestWordLength, index, onUpdateText }) => {
+  onCloseEditor: () => void;
+  isInitialWord: boolean;
+}> = ({
+  word,
+  longestWordLength,
+  index,
+  onUpdateText,
+  isInitialWord,
+  onCloseEditor,
+}) => {
   const { width, fps } = useVideoConfig();
   const frame = useCurrentFrame();
   const milliSeconds = (frame / fps) * 1000;
@@ -72,6 +81,38 @@ export const EditWord: React.FC<{
     }
   }, [active]);
 
+  const onInputKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const next = ref.current?.nextElementSibling?.querySelector(
+          "input[type=text]",
+        ) as HTMLInputElement | undefined;
+        if (next) {
+          next.focus();
+          next.scrollIntoView({ behavior: "auto", block: "center" });
+        }
+      }
+
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const prev = ref.current?.previousElementSibling?.querySelector(
+          "input[type=text]",
+        ) as HTMLInputElement | undefined;
+        if (prev) {
+          prev.focus();
+          prev.scrollIntoView({ behavior: "auto", block: "center" });
+        }
+      }
+
+      if (e.key === "Enter") {
+        e.preventDefault();
+        onCloseEditor();
+      }
+    },
+    [onCloseEditor],
+  );
+
   return (
     <div
       ref={ref}
@@ -108,6 +149,8 @@ export const EditWord: React.FC<{
         }}
       >
         <input
+          type={"text"}
+          autoFocus={isInitialWord}
           style={{
             fontSize: 30,
             fontFamily: isMonospaced ? "monospace" : "Helvetica",
@@ -115,6 +158,7 @@ export const EditWord: React.FC<{
             border: "none",
             color: isMonospaced ? "#3B82EB" : "black",
           }}
+          onKeyDown={onInputKeyDown}
           onChange={onChange}
           value={word.text}
         />

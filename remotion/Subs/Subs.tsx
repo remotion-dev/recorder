@@ -16,7 +16,7 @@ import type {
   Theme,
   VideoSceneAndMetadata,
 } from "../configuration";
-import type { WhisperOutput } from "../sub-types";
+import type { WhisperOutput, Word } from "../sub-types";
 import { SubsEditor } from "./Editor/SubsEditor";
 import { postprocessSubtitles } from "./postprocess-subs";
 import {
@@ -56,7 +56,7 @@ export const Subs: React.FC<{
   const [changeStatus, setChangeStatus] = useState<
     "initial" | "changed" | "unchanged"
   >("initial");
-  const [subEditorOpen, setSubEditorOpen] = useState(false);
+  const [subEditorOpen, setSubEditorOpen] = useState<Word | false>(false);
 
   useEffect(() => {
     if (!subEditorOpen) {
@@ -136,8 +136,8 @@ export const Subs: React.FC<{
     subtitleType,
   ]);
 
-  const onOpenSubEditor = useCallback(() => {
-    setSubEditorOpen(true);
+  const onOpenSubEditor = useCallback((word: Word) => {
+    setSubEditorOpen(word);
   }, []);
 
   const onCloseSubEditor = useCallback(() => {
@@ -200,6 +200,7 @@ export const Subs: React.FC<{
       })}
       {whisperOutput && subEditorOpen ? (
         <SubsEditor
+          initialWord={subEditorOpen}
           setWhisperOutput={setAndSaveWhisperOutput}
           whisperOutput={whisperOutput}
           fileName={file.name}
