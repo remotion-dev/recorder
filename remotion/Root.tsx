@@ -202,6 +202,20 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       />
+      <Composition
+        component={All}
+        fps={fps}
+        durationInFrames={100}
+        id="january"
+        schema={videoConf}
+        defaultProps={{
+          theme: "light" as const,
+          canvasLayout: "square" as const,
+          scenes: [],
+          scenesAndMetadata: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
     </>
   );
 };
