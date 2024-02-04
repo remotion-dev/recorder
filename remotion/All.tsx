@@ -11,6 +11,7 @@ import type {
   Theme,
 } from "./configuration";
 import { Scene } from "./Scene";
+import { subEditorPortal } from "./Subs/SubsEditor";
 
 export type AllProps = {
   canvasLayout: CanvasLayout;
@@ -53,6 +54,7 @@ export const All: React.FC<AllProps> = ({
         <WideScreenChapters chapters={chapters} />
       ) : null}
       <AudioTrack scenesAndMetadata={scenesAndMetadata} />
+      <div ref={subEditorPortal} />
     </AbsoluteFill>
   );
 };

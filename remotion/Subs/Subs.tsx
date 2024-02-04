@@ -23,6 +23,7 @@ import {
   getSubtitlesType,
   SegmentComp,
 } from "./Segment";
+import { SubsEditor } from "./SubsEditor";
 
 export const Subs: React.FC<{
   file: StaticFile;
@@ -149,6 +150,7 @@ export const Subs: React.FC<{
           />
         );
       })}
+      {data ? <SubsEditor whisperOutput={data} /> : null}
     </AbsoluteFill>
   );
 };

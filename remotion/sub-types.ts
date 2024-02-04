@@ -1,32 +1,32 @@
-interface WhisperWord {
+export type WhisperWord = {
   offsets: {
     from: number;
     to: number;
   };
   text: string;
-}
+};
 
-export interface WhisperOutput {
+export type WhisperOutput = {
   transcription: WhisperWord[];
   result: {
     language: string;
   };
-}
+};
 
-export interface SubTypes {
+export type SubTypes = {
   segments: Segment[];
-}
+};
 
-export interface Segment {
+export type Segment = {
   words: Word[];
-}
+};
 
-export interface Word {
+export type Word = {
   word: string;
   start: number;
   end: number;
   monospace?: boolean;
-}
+};
 
 export const whisperWordToWord = (word: WhisperWord): Word => {
   return {
