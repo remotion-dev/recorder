@@ -18,8 +18,9 @@ import { truthy } from "./truthy";
 
 export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   props,
+  compositionId,
 }) => {
-  const pairs = getPairs(props.prefix);
+  const pairs = getPairs(compositionId);
 
   let videoIndex = -1;
 
@@ -74,7 +75,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
         let idx = i;
         while (webcamPosition === "previous" && idx >= 0) {
           const prevScene = props.scenes[idx] as SceneType;
-          if (prevScene.type === "scene") {
+          if (prevScene.type === "videoscene") {
             webcamPosition = prevScene.webcamPosition;
           }
 
@@ -142,7 +143,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
     ...getDimensionsForLayout(props.canvasLayout),
     props: {
       canvasLayout: props.canvasLayout,
-      prefix: props.prefix,
+      prefix: compositionId,
       scenes: props.scenes,
       fps,
       pairs,

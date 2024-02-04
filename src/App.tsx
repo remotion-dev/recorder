@@ -1,6 +1,7 @@
 /* eslint-disable no-alert */
 import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
+import { VolumeMeter } from "./components/VolumeMeter";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
 import { onVideo } from "./on-video";
@@ -185,7 +186,7 @@ const App = () => {
         recording={recording}
         disabledByParent={false}
       />
-
+      <VolumeMeter mediaStream={mediaSources.webcam} />
       <div style={gridContainer}>
         <View
           prefix={"webcam"}
