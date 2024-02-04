@@ -23,6 +23,13 @@ export const getIsTransitioningOut = ({
     return false;
   }
 
+  if (
+    sceneAndMetadata.type === "video-scene" &&
+    !sceneAndMetadata.scene.transitionToNextScene
+  ) {
+    return false;
+  }
+
   if (isATextCard(sceneAndMetadata.scene)) {
     return true;
   }
@@ -33,8 +40,7 @@ export const getIsTransitioningOut = ({
 
   if (
     sceneAndMetadata.type === "video-scene" &&
-    nextScene.type === "video-scene" &&
-    sceneAndMetadata.scene.transitionToNextScene
+    nextScene.type === "video-scene"
   ) {
     const samePosition =
       nextScene.finalWebcamPosition !== sceneAndMetadata.finalWebcamPosition;

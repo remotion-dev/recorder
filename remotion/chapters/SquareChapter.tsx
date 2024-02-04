@@ -32,7 +32,7 @@ export const SquareChapter: React.FC<{
     }) * -width;
 
   return (
-    <AbsoluteFill style={{}}>
+    <AbsoluteFill style={{ pointerEvents: "none" }}>
       <div
         style={{
           color: "white",

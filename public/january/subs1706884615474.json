@@ -609,7 +609,7 @@
         "from": 20020,
         "to": 20520
       },
-      "text": " fit"
+      "text": "` fit`"
     },
     {
       "timestamps": {
@@ -620,7 +620,7 @@
         "from": 20520,
         "to": 20800
       },
-      "text": "Text"
+      "text": "`Text()`"
     },
     {
       "timestamps": {
@@ -807,7 +807,7 @@
         "from": 27600,
         "to": 28230
       },
-      "text": " font"
+      "text": "` font`"
     },
     {
       "timestamps": {
@@ -818,7 +818,7 @@
         "from": 28230,
         "to": 29040
       },
-      "text": " size"
+      "text": "`Size`"
     },
     {
       "timestamps": {
