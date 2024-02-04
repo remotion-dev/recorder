@@ -11,7 +11,7 @@ import type {
   Theme,
 } from "./configuration";
 import { Scene } from "./Scene";
-import { subEditorPortal } from "./Subs/SubsEditor";
+import { subEditorPortal } from "./Subs/Editor/layout";
 
 export type AllProps = {
   canvasLayout: CanvasLayout;

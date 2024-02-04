@@ -15,6 +15,7 @@ import type {
   VideoSceneAndMetadata,
 } from "../configuration";
 import type { WhisperOutput } from "../sub-types";
+import { SubsEditor } from "./Editor/SubsEditor";
 import { postprocessSubtitles } from "./postprocess-subs";
 import {
   getSubsBox,
@@ -23,7 +24,6 @@ import {
   getSubtitlesType,
   SegmentComp,
 } from "./Segment";
-import { SubsEditor } from "./SubsEditor";
 
 export const Subs: React.FC<{
   file: StaticFile;
