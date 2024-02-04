@@ -10,13 +10,6 @@ export const getDimensionsForLayout = (
     };
   }
 
-  if (canvasLayout === "portrait") {
-    return {
-      height: 1860,
-      width: 1080,
-    };
-  }
-
   return {
     height: 1080,
     width: 1920,

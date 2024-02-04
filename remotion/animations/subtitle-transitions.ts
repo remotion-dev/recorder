@@ -248,10 +248,7 @@ const getSubtitleEnter = ({
     isWebCamAtBottom(previousScene.finalWebcamPosition) ===
     isWebCamAtBottom(currentScene.finalWebcamPosition);
 
-  if (
-    !isSamePositionHorizontal &&
-    (canvasLayout === "square" || canvasLayout === "portrait")
-  ) {
+  if (!isSamePositionHorizontal && canvasLayout === "square") {
     return {
       translationX: 0,
       translationY: isWebCamAtBottom(currentScene.finalWebcamPosition)
@@ -260,10 +257,7 @@ const getSubtitleEnter = ({
     };
   }
 
-  if (
-    !isSamePositionVertical &&
-    (canvasLayout === "square" || canvasLayout === "portrait")
-  ) {
+  if (!isSamePositionVertical && canvasLayout === "square") {
     return {
       translationX: isWebCamRight(currentScene.finalWebcamPosition)
         ? -width

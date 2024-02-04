@@ -55,7 +55,7 @@ export const getSubtitlesType = ({
     return "overlayed-center";
   }
 
-  if (canvasLayout === "square" || canvasLayout === "portrait") {
+  if (canvasLayout === "square") {
     return "boxed";
   }
 
