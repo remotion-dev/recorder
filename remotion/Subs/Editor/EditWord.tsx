@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import type { WhisperWord } from "../../sub-types";
 import {
@@ -34,6 +34,7 @@ export const EditWord: React.FC<{
   const active =
     word.offsets.from <= milliSeconds && word.offsets.to >= milliSeconds;
   const usableWidth = width - SIDE_PADDING * 2;
+  const ref = useRef<HTMLDivElement>(null);
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,8 +63,18 @@ export const EditWord: React.FC<{
     }
   }, [index, isMonospaced, onUpdateText, word.text]);
 
+  useEffect(() => {
+    if (active) {
+      ref.current?.scrollIntoView({
+        behavior: "auto",
+        block: "center",
+      });
+    }
+  }, [active]);
+
   return (
     <div
+      ref={ref}
       style={{
         flexDirection: "row",
         display: "flex",
