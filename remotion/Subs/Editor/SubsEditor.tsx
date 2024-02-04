@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { AbsoluteFill } from "remotion";
 import type { WhisperOutput } from "../../sub-types";
 import { EditWord } from "./EditWord";
+import { SubsEditorFooter } from "./Footer";
 import { SubsEditorHeader } from "./Header";
 import { FOOTER_HEIGHT, HEADER_HEIGHT, subEditorPortal } from "./layout";
 
@@ -41,15 +42,7 @@ export const SubsEditor: React.FC<{
         })}
       </AbsoluteFill>
       <SubsEditorHeader />
-      <div
-        style={{
-          height: FOOTER_HEIGHT,
-          width: "100%",
-          backgroundColor: "red",
-          position: "absolute",
-          bottom: 0,
-        }}
-      />
+      <SubsEditorFooter />
     </AbsoluteFill>,
     subEditorPortal.current as HTMLDivElement,
   );
