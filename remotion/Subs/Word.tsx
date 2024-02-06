@@ -6,7 +6,13 @@ import {
   useVideoConfig,
 } from "remotion";
 import { COLORS } from "../colors";
-import type { Theme } from "../configuration";
+import {
+  regularFont,
+  regularFontWeight,
+  subtitleFont,
+  subtitleFontWeight,
+  type Theme,
+} from "../configuration";
 import type { Word } from "../sub-types";
 
 const style: React.CSSProperties = {
@@ -88,12 +94,6 @@ const getWordColor = ({
   return wordColor;
 };
 
-export const regularFontWeight = 600;
-export const regularFont = "Inter";
-
-export const monospaceFontWeight = 500;
-export const monospaceFont = "GT Planar";
-
 export const WORD_HIGHLIGHT_BORDER_RADIUS = 10;
 
 export const WordComp: React.FC<{
@@ -159,9 +159,9 @@ export const WordComp: React.FC<{
         onClick={() => onOpenSubEditor(word)}
         style={{
           ...style,
-          fontFamily: word.monospace ? monospaceFont : regularFont,
+          fontFamily: word.monospace ? subtitleFont : regularFont,
           color: shownWordColor,
-          fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
+          fontWeight: word.monospace ? subtitleFontWeight : regularFontWeight,
           backgroundColor,
           outline: hovered
             ? "2px solid black"

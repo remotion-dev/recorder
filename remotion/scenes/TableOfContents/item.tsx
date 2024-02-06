@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useVideoConfig } from "remotion";
+import { subtitleMonospaceFont } from "../../configuration";
 
 const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
@@ -33,7 +34,7 @@ export const TableOfContentItem: React.FC<{
   return (
     <div
       style={{
-        fontFamily: "GT Planar",
+        fontFamily: subtitleMonospaceFont,
         fontSize: 46,
         fontWeight: 400,
         display: "flex",
