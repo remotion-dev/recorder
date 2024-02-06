@@ -103,7 +103,44 @@ const fullscreenLayout = ({
   };
 };
 
-const wideLayout = ({
+const getMaxHeight = ({
+  canvasSize,
+  canvasLayout,
+  bottomSafeSpace,
+}: {
+  canvasSize: Dimensions;
+  canvasLayout: CanvasLayout;
+  bottomSafeSpace: number;
+}) => {
+  const withoutSafeAreas =
+    canvasSize.height - bottomSafeSpace - safeSpace(canvasLayout);
+
+  if (canvasLayout === "square") {
+    const threeFifths = withoutSafeAreas * (3 / 5);
+
+    return threeFifths;
+  }
+
+  return withoutSafeAreas;
+};
+
+const getMaxWidth = ({
+  canvasSize,
+  canvasLayout,
+}: {
+  canvasSize: Dimensions;
+  canvasLayout: CanvasLayout;
+}) => {
+  const withoutSafeArea = canvasSize.width - safeSpace(canvasLayout) * 2;
+  const fourFifths = canvasSize.width * (4 / 5);
+  if (canvasLayout === "landscape") {
+    return fourFifths;
+  }
+
+  return withoutSafeArea;
+};
+
+const getDisplayLayout = ({
   videoWidth,
   videoHeight,
   canvasSize,
@@ -118,9 +155,8 @@ const wideLayout = ({
 }): Layout => {
   const bottomSafeSpace = getBottomSafeSpace(canvasLayout);
 
-  const maxHeight =
-    canvasSize.height - bottomSafeSpace - safeSpace(canvasLayout);
-  const maxWidth = canvasSize.width - safeSpace(canvasLayout) * 2;
+  const maxHeight = getMaxHeight({ canvasSize, canvasLayout, bottomSafeSpace });
+  const maxWidth = getMaxWidth({ canvasSize, canvasLayout });
 
   const heightRatio = maxHeight / videoHeight;
   const widthRatio = maxWidth / videoWidth;
@@ -284,14 +320,21 @@ const getWebcamSize = ({
     };
   }
 
-  const remainingWidth =
-    canvasSize.width - displayLayout.width - safeSpace(canvasLayout) * 3;
-  const height = webcamRatio * remainingWidth;
+  if (canvasLayout === "landscape") {
+    const remainingWidth =
+      canvasSize.width - displayLayout.width - safeSpace(canvasLayout) * 3;
+    const maxWidth = 450;
+    const width = Math.min(remainingWidth, maxWidth);
 
-  return {
-    width: remainingWidth,
-    height,
-  };
+    const height = webcamRatio * width;
+
+    return {
+      width,
+      height,
+    };
+  }
+
+  throw new Error("Invalid canvas layout");
 };
 
 export type CameraSceneLayout = {
@@ -310,7 +353,7 @@ export const getLayout = ({
 }): CameraSceneLayout => {
   const canvasSize = getDimensionsForLayout(canvasLayout);
   const displayLayout = videos.display
-    ? wideLayout({
+    ? getDisplayLayout({
         videoWidth: videos.display.width,
         videoHeight: videos.display.height,
         canvasSize,
