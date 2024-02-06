@@ -63,7 +63,8 @@ export const DisplayVideo: React.FC<{
         endAt={endAt}
         src={scene.pair.display.src}
         style={{
-          maxWidth: "100%",
+          width: scene.layout.displayLayout.width,
+          height: scene.layout.displayLayout.height,
           borderRadius: scene.layout.displayLayout.borderRadius,
         }}
       />

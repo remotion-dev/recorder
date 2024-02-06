@@ -145,9 +145,13 @@ export const Scene: React.FC<Props> = ({
   chapters,
   theme,
 }) => {
+  const chapter =
+    sceneAndMetadata.scene.type === "videoscene"
+      ? sceneAndMetadata.scene.newChapter
+      : "";
   return (
     <Sequence
-      name={`Scene ${index}`}
+      name={`Scene ${index} ${chapter ? `(${chapter})` : ""}`}
       from={sceneAndMetadata.from}
       durationInFrames={Math.max(1, sceneAndMetadata.durationInFrames)}
     >
