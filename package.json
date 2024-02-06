@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint . --ext .ts,.tsx",
     "start": "remotion studio",
-    "remotion": "remotion studio",
+    "remotion": "bun studio.ts",
     "pull": "node copy-from-downloads.mjs",
     "upgrade": "remotion upgrade"
   },
