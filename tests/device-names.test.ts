@@ -254,3 +254,16 @@ test("Simple label should stay unaffected ", () => {
     }),
   ).toEqual("LUMIX Webcam Software");
 });
+
+test("Linkbuds S test ", () => {
+  expect(
+    formatLabel({
+      deviceId:
+        "50a6694639ca4046a0417487bdf7b7d7ff9ebecdacfdedbb1e475d9249b177c5",
+      kind: "audioinput",
+      label: "LinkBuds S (Bluetooth)",
+      groupId:
+        "dae9f3ee3a2cf4de69f8ee812e97abb7838ca7ae6e66184f455d34e184353005",
+    }),
+  ).toEqual("LinkBuds S");
+});
