@@ -27,7 +27,6 @@ const takeStringInBraces = (label: string): string => {
 };
 
 const removeLeadingNumber = (label: string) => {
-  console.log("label to remove leading number", label);
   return label.replace(/^\d+- /, "").trim();
 };
 
