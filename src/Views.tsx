@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./components/ui/select";
+import { VolumeMeter } from "./components/VolumeMeter";
 import { ToggleCrop } from "./ToggleCrop";
 
 const BORDERWIDTH = 2;
@@ -44,6 +45,7 @@ const videoWrapper: React.CSSProperties = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  flexDirection: "column",
 };
 
 const viewName: React.CSSProperties = {
@@ -94,7 +96,6 @@ export const View: React.FC<{
 
   const videoWidth = document.querySelector("video")?.videoWidth;
   const videoHeight = document.querySelector("video")?.videoHeight;
-
   const dynamicCropIndicator: CSSProperties = useMemo(() => {
     return {
       flex: 1,
@@ -312,13 +313,15 @@ export const View: React.FC<{
           />
         ) : null}
       </div>
-      <div style={videoWrapper}>
+      {prefix === "webcam" ? <VolumeMeter mediaStream={mediaStream} /> : null}
+      <div style={videoWrapper} id={prefix + "-video-container"}>
         <video
           ref={sourceRef}
           style={dynamicVideoStyle}
           muted
           onLoadedMetadata={onLoadedMetadata}
         />
+
         {streamState === "loading" ? <Spinner /> : null}
         {showCropIndicator ? (
           <div
