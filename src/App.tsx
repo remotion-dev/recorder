@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
@@ -71,7 +71,6 @@ const mediaRecorderOptions: MediaRecorderOptions = {
 
 const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
-
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
   const [mediaSources, setMediaSources] = useState<{
@@ -177,13 +176,23 @@ const App = () => {
     checkDeviceLabels();
   }, []);
 
+  const recordingDisabled = useMemo(() => {
+    if (
+      mediaSources.webcam === null ||
+      mediaSources.webcam.getAudioTracks().length === 0
+    ) {
+      return true;
+    }
+
+    return false;
+  }, [mediaSources.webcam]);
   return (
     <div style={outer}>
       <TopBar
         start={start}
         stop={stop}
         recording={recording}
-        disabledByParent={false}
+        disabledByParent={recordingDisabled}
       />
       <div style={gridContainer}>
         <View
