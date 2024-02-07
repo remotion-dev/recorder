@@ -133,20 +133,6 @@ export const View: React.FC<{
     });
   }, []);
 
-  const actualAudioSource: string | undefined = useMemo(() => {
-    if (selectedAudioSource) {
-      return selectedAudioSource as string;
-    }
-
-    const microphone = devices.find((d) => d.kind === "audioinput");
-
-    if (!microphone) {
-      return undefined;
-    }
-
-    return microphone.deviceId;
-  }, [devices, selectedAudioSource]);
-
   useEffect(() => {
     if (mediaStream) {
       const track = mediaStream.getVideoTracks()[0];
@@ -195,13 +181,13 @@ export const View: React.FC<{
 
     setStreamState("loading");
     const mediaStreamConstraints: MediaStreamConstraints =
-      recordAudio && actualAudioSource
+      recordAudio && selectedAudioSource
         ? {
             video: {
               deviceId: selectedVideoSource,
               width: { ideal: 1920 },
             },
-            audio: { deviceId: actualAudioSource },
+            audio: { deviceId: selectedAudioSource },
           }
         : {
             video: { deviceId: selectedVideoSource },
@@ -231,7 +217,7 @@ export const View: React.FC<{
         setStreamState("initial");
       });
   }, [
-    actualAudioSource,
+    selectedAudioSource,
     prefix,
     recordAudio,
     selectedVideoSource,

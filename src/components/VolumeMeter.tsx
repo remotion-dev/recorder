@@ -27,7 +27,7 @@ export const VolumeMeter: React.FC<{
 
   useEffect(() => {
     const getVolume = () => {
-      if (!mediaStream) {
+      if (!mediaStream || mediaStream.getAudioTracks().length === 0) {
         return 0;
       }
 
