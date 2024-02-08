@@ -52,6 +52,14 @@ const platform = z.enum(["youtube", "linkedin", "instagram", "discord", "x"]);
 
 export type Platform = z.infer<typeof platform>;
 
+// Note: If you change the font here, you also have to change all the loadFont imports too.
+export const regularFontWeight = 600;
+export const regularFont = "Inter";
+export const subtitleFont = "Inter";
+export const subtitleFontWeight = 500;
+export const subtitleMonospaceFont = "Roboto";
+export const subtitleMonospaceFontWeight = 500;
+
 export type WebcamPosition = (typeof availablePositions)[number];
 
 export const channel = z.enum(["jonny", "remotion"]);

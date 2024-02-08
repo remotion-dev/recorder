@@ -1,6 +1,10 @@
 import React, { useMemo } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { transitionDuration } from "../configuration";
+import {
+  subtitleFont,
+  subtitleFontWeight,
+  transitionDuration,
+} from "../configuration";
 import type { ChapterType } from "./make-chapters";
 
 export const CHAPTER_HEIGHT = 80;
@@ -57,8 +61,8 @@ export const WideLayoutChapter: React.FC<{
     return {
       padding: "0px 20px",
       fontSize: 36,
-      fontFamily: "GT Planar",
-      fontWeight: "500",
+      fontFamily: subtitleFont,
+      fontWeight: subtitleFontWeight,
       height: "100%",
       display: "flex",
       justifyContent: "center",
@@ -91,7 +95,7 @@ export const WideLayoutChapter: React.FC<{
         color: "white",
         padding: "12px 0px",
         fontSize: 32,
-        fontFamily: "GT Planar",
+        fontFamily: subtitleFont,
         width: 65,
         textAlign: "center",
         height: "100%",

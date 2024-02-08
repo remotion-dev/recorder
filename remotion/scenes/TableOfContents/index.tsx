@@ -1,9 +1,9 @@
-import { loadFont } from "@remotion/google-fonts/RobotoCondensed";
+import { loadFont } from "@remotion/google-fonts/Roboto";
 import React from "react";
 import { AbsoluteFill, interpolate, useVideoConfig } from "remotion";
 import type { ChapterType } from "../../chapters/make-chapters";
 import { COLORS } from "../../colors";
-import type { Theme } from "../../configuration";
+import { subtitleMonospaceFont, type Theme } from "../../configuration";
 import { TableOfContentItem } from "./item";
 
 loadFont();
@@ -33,7 +33,7 @@ export const TableOfContents: React.FC<{
     >
       <strong
         style={{
-          fontFamily: "GT Planar",
+          fontFamily: subtitleMonospaceFont,
           fontSize: 46,
           marginBottom: 30,
         }}

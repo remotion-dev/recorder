@@ -10,7 +10,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { transitionDuration } from "../configuration";
+import { subtitleFont, transitionDuration } from "../configuration";
 import { borderRadius, safeSpace } from "../layout/get-layout";
 
 export const TitleCard: React.FC<{
@@ -92,7 +92,7 @@ export const TitleCard: React.FC<{
       >
         <div
           style={{
-            fontFamily: "GT Planar",
+            fontFamily: subtitleFont,
             fontSize: 60,
             color: "#000",
             lineHeight: 1.1,
@@ -113,7 +113,7 @@ export const TitleCard: React.FC<{
         <AbsoluteFill>
           <h1
             style={{
-              fontFamily: "GT Planar",
+              fontFamily: subtitleFont,
               fontSize: 50,
               textAlign: "center",
               lineHeight: 1.5,

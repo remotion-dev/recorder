@@ -6,7 +6,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { transitionDuration } from "../configuration";
+import { subtitleFont, transitionDuration } from "../configuration";
 
 export const Title: React.FC<{
   title: string;
@@ -47,7 +47,7 @@ export const Title: React.FC<{
     >
       <div
         style={{
-          fontFamily: "GT Planar",
+          fontFamily: subtitleFont,
           fontSize: 130,
           color: subtitle ? "#000" : "#fff",
           lineHeight: 1.1,
@@ -69,7 +69,7 @@ export const Title: React.FC<{
       {subtitle ? (
         <div
           style={{
-            fontFamily: "GT Planar",
+            fontFamily: subtitleFont,
             fontSize: 60,
             background: "#0B84F3",
             lineHeight: 1.1,

@@ -1,4 +1,4 @@
-import { loadFont } from "@remotion/google-fonts/RobotoCondensed";
+import { loadFont } from "@remotion/google-fonts/Roboto";
 import React from "react";
 import { AbsoluteFill, interpolate, useVideoConfig } from "remotion";
 import { COLORS } from "../../colors";
