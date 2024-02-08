@@ -8,6 +8,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { subtitleFont } from "../configuration";
 
 const size = 180;
 const padding = 20;
@@ -49,7 +50,7 @@ const rowWithOutTopBorder: React.CSSProperties = {
 };
 
 const fatTitle: React.CSSProperties = {
-  fontFamily: "GT Planar",
+  fontFamily: subtitleFont,
   fontSize: 140,
   lineHeight: 1,
   fontWeight: "bold",
