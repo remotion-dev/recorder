@@ -1,6 +1,5 @@
 import type { SceneAndMetadata, SceneType } from "../configuration";
 import { transitionDuration } from "../configuration";
-import { isGrowingOrShrinkingToMiniature } from "./camera-scene-transitions";
 
 export const isATextCard = (scene: SceneType) => {
   return (
@@ -12,7 +11,7 @@ export const isATextCard = (scene: SceneType) => {
   );
 };
 
-export const getIsTransitioningOut = ({
+export const getShouldTransitionOut = ({
   sceneAndMetadata,
   nextScene,
 }: {
@@ -38,25 +37,12 @@ export const getIsTransitioningOut = ({
     return true;
   }
 
-  if (
-    sceneAndMetadata.type === "video-scene" &&
-    nextScene.type === "video-scene"
-  ) {
-    const samePosition =
-      nextScene.finalWebcamPosition !== sceneAndMetadata.finalWebcamPosition;
-
-    const isShrinkingOrGrowing = isGrowingOrShrinkingToMiniature({
-      currentScene: sceneAndMetadata,
-      otherScene: nextScene,
-    });
-
-    return samePosition || isShrinkingOrGrowing;
-  }
-
-  return false;
+  return (
+    sceneAndMetadata.type === "video-scene" && nextScene.type === "video-scene"
+  );
 };
 
-export const getIsTransitioningIn = ({
+export const getShouldTransitionIn = ({
   scene,
   previousScene,
 }: {
@@ -67,7 +53,7 @@ export const getIsTransitioningIn = ({
     return false;
   }
 
-  return getIsTransitioningOut({
+  return getShouldTransitionOut({
     sceneAndMetadata: previousScene,
     nextScene: scene,
   });
@@ -80,7 +66,7 @@ export const getSumUpDuration = ({
   scene: SceneAndMetadata;
   previousScene: SceneAndMetadata | null;
 }) => {
-  return getIsTransitioningIn({
+  return getShouldTransitionIn({
     scene,
     previousScene,
   })

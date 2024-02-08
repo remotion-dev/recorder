@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { AbsoluteFill } from "remotion";
 import { AudioTrack } from "./AudioTrack";
 import { makeChapters } from "./chapters/make-chapters";
-import { WideScreenChapters } from "./chapters/WideScreenChapters";
 import { COLORS } from "./colors";
 import type {
   CanvasLayout,
@@ -50,9 +49,6 @@ export const All: React.FC<AllProps> = ({
           />
         );
       })}
-      {canvasLayout === "landscape" ? (
-        <WideScreenChapters chapters={chapters} />
-      ) : null}
       <AudioTrack scenesAndMetadata={scenesAndMetadata} />
       <div ref={subEditorPortal} />
     </AbsoluteFill>

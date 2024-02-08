@@ -1,6 +1,6 @@
 import React from "react";
 import { Audio, interpolate, Sequence, useVideoConfig } from "remotion";
-import { getIsTransitioningOut, isATextCard } from "./animations/transitions";
+import { getShouldTransitionOut, isATextCard } from "./animations/transitions";
 import type { SceneAndMetadata } from "./configuration";
 import { transitionDuration } from "./configuration";
 import { getAudioSource } from "./layout/music";
@@ -77,7 +77,7 @@ export const AudioTrack: React.FC<{
 
     const from = addedUpDurations;
     addedUpDurations += metadataForScene.durationInFrames;
-    const isTransitioningOut = getIsTransitioningOut({
+    const isTransitioningOut = getShouldTransitionOut({
       sceneAndMetadata: scene,
       nextScene: scenesAndMetadata[i + 1] ?? null,
     });

@@ -2,12 +2,8 @@ import type { StaticFile } from "remotion";
 import { getStaticFiles, staticFile } from "remotion";
 import { z } from "zod";
 import type { CameraSceneLayout } from "./layout/get-layout";
+import type { Dimensions } from "./layout/layout-types";
 import { music } from "./layout/music";
-
-export type Dimensions = {
-  width: number;
-  height: number;
-};
 
 export type SceneVideos = {
   webcam: Dimensions;
@@ -23,6 +19,7 @@ export type VideoSceneAndMetadata = {
   layout: CameraSceneLayout;
   pair: Pair;
   finalWebcamPosition: WebcamPosition;
+  chapter: string | null;
 };
 
 export type SceneAndMetadata =
@@ -32,6 +29,7 @@ export type SceneAndMetadata =
       scene: SceneType;
       durationInFrames: number;
       from: number;
+      chapter: string | null;
     };
 
 const availablePositions = [
@@ -51,14 +49,6 @@ export type Theme = z.infer<typeof theme>;
 const platform = z.enum(["youtube", "linkedin", "instagram", "discord", "x"]);
 
 export type Platform = z.infer<typeof platform>;
-
-// Note: If you change the font here, you also have to change all the loadFont imports too.
-export const regularFontWeight = 600;
-export const regularFont = "Inter";
-export const subtitleFont = "Inter";
-export const subtitleFontWeight = 500;
-export const subtitleMonospaceFont = "Roboto";
-export const subtitleMonospaceFontWeight = 500;
 
 export type WebcamPosition = (typeof availablePositions)[number];
 
@@ -100,7 +90,7 @@ export const videoScene = z.object({
   webcamPosition: z.enum(availablePositionsAndPrevious),
   trimStart: z.number(),
   duration: z.number().nullable().default(null),
-  transitionToNextScene: z.boolean().default(false),
+  transitionToNextScene: z.boolean().default(true),
   newChapter: z.string().optional(),
   stopChapteringAfterThis: z.boolean().optional(),
   music,

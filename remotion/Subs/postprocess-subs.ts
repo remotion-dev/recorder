@@ -1,14 +1,8 @@
 import { fillTextBox } from "@remotion/layout-utils";
-import {
-  subtitleFont,
-  subtitleFontWeight,
-  subtitleMonospaceFont,
-  subtitleMonospaceFontWeight,
-  type CanvasLayout,
-} from "../configuration";
-import { safeSpace } from "../layout/get-layout";
+import type { CanvasLayout } from "../configuration";
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { hasMonoSpaceInIt } from "../layout/monospace";
+import { safeSpace } from "../layout/safe-space";
 import { wordsTogether } from "../layout/words-together";
 import {
   whisperWordToWord,
@@ -20,42 +14,26 @@ import {
 import { remapWord } from "./remap-words";
 import type { SubtitleType } from "./Segment";
 import { getBorderWidthForSubtitles } from "./Segment";
+import {
+  monospaceFont,
+  monospaceFontWeight,
+  regularFont,
+  regularFontWeight,
+} from "./Word";
 
-const cutWords = ({
+const balanceWords = ({
   words,
+  wordsToUse,
   boxWidth,
-  maxLines,
   fontSize,
+  maxLines,
 }: {
   words: Word[];
+  wordsToUse: number;
   boxWidth: number;
   maxLines: number;
   fontSize: number;
-}): Segment[] => {
-  const { add } = fillTextBox({ maxBoxWidth: boxWidth, maxLines });
-  let wordsToUse = 0;
-
-  for (const word of words) {
-    const { exceedsBox } = add({
-      text: word.word,
-      fontFamily: word.monospace ? subtitleMonospaceFont : subtitleFont,
-      fontWeight: word.monospace
-        ? subtitleMonospaceFontWeight
-        : subtitleFontWeight,
-      fontSize,
-    });
-
-    if (exceedsBox) {
-      break;
-    } else {
-      wordsToUse++;
-    }
-  }
-
-  if (wordsToUse === words.length) {
-    return [{ words }];
-  }
-
+}) => {
   let bestCut = wordsToUse;
 
   if (wordsToUse / words.length > 0.9) {
@@ -84,6 +62,7 @@ const cutWords = ({
 
   return [
     { words: firstHalf },
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     ...cutWords({
       words: secondHalf,
       boxWidth,
@@ -91,6 +70,48 @@ const cutWords = ({
       fontSize,
     }),
   ];
+};
+
+const cutWords = ({
+  words,
+  boxWidth,
+  maxLines,
+  fontSize,
+}: {
+  words: Word[];
+  boxWidth: number;
+  maxLines: number;
+  fontSize: number;
+}): Segment[] => {
+  const { add } = fillTextBox({ maxBoxWidth: boxWidth, maxLines });
+  let wordsToUse = 0;
+
+  for (const word of words) {
+    const { exceedsBox } = add({
+      text: word.word,
+      fontFamily: word.monospace ? monospaceFont : regularFont,
+      fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
+      fontSize,
+    });
+
+    if (exceedsBox) {
+      break;
+    } else {
+      wordsToUse++;
+    }
+  }
+
+  if (wordsToUse === words.length) {
+    return [{ words }];
+  }
+
+  return balanceWords({
+    words,
+    boxWidth,
+    fontSize,
+    maxLines,
+    wordsToUse,
+  });
 };
 
 export const removeWhisperBlankWords = (original: Word[]): Word[] => {
@@ -170,7 +191,15 @@ export const postprocessSubtitles = ({
   subtitleType: SubtitleType;
 }): SubTypes => {
   const allWords = wordsTogether(
-    subTypes.transcription.map(whisperWordToWord).map(remapWord),
+    subTypes.transcription
+      .map(whisperWordToWord)
+      .map(remapWord)
+      .map((word) => {
+        return {
+          ...word,
+          word: word.word.replaceAll(/`\s/g, " `"),
+        };
+      }),
   );
   const preFilteredWords = removeWhisperBlankWords(allWords);
   const segments = cutWords({

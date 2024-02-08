@@ -2,7 +2,7 @@ import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import type { AllProps } from "./All";
 import {
-  getIsTransitioningOut,
+  getShouldTransitionOut,
   getSumUpDuration,
 } from "./animations/transitions";
 import type {
@@ -39,6 +39,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
             scene,
             durationInFrames: scene.durationInFrames,
             from: 0, // Placeholder
+            chapter: null,
           };
         }
 
@@ -99,19 +100,28 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           pair: p,
           finalWebcamPosition: webcamPosition as WebcamPosition,
           from: 0,
+          chapter: scene.newChapter ?? null,
         };
       }),
     )
   ).filter(truthy);
 
   let addedUpDurations = 0;
+  let currentChapter: string | null = null;
 
   const scenesAndMetadata = scenesAndMetadataWithoutDuration.map(
     (sceneAndMetadata, i) => {
       const from = addedUpDurations;
       addedUpDurations += sceneAndMetadata.durationInFrames;
       if (
-        getIsTransitioningOut({
+        sceneAndMetadata.type === "video-scene" &&
+        sceneAndMetadata.scene.newChapter
+      ) {
+        currentChapter = sceneAndMetadata.scene.newChapter;
+      }
+
+      if (
+        getShouldTransitionOut({
           sceneAndMetadata,
           nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
         })
@@ -119,10 +129,19 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
         addedUpDurations -= transitionDuration;
       }
 
-      return {
+      const retValue = {
         ...sceneAndMetadata,
         from,
+        chapter: currentChapter,
       };
+      if (
+        sceneAndMetadata.type === "video-scene" &&
+        sceneAndMetadata.scene.stopChapteringAfterThis
+      ) {
+        currentChapter = null;
+      }
+
+      return retValue;
     },
   );
 

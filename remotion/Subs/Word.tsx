@@ -6,25 +6,11 @@ import {
   useVideoConfig,
 } from "remotion";
 import { COLORS } from "../colors";
-import {
-  regularFont,
-  regularFontWeight,
-  subtitleFont,
-  subtitleFontWeight,
-  type Theme,
-} from "../configuration";
+import type { Theme } from "../configuration";
 import type { Word } from "../sub-types";
 
 const style: React.CSSProperties = {
   display: "inline",
-};
-
-export const useTime = (trimStart: number) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const time = (frame + trimStart) / fps;
-
-  return time * 1000;
 };
 
 export const useSequenceDuration = (trimStart: number) => {
@@ -94,6 +80,12 @@ const getWordColor = ({
   return wordColor;
 };
 
+export const regularFontWeight = 600;
+export const regularFont = "Inter";
+
+export const monospaceFontWeight = 500;
+export const monospaceFont = "GT Planar";
+
 export const WORD_HIGHLIGHT_BORDER_RADIUS = 10;
 
 export const WordComp: React.FC<{
@@ -102,10 +94,12 @@ export const WordComp: React.FC<{
   isLast: boolean;
   theme: Theme;
   onOpenSubEditor: (word: Word) => void;
-}> = ({ word, trimStart, isLast, theme, onOpenSubEditor }) => {
-  const time = useTime(trimStart);
+  startFrame: number;
+}> = ({ word, trimStart, isLast, theme, onOpenSubEditor, startFrame }) => {
   const { fps } = useVideoConfig();
-  const frame = useCurrentFrame();
+  const frame = useCurrentFrame() + startFrame;
+  const time = ((frame + trimStart) / fps) * 1000;
+
   const [hovered, setHovered] = useState(false);
 
   const scale = word.monospace
@@ -159,9 +153,9 @@ export const WordComp: React.FC<{
         onClick={() => onOpenSubEditor(word)}
         style={{
           ...style,
-          fontFamily: word.monospace ? subtitleFont : regularFont,
+          fontFamily: word.monospace ? monospaceFont : regularFont,
           color: shownWordColor,
-          fontWeight: word.monospace ? subtitleFontWeight : regularFontWeight,
+          fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
           backgroundColor,
           outline: hovered
             ? "2px solid black"

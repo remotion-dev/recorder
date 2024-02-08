@@ -9,7 +9,10 @@ import {
 } from "remotion";
 import type { SaveSubtitlesPayload } from "../../server/constants";
 import { SAVE_SUBTITLES, SERVER_PORT } from "../../server/constants";
-import { getSubtitleTranslation } from "../animations/subtitle-transitions";
+import { getSubtitleTransform } from "../animations/subtitle-transitions";
+import { getAnimatedSubtitleLayout } from "../animations/subtitle-transitions/box-transition";
+import { shouldInlineTransitionSubtitles } from "../animations/subtitle-transitions/should-transition-subtitle";
+import { COLORS } from "../colors";
 import type {
   CanvasLayout,
   SceneAndMetadata,
@@ -20,12 +23,19 @@ import type { WhisperOutput, Word } from "../sub-types";
 import { SubsEditor } from "./Editor/SubsEditor";
 import { postprocessSubtitles } from "./postprocess-subs";
 import {
-  getSubsBox,
+  CaptionSentence,
+  getBorderWidthForSubtitles,
+  getSubsAlign,
   getSubtitlesFontSize,
   getSubtitlesLines,
   getSubtitlesType,
-  SegmentComp,
 } from "./Segment";
+import {
+  TransitionFromPreviousSubtitles,
+  TransitionToNextSubtitles,
+} from "./TransitionBetweenSubtitles";
+
+const LINE_HEIGHT = 1.2;
 
 export const Subs: React.FC<{
   file: StaticFile;
@@ -93,47 +103,49 @@ export const Subs: React.FC<{
     displayLayout: scene.layout.displayLayout,
   });
 
-  const subsLayout = getSubsBox({
+  const shouldTransitionToNext = shouldInlineTransitionSubtitles({
     canvasLayout,
-    canvasSize: { height, width },
-    subtitleType,
-    displayLayout: scene.layout.displayLayout,
-    webcamLayout: scene.layout.webcamLayout,
-    webcamPosition: scene.finalWebcamPosition,
+    currentScene: scene,
+    nextScene,
+  });
+  const shouldTransitionFromPrevious = shouldInlineTransitionSubtitles({
+    canvasLayout,
+    currentScene: scene,
+    nextScene: previousScene,
   });
 
-  const animatedSubLayout = getSubtitleTranslation({
-    enter,
-    exit,
-    height,
-    width,
-    canvasLayout,
-    nextScene,
-    previousScene,
+  const animatedSubLayout = getAnimatedSubtitleLayout({
+    enterProgress: enter,
+    exitProgress: exit,
+    nextScene: nextScene && nextScene.type === "video-scene" ? nextScene : null,
+    previousScene:
+      previousScene && previousScene.type === "video-scene"
+        ? previousScene
+        : null,
     scene,
-    currentLayout: subsLayout,
+    shouldTransitionFromPrevious,
+    shouldTransitionToNext,
   });
 
   const postprocessed = useMemo(() => {
-    return whisperOutput
-      ? postprocessSubtitles({
-          subTypes: whisperOutput,
-          boxWidth: animatedSubLayout.width,
-          maxLines: getSubtitlesLines(subtitleType),
-          fontSize: getSubtitlesFontSize(
-            subtitleType,
-            scene.layout.displayLayout,
-          ),
-          canvasLayout,
-          subtitleType,
-        })
-      : null;
+    if (!whisperOutput) {
+      return null;
+    }
+
+    return postprocessSubtitles({
+      subTypes: whisperOutput,
+      boxWidth: animatedSubLayout.width,
+      maxLines: getSubtitlesLines(subtitleType),
+      fontSize: getSubtitlesFontSize(subtitleType, scene.layout.displayLayout),
+      canvasLayout,
+      subtitleType,
+    });
   }, [
-    animatedSubLayout.width,
-    canvasLayout,
     whisperOutput,
-    scene.layout.displayLayout,
+    animatedSubLayout.width,
     subtitleType,
+    scene.layout.displayLayout,
+    canvasLayout,
   ]);
 
   const onOpenSubEditor = useCallback((word: Word) => {
@@ -178,26 +190,64 @@ export const Subs: React.FC<{
     return null;
   }
 
+  const outer: React.CSSProperties = {
+    fontSize: getSubtitlesFontSize(subtitleType, scene.layout.displayLayout),
+    display: "flex",
+    lineHeight: LINE_HEIGHT,
+    border: `${getBorderWidthForSubtitles(subtitleType)}px solid ${
+      COLORS[theme].BORDER_COLOR
+    }`,
+    backgroundColor:
+      subtitleType === "boxed" || subtitleType === "overlayed-center"
+        ? COLORS[theme].SUBTITLES_BACKGROUND
+        : undefined,
+    ...getSubsAlign({
+      canvasLayout,
+      subtitleType,
+    }),
+    ...animatedSubLayout,
+    transform: getSubtitleTransform({
+      currentLayout: animatedSubLayout,
+      enter,
+      exit,
+      height,
+      nextScene,
+      previousScene,
+      scene,
+      width,
+      subtitleType,
+    }),
+  };
+
   return (
-    <AbsoluteFill>
-      {postprocessed.segments.map((segment, index) => {
-        return (
-          <SegmentComp
-            // eslint-disable-next-line react/no-array-index-key
-            key={index}
-            isLast={index === postprocessed.segments.length - 1}
-            isFirst={index === 0}
-            segment={segment}
-            trimStart={trimStart}
-            canvasLayout={canvasLayout}
-            subsBox={animatedSubLayout}
-            subtitleType={subtitleType}
-            theme={theme}
-            displayLayout={scene.layout.displayLayout}
-            onOpenSubEditor={onOpenSubEditor}
-          />
-        );
-      })}
+    <AbsoluteFill style={outer}>
+      <TransitionFromPreviousSubtitles
+        shouldTransitionFromPreviousSubtitle={shouldTransitionFromPrevious}
+        subtitleType={subtitleType}
+      >
+        <TransitionToNextSubtitles
+          shouldTransitionToNextsSubtitles={shouldTransitionToNext}
+          subtitleType={subtitleType}
+        >
+          {postprocessed.segments.map((segment, index) => {
+            return (
+              <CaptionSentence
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                isFirst={index === 0}
+                segment={segment}
+                trimStart={trimStart}
+                canvasLayout={canvasLayout}
+                subtitleType={subtitleType}
+                theme={theme}
+                displayLayout={scene.layout.displayLayout}
+                onOpenSubEditor={onOpenSubEditor}
+              />
+            );
+          })}
+        </TransitionToNextSubtitles>
+      </TransitionFromPreviousSubtitles>
+
       {whisperOutput && subEditorOpen ? (
         <SubsEditor
           initialWord={subEditorOpen}

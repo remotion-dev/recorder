@@ -4,14 +4,14 @@ import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../configuration";
-import type { Layout } from "../layout/get-layout";
-import { safeSpace } from "../layout/get-layout";
+import type { Layout } from "../layout/layout-types";
+import { safeSpace } from "../layout/safe-space";
 import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,
   isWebCamAtBottom,
   isWebCamRight,
-} from "./camera-scene-transitions";
+} from "./webcam-transitions";
 
 const getDisplayExit = ({
   currentScene,
@@ -25,7 +25,7 @@ const getDisplayExit = ({
   width: number;
   height: number;
   canvasLayout: CanvasLayout;
-}) => {
+}): Layout => {
   if (
     currentScene.type !== "video-scene" ||
     currentScene.layout.displayLayout === null
@@ -39,10 +39,7 @@ const getDisplayExit = ({
     nextScene.layout.displayLayout !== null;
 
   if (nextAndCurrentAreVideoScenes) {
-    return {
-      exitEndX: (nextScene.layout.displayLayout as Layout).x,
-      exitEndY: (nextScene.layout.displayLayout as Layout).y,
-    };
+    return nextScene.layout.displayLayout as Layout;
   }
 
   if (
@@ -62,31 +59,29 @@ const getDisplayExit = ({
       canvasLayout === "landscape"
         ? height - currentScene.layout.displayLayout.height
         : isWebCamAtBottom(nextScene.finalWebcamPosition)
-        ? height -
-          nextScene.layout.webcamLayout.height -
-          currentScene.layout.displayLayout.height -
-          safeSpace(canvasLayout) * 2
-        : nextScene.layout.webcamLayout.height + 2 * safeSpace(canvasLayout);
+          ? height -
+            nextScene.layout.webcamLayout.height -
+            currentScene.layout.displayLayout.height -
+            safeSpace(canvasLayout) * 2
+          : nextScene.layout.webcamLayout.height + 2 * safeSpace(canvasLayout);
 
     if (changedVerticalPosition) {
       return {
-        exitEndX: currentScene.layout.displayLayout.x,
-        exitEndY: y,
+        ...currentScene.layout.displayLayout,
+        top: y,
       };
     }
 
     return {
-      exitEndX: isWebCamRight(currentScene.finalWebcamPosition)
+      ...currentScene.layout.displayLayout,
+      left: isWebCamRight(currentScene.finalWebcamPosition)
         ? -(width - safeSpace(canvasLayout) * 2)
         : width + safeSpace(canvasLayout),
-      exitEndY: y,
+      top: y,
     };
   }
 
-  return {
-    exitEndX: currentScene.layout.displayLayout.x - width,
-    exitEndY: currentScene.layout.displayLayout.y,
-  };
+  return currentScene.layout.displayLayout;
 };
 
 const getDisplayEnter = ({
@@ -101,7 +96,7 @@ const getDisplayEnter = ({
   width: number;
   canvasLayout: CanvasLayout;
   height: number;
-}) => {
+}): Layout => {
   if (
     currentScene.type !== "video-scene" ||
     currentScene.layout.displayLayout === null
@@ -129,8 +124,8 @@ const getDisplayEnter = ({
     const y = isWebCamAtBottom(currentScene.finalWebcamPosition)
       ? -translationY
       : changedVerticalPosition
-      ? translationY
-      : height;
+        ? translationY
+        : height;
 
     // landscape, Slide in from left
     if (
@@ -138,39 +133,36 @@ const getDisplayEnter = ({
       isWebCamRight(currentScene.finalWebcamPosition)
     ) {
       return {
-        enterStartX:
+        ...currentScene.layout.displayLayout,
+        left:
           -currentScene.layout.displayLayout.width - safeSpace(canvasLayout),
-        enterStartY: 0,
+        top: 0,
       };
     }
 
     // Slide in from right
     if (canvasLayout === "landscape") {
       return {
-        enterStartX: width + safeSpace(canvasLayout),
-        enterStartY: 0,
+        ...currentScene.layout.displayLayout,
+        left: width + safeSpace(canvasLayout),
+        top: 0,
       };
     }
 
     return {
-      enterStartX: (currentScene.layout.displayLayout as Layout).x,
-      enterStartY: y,
+      ...currentScene.layout.displayLayout,
+      top: y,
     };
   }
 
   const currentandPreviousAreVideoScenes =
     previousScene && previousScene.type === "video-scene";
+
   if (currentandPreviousAreVideoScenes) {
-    return {
-      enterStartX: (previousScene.layout.displayLayout as Layout).x,
-      enterStartY: (previousScene.layout.displayLayout as Layout).y,
-    };
+    return previousScene.layout.displayLayout as Layout;
   }
 
-  return {
-    enterStartX: currentScene.layout.displayLayout.x + width,
-    enterStartY: currentScene.layout.displayLayout.y,
-  };
+  return currentScene.layout.displayLayout;
 };
 
 const getDisplayTransitionOrigins = ({
@@ -188,7 +180,7 @@ const getDisplayTransitionOrigins = ({
   width: number;
   height: number;
 }) => {
-  const { enterStartX, enterStartY } = getDisplayEnter({
+  const enter = getDisplayEnter({
     currentScene,
     previousScene,
     width,
@@ -196,7 +188,7 @@ const getDisplayTransitionOrigins = ({
     height,
   });
 
-  const { exitEndX, exitEndY } = getDisplayExit({
+  const exit = getDisplayExit({
     currentScene,
     nextScene,
     width,
@@ -205,16 +197,30 @@ const getDisplayTransitionOrigins = ({
   });
 
   return {
-    enterStartX,
-    enterStartY,
-    exitEndX,
-    exitEndY,
+    enter,
+    exit,
   };
 };
 
+const shouldTransitionDisplayVideo = ({
+  previousScene,
+}: {
+  previousScene: SceneAndMetadata | null;
+}) => {
+  if (previousScene === null) {
+    return false;
+  }
+
+  if (previousScene.type !== "video-scene") {
+    return false;
+  }
+
+  return true;
+};
+
 export const getDisplayPosition = ({
-  enter,
-  exit,
+  enterProgress: enter,
+  exitProgress: exit,
   width,
   height,
   nextScene,
@@ -222,15 +228,15 @@ export const getDisplayPosition = ({
   currentScene,
   canvasLayout,
 }: {
-  enter: number;
-  exit: number;
+  enterProgress: number;
+  exitProgress: number;
   width: number;
   height: number;
   previousScene: SceneAndMetadata | null;
   nextScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   canvasLayout: CanvasLayout;
-}) => {
+}): Layout => {
   if (
     currentScene.type !== "video-scene" ||
     currentScene.layout.displayLayout === null
@@ -238,50 +244,99 @@ export const getDisplayPosition = ({
     throw new Error("no transitions on non-video scenes");
   }
 
-  const { enterStartX, enterStartY, exitEndX, exitEndY } =
-    getDisplayTransitionOrigins({
-      currentScene,
-      nextScene,
-      previousScene,
-      width,
-      height,
-      canvasLayout,
-    });
+  const { enter: enterState, exit: exitState } = getDisplayTransitionOrigins({
+    currentScene,
+    nextScene,
+    previousScene,
+    width,
+    height,
+    canvasLayout,
+  });
 
   if (exit > 0) {
+    // TODO: Could use interpolateStyles() here
     return {
-      translationX: Math.round(
+      left: Math.round(
         interpolate(
           exit,
           [0, 1],
-          [currentScene.layout.displayLayout.x, exitEndX],
+          [currentScene.layout.displayLayout.left, exitState.left],
         ),
       ),
-      translationY: Math.round(
+      top: Math.round(
         interpolate(
           exit,
           [0, 1],
-          [currentScene.layout.displayLayout.y, exitEndY],
+          [currentScene.layout.displayLayout.top, exitState.top],
         ),
       ),
-      opacity: 1,
+      width: Math.round(
+        interpolate(
+          exit,
+          [0, 1],
+          [currentScene.layout.displayLayout.width, exitState.width],
+        ),
+      ),
+      height: Math.round(
+        interpolate(
+          exit,
+          [0, 1],
+          [currentScene.layout.displayLayout.height, exitState.height],
+        ),
+      ),
+      opacity: interpolate(
+        exit,
+        [0, 1],
+        [currentScene.layout.displayLayout.opacity, exitState.opacity],
+      ),
+      borderRadius: interpolate(
+        exit,
+        [0, 1],
+        [
+          currentScene.layout.displayLayout.borderRadius,
+          exitState.borderRadius,
+        ],
+      ),
     };
   }
 
   const enterX = interpolate(
     enter,
     [0, 1],
-    [enterStartX, currentScene.layout.displayLayout.x],
+    [enterState.left, currentScene.layout.displayLayout.left],
   );
   const enterY = interpolate(
     enter,
     [0, 1],
-    [enterStartY, currentScene.layout.displayLayout.y],
+    [enterState.top, currentScene.layout.displayLayout.top],
+  );
+  const enterWidth = interpolate(
+    enter,
+    [0, 1],
+    [enterState.width, currentScene.layout.displayLayout.width],
+  );
+  const enterHeight = interpolate(
+    enter,
+    [0, 1],
+    [enterState.height, currentScene.layout.displayLayout.height],
+  );
+  const borderRadius = interpolate(
+    enter,
+    [0, 1],
+    [enterState.borderRadius, currentScene.layout.displayLayout.borderRadius],
   );
 
   return {
-    translationX: Math.round(enterX),
-    translationY: Math.round(enterY),
-    opacity: 1,
+    left: Math.round(enterX),
+    top: Math.round(enterY),
+    width: enterWidth,
+    height: enterHeight,
+    // Switch to new video in the middle of the transition
+    opacity: shouldTransitionDisplayVideo({ previousScene })
+      ? enter > 0.5
+        ? 1
+        : 0
+      : 1,
+    borderRadius,
   };
 };

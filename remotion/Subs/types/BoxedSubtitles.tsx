@@ -1,0 +1,59 @@
+import type { CanvasLayout, Theme } from "../../configuration";
+import type { Layout } from "../../layout/layout-types";
+import type { Segment, Word } from "../../sub-types";
+import { getHorizontalPaddingForSubtitles } from "../postprocess-subs";
+import { getSubtitlesFontSize, getSubtitlesLines } from "../Segment";
+import { Words } from "../Words";
+
+export const LINE_HEIGHT = 1.2;
+
+export const BoxedSubtitles: React.FC<{
+  segment: Segment;
+  startFrame: number;
+  theme: Theme;
+  trimStart: number;
+  displayLayout: Layout | null;
+  onOpenSubEditor: (word: Word) => void;
+  canvasLayout: CanvasLayout;
+}> = ({
+  segment,
+  startFrame,
+  theme,
+  trimStart,
+  displayLayout,
+  canvasLayout,
+  onOpenSubEditor,
+}) => {
+  const padding = getHorizontalPaddingForSubtitles("boxed", canvasLayout);
+
+  return (
+    <div
+      style={{
+        height:
+          getSubtitlesLines("boxed") *
+          getSubtitlesFontSize("boxed", displayLayout) *
+          LINE_HEIGHT,
+        marginTop: -5,
+      }}
+    >
+      <span
+        style={{
+          lineHeight: LINE_HEIGHT,
+          display: "inline-block",
+          boxDecorationBreak: "clone",
+          WebkitBoxDecorationBreak: "clone",
+          paddingLeft: padding,
+          paddingRight: padding,
+        }}
+      >
+        <Words
+          onOpenSubEditor={onOpenSubEditor}
+          segment={segment}
+          startFrame={startFrame}
+          theme={theme}
+          trimStart={trimStart}
+        />
+      </span>
+    </div>
+  );
+};
