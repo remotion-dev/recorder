@@ -18,7 +18,6 @@ const takeStringInBraces = (label: string): string => {
     return label;
   }
 
-  console.log("match", match);
   if (match[1] === "Bluetooth") {
     return label.replace(/\(Bluetooth\)/, "").trim();
   }

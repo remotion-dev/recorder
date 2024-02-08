@@ -50,8 +50,6 @@ const ffmpegTrim =
     : [];
 
 const convert = (i, o) => {
-  console.log({ i, o, audibleParts });
-
   execSync(
     [
       "npx remotion ffmpeg",
