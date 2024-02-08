@@ -64,130 +64,130 @@ const exampleDevicesFromWindows: SimpleMediaDeviceInfo[] = [
     deviceId: "default",
     kind: "audioinput",
     label: "Default - Microphone (Logitech StreamCam) (046d:0893)",
-    groupId: "157bcd4ef432f9d148945572a10a534cad551829fa22bac0fb23a6738c7718f8",
+    groupId: "601830fbbe679ed0dc018b5bfa9e4d6e67a770bbb13a4a1a2ef5a0a8995f662c",
   },
   {
     deviceId: "communications",
     kind: "audioinput",
     label: "Communications - Microphone (Logitech StreamCam) (046d:0893)",
-    groupId: "157bcd4ef432f9d148945572a10a534cad551829fa22bac0fb23a6738c7718f8",
+    groupId: "601830fbbe679ed0dc018b5bfa9e4d6e67a770bbb13a4a1a2ef5a0a8995f662c",
   },
   {
     deviceId:
-      "698e00ea508d635fff106bca6fbf2441334d333f0a8a4c5d0b18ba9e4a48cc75",
+      "3a49e15e6f97487e9e35d23c2601f8457ff469b38cde9222db5ff064d0060384",
     kind: "audioinput",
     label: "HDMI (2- Cam Link 4K) (0fd9:007b)",
-    groupId: "6ce5732d7d1cb242d777c9c64c9ee87868a67af1b4d6c040e8728192c1fd8eb9",
+    groupId: "6e4e547aa79c0b075ef4ac9679cf369c12e901fb0ab234c26d086f23575ef91f",
   },
   {
     deviceId:
-      "0542e1ad02f2540cb3d98564f8493d2cee36060e8ddc4f972441297e09f0eebd",
+      "75866698d7a90281a22f21cb7d8c0d6ed088fab0fc73231bc7036d41c624f39b",
     kind: "audioinput",
     label: "Line (Elgato Sound Capture)",
-    groupId: "57f1c4c1e7f85bf6225660078d14eb5b7b516afe67f4b1b75813f3bfb21636c2",
+    groupId: "cf31213a1dbe36cafd2b8cba4e0d144a78f922b7f4b67b9fcb4f1eb60f524540",
   },
   {
     deviceId:
-      "4e3bbe6d8196f774978676235abb52e8423639a1f9cafce76249f66527749bb2",
+      "6d9c71a3601f0bcaad551c44414d5ee3875a9ef2d8f0e8ae04c68871d6d3f857",
     kind: "audioinput",
     label: "Game Capture HD60 X (Game Capture HD60 X) (0fd9:0082)",
-    groupId: "36d48072aece2a97e84cabe3a00bd2063482fbe7e176d09478f1109ffaa12b24",
+    groupId: "011ae12697417f1648b14b756cefa1af42933bada030d62303f1047aac2b787e",
   },
   {
     deviceId:
-      "f705e909b1036b4495913f4de3e1be03317512d73a3ce7c376a0fe01132e034f",
+      "d6ac77a6d09ee496183b49b7ca75e37be93304aabc5c3e8f37b23d4de068fc4a",
     kind: "audioinput",
     label: "Microphone (6- RODE NT-USB) (19f7:0003)",
-    groupId: "ff79c7568dede39d6f434e7b3f25be43225468a5a111ece2f810e25b1b185d42",
+    groupId: "cc002cc139e4cc9b60a69a2339c31dd145dcd7046a33c78598edc41d8f4c29df",
   },
   {
     deviceId:
-      "9740a331fef4519b27aa41d38efc1cf883cabda9a01b344350e2bd5fb0c447c4",
+      "16dafab7166f59172d162b1ec820e7b59340eac48a30172d6370bc3ff28940ff",
     kind: "audioinput",
     label: "Microphone (Logitech StreamCam) (046d:0893)",
-    groupId: "157bcd4ef432f9d148945572a10a534cad551829fa22bac0fb23a6738c7718f8",
+    groupId: "601830fbbe679ed0dc018b5bfa9e4d6e67a770bbb13a4a1a2ef5a0a8995f662c",
   },
   {
     deviceId:
-      "a8cf9b118062299f5f0888d4fa27b580ee41c5f1ab975b77d6cd3983349160bb",
+      "ca8e564026fcbac1d5627068cf8b532f3706bbf3bb258f1e319431817aaf6b73",
     kind: "videoinput",
     label: "Logitech StreamCam (046d:0893)",
-    groupId: "157bcd4ef432f9d148945572a10a534cad551829fa22bac0fb23a6738c7718f8",
+    groupId: "601830fbbe679ed0dc018b5bfa9e4d6e67a770bbb13a4a1a2ef5a0a8995f662c",
   },
   {
     deviceId:
-      "e71ca3cd3d377146c879c450bb14bf731aae0133e372243a96473777f6d3c8cd",
+      "c142f209ad4c723a2476354cc7d294762a4fb8fb28e168f7ad7d662f660aeff5",
     kind: "videoinput",
     label: "Game Capture HD60 X (0fd9:0082)",
-    groupId: "36d48072aece2a97e84cabe3a00bd2063482fbe7e176d09478f1109ffaa12b24",
+    groupId: "011ae12697417f1648b14b756cefa1af42933bada030d62303f1047aac2b787e",
   },
   {
     deviceId:
-      "dc5fbfd328cd09913b1f6b8ba0c8a5dec2a1d75457f35ba5a9fa24ac28ae7c31",
+      "a02a07ff4c54861f16cb544b53b7e0dc5c94ceeb32d6aad96c74c94e6152c63e",
     kind: "videoinput",
     label: "Cam Link 4K (0fd9:007b)",
-    groupId: "6ce5732d7d1cb242d777c9c64c9ee87868a67af1b4d6c040e8728192c1fd8eb9",
+    groupId: "6e4e547aa79c0b075ef4ac9679cf369c12e901fb0ab234c26d086f23575ef91f",
   },
   {
     deviceId:
-      "ed5e440d425fe0d64dfe0b80606777f5ea12605b85b831ee18179e50f1058591",
+      "9276bdff65d92deceae4c3df7e50d84efdff22ab4ec60124344c51358e3c8c2a",
     kind: "videoinput",
     label: "Logi Capture",
-    groupId: "72342ff82241f8f38abdcbb8c4009d075f553af656f77498507099e8fdf09a64",
+    groupId: "64be8f1d48d8eead2eea1fc92d281c320cdcbaf17f0b3f701b9eef88a0e0eba1",
   },
   {
     deviceId:
-      "931f56f2372d9681293bad225147f488dc7f49c4bf319d55abf01afbb601b1bd",
+      "50f712f1a8c30cbe8a02f9ab13b33c32c01204210a34db27572bd1f928c96860",
     kind: "videoinput",
     label: "LUMIX Webcam Software",
-    groupId: "30f1fb14b04c7c76a0c73775b2c1eb46361215dd6f6c4c4e94f0c9c777382f01",
+    groupId: "5a694a5713c75196c50dfbe3606d92bcd7d02c7d2e6c0a60a7f5adc95480c0c5",
   },
   {
     deviceId:
-      "55c3cc1b445ba76c6a3a3426d271cfb406554a6750171415b1c917e87e702776",
+      "49659e5373dc3800ae9e4bdd9a44d28d4f2b62ca78fd2e3cb2b2ab6462765860",
     kind: "videoinput",
     label: "OBS Virtual Camera",
-    groupId: "2cc1d211c61eff627674358ca3f8adbe5eaf5997fe841dae29c4f81caf93084f",
+    groupId: "fdb8f7cd0527c97096de31cc9da100bd2510e37df0c519a8c9a8f7c5e7db9068",
   },
   {
     deviceId:
-      "f2dbba203cd1deab50efb7daf3a17995fc8f87e5fadecb077ae520551d9cd2e1",
+      "97278b8041976bec4d5c871f478d45844fff66ffbde95cd6adcedf3f9703f51a",
     kind: "videoinput",
     label: "Elgato Screen Link",
-    groupId: "0042479ce568432ac6ea86ec9d2771b37a8beb6182a9874ad7757616753afe78",
+    groupId: "fc06fee6c00e6f47c751109a9ad273cac0f7c73a91f7af2c1b65ad29528224d5",
   },
   {
     deviceId: "default",
     kind: "audiooutput",
     label: "Default - 4 - P27q-20 (AMD High Definition Audio Device)",
-    groupId: "46dc4a79485a81472019ea852a751daf00f84f240172f734a658bc8784c94d88",
+    groupId: "02c877482d3b49f2b6e149672386c9eb95669cccb39a6c18b61686868e06f933",
   },
   {
     deviceId: "communications",
     kind: "audiooutput",
     label: "Communications - Speakers (6- RODE NT-USB) (19f7:0003)",
-    groupId: "ff79c7568dede39d6f434e7b3f25be43225468a5a111ece2f810e25b1b185d42",
+    groupId: "cc002cc139e4cc9b60a69a2339c31dd145dcd7046a33c78598edc41d8f4c29df",
   },
   {
     deviceId:
-      "f4c7141d9500d0967bed75087917597fdf1233caabd8687f1874020ab45b728a",
+      "8afd524fffa9854afd8627b5ce98715ab68f68355f4a86bb49770baba9a94a91",
     kind: "audiooutput",
     label: "4 - P27q-20 (AMD High Definition Audio Device)",
-    groupId: "46dc4a79485a81472019ea852a751daf00f84f240172f734a658bc8784c94d88",
+    groupId: "02c877482d3b49f2b6e149672386c9eb95669cccb39a6c18b61686868e06f933",
   },
   {
     deviceId:
-      "85ba31a1df20e4e1ec2542cf2518da5455c01fe1c0ce25960d7ede0ee3e6ed97",
+      "54a6009df5d18a7f3c2752d0666c4206df867bef8c206d24141f6c51065f440c",
     kind: "audiooutput",
     label: "Realtek Digital Output (Realtek(R) Audio)",
-    groupId: "e7908f0e54ae3e69142757740cf7808e15512404546170e4c71434a36ad47e1c",
+    groupId: "342675f34dcf8af4cd3cfee0e158ab6bbb02c7a320624c48da8d2bef648f4f7d",
   },
   {
     deviceId:
-      "4d1eadce39fe6b8f80ccb8289da7b75c2ad498b49d908309bb03d498d36cdecd",
+      "55cff10ebabfa0bb6a1c2304bf263102865ca92d1d0fff6a5b84fecc2bb2f004",
     kind: "audiooutput",
     label: "Speakers (6- RODE NT-USB) (19f7:0003)",
-    groupId: "ff79c7568dede39d6f434e7b3f25be43225468a5a111ece2f810e25b1b185d42",
+    groupId: "cc002cc139e4cc9b60a69a2339c31dd145dcd7046a33c78598edc41d8f4c29df",
   },
 ];
 
@@ -214,7 +214,7 @@ test("remove Speaker tag ", () => {
       groupId:
         "ff79c7568dede39d6f434e7b3f25be43225468a5a111ece2f810e25b1b185d42",
     }),
-  ).toEqual("6- RODE NT-USB");
+  ).toEqual("RODE NT-USB");
 });
 
 test("remove (Built-in) ", () => {
@@ -253,4 +253,17 @@ test("Simple label should stay unaffected ", () => {
         "30f1fb14b04c7c76a0c73775b2c1eb46361215dd6f6c4c4e94f0c9c777382f01",
     }),
   ).toEqual("LUMIX Webcam Software");
+});
+
+test("Linkbuds S test ", () => {
+  expect(
+    formatLabel({
+      deviceId:
+        "50a6694639ca4046a0417487bdf7b7d7ff9ebecdacfdedbb1e475d9249b177c5",
+      kind: "audioinput",
+      label: "LinkBuds S (Bluetooth)",
+      groupId:
+        "dae9f3ee3a2cf4de69f8ee812e97abb7838ca7ae6e66184f455d34e184353005",
+    }),
+  ).toEqual("LinkBuds S");
 });
