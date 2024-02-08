@@ -1,10 +1,5 @@
 import { COLORS } from "../../colors";
-import {
-  subtitleFont,
-  subtitleFontWeight,
-  type Platform,
-  type Theme,
-} from "../../configuration";
+import type { Platform, Theme } from "../../configuration";
 
 export const followButtonHeight = 140;
 
@@ -24,9 +19,9 @@ export const FollowButton: React.FC<{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        fontFamily: subtitleFont,
+        fontFamily: "GT Planar",
         fontSize: 50,
-        fontWeight: subtitleFontWeight,
+        fontWeight: 500,
       }}
     >
       {platform === "youtube"

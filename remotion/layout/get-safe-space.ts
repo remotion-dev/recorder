@@ -1,5 +1,5 @@
 import type { CanvasLayout } from "../configuration";
-import { safeSpace } from "./get-layout";
+import { safeSpace } from "./safe-space";
 
 export const getBottomSafeSpace = (canvasLayout: CanvasLayout) => {
   if (canvasLayout === "landscape") {

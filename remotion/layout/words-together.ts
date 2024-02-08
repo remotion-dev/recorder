@@ -25,7 +25,9 @@ export const wordsTogether = (words: Word[]): Word[] => {
   return newWords.map((w) => {
     return {
       ...w,
-      word: w.word.replaceAll(/``/g, ""),
+      word:
+        // Remove double backticks: ` n``px`` rem``otion`` render`
+        w.word.replaceAll(/``/g, ""),
     };
   });
 };

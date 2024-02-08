@@ -1,11 +1,11 @@
 import { truthy } from "../truthy";
-import type { ChapterType, WebcamInformation } from "./make-chapters";
+import type { ChapterType, SimpleWebcamInformation } from "./make-chapters";
 
 const maxOtherChapters = 2;
 
 export type ChapterScene = {
   chapterId: number;
-  webcamInformation: WebcamInformation;
+  webcamInformation: SimpleWebcamInformation;
   shownChapters: ChapterType[];
   start: number;
   end: number;

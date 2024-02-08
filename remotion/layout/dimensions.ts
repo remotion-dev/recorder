@@ -1,4 +1,5 @@
-import type { CanvasLayout, Dimensions } from "../configuration";
+import type { CanvasLayout } from "../configuration";
+import type { Dimensions } from "./layout-types";
 
 export const getDimensionsForLayout = (
   canvasLayout: CanvasLayout,

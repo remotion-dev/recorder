@@ -1,14 +1,19 @@
 import {
-  getIsTransitioningIn,
+  getShouldTransitionIn,
   getSumUpDuration,
 } from "../animations/transitions";
 import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
 import { transitionDuration } from "../configuration";
 
-export type WebcamInformation = {
+export type SimpleWebcamInformation = {
   scene: VideoSceneAndMetadata;
   start: number;
   end: number;
+  previousScene: SceneAndMetadata | null;
+  nextScene: SceneAndMetadata | null;
+};
+
+export type WebcamInformation = SimpleWebcamInformation & {
   previousScene: SceneAndMetadata | null;
   nextScene: SceneAndMetadata | null;
 };
@@ -30,7 +35,7 @@ export const makeChapters = ({ scenes }: { scenes: SceneAndMetadata[] }) => {
     const scene = scenes[i] as SceneAndMetadata;
     const previousScene = scenes[i - 1] ?? null;
 
-    const isTransitioningIn = getIsTransitioningIn({
+    const isTransitioningIn = getShouldTransitionIn({
       scene,
       previousScene,
     });
@@ -68,27 +73,15 @@ export const makeChapters = ({ scenes }: { scenes: SceneAndMetadata[] }) => {
     } else if (chapters.length > 0) {
       const lastChapter = chapters[chapters.length - 1] as ChapterType;
       if (scene.type === "video-scene") {
-        const lastWebcamPosition = lastChapter.webcamPositions[
-          lastChapter.webcamPositions.length - 1
-        ] as WebcamInformation;
-        if (
-          scene.finalWebcamPosition ===
-          lastWebcamPosition.scene.finalWebcamPosition
-        ) {
-          lastWebcamPosition.scene.scene.transitionToNextScene =
-            scene.scene.transitionToNextScene;
-          lastWebcamPosition.end += sumUpDuration;
-        } else {
-          lastChapter.webcamPositions.push({
-            start: isTransitioningIn
-              ? lastChapter.end - transitionDuration
-              : lastChapter.end,
-            end: lastChapter.end + sumUpDuration,
-            scene,
-            nextScene: scenes[i + 1] ?? null,
-            previousScene: scenes[i - 1] ?? null,
-          });
-        }
+        lastChapter.webcamPositions.push({
+          start: isTransitioningIn
+            ? lastChapter.end - transitionDuration
+            : lastChapter.end,
+          end: lastChapter.end + sumUpDuration,
+          scene,
+          nextScene: scenes[i + 1] ?? null,
+          previousScene: scenes[i - 1] ?? null,
+        });
       }
 
       lastChapter.end += sumUpDuration;

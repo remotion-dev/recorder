@@ -11,13 +11,7 @@ import {
 } from "remotion";
 import { COLORS } from "../../colors";
 import type { Channel, LinkType, Platform, Theme } from "../../configuration";
-import {
-  avatars,
-  channels,
-  subtitleFont,
-  subtitleFontWeight,
-  transitionDuration,
-} from "../../configuration";
+import { avatars, channels, transitionDuration } from "../../configuration";
 import { FollowButton, followButtonHeight } from "./FollowButton";
 import {
   InstagramIcon,
@@ -94,8 +88,8 @@ const IconRow: React.FC<{
 }> = ({ type, label, opacity, theme }) => {
   const labelStyle: React.CSSProperties = {
     fontSize: 50,
-    fontFamily: subtitleFont,
-    fontWeight: subtitleFontWeight,
+    fontFamily: "GT Planar",
+    fontWeight: 500,
     marginLeft: 20,
     color: COLORS[theme].ENDCARD_TEXT_COLOR,
   };

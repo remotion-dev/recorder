@@ -1,0 +1,53 @@
+import type { CanvasLayout, Theme } from "../../configuration";
+import type { Segment, Word } from "../../sub-types";
+import { getHorizontalPaddingForSubtitles } from "../postprocess-subs";
+import { WORD_HIGHLIGHT_BORDER_RADIUS } from "../Word";
+import { Words } from "../Words";
+import { LINE_HEIGHT } from "./BoxedSubtitles";
+
+export const OverlayedCenterSubtitles: React.FC<{
+  segment: Segment;
+  startFrame: number;
+  theme: Theme;
+  trimStart: number;
+  onOpenSubEditor: (word: Word) => void;
+  canvasLayout: CanvasLayout;
+}> = ({
+  segment,
+  startFrame,
+  theme,
+  trimStart,
+  canvasLayout,
+  onOpenSubEditor,
+}) => {
+  const padding = getHorizontalPaddingForSubtitles(
+    "overlayed-center",
+    canvasLayout,
+  );
+
+  return (
+    <div>
+      <span
+        style={{
+          lineHeight: LINE_HEIGHT,
+          display: "inline-block",
+          boxDecorationBreak: "clone",
+          WebkitBoxDecorationBreak: "clone",
+          paddingLeft: padding,
+          paddingRight: padding,
+          paddingTop: padding,
+          paddingBottom: padding,
+          borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS + padding,
+        }}
+      >
+        <Words
+          onOpenSubEditor={onOpenSubEditor}
+          segment={segment}
+          startFrame={startFrame}
+          theme={theme}
+          trimStart={trimStart}
+        />
+      </span>
+    </div>
+  );
+};
