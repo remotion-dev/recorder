@@ -18,7 +18,15 @@ const takeStringInBraces = (label: string): string => {
     return label;
   }
 
+  if (match[1] === "Bluetooth") {
+    return label.replace(/\(Bluetooth\)/, "").trim();
+  }
+
   return match[1] as string;
+};
+
+const removeLeadingNumber = (label: string) => {
+  return label.replace(/^\d+- /, "").trim();
 };
 
 export const formatLabel = (device: Omit<MediaDeviceInfo, "toJSON">) => {
@@ -27,9 +35,10 @@ export const formatLabel = (device: Omit<MediaDeviceInfo, "toJSON">) => {
   const withoutUsb = removeUsbIdentifier(label);
   const withoutBuiltIn = removeBuiltIn(withoutUsb);
   const withoutVirtual = removeVirtual(withoutBuiltIn);
-  const remaining = takeStringInBraces(withoutVirtual);
+  const stringFromBraces = takeStringInBraces(withoutVirtual);
+  const withoutLeadingNumber = removeLeadingNumber(stringFromBraces);
 
-  return remaining;
+  return withoutLeadingNumber;
 };
 
 export const getDeviceLabel = (device: MediaDeviceInfo): string => {
