@@ -27,7 +27,7 @@ const validModelNames = [
 ];
 
 // available models: tiny, tiny.en, base, base.en, small, small.en, medium, medium.en, large-v1, large-v2, large-v3
-const SELECTED_WHISPER_MODEL = "base.en";
+const SELECTED_WHISPER_MODEL = "base.en"; // TODO: make this typesafe once this is a .ts file
 
 const getModelPathByName = (name) => {
   const whisperLocation = path.join(process.cwd(), "whisper.cpp");
@@ -66,7 +66,6 @@ const extractToTempAudioFile = (fileToTranscribe, tempOutFile) => {
 
 const subFile = async (filePath, fileName, folder) => {
   // defining the output file location and name
-  const selectedModelPath = getModelPathByName(SELECTED_WHISPER_MODEL);
   const outPath = path.join(
     process.cwd(),
     `public/${folder}/${fileName.replace(".wav", ".json")}`,
@@ -78,6 +77,8 @@ const subFile = async (filePath, fileName, folder) => {
       folder: path.join(process.cwd(), "whisper.cpp"),
     });
   }
+
+  const selectedModelPath = getModelPathByName(SELECTED_WHISPER_MODEL);
 
   if (os.platform() === "darwin" || os.platform() === "linux") {
     execSync(
