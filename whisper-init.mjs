@@ -9,6 +9,6 @@ await installWhisperCpp({
   version: "1.5.4",
 });
 await downloadWhisperModel({
-  model: "base.en",
+  model: "tiny.en",
   folder: to,
 });
