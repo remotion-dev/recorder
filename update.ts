@@ -20,7 +20,7 @@ const files = (await $`git ls-files`.quiet().cwd(tmp)).stdout
   .filter(Boolean)
   .filter((file) => {
     if (file.startsWith("public")) {
-      return false;
+      return file.startsWith("public/sounds");
     }
 
     if (file.endsWith("Root.tsx")) {
