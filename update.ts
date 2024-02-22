@@ -1,5 +1,5 @@
 import { $ } from "bun";
-import { cpSync } from "node:fs";
+import { cpSync, rmdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -39,3 +39,4 @@ console.log(
   "Pulled files from the current main branch of the Recorder (except public and Root.tsx)",
 );
 console.log("Please review the changes and commit them.");
+rmdirSync(tmp, { recursive: true });
