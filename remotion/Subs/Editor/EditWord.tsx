@@ -66,7 +66,7 @@ export const EditWord: React.FC<{
         newWord = "`" + newWord;
       }
 
-      if (!newWord.trim().endsWith("`")) {
+      if (!newWord.trim().endsWith("`") || newWord.trim().length === 1) {
         newWord += "`";
       }
 
