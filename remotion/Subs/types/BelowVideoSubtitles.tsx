@@ -10,7 +10,6 @@ export const BelowVideoSubtitles: React.FC<{
   segment: Segment;
   startFrame: number;
   theme: Theme;
-  trimStart: number;
   displayLayout: Layout | null;
   onOpenSubEditor: (word: Word) => void;
   canvasLayout: CanvasLayout;
@@ -18,7 +17,6 @@ export const BelowVideoSubtitles: React.FC<{
   segment,
   startFrame,
   theme,
-  trimStart,
   displayLayout,
   canvasLayout,
   onOpenSubEditor,
@@ -50,7 +48,6 @@ export const BelowVideoSubtitles: React.FC<{
           segment={segment}
           startFrame={startFrame}
           theme={theme}
-          trimStart={trimStart}
         />
       </span>
     </div>

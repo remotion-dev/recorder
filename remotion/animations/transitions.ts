@@ -37,9 +37,39 @@ export const getShouldTransitionOut = ({
     return true;
   }
 
-  return (
-    sceneAndMetadata.type === "video-scene" && nextScene.type === "video-scene"
-  );
+  const areBothVideoScenes =
+    sceneAndMetadata.type === "video-scene" && nextScene.type === "video-scene";
+
+  if (!areBothVideoScenes) {
+    return false;
+  }
+
+  const hasSameWebcamPosition =
+    sceneAndMetadata.finalWebcamPosition === nextScene.finalWebcamPosition;
+  const hasSameWebcamSize =
+    sceneAndMetadata.videos.webcam.height === nextScene.videos.webcam.height &&
+    sceneAndMetadata.videos.webcam.width === nextScene.videos.webcam.width;
+  const hasBothDisplays =
+    Boolean(sceneAndMetadata.videos.display) ===
+    Boolean(nextScene.videos.display);
+  const hasSameDisplaySize =
+    !sceneAndMetadata.videos.display || !nextScene.videos.display
+      ? true
+      : sceneAndMetadata.videos.display.height ===
+          nextScene.videos.display.height &&
+        sceneAndMetadata.videos.display.width ===
+          nextScene.videos.display.width;
+
+  if (
+    hasBothDisplays &&
+    hasSameDisplaySize &&
+    hasSameWebcamSize &&
+    hasSameWebcamPosition
+  ) {
+    return false;
+  }
+
+  return true;
 };
 
 export const getShouldTransitionIn = ({

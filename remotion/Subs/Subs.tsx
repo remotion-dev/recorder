@@ -235,6 +235,7 @@ export const Subs: React.FC<{
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
                 isFirst={index === 0}
+                isLast={index === postprocessed.segments.length - 1}
                 segment={segment}
                 trimStart={trimStart}
                 canvasLayout={canvasLayout}
@@ -255,6 +256,7 @@ export const Subs: React.FC<{
           whisperOutput={whisperOutput}
           fileName={file.name}
           onCloseSubEditor={onCloseSubEditor}
+          trimStart={trimStart}
         />
       ) : null}
     </AbsoluteFill>

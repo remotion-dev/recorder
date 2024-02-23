@@ -90,15 +90,14 @@ export const WORD_HIGHLIGHT_BORDER_RADIUS = 10;
 
 export const WordComp: React.FC<{
   word: Word;
-  trimStart: number;
   isLast: boolean;
   theme: Theme;
   onOpenSubEditor: (word: Word) => void;
   startFrame: number;
-}> = ({ word, trimStart, isLast, theme, onOpenSubEditor, startFrame }) => {
+}> = ({ word, isLast, theme, onOpenSubEditor, startFrame }) => {
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame() + startFrame;
-  const time = ((frame + trimStart) / fps) * 1000;
+  const time = (frame / fps) * 1000;
 
   const [hovered, setHovered] = useState(false);
 
@@ -108,7 +107,7 @@ export const WordComp: React.FC<{
       : spring({
           fps,
           frame,
-          delay: word.start * fps - trimStart,
+          delay: word.start * fps,
           config: {
             damping: 200,
           },

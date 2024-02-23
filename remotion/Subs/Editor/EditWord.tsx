@@ -29,6 +29,7 @@ export const EditWord: React.FC<{
   onUpdateText: (index: number, newText: string) => void;
   onCloseEditor: () => void;
   isInitialWord: boolean;
+  trimStart: number;
 }> = ({
   word,
   longestWordLength,
@@ -36,10 +37,11 @@ export const EditWord: React.FC<{
   onUpdateText,
   isInitialWord,
   onCloseEditor,
+  trimStart,
 }) => {
   const { width, fps } = useVideoConfig();
   const frame = useCurrentFrame();
-  const milliSeconds = (frame / fps) * 1000;
+  const milliSeconds = ((frame + trimStart) / fps) * 1000;
   const active =
     word.offsets.from <= milliSeconds && word.offsets.to >= milliSeconds;
   const usableWidth = width - SIDE_PADDING * 2;

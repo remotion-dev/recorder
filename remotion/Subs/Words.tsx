@@ -5,11 +5,10 @@ import { WordComp } from "./Word";
 
 export const Words: React.FC<{
   segment: Segment;
-  trimStart: number;
   theme: Theme;
   onOpenSubEditor: (word: Word) => void;
   startFrame: number;
-}> = ({ onOpenSubEditor, segment, startFrame, theme, trimStart }) => {
+}> = ({ onOpenSubEditor, segment, startFrame, theme }) => {
   return (
     <>
       {segment.words.map((word, index) => {
@@ -18,7 +17,6 @@ export const Words: React.FC<{
             // eslint-disable-next-line react/no-array-index-key
             key={word.start + word.word + index}
             isLast={index === segment.words.length - 1}
-            trimStart={trimStart}
             word={word}
             theme={theme}
             onOpenSubEditor={onOpenSubEditor}
