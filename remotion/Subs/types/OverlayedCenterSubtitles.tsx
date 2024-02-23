@@ -9,17 +9,9 @@ export const OverlayedCenterSubtitles: React.FC<{
   segment: Segment;
   startFrame: number;
   theme: Theme;
-  trimStart: number;
   onOpenSubEditor: (word: Word) => void;
   canvasLayout: CanvasLayout;
-}> = ({
-  segment,
-  startFrame,
-  theme,
-  trimStart,
-  canvasLayout,
-  onOpenSubEditor,
-}) => {
+}> = ({ segment, startFrame, theme, canvasLayout, onOpenSubEditor }) => {
   const padding = getHorizontalPaddingForSubtitles(
     "overlayed-center",
     canvasLayout,
@@ -45,7 +37,6 @@ export const OverlayedCenterSubtitles: React.FC<{
           segment={segment}
           startFrame={startFrame}
           theme={theme}
-          trimStart={trimStart}
         />
       </span>
     </div>

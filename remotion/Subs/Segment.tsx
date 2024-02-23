@@ -118,6 +118,7 @@ export const getBorderWidthForSubtitles = (subtitleType: SubtitleType) => {
 export const CaptionSentence: React.FC<{
   segment: Segment;
   isFirst: boolean;
+  isLast: boolean;
   trimStart: number;
   canvasLayout: CanvasLayout;
   subtitleType: SubtitleType;
@@ -131,6 +132,7 @@ export const CaptionSentence: React.FC<{
   subtitleType,
   displayLayout,
   isFirst,
+  isLast,
   theme,
   onOpenSubEditor,
 }) => {
@@ -141,12 +143,13 @@ export const CaptionSentence: React.FC<{
   // If first caption of a segment, show it a bit earlier to avoid flicker
   // of caption showing only shortly after the video
   const startFrame = isFirst ? normalStartFrame - fps : normalStartFrame;
-  const endFrame = (getEndOfSegment(segment) / 1000) * fps;
+  const normalEndFrame = (getEndOfSegment(segment) / 1000) * fps;
+  const endFrame = isLast ? normalEndFrame + fps : normalEndFrame;
 
   return (
     <Sequence
       showInTimeline={false}
-      from={startFrame}
+      from={startFrame - trimStart}
       durationInFrames={endFrame - startFrame}
       layout="none"
     >
@@ -159,7 +162,6 @@ export const CaptionSentence: React.FC<{
             segment={segment}
             startFrame={startFrame}
             theme={theme}
-            trimStart={trimStart}
           />
         ) : subtitleType === "below-video" ? (
           <BelowVideoSubtitles
@@ -169,7 +171,6 @@ export const CaptionSentence: React.FC<{
             segment={segment}
             startFrame={startFrame}
             theme={theme}
-            trimStart={trimStart}
           />
         ) : (
           <OverlayedCenterSubtitles
@@ -178,7 +179,6 @@ export const CaptionSentence: React.FC<{
             segment={segment}
             startFrame={startFrame}
             theme={theme}
-            trimStart={trimStart}
           />
         )}
       </FadeSentence>

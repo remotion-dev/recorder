@@ -13,12 +13,14 @@ export const SubsEditor: React.FC<{
   fileName: string;
   initialWord: Word;
   onCloseSubEditor: () => void;
+  trimStart: number;
 }> = ({
   whisperOutput,
   setWhisperOutput,
   fileName,
   onCloseSubEditor,
   initialWord,
+  trimStart,
 }) => {
   const longestNumberLength = String(
     Math.max(...whisperOutput.transcription.map((t) => t.offsets.to)),
@@ -73,6 +75,7 @@ export const SubsEditor: React.FC<{
               word={word}
               isInitialWord={word.offsets.from === initialWord.start}
               onCloseEditor={onCloseSubEditor}
+              trimStart={trimStart}
             />
           );
         })}
