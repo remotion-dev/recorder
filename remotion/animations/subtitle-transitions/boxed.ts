@@ -159,7 +159,7 @@ export const getBoxedEnter = ({
     }
 
     return translate(
-      isWebCamRight(scene.finalWebcamPosition) ? -width : width,
+      isWebCamRight(previousScene.finalWebcamPosition) ? width : -width,
       currentlyAtBottom ? heightDifference : -heightDifference,
     );
   }
