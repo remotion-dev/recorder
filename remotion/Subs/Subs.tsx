@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { StaticFile } from "remotion";
 import {
   AbsoluteFill,
@@ -67,6 +73,7 @@ export const Subs: React.FC<{
     "initial" | "changed" | "unchanged"
   >("initial");
   const [subEditorOpen, setSubEditorOpen] = useState<Word | false>(false);
+  const preventReload = useRef(false);
 
   useEffect(() => {
     if (!subEditorOpen) {
@@ -92,7 +99,9 @@ export const Subs: React.FC<{
         .then((res) => res.json())
         .then((d) => {
           continueRender(handle);
-          setWhisperOutput(d);
+          if (!preventReload.current) {
+            setWhisperOutput(d);
+          }
         });
       setChangeStatus("unchanged");
     }
@@ -173,12 +182,15 @@ export const Subs: React.FC<{
           data: newOutput,
         };
 
+        preventReload.current = true;
         fetch(`http://localhost:${SERVER_PORT}${SAVE_SUBTITLES}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
+        }).finally(() => {
+          preventReload.current = false;
         });
         return newOutput;
       });
