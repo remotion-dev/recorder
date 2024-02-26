@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { CircleSpinner } from "./components/Spinner";
+import { PermissionError } from "./PermissionError";
 
 type PermissionState = "granted" | "denied" | "prompt" | "initial";
 
@@ -69,7 +70,14 @@ const Permission: React.FC<{
   deviceState: PermissionState;
   setDeviceState: (newState: PermissionState) => void;
   isInitialState: boolean;
-}> = ({ type, deviceState, setDeviceState, isInitialState }) => {
+  onNoDevicesFound: () => void;
+}> = ({
+  type,
+  deviceState,
+  setDeviceState,
+  isInitialState,
+  onNoDevicesFound,
+}) => {
   const dynamicStyle: React.CSSProperties = useMemo(() => {
     return {
       display: "flex",
@@ -105,6 +113,21 @@ const Permission: React.FC<{
     </svg>
   );
 
+  const handleError = useCallback(
+    (error: Error) => {
+      if (
+        error.message.includes("Requested device not found") ||
+        error.message.includes("The object can not be found here")
+      ) {
+        onNoDevicesFound();
+        return;
+      }
+
+      setDeviceState("denied");
+    },
+    [onNoDevicesFound, setDeviceState],
+  );
+
   const run = useCallback(async () => {
     const name =
       type === "audio"
@@ -122,7 +145,6 @@ const Permission: React.FC<{
         console.log(e);
         return null;
       });
-    console.log("result", result);
     // firefox case
     if (!result && deviceState === "initial") {
       // probe for permission
@@ -136,7 +158,7 @@ const Permission: React.FC<{
         stream.getAudioTracks().forEach((track) => track.stop());
       } catch (err) {
         console.log("Error on getUserMedia", err);
-        setDeviceState("denied");
+        handleError(err as Error);
         return;
       }
 
@@ -158,7 +180,7 @@ const Permission: React.FC<{
         });
       } catch (err) {
         console.log("Error on getUserMedia", err);
-        setDeviceState("denied");
+        handleError(err as Error);
         return;
       }
     }
@@ -168,7 +190,7 @@ const Permission: React.FC<{
     } else if (result.state === "denied") {
       setDeviceState("denied");
     }
-  }, [deviceState, setDeviceState, type]);
+  }, [deviceState, handleError, setDeviceState, type]);
 
   useEffect(() => {
     run();
@@ -217,6 +239,7 @@ const Permission: React.FC<{
 export const DevicePermission: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const [noDeviceFound, setNoDeviceFound] = useState(false);
   const [audioState, setAudioState] = useState<PermissionState>("initial");
   const [videoState, setVideoState] = useState<PermissionState>("initial");
 
@@ -230,6 +253,14 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
       borderColor: isInitialState ? "black" : "white",
     };
   }, [isInitialState]);
+
+  const onNoDevicesFound = useCallback(() => {
+    setNoDeviceFound(true);
+  }, []);
+
+  if (noDeviceFound) {
+    return <PermissionError />;
+  }
 
   if (audioState === "granted" && videoState === "granted") {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -245,12 +276,14 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
             type="audio"
             deviceState={audioState}
             setDeviceState={(newState) => setAudioState(newState)}
+            onNoDevicesFound={onNoDevicesFound}
           />
           <Permission
             isInitialState={isInitialState}
             type="video"
             deviceState={videoState}
             setDeviceState={(newState) => setVideoState(newState)}
+            onNoDevicesFound={onNoDevicesFound}
           />
         </div>
         {isInitialState ? null : (
