@@ -18,3 +18,5 @@ export const DIMENSIONS: { [key in CanvasLayout]: Dimensions } = {
     height: 1080,
   },
 };
+
+export const LANDSCAPE_DISPLAY_MAX_WIDTH_OF_CANVAS = 0.77;

@@ -1,5 +1,7 @@
 import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
+import { getStaticFiles } from "remotion";
+import { FPS } from "../config/fps";
 import type {
   Pair,
   SceneAndMetadata,
@@ -7,6 +9,7 @@ import type {
   SceneVideos,
   WebcamPosition,
 } from "../config/scenes";
+import { TRANSITION_DURATION } from "../config/transitions";
 import {
   getShouldTransitionOut,
   getSumUpDuration,
@@ -15,10 +18,6 @@ import { truthy } from "./helpers/truthy";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
 import type { MainProps } from "./Main";
-
-import { getStaticFiles } from "remotion";
-import { FPS } from "../config/fps";
-import { TRANSITION_DURATION } from "../config/transitions";
 
 const getPairs = (prefix: string) => {
   const files = getStaticFiles().filter((f) => f.name.startsWith(prefix));
@@ -30,6 +29,7 @@ const getPairs = (prefix: string) => {
           .replace(`${prefix}/webcam`, "")
           .replace(".webm", "")
           .replace(".mp4", "");
+
         const display = files.find(
           (_f) =>
             _f.name === `${prefix}/display${timestamp}.webm` ||

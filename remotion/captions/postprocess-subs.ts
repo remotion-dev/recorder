@@ -6,12 +6,12 @@ import {
   REGULAR_FONT_WEIGHT,
 } from "../../config/fonts";
 import type { CanvasLayout } from "../../config/layout";
-import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
-import { hasMonoSpaceInIt } from "../layout/monospace";
 import { safeSpace } from "../layout/safe-space";
+import { hasMonoSpaceInIt } from "./monospace";
 import { remapWord } from "./remap-words";
 import type { SubtitleType } from "./Segment";
 import { getBorderWidthForSubtitles } from "./Segment";
+import { splitWordIntoMonospaceSegment } from "./split-word-into-monospace-segment";
 import {
   whisperWordToWord,
   type Segment,
