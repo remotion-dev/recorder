@@ -53,6 +53,7 @@ export const captionFile = async ({
     tokenLevelTimestamps: true,
     whisperPath: WHISPER_PATH,
     translateToEnglish: false,
+    printOutput: false,
   });
 
   rmSync(wavFile);

@@ -16,7 +16,7 @@ export const ensureWhisper = async () => {
     printOutput: true,
   });
   await downloadWhisperModel({
-    model: "medium.en",
+    model: WHISPER_MODEL,
     folder: WHISPER_PATH,
     printOutput: true,
   });
