@@ -19,6 +19,14 @@
     "alwaysStrict": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["src", "remotion", "sub.ts", "scripts", "config", "studio.ts"],
+  "include": [
+    "src",
+    "remotion",
+    "sub.ts",
+    "scripts",
+    "config",
+    "studio.ts",
+    "tests/index.tsx"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
