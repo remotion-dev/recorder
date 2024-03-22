@@ -70,7 +70,7 @@ for (const file of filesInUpstream) {
   cpSync(fullPath, path.join(process.cwd(), file));
 }
 
-for (const file in filesNotInUpstream) {
+for (const file of filesNotInUpstream) {
   const fullPath = path.join(process.cwd(), file);
   rmSync(fullPath);
 }
