@@ -1,5 +1,5 @@
 import { $ } from "bun";
-import { cpSync, rmdirSync } from "node:fs";
+import { cpSync, rmdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { SOUNDS_FOLDER } from "./config/sounds";
@@ -19,52 +19,67 @@ await $`git clone https://github.com/remotion-dev/recorder.git ${tmp} --depth=1`
   },
 );
 
-const filesInUpstream = (await $`git ls-files`.quiet().cwd(tmp)).stdout
-  .toString("utf-8")
-  .split("\n")
-  .filter(Boolean)
-  .filter((file) => {
-    if (file.startsWith("public")) {
-      return file.startsWith("public/" + SOUNDS_FOLDER);
-    }
+const getFilesInGit = async (folder: string) => {
+  return (await $`git ls-files`.quiet().cwd(folder)).stdout
+    .toString("utf-8")
+    .split("\n")
+    .filter(Boolean)
+    .filter((file) => {
+      if (file.startsWith("public")) {
+        return file.startsWith("public/" + SOUNDS_FOLDER);
+      }
 
-    if (file.startsWith("config")) {
-      const knownConfigs = [
-        "endcard.ts",
-        "fonts.ts",
-        "fps.ts",
-        "layout.ts",
-        "scenes.ts",
-        "server.ts",
-        "sounds.ts",
-        "themes.ts",
-        "transitions.ts",
-      ];
+      if (file.startsWith("config")) {
+        const knownConfigs = [
+          "endcard.ts",
+          "fonts.ts",
+          "fps.ts",
+          "layout.ts",
+          "scenes.ts",
+          "server.ts",
+          "sounds.ts",
+          "themes.ts",
+          "transitions.ts",
+        ];
 
-      // Don't override config files with defaults
-      if (knownConfigs.some((f) => file.endsWith(f))) {
+        // Don't override config files with defaults
+        if (knownConfigs.some((f) => file.endsWith(f))) {
+          return false;
+        }
+
+        return true;
+      }
+
+      if (file.endsWith("Root.tsx")) {
         return false;
       }
 
       return true;
-    }
+    });
+};
 
-    if (file.endsWith("Root.tsx")) {
-      return false;
-    }
+const filesInUpstream = await getFilesInGit(tmp);
+const filesInCurrent = await getFilesInGit(process.cwd());
 
-    return true;
-  });
+const filesNotInUpstream = filesInCurrent.filter(
+  (file) => !filesInUpstream.includes(file),
+);
 
 for (const file of filesInUpstream) {
   const fullPath = path.join(tmp, file);
   cpSync(fullPath, path.join(process.cwd(), file));
 }
 
-console.log(
-  "Pulled files from the current main branch of the Recorder (except public and Root.tsx)",
-);
-console.log("Please review the changes and commit them.");
+for (const file in filesNotInUpstream) {
+  const fullPath = path.join(process.cwd(), file);
+  rmSync(fullPath);
+}
+
 rmdirSync(tmp, { recursive: true });
 
 await $`git status`;
+
+console.log(
+  "Pulled files from the current main branch of the Recorder (except public, config and Root.tsx)",
+);
+console.log("Please review the changes and commit them.");
