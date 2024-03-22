@@ -2,8 +2,8 @@ import type { StaticFile } from "remotion";
 import { z } from "zod";
 import type { CameraSceneLayout } from "../remotion/layout/get-layout";
 import type { Dimensions } from "../remotion/layout/layout-types";
-import { music } from "./music";
 import { channel, platform } from "./socials";
+import { music } from "./sounds";
 
 const availablePositions = [
   "top-left",
