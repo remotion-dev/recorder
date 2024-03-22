@@ -1,6 +1,6 @@
 import type { Platform } from "../../../config/endcard";
-import type { Theme } from "../../../config/scenes";
-import { COLORS } from "../../colors";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 
 export const followButtonHeight = 140;
 

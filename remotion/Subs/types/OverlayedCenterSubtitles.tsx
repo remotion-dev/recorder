@@ -1,4 +1,5 @@
-import type { CanvasLayout, Theme } from "../../../config/scenes";
+import type { CanvasLayout } from "../../../config/scenes";
+import type { Theme } from "../../../config/themes";
 import type { Segment, Word } from "../../sub-types";
 import { getHorizontalPaddingForSubtitles } from "../postprocess-subs";
 import { WORD_HIGHLIGHT_BORDER_RADIUS } from "../Word";

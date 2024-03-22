@@ -4,11 +4,11 @@ import type {
   CanvasLayout,
   SceneAndMetadata,
   SceneType,
-  Theme,
 } from "../config/scenes";
+import type { Theme } from "../config/themes";
+import { COLORS } from "../config/themes";
 import { AudioTrack } from "./AudioTrack";
 import { makeChapters } from "./chapters/make-chapters";
-import { COLORS } from "./colors";
 import { Scene } from "./Scene";
 import { subEditorPortal } from "./Subs/Editor/layout";
 

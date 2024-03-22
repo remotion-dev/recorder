@@ -1,5 +1,5 @@
 import React from "react";
-import type { Theme } from "../../config/scenes";
+import type { Theme } from "../../config/themes";
 import type { Segment, Word } from "../sub-types";
 import { WordComp } from "./Word";
 

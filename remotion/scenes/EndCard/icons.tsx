@@ -1,6 +1,6 @@
 import React from "react";
-import type { Theme } from "../../../config/scenes";
-import { COLORS } from "../../colors";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 
 export const LinkedInIcon: React.FC<{
   height: number;

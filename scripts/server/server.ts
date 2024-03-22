@@ -1,8 +1,9 @@
 import { writeFileSync } from "fs";
 import { EOL } from "os";
 import path from "path";
+import { SERVER_PORT } from "../../config/server";
 import type { SaveSubtitlesPayload } from "./constants";
-import { SAVE_SUBTITLES, SERVER_PORT } from "./constants";
+import { SAVE_SUBTITLES } from "./constants";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
