@@ -3,7 +3,7 @@ import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
-import { getSubtitlesType } from "../../Subs/Segment";
+import { getSubtitlesType } from "../../captions/Segment";
 
 // An inline subtitle transition:
 // - The subtitle stays at the same position and is the same subtitle type

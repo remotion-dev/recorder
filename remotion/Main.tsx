@@ -4,19 +4,19 @@ import type { CanvasLayout } from "../config/layout";
 import type { SceneAndMetadata, SceneType } from "../config/scenes";
 import type { Theme } from "../config/themes";
 import { COLORS } from "../config/themes";
-import { AudioTrack } from "./AudioTrack";
+import { AudioTrack } from "./audio/AudioTrack";
+import { subEditorPortal } from "./captions/Editor/layout";
 import { makeChapters } from "./chapters/make-chapters";
-import { Scene } from "./Scene";
-import { subEditorPortal } from "./Subs/Editor/layout";
+import { Scene } from "./scenes/Scene";
 
-export type AllProps = {
+export type MainProps = {
   canvasLayout: CanvasLayout;
   scenes: SceneType[];
   scenesAndMetadata: SceneAndMetadata[];
   theme: Theme;
 };
 
-export const All: React.FC<AllProps> = ({
+export const Main: React.FC<MainProps> = ({
   scenesAndMetadata,
   canvasLayout,
   theme,

@@ -7,14 +7,14 @@ import type {
   SceneVideos,
   WebcamPosition,
 } from "../config/scenes";
-import type { AllProps } from "./All";
 import {
   getShouldTransitionOut,
   getSumUpDuration,
 } from "./animations/transitions";
+import { truthy } from "./helpers/truthy";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
-import { truthy } from "./truthy";
+import type { MainProps } from "./Main";
 
 import { getStaticFiles } from "remotion";
 import { FPS } from "../config/fps";
@@ -49,7 +49,7 @@ const getPairs = (prefix: string) => {
   return pairs;
 };
 
-export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
+export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
   props,
   compositionId,
 }) => {

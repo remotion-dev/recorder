@@ -16,13 +16,13 @@ import {
   getChapterInTransition,
   getChapterOutTransition,
 } from "../../animations/widescreen-chapter-transitions";
+import { Subs } from "../../captions/Subs";
 import type { ChapterType } from "../../chapters/make-chapters";
 import { SquareChapter } from "../../chapters/square/SquareChapter";
 import { SelectedChapters } from "../../chapters/widescreen/SelectedChapters";
-import { Subs } from "../../Subs/Subs";
-import { Webcam } from "../../Webcam";
 import { Screen } from "./Screen";
 import { SoundEffects } from "./SoundEffects";
+import { Webcam } from "./Webcam";
 
 export const CameraScene: React.FC<{
   shouldEnter: boolean;

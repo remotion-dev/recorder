@@ -1,4 +1,4 @@
-import type { Word } from "../sub-types";
+import type { Word } from "./types";
 
 export const remapWord = (word: Word): Word => {
   if (word.word === " github") {

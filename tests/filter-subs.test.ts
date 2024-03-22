@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { removeWhisperBlankWords } from "./postprocess-subs";
+import { removeWhisperBlankWords } from "../remotion/captions/postprocess-subs";
 
 const example = [
   {

@@ -1,4 +1,4 @@
-import type { Word } from "../sub-types";
+import type { Word } from "./types";
 
 export const wordsTogether = (words: Word[]): Word[] => {
   const newWords: Word[] = [];

@@ -4,11 +4,11 @@ import type { CanvasLayout, Dimensions } from "../../config/layout";
 import type {} from "../../config/scenes";
 import type { Theme } from "../../config/themes";
 import type { Layout } from "../layout/layout-types";
-import type { Segment, Word } from "../sub-types";
 import { FadeSentence } from "./FadeSentence";
-import { BelowVideoSubtitles } from "./types/BelowVideoSubtitles";
-import { BoxedSubtitles } from "./types/BoxedSubtitles";
-import { OverlayedCenterSubtitles } from "./types/OverlayedCenterSubtitles";
+import type { Segment, Word } from "./types";
+import { BelowVideoSubtitles } from "./Variants/BelowVideoSubtitles";
+import { BoxedSubtitles } from "./Variants/BoxedSubtitles";
+import { OverlayedCenterSubtitles } from "./Variants/OverlayedCenterSubtitles";
 
 export const getStartOfSegment = (segment: Segment) => {
   if (segment.words.length === 0) {

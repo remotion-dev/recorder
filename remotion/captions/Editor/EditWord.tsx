@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import type { WhisperWord } from "../../sub-types";
+import type { WhisperWord } from "../types";
 import {
   FIRST_COLUMN_WIDTH,
   SECOND_COLUMN_WIDTH,

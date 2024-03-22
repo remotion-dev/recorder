@@ -9,16 +9,16 @@ import type { CanvasLayout } from "../../config/layout";
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { hasMonoSpaceInIt } from "../layout/monospace";
 import { safeSpace } from "../layout/safe-space";
+import { remapWord } from "./remap-words";
+import type { SubtitleType } from "./Segment";
+import { getBorderWidthForSubtitles } from "./Segment";
 import {
   whisperWordToWord,
   type Segment,
   type SubTypes,
   type WhisperOutput,
   type Word,
-} from "../sub-types";
-import { remapWord } from "./remap-words";
-import type { SubtitleType } from "./Segment";
-import { getBorderWidthForSubtitles } from "./Segment";
+} from "./types";
 import { wordsTogether } from "./words-together";
 
 const balanceWords = ({
