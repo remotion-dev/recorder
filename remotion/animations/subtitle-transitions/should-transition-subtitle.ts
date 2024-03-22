@@ -1,8 +1,8 @@
 import type {
-  CanvasLayout,
   SceneAndMetadata,
   VideoSceneAndMetadata,
-} from "../../configuration";
+} from "../../../config/scenes";
+import type { CanvasLayout } from "../../configuration";
 import { getSubtitlesType } from "../../Subs/Segment";
 
 // An inline subtitle transition:

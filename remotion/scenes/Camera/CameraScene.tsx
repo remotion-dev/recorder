@@ -5,6 +5,10 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import type {
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../../../config/scenes";
 import {
   getChapterInTransition,
   getChapterOutTransition,
@@ -12,12 +16,7 @@ import {
 import type { ChapterType } from "../../chapters/make-chapters";
 import { SquareChapter } from "../../chapters/square/SquareChapter";
 import { SelectedChapters } from "../../chapters/widescreen/SelectedChapters";
-import type {
-  CanvasLayout,
-  SceneAndMetadata,
-  Theme,
-  VideoSceneAndMetadata,
-} from "../../configuration";
+import type { CanvasLayout, Theme } from "../../configuration";
 import { transitionDuration } from "../../configuration";
 import { Subs } from "../../Subs/Subs";
 import { Webcam } from "../../Webcam";

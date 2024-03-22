@@ -1,4 +1,4 @@
-import type { SceneAndMetadata, SceneType } from "../configuration";
+import type { SceneAndMetadata, SceneType } from "../../config/scenes";
 import { transitionDuration } from "../configuration";
 
 export const isATextCard = (scene: SceneType) => {

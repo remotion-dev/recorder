@@ -1,16 +1,16 @@
 import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
-import type { AllProps } from "./All";
-import {
-  getShouldTransitionOut,
-  getSumUpDuration,
-} from "./animations/transitions";
 import type {
   SceneAndMetadata,
   SceneType,
   SceneVideos,
   WebcamPosition,
-} from "./configuration";
+} from "../config/scenes";
+import type { AllProps } from "./All";
+import {
+  getShouldTransitionOut,
+  getSumUpDuration,
+} from "./animations/transitions";
 import { fps, getPairs, transitionDuration } from "./configuration";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";

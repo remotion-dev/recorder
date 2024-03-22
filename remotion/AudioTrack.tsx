@@ -1,7 +1,7 @@
 import React from "react";
 import { Audio, interpolate, Sequence, useVideoConfig } from "remotion";
+import type { SceneAndMetadata } from "../config/scenes";
 import { getShouldTransitionOut, isATextCard } from "./animations/transitions";
-import type { SceneAndMetadata } from "./configuration";
 import { transitionDuration } from "./configuration";
 import { getAudioSource } from "./layout/music";
 

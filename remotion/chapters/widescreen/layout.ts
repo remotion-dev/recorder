@@ -1,8 +1,8 @@
+import type { VideoSceneAndMetadata } from "../../../config/scenes";
 import {
   isWebCamAtBottom,
   isWebCamRight,
 } from "../../animations/webcam-transitions";
-import type { VideoSceneAndMetadata } from "../../configuration";
 import type { Layout } from "../../layout/layout-types";
 import { safeSpace } from "../../layout/safe-space";
 export const getWidescreenChapterLayout = (

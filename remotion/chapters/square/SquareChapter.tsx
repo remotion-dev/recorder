@@ -5,7 +5,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { WebcamPosition } from "../../configuration";
+import type { WebcamPosition } from "../../../config/scenes";
 import { borderRadius } from "../../layout/get-layout";
 import { safeSpace } from "../../layout/safe-space";
 

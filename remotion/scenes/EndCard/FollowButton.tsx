@@ -1,5 +1,6 @@
+import type { Platform } from "../../../config/socials";
 import { COLORS } from "../../colors";
-import type { Platform, Theme } from "../../configuration";
+import type { Theme } from "../../configuration";
 
 export const followButtonHeight = 140;
 
@@ -27,10 +28,10 @@ export const FollowButton: React.FC<{
       {platform === "youtube"
         ? "Subscribe"
         : platform === "linkedin"
-        ? isLinkedInBusinessPage
-          ? "Follow"
-          : "Connect"
-        : "Follow"}
+          ? isLinkedInBusinessPage
+            ? "Follow"
+            : "Connect"
+          : "Follow"}
     </div>
   );
 };

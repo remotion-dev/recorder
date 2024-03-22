@@ -1,12 +1,12 @@
 import { Audio, staticFile } from "remotion";
+import type {
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../../../config/scenes";
 import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,
 } from "../../animations/webcam-transitions";
-import type {
-  SceneAndMetadata,
-  VideoSceneAndMetadata,
-} from "../../configuration";
 
 export const SoundEffects: React.FC<{
   previousScene: SceneAndMetadata | null;
