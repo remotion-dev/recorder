@@ -9,11 +9,11 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { Brand, Platform } from "../../../config/endcard";
+import type { Brand, LinkType, Platform } from "../../../config/endcard";
 import { avatars, channels } from "../../../config/endcard";
-import type { LinkType, Theme } from "../../../config/scenes";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 import { TRANSITION_DURATION } from "../../../config/transitions";
-import { COLORS } from "../../colors";
 import { FollowButton, followButtonHeight } from "./FollowButton";
 import {
   InstagramIcon,

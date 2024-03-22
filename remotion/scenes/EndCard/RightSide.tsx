@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
-import type { Theme } from "../../../config/scenes";
-import { COLORS } from "../../colors";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 
 const border = 6;
 

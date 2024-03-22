@@ -2,7 +2,7 @@ import type { StaticFile } from "remotion";
 import { z } from "zod";
 import type { CameraSceneLayout } from "../remotion/layout/get-layout";
 import type { Dimensions } from "../remotion/layout/layout-types";
-import { brand, platform } from "./endcard";
+import { brand, linkType, platform } from "./endcard";
 import { music } from "./sounds";
 import { theme } from "./themes";
 

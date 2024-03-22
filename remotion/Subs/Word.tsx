@@ -5,8 +5,8 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { Theme } from "../../config/scenes";
-import { COLORS } from "../colors";
+import type { Theme } from "../../config/themes";
+import { COLORS } from "../../config/themes";
 import type { Word } from "../sub-types";
 
 const style: React.CSSProperties = {

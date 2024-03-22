@@ -8,9 +8,9 @@ import {
 import type {
   CanvasLayout,
   SceneAndMetadata,
-  Theme,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
+import type { Theme } from "../../../config/themes";
 import { TRANSITION_DURATION } from "../../../config/transitions";
 import {
   getChapterInTransition,
