@@ -28,8 +28,16 @@ export const captionFile = async ({
   const isTranscribed = existsSync(
     fileToTranscribe.replace(".mp4", ".json").replace("webcam", "subs"),
   );
+  // defining the output file location and name
+  const outPath = path
+    .join(
+      process.cwd(),
+      `public/${folder}/${fileName.replace(".wav", ".json")}`,
+    )
+    .replace("webcam", "subs");
+
   if (isTranscribed) {
-    return;
+    return { outPath };
   }
 
   if (!existsSync(path.join(process.cwd(), "temp"))) {
@@ -39,15 +47,7 @@ export const captionFile = async ({
   const wavFile = path.join(process.cwd(), `temp/${fileName}`);
   extractToTempAudioFile(fileToTranscribe, wavFile);
 
-  // defining the output file location and name
-  const outPath = path
-    .join(
-      process.cwd(),
-      `public/${folder}/${fileName.replace(".wav", ".json")}`,
-    )
-    .replace("webcam", "subs");
-
-  const { transcription } = await transcribe({
+  const output = await transcribe({
     inputPath: wavFile,
     model: WHISPER_MODEL,
     tokenLevelTimestamps: true,
@@ -56,5 +56,7 @@ export const captionFile = async ({
   });
 
   rmSync(wavFile);
-  writeFileSync(outPath, JSON.stringify(transcription, null, 2));
+  writeFileSync(outPath, JSON.stringify(output, null, 2));
+
+  return { outPath };
 };
