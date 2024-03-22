@@ -177,21 +177,24 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
     },
   );
 
-  const durations = scenesAndMetadata.map((s, i) => {
-    return getSumUpDuration({
+  const durations = scenesAndMetadata.map((s, i) =>
+    getSumUpDuration({
       scene: s,
       previousScene: scenesAndMetadata[i - 1] ?? null,
-    });
-  });
+    }),
+  );
 
   const totalDuration = Math.max(
     1,
     durations.reduce((a, b) => a + b, 0),
   );
 
+  const { height, width } = getDimensionsForLayout(props.canvasLayout);
+
   return {
     durationInFrames: totalDuration,
-    ...getDimensionsForLayout(props.canvasLayout),
+    height,
+    width,
     fps: FPS,
     props: {
       canvasLayout: props.canvasLayout,

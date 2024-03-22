@@ -4,21 +4,21 @@ import {
   MONOSPACE_FONT_WEIGHT,
   REGULAR_FONT_FAMILY,
   REGULAR_FONT_WEIGHT,
-} from "../../config/fonts";
-import type { CanvasLayout } from "../../config/layout";
-import { getSafeSpace } from "../../config/layout";
-import { hasMonoSpaceInIt } from "./monospace";
-import { remapWord } from "./remap-words";
-import type { SubtitleType } from "./Segment";
-import { getBorderWidthForSubtitles } from "./Segment";
-import { splitWordIntoMonospaceSegment } from "./split-word-into-monospace-segment";
+} from "../../../config/fonts";
+import type { CanvasLayout } from "../../../config/layout";
+import { getSafeSpace } from "../../../config/layout";
+import type { SubtitleType } from "../Segment";
+import { getBorderWidthForSubtitles } from "../Segment";
 import {
   whisperWordToWord,
   type Segment,
   type SubTypes,
   type WhisperOutput,
   type Word,
-} from "./types";
+} from "../types";
+import { hasMonoSpaceInIt } from "./has-monospace-in-word";
+import { remapWord } from "./remap-words";
+import { splitWordIntoMonospaceSegment } from "./split-word-into-monospace-segment";
 import { wordsTogether } from "./words-together";
 
 const balanceWords = ({
@@ -201,6 +201,7 @@ export const postprocessSubtitles = ({
         };
       }),
   );
+
   const preFilteredWords = removeWhisperBlankWords(allWords);
   const segments = cutWords({
     words: preFilteredWords,
@@ -213,7 +214,6 @@ export const postprocessSubtitles = ({
   });
 
   return {
-    ...segments,
     segments: segments.map((segment) => {
       return {
         ...segment,
@@ -226,11 +226,3 @@ export const postprocessSubtitles = ({
     }),
   };
 };
-
-declare global {
-  interface Array<T> {
-    findLastIndex(
-      predicate: (value: T, index: number, obj: T[]) => unknown,
-    ): number;
-  }
-}

@@ -10,7 +10,7 @@ import { BelowVideoSubtitles } from "./Variants/BelowVideoSubtitles";
 import { BoxedSubtitles } from "./Variants/BoxedSubtitles";
 import { OverlayedCenterSubtitles } from "./Variants/OverlayedCenterSubtitles";
 
-export const getStartOfSegment = (segment: Segment) => {
+const getStartOfSegment = (segment: Segment) => {
   if (segment.words.length === 0) {
     return 0;
   }
@@ -18,7 +18,7 @@ export const getStartOfSegment = (segment: Segment) => {
   return (segment.words[0] as Word).start;
 };
 
-export const getEndOfSegment = (segment: Segment) => {
+const getEndOfSegment = (segment: Segment) => {
   if (segment.words.length === 0) {
     return 0;
   }

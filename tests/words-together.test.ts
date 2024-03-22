@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 
 import { expect, test } from "bun:test";
-import { wordsTogether } from "../remotion/captions/words-together";
+import { wordsTogether } from "../remotion/captions/processing/words-together";
 
 const example = [
   {

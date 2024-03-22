@@ -1,7 +1,7 @@
 import type { CanvasLayout } from "../../../config/layout";
 import type { Theme } from "../../../config/themes";
 import type { Layout } from "../../layout/layout-types";
-import { getHorizontalPaddingForSubtitles } from "../postprocess-subs";
+import { getHorizontalPaddingForSubtitles } from "../processing/postprocess-subs";
 import { getSubtitlesFontSize, getSubtitlesLines } from "../Segment";
 import type { Segment, Word } from "../types";
 import { Words } from "../Words";

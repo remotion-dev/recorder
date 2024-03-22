@@ -5,7 +5,7 @@ import type { WhisperOutput, Word } from "../types";
 import { EditWord } from "./EditWord";
 import { SubsEditorFooter } from "./Footer";
 import { SubsEditorHeader } from "./Header";
-import { FOOTER_HEIGHT, HEADER_HEIGHT, subEditorPortal } from "./layout";
+import { captionEditorPortal, FOOTER_HEIGHT, HEADER_HEIGHT } from "./layout";
 
 export const SubsEditor: React.FC<{
   whisperOutput: WhisperOutput;
@@ -48,7 +48,7 @@ export const SubsEditor: React.FC<{
     [setWhisperOutput],
   );
 
-  if (!subEditorPortal.current) {
+  if (!captionEditorPortal.current) {
     return null;
   }
 
@@ -86,6 +86,6 @@ export const SubsEditor: React.FC<{
         fileName={fileName}
       />
     </AbsoluteFill>,
-    subEditorPortal.current as HTMLDivElement,
+    captionEditorPortal.current as HTMLDivElement,
   );
 };
