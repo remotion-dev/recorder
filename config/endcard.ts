@@ -1,12 +1,14 @@
 /**
  * Configure the social media channels that you can display in the endcard here.
+ * and the links that you can show.
  */
 
 import { staticFile } from "remotion";
 import { z } from "zod";
 
-export const channel = z.enum(["jonny", "remotion"]);
-export type Channel = z.infer<typeof channel>;
+// TODO: 1. Replace with your own channels (e.g personal and company)
+export const brand = z.enum(["jonny", "remotion"]);
+export type Brand = z.infer<typeof brand>;
 
 export const platform = z.enum([
   "youtube",
@@ -21,10 +23,11 @@ export type Platform = z.infer<typeof platform>;
 type ChannelConfig = { [key in Platform]: string | null };
 
 export const channels: {
-  [key in Channel]: ChannelConfig & {
+  [key in Brand]: ChannelConfig & {
     isLinkedInBusinessPage: boolean;
   };
 } = {
+  // TODO: 2. Fill out the socials
   jonny: {
     instagram: null,
     linkedin: "Jonny Burger",
@@ -43,7 +46,14 @@ export const channels: {
   },
 };
 
-export const avatars: { [key in Channel]: string } = {
+// TODO: 3. Add your own avatars
+export const avatars: { [key in Brand]: string } = {
   jonny: "https://jonny.io/avatar.png",
-  remotion: staticFile("logo-on-white.png"),
+  remotion: staticFile("remotion.png"),
 };
+
+export const linkType = z.object({
+  link: z.string(),
+});
+
+export type LinkType = z.infer<typeof linkType>;

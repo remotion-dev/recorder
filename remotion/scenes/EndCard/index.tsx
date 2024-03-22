@@ -1,8 +1,8 @@
 import { loadFont } from "@remotion/google-fonts/RobotoCondensed";
 import React from "react";
 import { AbsoluteFill } from "remotion";
+import type { Brand, Platform } from "../../../config/endcard";
 import type { CanvasLayout, LinkType, Theme } from "../../../config/scenes";
-import type { Channel, Platform } from "../../../config/socials";
 import { COLORS } from "../../colors";
 import { LeftSide } from "./LeftSide";
 import { ThumbnailContainers } from "./RightSide";
@@ -10,7 +10,7 @@ import { ThumbnailContainers } from "./RightSide";
 loadFont();
 
 export const EndCard: React.FC<{
-  channel: Channel;
+  channel: Brand;
   canvasLayout: CanvasLayout;
   platform: Platform;
   links: LinkType[];
