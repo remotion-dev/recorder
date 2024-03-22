@@ -2,6 +2,7 @@ import { $ } from "bun";
 import { cpSync, rmdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { SOUNDS_FOLDER } from "./config/sounds";
 
 const tmp = path.join(tmpdir(), "recorder");
 
@@ -24,7 +25,7 @@ const files = (await $`git ls-files`.quiet().cwd(tmp)).stdout
   .filter(Boolean)
   .filter((file) => {
     if (file.startsWith("public")) {
-      return file.startsWith("public/sounds");
+      return file.startsWith("public/" + SOUNDS_FOLDER);
     }
 
     if (file.startsWith("config")) {
