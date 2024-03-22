@@ -1,10 +1,10 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
+import { getSafeSpace } from "../../config/layout";
 import type { WebcamPosition } from "../../config/scenes";
 import { borderRadius } from "./get-layout";
 import { getBottomSafeSpace } from "./get-safe-space";
 import type { Layout } from "./layout-types";
 import { overrideYForAltLayouts } from "./override-y-for-alt-layouts";
-import { safeSpace } from "./safe-space";
 
 export const getDisplayLayout = ({
   canvasSize,
@@ -25,7 +25,7 @@ export const getDisplayLayout = ({
   const x = (canvasSize.width - newWidth) / 2;
   const y =
     (canvasSize.height - newHeight - bottomSafeSpace) / 2 +
-    safeSpace(canvasLayout) / 2;
+    getSafeSpace(canvasLayout) / 2;
 
   return {
     left: x,

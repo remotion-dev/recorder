@@ -1,11 +1,11 @@
 import { interpolate } from "remotion";
 import type { CanvasLayout } from "../../config/layout";
+import { getSafeSpace } from "../../config/layout";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../config/scenes";
 import type { Layout } from "../layout/layout-types";
-import { safeSpace } from "../layout/safe-space";
 import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,
@@ -62,8 +62,9 @@ const getDisplayExit = ({
           ? height -
             nextScene.layout.webcamLayout.height -
             currentScene.layout.displayLayout.height -
-            safeSpace(canvasLayout) * 2
-          : nextScene.layout.webcamLayout.height + 2 * safeSpace(canvasLayout);
+            getSafeSpace(canvasLayout) * 2
+          : nextScene.layout.webcamLayout.height +
+            2 * getSafeSpace(canvasLayout);
 
     if (changedVerticalPosition) {
       return {
@@ -75,8 +76,8 @@ const getDisplayExit = ({
     return {
       ...currentScene.layout.displayLayout,
       left: isWebCamRight(currentScene.finalWebcamPosition)
-        ? -(width - safeSpace(canvasLayout) * 2)
-        : width + safeSpace(canvasLayout),
+        ? -(width - getSafeSpace(canvasLayout) * 2)
+        : width + getSafeSpace(canvasLayout),
       top: y,
     };
   }
@@ -135,7 +136,7 @@ const getDisplayEnter = ({
       return {
         ...currentScene.layout.displayLayout,
         left:
-          -currentScene.layout.displayLayout.width - safeSpace(canvasLayout),
+          -currentScene.layout.displayLayout.width - getSafeSpace(canvasLayout),
         top: 0,
       };
     }
@@ -144,7 +145,7 @@ const getDisplayEnter = ({
     if (canvasLayout === "landscape") {
       return {
         ...currentScene.layout.displayLayout,
-        left: width + safeSpace(canvasLayout),
+        left: width + getSafeSpace(canvasLayout),
         top: 0,
       };
     }

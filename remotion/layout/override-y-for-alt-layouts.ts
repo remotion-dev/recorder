@@ -1,6 +1,6 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
+import { getSafeSpace } from "../../config/layout";
 import type { WebcamPosition } from "../../config/scenes";
-import { safeSpace } from "./safe-space";
 
 export const overrideYForAltLayouts = ({
   y,
@@ -20,19 +20,19 @@ export const overrideYForAltLayouts = ({
   }
 
   if (webcamPosition === "top-left") {
-    return canvasSize.height - newHeight - safeSpace(canvasLayout);
+    return canvasSize.height - newHeight - getSafeSpace(canvasLayout);
   }
 
   if (webcamPosition === "top-right") {
-    return canvasSize.height - newHeight - safeSpace(canvasLayout);
+    return canvasSize.height - newHeight - getSafeSpace(canvasLayout);
   }
 
   if (webcamPosition === "bottom-left") {
-    return safeSpace(canvasLayout);
+    return getSafeSpace(canvasLayout);
   }
 
   if (webcamPosition === "bottom-right") {
-    return safeSpace(canvasLayout);
+    return getSafeSpace(canvasLayout);
   }
 
   return y;

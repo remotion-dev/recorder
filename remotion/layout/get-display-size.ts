@@ -1,7 +1,9 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
-import { LANDSCAPE_DISPLAY_MAX_WIDTH_OF_CANVAS } from "../../config/layout";
+import {
+  getSafeSpace,
+  LANDSCAPE_DISPLAY_MAX_WIDTH_OF_CANVAS,
+} from "../../config/layout";
 import { getBottomSafeSpace } from "./get-safe-space";
-import { safeSpace } from "./safe-space";
 
 const getMaxHeight = ({
   canvasSize,
@@ -13,7 +15,7 @@ const getMaxHeight = ({
   bottomSafeSpace: number;
 }) => {
   const withoutSafeAreas =
-    canvasSize.height - bottomSafeSpace - safeSpace(canvasLayout);
+    canvasSize.height - bottomSafeSpace - getSafeSpace(canvasLayout);
 
   if (canvasLayout === "square") {
     const threeFifths = withoutSafeAreas * (3 / 5);
@@ -31,7 +33,7 @@ const getMaxWidth = ({
   canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
 }) => {
-  const withoutSafeArea = canvasSize.width - safeSpace(canvasLayout) * 2;
+  const withoutSafeArea = canvasSize.width - getSafeSpace(canvasLayout) * 2;
   const fourFifths = canvasSize.width * LANDSCAPE_DISPLAY_MAX_WIDTH_OF_CANVAS;
   if (canvasLayout === "landscape") {
     return fourFifths;

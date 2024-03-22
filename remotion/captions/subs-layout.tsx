@@ -1,9 +1,9 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
+import { getSafeSpace } from "../../config/layout";
 import type { WebcamPosition } from "../../config/scenes";
 import { borderRadius } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type { Layout } from "../layout/layout-types";
-import { safeSpace } from "../layout/safe-space";
 import type { SubtitleType } from "./Segment";
 import { getSubtitlesFontSize } from "./Segment";
 
@@ -55,12 +55,14 @@ export const getSubsLayout = ({
 
     return {
       height:
-        canvasSize.height - webcamLayout.height - safeSpace(canvasLayout) * 3,
+        canvasSize.height -
+        webcamLayout.height -
+        getSafeSpace(canvasLayout) * 3,
       top: isTopAligned
-        ? webcamLayout.height + safeSpace(canvasLayout) * 2
-        : safeSpace(canvasLayout),
-      left: safeSpace(canvasLayout),
-      width: canvasSize.width - safeSpace(canvasLayout) * 2,
+        ? webcamLayout.height + getSafeSpace(canvasLayout) * 2
+        : getSafeSpace(canvasLayout),
+      left: getSafeSpace(canvasLayout),
+      width: canvasSize.width - getSafeSpace(canvasLayout) * 2,
       borderRadius,
       opacity: 1,
     };
@@ -71,9 +73,10 @@ export const getSubsLayout = ({
     top: webcamLayout.top,
     left:
       webcamPosition === "bottom-left" || webcamPosition === "top-left"
-        ? webcamLayout.width + safeSpace(canvasLayout) * 2
-        : safeSpace(canvasLayout),
-    width: canvasSize.width - webcamLayout.width - safeSpace(canvasLayout) * 3,
+        ? webcamLayout.width + getSafeSpace(canvasLayout) * 2
+        : getSafeSpace(canvasLayout),
+    width:
+      canvasSize.width - webcamLayout.width - getSafeSpace(canvasLayout) * 3,
     borderRadius,
     opacity: 1,
   };

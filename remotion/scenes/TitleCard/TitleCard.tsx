@@ -11,9 +11,9 @@ import {
   useVideoConfig,
 } from "remotion";
 import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
+import { getSafeSpace } from "../../../config/layout";
 import { TRANSITION_DURATION } from "../../../config/transitions";
 import { borderRadius } from "../../layout/get-layout";
-import { safeSpace } from "../../layout/safe-space";
 
 export const TitleCard: React.FC<{
   title: string;
@@ -34,7 +34,7 @@ export const TitleCard: React.FC<{
       delay,
     });
 
-  const desiredImageWidth = width - safeSpace("square") * 2;
+  const desiredImageWidth = width - getSafeSpace("square") * 2;
   const actualImageHeight = Math.min(
     height * 0.7,
     (desiredImageWidth / 16) * 9,
