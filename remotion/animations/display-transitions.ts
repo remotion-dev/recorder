@@ -1,6 +1,6 @@
 import { interpolate } from "remotion";
+import type { CanvasLayout } from "../../config/layout";
 import type {
-  CanvasLayout,
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../config/scenes";

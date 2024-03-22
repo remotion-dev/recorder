@@ -1,8 +1,9 @@
 import React from "react";
 import { Sequence, useVideoConfig } from "remotion";
-import type { CanvasLayout } from "../../config/scenes";
+import type { CanvasLayout, Dimensions } from "../../config/layout";
+import type {} from "../../config/scenes";
 import type { Theme } from "../../config/themes";
-import type { Dimensions, Layout } from "../layout/layout-types";
+import type { Layout } from "../layout/layout-types";
 import type { Segment, Word } from "../sub-types";
 import { FadeSentence } from "./FadeSentence";
 import { BelowVideoSubtitles } from "./types/BelowVideoSubtitles";

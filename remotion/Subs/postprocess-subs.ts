@@ -5,7 +5,7 @@ import {
   REGULAR_FONT_FAMILY,
   REGULAR_FONT_WEIGHT,
 } from "../../config/fonts";
-import type { CanvasLayout } from "../../config/scenes";
+import type { CanvasLayout } from "../../config/layout";
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { hasMonoSpaceInIt } from "../layout/monospace";
 import { safeSpace } from "../layout/safe-space";

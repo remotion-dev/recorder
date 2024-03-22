@@ -1,10 +1,7 @@
 import React, { useMemo } from "react";
 import { AbsoluteFill } from "remotion";
-import type {
-  CanvasLayout,
-  SceneAndMetadata,
-  SceneType,
-} from "../config/scenes";
+import type { CanvasLayout } from "../config/layout";
+import type { SceneAndMetadata, SceneType } from "../config/scenes";
 import type { Theme } from "../config/themes";
 import { COLORS } from "../config/themes";
 import { AudioTrack } from "./AudioTrack";

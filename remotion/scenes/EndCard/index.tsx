@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
 import type { Brand, LinkType, Platform } from "../../../config/endcard";
-import type { CanvasLayout } from "../../../config/scenes";
+import type { CanvasLayout } from "../../../config/layout";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
 import { LeftSide } from "./LeftSide";

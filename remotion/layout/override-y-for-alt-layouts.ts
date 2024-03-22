@@ -1,5 +1,5 @@
-import type { CanvasLayout, WebcamPosition } from "../../config/scenes";
-import type { Dimensions } from "./layout-types";
+import type { CanvasLayout, Dimensions } from "../../config/layout";
+import type { WebcamPosition } from "../../config/scenes";
 import { safeSpace } from "./safe-space";
 
 export const overrideYForAltLayouts = ({

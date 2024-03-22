@@ -1,8 +1,9 @@
 import type { StaticFile } from "remotion";
 import { z } from "zod";
 import type { CameraSceneLayout } from "../remotion/layout/get-layout";
-import type { Dimensions } from "../remotion/layout/layout-types";
 import { brand, linkType, platform } from "./endcard";
+import type { Dimensions } from "./layout";
+import { canvasLayout } from "./layout";
 import { music } from "./sounds";
 import { theme } from "./themes";
 
@@ -72,9 +73,6 @@ export const configuration = z.discriminatedUnion("type", [
 
 export const scenes = z.array(configuration);
 export type SceneType = z.infer<typeof configuration>;
-
-export const canvasLayout = z.enum(["landscape", "square"]);
-export type CanvasLayout = z.infer<typeof canvasLayout>;
 
 export const videoConf = z.object({
   theme,

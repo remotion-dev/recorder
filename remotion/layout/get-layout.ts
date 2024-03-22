@@ -1,8 +1,5 @@
-import type {
-  CanvasLayout,
-  SceneVideos,
-  WebcamPosition,
-} from "../../config/scenes";
+import type { CanvasLayout, Dimensions } from "../../config/layout";
+import type { SceneVideos, WebcamPosition } from "../../config/scenes";
 import {
   isWebCamAtBottom,
   isWebCamRight,
@@ -14,7 +11,7 @@ import { getDisplayLayout } from "./get-display-layout";
 import { getDisplaySize } from "./get-display-size";
 import { getBottomSafeSpace } from "./get-safe-space";
 import { getWebcamSize } from "./get-webcam-size";
-import type { Dimensions, Layout } from "./layout-types";
+import type { Layout } from "./layout-types";
 import { safeSpace } from "./safe-space";
 
 export const borderRadius = 20;

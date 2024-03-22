@@ -1,5 +1,4 @@
-import type { CanvasLayout } from "../../config/scenes";
-import type { Dimensions } from "./layout-types";
+import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { safeSpace } from "./safe-space";
 
 const webcamRatio = 400 / 350;

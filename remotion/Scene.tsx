@@ -7,11 +7,8 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type {
-  CanvasLayout,
-  SceneAndMetadata,
-  VideoSceneAndMetadata,
-} from "../config/scenes";
+import type { CanvasLayout } from "../config/layout";
+import type { SceneAndMetadata, VideoSceneAndMetadata } from "../config/scenes";
 import type { Theme } from "../config/themes";
 import { TRANSITION_DURATION } from "../config/transitions";
 import { getSceneEnter, getSceneExit } from "./animations/scene-transitions";
