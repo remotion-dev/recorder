@@ -1,4 +1,5 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
+import { LANDSCAPE_DISPLAY_MAX_WIDTH_OF_CANVAS } from "../../config/layout";
 import { getBottomSafeSpace } from "./get-safe-space";
 import { safeSpace } from "./safe-space";
 
@@ -22,8 +23,6 @@ const getMaxHeight = ({
 
   return withoutSafeAreas;
 };
-
-const LANDSCAPE_DISPLAY_MAX_WIDTH_OF_CANVAS = 0.77;
 
 const getMaxWidth = ({
   canvasSize,

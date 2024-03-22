@@ -1,8 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 
 import { expect, test } from "bun:test";
+import { splitWordIntoMonospaceSegment } from "../remotion/captions/split-word-into-monospace-segment";
 import type { Word } from "../remotion/captions/types";
-import { splitWordIntoMonospaceSegment } from "../remotion/layout/make-monospace-word";
 
 test("Should split up into monospace words", () => {
   const word: Word = {
