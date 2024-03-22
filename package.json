@@ -45,6 +45,7 @@
     "@remotion/media-utils": "4.0.131",
     "@remotion/renderer": "4.0.131",
     "@remotion/shapes": "4.0.131",
+    "@remotion/install-whisper-cpp": "4.0.131",
     "@types/node": "^20.8.9",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
