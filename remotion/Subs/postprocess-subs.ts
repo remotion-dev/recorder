@@ -9,7 +9,6 @@ import type { CanvasLayout } from "../../config/layout";
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { hasMonoSpaceInIt } from "../layout/monospace";
 import { safeSpace } from "../layout/safe-space";
-import { wordsTogether } from "../layout/words-together";
 import {
   whisperWordToWord,
   type Segment,
@@ -20,6 +19,7 @@ import {
 import { remapWord } from "./remap-words";
 import type { SubtitleType } from "./Segment";
 import { getBorderWidthForSubtitles } from "./Segment";
+import { wordsTogether } from "./words-together";
 
 const balanceWords = ({
   words,
