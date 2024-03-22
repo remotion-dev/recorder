@@ -1,5 +1,5 @@
 import { interpolateStyles } from "@remotion/animation-utils";
-import type { VideoSceneAndMetadata } from "../../configuration";
+import type { VideoSceneAndMetadata } from "../../../config/scenes";
 import type { Layout } from "../../layout/layout-types";
 
 export const getAnimatedSubtitleLayout = ({

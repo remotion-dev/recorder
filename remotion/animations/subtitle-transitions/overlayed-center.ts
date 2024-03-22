@@ -2,7 +2,8 @@ import { translate } from "@remotion/animation-utils";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
-} from "../../configuration";
+} from "../../../config/scenes";
+import type {} from "../../configuration";
 import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,

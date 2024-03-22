@@ -1,5 +1,8 @@
 import { interpolateStyles, translate } from "@remotion/animation-utils";
-import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
+import type {
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../../config/scenes";
 import type { Layout } from "../layout/layout-types";
 import type { SubtitleType } from "../Subs/Segment";
 import {

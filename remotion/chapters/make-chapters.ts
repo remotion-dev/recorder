@@ -1,8 +1,11 @@
+import type {
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../../config/scenes";
 import {
   getShouldTransitionIn,
   getSumUpDuration,
 } from "../animations/transitions";
-import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
 import { transitionDuration } from "../configuration";
 
 export type SimpleWebcamInformation = {

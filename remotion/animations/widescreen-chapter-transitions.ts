@@ -1,5 +1,8 @@
 import { interpolate } from "remotion";
-import type { SceneAndMetadata, VideoSceneAndMetadata } from "../configuration";
+import type {
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../../config/scenes";
 import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,

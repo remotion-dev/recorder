@@ -1,11 +1,8 @@
 import React from "react";
 import { OffthreadVideo, useVideoConfig } from "remotion";
+import type { SceneAndMetadata, VideoSceneAndMetadata } from "../config/scenes";
 import { getWebcamLayout } from "./animations/webcam-transitions";
-import type {
-  CanvasLayout,
-  SceneAndMetadata,
-  VideoSceneAndMetadata,
-} from "./configuration";
+import type { CanvasLayout } from "./configuration";
 import type { Layout } from "./layout/layout-types";
 
 export const Webcam: React.FC<{

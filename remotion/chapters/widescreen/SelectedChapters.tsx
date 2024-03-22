@@ -1,6 +1,7 @@
 import { interpolateStyles, translate } from "@remotion/animation-utils";
 import React, { useMemo } from "react";
 import { AbsoluteFill, useVideoConfig } from "remotion";
+import type { VideoSceneAndMetadata } from "../../../config/scenes";
 import { isWebCamRight } from "../../animations/webcam-transitions";
 import type {
   InTransition,
@@ -10,7 +11,6 @@ import {
   makeInTransition,
   makeOutTransition,
 } from "../../animations/widescreen-chapter-transitions";
-import type { VideoSceneAndMetadata } from "../../configuration";
 import type { ChapterType } from "../make-chapters";
 import { getWidescreenChapterStyle } from "./layout";
 import {

@@ -1,4 +1,4 @@
-import type { SceneAndMetadata } from "../configuration";
+import type { SceneAndMetadata } from "../../config/scenes";
 
 export const getSceneEnter = ({
   width,
