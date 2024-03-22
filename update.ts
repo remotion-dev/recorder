@@ -12,7 +12,11 @@ if ((await $`git status --porcelain`.quiet()).exitCode !== 0) {
   process.exit(1);
 }
 
-await $`git clone https://github.com/remotion-dev/recorder.git ${tmp}`;
+await $`git clone https://github.com/remotion-dev/recorder.git ${tmp} --depth=1`.env(
+  {
+    GIT_LFS_SKIP_SMUDGE: "1",
+  },
+);
 
 const files = (await $`git ls-files`.quiet().cwd(tmp)).stdout
   .toString("utf-8")
