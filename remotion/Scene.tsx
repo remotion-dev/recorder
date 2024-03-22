@@ -7,14 +7,18 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { SceneAndMetadata, VideoSceneAndMetadata } from "../config/scenes";
+import type {
+  CanvasLayout,
+  SceneAndMetadata,
+  Theme,
+  VideoSceneAndMetadata,
+} from "../config/scenes";
 import { getSceneEnter, getSceneExit } from "./animations/scene-transitions";
 import {
   getShouldTransitionIn,
   getShouldTransitionOut,
 } from "./animations/transitions";
 import type { ChapterType } from "./chapters/make-chapters";
-import type { CanvasLayout, Theme } from "./configuration";
 import { transitionDuration } from "./configuration";
 import { CameraScene } from "./scenes/Camera/CameraScene";
 import { EndCard } from "./scenes/EndCard";

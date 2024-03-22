@@ -1,9 +1,9 @@
 import { loadFont } from "@remotion/google-fonts/RobotoCondensed";
 import React from "react";
 import { AbsoluteFill } from "remotion";
+import type { Theme } from "../../../config/scenes";
 import type { ChapterType } from "../../chapters/make-chapters";
 import { COLORS } from "../../colors";
-import type { Theme } from "../../configuration";
 import { TableOfContentItem } from "./item";
 
 loadFont();

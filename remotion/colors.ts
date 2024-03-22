@@ -1,4 +1,4 @@
-import type { Theme } from "./configuration";
+import type { Theme } from "../config/scenes";
 
 type ColorTheme = {
   BACKGROUND: string;

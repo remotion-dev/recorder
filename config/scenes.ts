@@ -1,6 +1,5 @@
+import type { StaticFile } from "remotion";
 import { z } from "zod";
-import type { Pair } from "../remotion/configuration";
-import { linkType } from "../remotion/configuration";
 import type { CameraSceneLayout } from "../remotion/layout/get-layout";
 import type { Dimensions } from "../remotion/layout/layout-types";
 import { music } from "../remotion/layout/music";
@@ -32,6 +31,12 @@ export const videoScene = z.object({
 });
 
 export type VideoScene = z.infer<typeof videoScene>;
+
+export const linkType = z.object({
+  link: z.string(),
+});
+
+export type LinkType = z.infer<typeof linkType>;
 
 export const configuration = z.discriminatedUnion("type", [
   videoScene,
@@ -72,6 +77,24 @@ export const configuration = z.discriminatedUnion("type", [
 
 export const scenes = z.array(configuration);
 export type SceneType = z.infer<typeof configuration>;
+
+const theme = z.enum(["light", "dark"]);
+export type Theme = z.infer<typeof theme>;
+
+export const canvasLayout = z.enum(["landscape", "square"]);
+export type CanvasLayout = z.infer<typeof canvasLayout>;
+
+export const videoConf = z.object({
+  theme,
+  canvasLayout,
+  scenes,
+});
+
+export type Pair = {
+  display: StaticFile | null;
+  webcam: StaticFile;
+  sub: StaticFile | null;
+};
 
 export type SceneVideos = {
   webcam: Dimensions;

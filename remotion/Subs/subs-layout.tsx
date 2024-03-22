@@ -1,5 +1,4 @@
-import type { WebcamPosition } from "../../config/scenes";
-import type { CanvasLayout } from "../configuration";
+import type { CanvasLayout, WebcamPosition } from "../../config/scenes";
 import { borderRadius } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type { Dimensions, Layout } from "../layout/layout-types";

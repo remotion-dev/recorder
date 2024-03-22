@@ -1,10 +1,10 @@
 import { OffthreadVideo, useVideoConfig } from "remotion";
 import type {
+  CanvasLayout,
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
 import { getDisplayPosition } from "../../animations/display-transitions";
-import type { CanvasLayout } from "../../configuration";
 
 export const Screen: React.FC<{
   scene: VideoSceneAndMetadata;

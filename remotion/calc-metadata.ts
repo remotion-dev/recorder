@@ -1,6 +1,7 @@
 import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import type {
+  Pair,
   SceneAndMetadata,
   SceneType,
   SceneVideos,
@@ -11,10 +12,41 @@ import {
   getShouldTransitionOut,
   getSumUpDuration,
 } from "./animations/transitions";
-import { fps, getPairs, transitionDuration } from "./configuration";
+import { FPS, transitionDuration } from "./configuration";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
 import { truthy } from "./truthy";
+
+import { getStaticFiles } from "remotion";
+
+const getPairs = (prefix: string) => {
+  const files = getStaticFiles().filter((f) => f.name.startsWith(prefix));
+
+  const pairs = files
+    .map((f): Pair | null => {
+      if (f.name.startsWith(`${prefix}/webcam`)) {
+        const timestamp = f.name
+          .replace(`${prefix}/webcam`, "")
+          .replace(".webm", "")
+          .replace(".mp4", "");
+        const display = files.find(
+          (_f) =>
+            _f.name === `${prefix}/display${timestamp}.webm` ||
+            _f.name === `${prefix}/display${timestamp}.mp4`,
+        );
+
+        const sub = files.find((_f) => {
+          return _f.name === `${prefix}/subs${timestamp}.json`;
+        });
+
+        return { display: display ?? null, webcam: f, sub: sub ?? null };
+      }
+
+      return null;
+    })
+    .filter(Boolean) as Pair[];
+  return pairs;
+};
 
 export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   props,
@@ -57,7 +89,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
         } = await getVideoMetadata(p.webcam.src);
 
         const dim = p.display ? await getVideoMetadata(p.display.src) : null;
-        const durationInFrames = Math.round(durationInSeconds * fps);
+        const durationInFrames = Math.round(durationInSeconds * FPS);
 
         const trimStart = scene?.trimStart ?? 0;
 
@@ -164,7 +196,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
       canvasLayout: props.canvasLayout,
       prefix: compositionId,
       scenes: props.scenes,
-      fps,
+      fps: FPS,
       pairs,
       scenesAndMetadata,
       theme: props.theme,

@@ -1,10 +1,14 @@
 import React, { useMemo } from "react";
 import { AbsoluteFill } from "remotion";
-import type { SceneAndMetadata, SceneType } from "../config/scenes";
+import type {
+  CanvasLayout,
+  SceneAndMetadata,
+  SceneType,
+  Theme,
+} from "../config/scenes";
 import { AudioTrack } from "./AudioTrack";
 import { makeChapters } from "./chapters/make-chapters";
 import { COLORS } from "./colors";
-import type { CanvasLayout, Theme } from "./configuration";
 import { Scene } from "./Scene";
 import { subEditorPortal } from "./Subs/Editor/layout";
 
