@@ -9,9 +9,9 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import type { Brand, Platform } from "../../../config/endcard";
+import { avatars, channels } from "../../../config/endcard";
 import type { LinkType, Theme } from "../../../config/scenes";
-import type { Channel, Platform } from "../../../config/socials";
-import { avatars, channels } from "../../../config/socials";
 import { TRANSITION_DURATION } from "../../../config/transitions";
 import { COLORS } from "../../colors";
 import { FollowButton, followButtonHeight } from "./FollowButton";
@@ -116,7 +116,7 @@ const IconRow: React.FC<{
 
 export const LeftSide: React.FC<{
   platform: Platform;
-  channel: Channel;
+  channel: Brand;
   links: LinkType[];
   theme: Theme;
 }> = ({ platform, channel, links, theme }) => {

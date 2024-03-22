@@ -2,8 +2,9 @@ import type { StaticFile } from "remotion";
 import { z } from "zod";
 import type { CameraSceneLayout } from "../remotion/layout/get-layout";
 import type { Dimensions } from "../remotion/layout/layout-types";
-import { channel, platform } from "./socials";
+import { brand, platform } from "./endcard";
 import { music } from "./sounds";
+import { theme } from "./themes";
 
 const availablePositions = [
   "top-left",
@@ -32,12 +33,6 @@ export const videoScene = z.object({
 
 export type VideoScene = z.infer<typeof videoScene>;
 
-export const linkType = z.object({
-  link: z.string(),
-});
-
-export type LinkType = z.infer<typeof linkType>;
-
 export const configuration = z.discriminatedUnion("type", [
   videoScene,
   z.object({
@@ -64,7 +59,7 @@ export const configuration = z.discriminatedUnion("type", [
     type: z.literal("endcard"),
     durationInFrames: z.number().int().default(200),
     music,
-    channel,
+    channel: brand,
     platform,
     links: z.array(linkType),
   }),
@@ -77,9 +72,6 @@ export const configuration = z.discriminatedUnion("type", [
 
 export const scenes = z.array(configuration);
 export type SceneType = z.infer<typeof configuration>;
-
-const theme = z.enum(["light", "dark"]);
-export type Theme = z.infer<typeof theme>;
 
 export const canvasLayout = z.enum(["landscape", "square"]);
 export type CanvasLayout = z.infer<typeof canvasLayout>;
