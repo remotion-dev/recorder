@@ -1,4 +1,4 @@
-import type { CanvasLayout } from "../configuration";
+import type { CanvasLayout } from "../../config/scenes";
 import { getBottomSafeSpace } from "./get-safe-space";
 import type { Dimensions } from "./layout-types";
 import { safeSpace } from "./safe-space";

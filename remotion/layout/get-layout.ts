@@ -1,9 +1,12 @@
-import type { SceneVideos, WebcamPosition } from "../../config/scenes";
+import type {
+  CanvasLayout,
+  SceneVideos,
+  WebcamPosition,
+} from "../../config/scenes";
 import {
   isWebCamAtBottom,
   isWebCamRight,
 } from "../animations/webcam-transitions";
-import type { CanvasLayout } from "../configuration";
 import { getSubtitlesType } from "../Subs/Segment";
 import { getSubsLayout } from "../Subs/subs-layout";
 import { getDimensionsForLayout } from "./dimensions";

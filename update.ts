@@ -27,6 +27,10 @@ const files = (await $`git ls-files`.quiet().cwd(tmp)).stdout
       return file.startsWith("public/sounds");
     }
 
+    if (file.startsWith("config")) {
+      return false;
+    }
+
     if (file.endsWith("Root.tsx")) {
       return false;
     }

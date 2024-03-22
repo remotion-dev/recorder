@@ -9,10 +9,10 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import type { LinkType, Theme } from "../../../config/scenes";
 import type { Channel, Platform } from "../../../config/socials";
 import { avatars, channels } from "../../../config/socials";
 import { COLORS } from "../../colors";
-import type { LinkType, Theme } from "../../configuration";
 import { transitionDuration } from "../../configuration";
 import { FollowButton, followButtonHeight } from "./FollowButton";
 import {

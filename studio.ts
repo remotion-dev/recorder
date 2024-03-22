@@ -1,8 +1,3 @@
-import { startServer } from "./server/server";
+import { startStudioAndServer } from "./scripts/server";
 
-startServer();
-
-Bun.spawn(["bunx", "remotion", "studio"], {
-  stdout: "inherit",
-  shell: process.platform === "win32" ? "cmd.exe" : undefined,
-});
+startStudioAndServer();

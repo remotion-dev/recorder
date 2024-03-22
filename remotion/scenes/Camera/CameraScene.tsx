@@ -6,7 +6,9 @@ import {
   useVideoConfig,
 } from "remotion";
 import type {
+  CanvasLayout,
   SceneAndMetadata,
+  Theme,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
 import {
@@ -16,7 +18,6 @@ import {
 import type { ChapterType } from "../../chapters/make-chapters";
 import { SquareChapter } from "../../chapters/square/SquareChapter";
 import { SelectedChapters } from "../../chapters/widescreen/SelectedChapters";
-import type { CanvasLayout, Theme } from "../../configuration";
 import { transitionDuration } from "../../configuration";
 import { Subs } from "../../Subs/Subs";
 import { Webcam } from "../../Webcam";

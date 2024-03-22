@@ -1,9 +1,9 @@
 import { loadFont } from "@remotion/google-fonts/RobotoCondensed";
 import React from "react";
 import { AbsoluteFill } from "remotion";
+import type { CanvasLayout, LinkType, Theme } from "../../../config/scenes";
 import type { Channel, Platform } from "../../../config/socials";
 import { COLORS } from "../../colors";
-import type { CanvasLayout, LinkType, Theme } from "../../configuration";
 import { LeftSide } from "./LeftSide";
 import { ThumbnailContainers } from "./RightSide";
 

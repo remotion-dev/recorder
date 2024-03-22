@@ -14,16 +14,17 @@ import {
   watchStaticFile,
 } from "remotion";
 import type {
+  CanvasLayout,
   SceneAndMetadata,
+  Theme,
   VideoSceneAndMetadata,
 } from "../../config/scenes";
-import type { SaveSubtitlesPayload } from "../../server/constants";
-import { SAVE_SUBTITLES, SERVER_PORT } from "../../server/constants";
+import type { SaveSubtitlesPayload } from "../../scripts/server/constants";
+import { SAVE_SUBTITLES, SERVER_PORT } from "../../scripts/server/constants";
 import { getSubtitleTransform } from "../animations/subtitle-transitions";
 import { getAnimatedSubtitleLayout } from "../animations/subtitle-transitions/box-transition";
 import { shouldInlineTransitionSubtitles } from "../animations/subtitle-transitions/should-transition-subtitle";
 import { COLORS } from "../colors";
-import type { CanvasLayout, Theme } from "../configuration";
 import type { WhisperOutput, Word } from "../sub-types";
 import { SubsEditor } from "./Editor/SubsEditor";
 import { postprocessSubtitles } from "./postprocess-subs";

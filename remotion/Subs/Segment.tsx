@@ -1,7 +1,7 @@
 import { loadFont } from "@remotion/google-fonts/Inter";
 import React from "react";
 import { Sequence, useVideoConfig } from "remotion";
-import type { CanvasLayout, Theme } from "../configuration";
+import type { CanvasLayout, Theme } from "../../config/scenes";
 import type { Dimensions, Layout } from "../layout/layout-types";
 import type { Segment, Word } from "../sub-types";
 import { FadeSentence } from "./FadeSentence";

@@ -1,4 +1,4 @@
-import type { CanvasLayout } from "../configuration";
+import type { CanvasLayout } from "../../config/scenes";
 import type { Dimensions } from "./layout-types";
 
 export const getDimensionsForLayout = (

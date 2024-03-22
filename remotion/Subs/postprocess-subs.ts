@@ -1,5 +1,5 @@
 import { fillTextBox } from "@remotion/layout-utils";
-import type { CanvasLayout } from "../configuration";
+import type { CanvasLayout } from "../../config/scenes";
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { hasMonoSpaceInIt } from "../layout/monospace";
 import { safeSpace } from "../layout/safe-space";

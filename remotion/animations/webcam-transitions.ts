@@ -1,10 +1,10 @@
 import { interpolateStyles } from "@remotion/animation-utils";
 import type {
+  CanvasLayout,
   SceneAndMetadata,
   VideoSceneAndMetadata,
   WebcamPosition,
 } from "../../config/scenes";
-import type { CanvasLayout } from "../configuration";
 import type { Layout } from "../layout/layout-types";
 import { safeSpace } from "../layout/safe-space";
 
