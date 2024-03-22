@@ -19,7 +19,7 @@ await $`git clone https://github.com/remotion-dev/recorder.git ${tmp} --depth=1`
   },
 );
 
-const files = (await $`git ls-files`.quiet().cwd(tmp)).stdout
+const filesInUpstream = (await $`git ls-files`.quiet().cwd(tmp)).stdout
   .toString("utf-8")
   .split("\n")
   .filter(Boolean)
@@ -29,7 +29,24 @@ const files = (await $`git ls-files`.quiet().cwd(tmp)).stdout
     }
 
     if (file.startsWith("config")) {
-      return false;
+      const knownConfigs = [
+        "endcard.ts",
+        "fonts.ts",
+        "fps.ts",
+        "layout.ts",
+        "scenes.ts",
+        "server.ts",
+        "sounds.ts",
+        "themes.ts",
+        "transitions.ts",
+      ];
+
+      // Don't override config files with defaults
+      if (knownConfigs.some((f) => file.endsWith(f))) {
+        return false;
+      }
+
+      return true;
     }
 
     if (file.endsWith("Root.tsx")) {
@@ -39,7 +56,7 @@ const files = (await $`git ls-files`.quiet().cwd(tmp)).stdout
     return true;
   });
 
-for (const file of files) {
+for (const file of filesInUpstream) {
   const fullPath = path.join(tmp, file);
   cpSync(fullPath, path.join(process.cwd(), file));
 }
