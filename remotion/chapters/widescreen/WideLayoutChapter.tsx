@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { interpolate } from "remotion";
+import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
 import type { ChapterType } from "../make-chapters";
 
 export const CHAPTER_HEIGHT = 80;
@@ -60,8 +61,8 @@ export const WideLayoutChapter: React.FC<{
     return {
       padding: "0px 20px",
       fontSize: 36,
-      fontFamily: "GT Planar",
-      fontWeight: "500",
+      fontFamily: TITLE_FONT_FAMILY,
+      fontWeight: TITLE_FONT_WEIGHT,
       height: "100%",
       display: "flex",
       justifyContent: "center",
@@ -90,10 +91,11 @@ export const WideLayoutChapter: React.FC<{
         color: "white",
         padding: "12px 0px",
         fontSize: 32,
-        fontFamily: "GT Planar",
+        fontFamily: TITLE_FONT_FAMILY,
         width: 65,
         textAlign: "center",
         height: "100%",
+        fontWeight: TITLE_FONT_WEIGHT,
         justifyContent: "center",
         alignItems: "center",
         display: "flex",

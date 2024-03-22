@@ -5,6 +5,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
 import type { WebcamPosition } from "../../../config/scenes";
 import { borderRadius } from "../../layout/get-layout";
 import { safeSpace } from "../../layout/safe-space";
@@ -39,7 +40,7 @@ export const SquareChapter: React.FC<{
           color: "white",
           padding: "16px 30px",
           background: "#0b84f3",
-          fontFamily: "GT Planar",
+          fontFamily: TITLE_FONT_FAMILY,
           position: "absolute",
           top: isTop ? undefined : safeSpace("square") * 2,
           bottom: isTop ? safeSpace("square") * 2 : undefined,
@@ -47,7 +48,7 @@ export const SquareChapter: React.FC<{
           borderRadius,
           fontSize: 50,
           border: "8px solid black",
-          fontWeight: 500,
+          fontWeight: TITLE_FONT_WEIGHT,
           scale: String(scale),
           transform: `translateX(${toLeft}px)`,
         }}

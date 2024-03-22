@@ -1,4 +1,5 @@
 import type { Platform } from "../../../config/endcard";
+import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
 
@@ -20,9 +21,9 @@ export const FollowButton: React.FC<{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        fontFamily: "GT Planar",
+        fontFamily: TITLE_FONT_FAMILY,
         fontSize: 50,
-        fontWeight: 500,
+        fontWeight: TITLE_FONT_WEIGHT,
       }}
     >
       {platform === "youtube"

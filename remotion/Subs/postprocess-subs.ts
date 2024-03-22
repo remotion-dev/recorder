@@ -1,4 +1,10 @@
 import { fillTextBox } from "@remotion/layout-utils";
+import {
+  MONOSPACE_FONT_FAMILY,
+  MONOSPACE_FONT_WEIGHT,
+  REGULAR_FONT_FAMILY,
+  REGULAR_FONT_WEIGHT,
+} from "../../config/fonts";
 import type { CanvasLayout } from "../../config/scenes";
 import { splitWordIntoMonospaceSegment } from "../layout/make-monospace-word";
 import { hasMonoSpaceInIt } from "../layout/monospace";
@@ -14,12 +20,6 @@ import {
 import { remapWord } from "./remap-words";
 import type { SubtitleType } from "./Segment";
 import { getBorderWidthForSubtitles } from "./Segment";
-import {
-  monospaceFont,
-  monospaceFontWeight,
-  regularFont,
-  regularFontWeight,
-} from "./Word";
 
 const balanceWords = ({
   words,
@@ -89,8 +89,8 @@ const cutWords = ({
   for (const word of words) {
     const { exceedsBox } = add({
       text: word.word,
-      fontFamily: word.monospace ? monospaceFont : regularFont,
-      fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
+      fontFamily: word.monospace ? MONOSPACE_FONT_FAMILY : REGULAR_FONT_FAMILY,
+      fontWeight: word.monospace ? MONOSPACE_FONT_WEIGHT : REGULAR_FONT_WEIGHT,
       fontSize,
     });
 

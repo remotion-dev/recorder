@@ -1,4 +1,3 @@
-import { loadFont } from "@remotion/google-fonts/RobotoCondensed";
 import React from "react";
 import { AbsoluteFill } from "remotion";
 import type { Brand, LinkType, Platform } from "../../../config/endcard";
@@ -7,8 +6,6 @@ import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
 import { LeftSide } from "./LeftSide";
 import { ThumbnailContainers } from "./RightSide";
-
-loadFont();
 
 export const EndCard: React.FC<{
   channel: Brand;
