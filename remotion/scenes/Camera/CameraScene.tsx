@@ -11,6 +11,7 @@ import type {
   Theme,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
+import { TRANSITION_DURATION } from "../../../config/transitions";
 import {
   getChapterInTransition,
   getChapterOutTransition,
@@ -18,7 +19,6 @@ import {
 import type { ChapterType } from "../../chapters/make-chapters";
 import { SquareChapter } from "../../chapters/square/SquareChapter";
 import { SelectedChapters } from "../../chapters/widescreen/SelectedChapters";
-import { transitionDuration } from "../../configuration";
 import { Subs } from "../../Subs/Subs";
 import { Webcam } from "../../Webcam";
 import { Screen } from "./Screen";
@@ -56,7 +56,7 @@ export const CameraScene: React.FC<{
       const spr = spring({
         fps,
         frame,
-        durationInFrames: transitionDuration,
+        durationInFrames: TRANSITION_DURATION,
         config: {
           damping: 200,
         },
@@ -72,11 +72,11 @@ export const CameraScene: React.FC<{
       const spr = spring({
         fps,
         frame,
-        durationInFrames: transitionDuration,
+        durationInFrames: TRANSITION_DURATION,
         config: {
           damping: 200,
         },
-        delay: durationInFrames - transitionDuration,
+        delay: durationInFrames - TRANSITION_DURATION,
       });
       return spr;
     }

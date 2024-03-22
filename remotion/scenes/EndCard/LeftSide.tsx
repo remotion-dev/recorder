@@ -12,8 +12,8 @@ import {
 import type { LinkType, Theme } from "../../../config/scenes";
 import type { Channel, Platform } from "../../../config/socials";
 import { avatars, channels } from "../../../config/socials";
+import { TRANSITION_DURATION } from "../../../config/transitions";
 import { COLORS } from "../../colors";
-import { transitionDuration } from "../../configuration";
 import { FollowButton, followButtonHeight } from "./FollowButton";
 import {
   InstagramIcon,
@@ -128,7 +128,7 @@ export const LeftSide: React.FC<{
   const { fps, width } = useVideoConfig();
   const frame = useCurrentFrame();
 
-  const slideDelay = transitionDuration + 20;
+  const slideDelay = TRANSITION_DURATION + 20;
   const slideDuration = 30;
 
   const slideUp = spring({

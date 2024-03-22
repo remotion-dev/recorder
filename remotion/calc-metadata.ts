@@ -12,12 +12,13 @@ import {
   getShouldTransitionOut,
   getSumUpDuration,
 } from "./animations/transitions";
-import { FPS, transitionDuration } from "./configuration";
+import { FPS } from "./configuration";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
 import { truthy } from "./truthy";
 
 import { getStaticFiles } from "remotion";
+import { TRANSITION_DURATION } from "../config/transitions";
 
 const getPairs = (prefix: string) => {
   const files = getStaticFiles().filter((f) => f.name.startsWith(prefix));
@@ -158,7 +159,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
           nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
         })
       ) {
-        addedUpDurations -= transitionDuration;
+        addedUpDurations -= TRANSITION_DURATION;
       }
 
       const retValue = {

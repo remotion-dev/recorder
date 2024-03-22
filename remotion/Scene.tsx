@@ -13,13 +13,13 @@ import type {
   Theme,
   VideoSceneAndMetadata,
 } from "../config/scenes";
+import { TRANSITION_DURATION } from "../config/transitions";
 import { getSceneEnter, getSceneExit } from "./animations/scene-transitions";
 import {
   getShouldTransitionIn,
   getShouldTransitionOut,
 } from "./animations/transitions";
 import type { ChapterType } from "./chapters/make-chapters";
-import { transitionDuration } from "./configuration";
 import { CameraScene } from "./scenes/Camera/CameraScene";
 import { EndCard } from "./scenes/EndCard";
 import { TableOfContents } from "./scenes/TableOfContents";
@@ -123,7 +123,7 @@ const SceneWithTransition: React.FC<Props> = (props) => {
         config: {
           damping: 200,
         },
-        durationInFrames: transitionDuration,
+        durationInFrames: TRANSITION_DURATION,
       })
     : 1;
 
@@ -134,8 +134,8 @@ const SceneWithTransition: React.FC<Props> = (props) => {
         config: {
           damping: 200,
         },
-        durationInFrames: transitionDuration,
-        delay: durationInFrames - transitionDuration,
+        durationInFrames: TRANSITION_DURATION,
+        delay: durationInFrames - TRANSITION_DURATION,
       })
     : 0;
 
