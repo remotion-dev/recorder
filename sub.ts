@@ -24,6 +24,8 @@ for (const folder of folders) {
 
     const fileToTranscribe = path.join(publicFolder, folder, file);
 
-    await captionFile({ file, folder, fileToTranscribe });
+    console.log("Transcribing", fileToTranscribe);
+    const { outPath } = await captionFile({ file, folder, fileToTranscribe });
+    console.log("Transcribed to", outPath);
   }
 }
