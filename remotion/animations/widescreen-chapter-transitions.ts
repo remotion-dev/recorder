@@ -41,12 +41,12 @@ export const getChapterOutTransition = ({
     currentScene.finalWebcamPosition === "top-right";
 
   const isNextLeft =
-    nextScene?.finalWebcamPosition === "bottom-left" ||
-    nextScene?.finalWebcamPosition === "top-left";
+    nextScene.finalWebcamPosition === "bottom-left" ||
+    nextScene.finalWebcamPosition === "top-left";
 
   const isNextTop =
-    nextScene?.finalWebcamPosition === "top-left" ||
-    nextScene?.finalWebcamPosition === "top-right";
+    nextScene.finalWebcamPosition === "top-left" ||
+    nextScene.finalWebcamPosition === "top-right";
 
   if (isCurrentlyLeft && !isNextLeft) {
     return "left";
@@ -89,7 +89,7 @@ export const getChapterInTransition = ({
   }
 
   if (
-    previousScene?.type === "video-scene" &&
+    previousScene.type === "video-scene" &&
     isShrinkingToMiniature({
       firstScene: previousScene,
       secondScene: currentScene,

@@ -29,14 +29,6 @@ export const getShouldTransitionOut = ({
     return false;
   }
 
-  if (isATextCard(sceneAndMetadata.scene)) {
-    return true;
-  }
-
-  if (isATextCard(nextScene.scene)) {
-    return true;
-  }
-
   const areBothVideoScenes =
     sceneAndMetadata.type === "video-scene" && nextScene.type === "video-scene";
 
