@@ -1,6 +1,6 @@
 import { interpolateStyles } from "@remotion/animation-utils";
+import type { CanvasLayout } from "../../config/layout";
 import type {
-  CanvasLayout,
   SceneAndMetadata,
   VideoSceneAndMetadata,
   WebcamPosition,

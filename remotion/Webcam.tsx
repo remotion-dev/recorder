@@ -1,10 +1,7 @@
 import React from "react";
 import { OffthreadVideo, useVideoConfig } from "remotion";
-import type {
-  CanvasLayout,
-  SceneAndMetadata,
-  VideoSceneAndMetadata,
-} from "../config/scenes";
+import type { CanvasLayout } from "../config/layout";
+import type { SceneAndMetadata, VideoSceneAndMetadata } from "../config/scenes";
 import { getWebcamLayout } from "./animations/webcam-transitions";
 import type { Layout } from "./layout/layout-types";
 

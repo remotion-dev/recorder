@@ -1,4 +1,4 @@
-import type { CanvasLayout } from "../../../config/scenes";
+import type { CanvasLayout } from "../../../config/layout";
 import type { Theme } from "../../../config/themes";
 import type { Layout } from "../../layout/layout-types";
 import type { Segment, Word } from "../../sub-types";

@@ -1,7 +1,8 @@
-import type { CanvasLayout, WebcamPosition } from "../../config/scenes";
+import type { CanvasLayout, Dimensions } from "../../config/layout";
+import type { WebcamPosition } from "../../config/scenes";
 import { borderRadius } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
-import type { Dimensions, Layout } from "../layout/layout-types";
+import type { Layout } from "../layout/layout-types";
 import { safeSpace } from "../layout/safe-space";
 import type { SubtitleType } from "./Segment";
 import { getSubtitlesFontSize } from "./Segment";

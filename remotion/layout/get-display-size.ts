@@ -1,6 +1,5 @@
-import type { CanvasLayout } from "../../config/scenes";
+import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { getBottomSafeSpace } from "./get-safe-space";
-import type { Dimensions } from "./layout-types";
 import { safeSpace } from "./safe-space";
 
 const getMaxHeight = ({
