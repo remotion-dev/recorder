@@ -5,7 +5,7 @@ import type { SceneAndMetadata, SceneType } from "../config/scenes";
 import type { Theme } from "../config/themes";
 import { COLORS } from "../config/themes";
 import { AudioTrack } from "./audio/AudioTrack";
-import { subEditorPortal } from "./captions/Editor/layout";
+import { captionEditorPortal } from "./captions/Editor/layout";
 import { makeChapters } from "./chapters/make-chapters";
 import { Scene } from "./scenes/Scene";
 
@@ -47,7 +47,7 @@ export const Main: React.FC<MainProps> = ({
         );
       })}
       <AudioTrack scenesAndMetadata={scenesAndMetadata} />
-      <div ref={subEditorPortal} />
+      <div ref={captionEditorPortal} />
     </AbsoluteFill>
   );
 };

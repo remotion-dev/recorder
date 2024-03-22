@@ -1,4 +1,4 @@
-import type { Word } from "./types";
+import type { Word } from "../types";
 
 export const splitWordIntoMonospaceSegment = (word: Word): Word[] => {
   const result: Word[] = [];

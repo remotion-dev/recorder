@@ -1,6 +1,6 @@
 import React from "react";
 
-export const subEditorPortal = React.createRef<HTMLDivElement>();
+export const captionEditorPortal = React.createRef<HTMLDivElement>();
 
 export const FIRST_COLUMN_WIDTH = 0.25;
 export const SECOND_COLUMN_WIDTH = 0.5;

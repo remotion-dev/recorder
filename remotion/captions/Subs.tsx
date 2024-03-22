@@ -27,7 +27,7 @@ import { getSubtitleTransform } from "../animations/subtitle-transitions";
 import { getAnimatedSubtitleLayout } from "../animations/subtitle-transitions/box-transition";
 import { shouldInlineTransitionSubtitles } from "../animations/subtitle-transitions/should-transition-subtitle";
 import { SubsEditor } from "./Editor/SubsEditor";
-import { postprocessSubtitles } from "./postprocess-subs";
+import { postprocessSubtitles } from "./processing/postprocess-subs";
 import {
   CaptionSentence,
   getBorderWidthForSubtitles,
