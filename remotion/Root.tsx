@@ -1,15 +1,13 @@
 import { Composition } from "remotion";
 import { videoConf } from "../config/scenes";
-
-import { All } from "./All";
-
 import { calcMetadata } from "./calc-metadata";
+import { Main } from "./Main";
 
 export const Root = () => {
   return (
     <>
       <Composition
-        component={All}
+        component={Main}
         id="augustupdate"
         schema={videoConf}
         defaultProps={{
@@ -168,7 +166,7 @@ export const Root = () => {
         calculateMetadata={calcMetadata}
       />
       <Composition
-        component={All}
+        component={Main}
         id="test"
         schema={videoConf}
         defaultProps={{
@@ -198,7 +196,7 @@ export const Root = () => {
         calculateMetadata={calcMetadata}
       />
       <Composition
-        component={All}
+        component={Main}
         id="timing"
         schema={videoConf}
         defaultProps={{
@@ -439,7 +437,7 @@ export const Root = () => {
         calculateMetadata={calcMetadata}
       />
       <Composition
-        component={All}
+        component={Main}
         id="january"
         schema={videoConf}
         defaultProps={{
@@ -655,7 +653,7 @@ export const Root = () => {
         calculateMetadata={calcMetadata}
       />{" "}
       <Composition
-        component={All}
+        component={Main}
         id="pirates"
         schema={videoConf}
         defaultProps={{
@@ -866,7 +864,7 @@ export const Root = () => {
         calculateMetadata={calcMetadata}
       />{" "}
       <Composition
-        component={All}
+        component={Main}
         id="bunbun"
         schema={videoConf}
         defaultProps={{
@@ -977,7 +975,7 @@ export const Root = () => {
         calculateMetadata={calcMetadata}
       />{" "}
       <Composition
-        component={All}
+        component={Main}
         id="tiktok"
         schema={videoConf}
         defaultProps={{

@@ -1,4 +1,4 @@
-import type { Word } from "../sub-types";
+import type { Word } from "../captions/types";
 
 export const hasMonoSpaceInIt = (word: Word) => {
   if (word.word.split("").filter((char) => char === "`").length >= 2) {

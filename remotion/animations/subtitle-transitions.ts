@@ -3,8 +3,8 @@ import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../config/scenes";
+import type { SubtitleType } from "../captions/Segment";
 import type { Layout } from "../layout/layout-types";
-import type { SubtitleType } from "../Subs/Segment";
 import {
   belowVideoSubtitleEnter,
   belowVideoSubtitleExit,

@@ -1,4 +1,4 @@
-import { truthy } from "../truthy";
+import { truthy } from "../helpers/truthy";
 import type { ChapterType, SimpleWebcamInformation } from "./make-chapters";
 
 const maxOtherChapters = 2;

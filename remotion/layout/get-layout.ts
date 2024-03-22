@@ -4,8 +4,8 @@ import {
   isWebCamAtBottom,
   isWebCamRight,
 } from "../animations/webcam-transitions";
-import { getSubtitlesType } from "../Subs/Segment";
-import { getSubsLayout } from "../Subs/subs-layout";
+import { getSubtitlesType } from "../captions/Segment";
+import { getSubsLayout } from "../captions/subs-layout";
 import { getDimensionsForLayout } from "./dimensions";
 import { getDisplayLayout } from "./get-display-layout";
 import { getDisplaySize } from "./get-display-size";

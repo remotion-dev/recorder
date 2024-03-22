@@ -26,7 +26,6 @@ import { SAVE_SUBTITLES } from "../../scripts/server/constants";
 import { getSubtitleTransform } from "../animations/subtitle-transitions";
 import { getAnimatedSubtitleLayout } from "../animations/subtitle-transitions/box-transition";
 import { shouldInlineTransitionSubtitles } from "../animations/subtitle-transitions/should-transition-subtitle";
-import type { WhisperOutput, Word } from "../sub-types";
 import { SubsEditor } from "./Editor/SubsEditor";
 import { postprocessSubtitles } from "./postprocess-subs";
 import {
@@ -41,6 +40,7 @@ import {
   TransitionFromPreviousSubtitles,
   TransitionToNextSubtitles,
 } from "./TransitionBetweenSubtitles";
+import type { WhisperOutput, Word } from "./types";
 
 const LINE_HEIGHT = 1.2;
 

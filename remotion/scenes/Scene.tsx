@@ -7,22 +7,25 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { CanvasLayout } from "../config/layout";
-import type { SceneAndMetadata, VideoSceneAndMetadata } from "../config/scenes";
-import type { Theme } from "../config/themes";
-import { TRANSITION_DURATION } from "../config/transitions";
-import { getSceneEnter, getSceneExit } from "./animations/scene-transitions";
+import type { CanvasLayout } from "../../config/layout";
+import type {
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../../config/scenes";
+import type { Theme } from "../../config/themes";
+import { TRANSITION_DURATION } from "../../config/transitions";
+import { getSceneEnter, getSceneExit } from "../animations/scene-transitions";
 import {
   getShouldTransitionIn,
   getShouldTransitionOut,
-} from "./animations/transitions";
-import type { ChapterType } from "./chapters/make-chapters";
-import { CameraScene } from "./scenes/Camera/CameraScene";
-import { EndCard } from "./scenes/EndCard";
-import { TableOfContents } from "./scenes/TableOfContents";
-import { Title } from "./scenes/Title/Title";
-import { TitleCard } from "./scenes/TitleCard/TitleCard";
-import { UpdateScene } from "./scenes/Update/UpdateScene";
+} from "../animations/transitions";
+import type { ChapterType } from "../chapters/make-chapters";
+import { CameraScene } from "./Camera/CameraScene";
+import { EndCard } from "./EndCard";
+import { TableOfContents } from "./TableOfContents";
+import { Title } from "./Title/Title";
+import { TitleCard } from "./TitleCard/TitleCard";
+import { UpdateScene } from "./Update/UpdateScene";
 
 type Props = {
   sceneAndMetadata: SceneAndMetadata;

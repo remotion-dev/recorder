@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import ReactDOM from "react-dom";
 import { AbsoluteFill } from "remotion";
-import type { WhisperOutput, Word } from "../../sub-types";
+import type { WhisperOutput, Word } from "../types";
 import { EditWord } from "./EditWord";
 import { SubsEditorFooter } from "./Footer";
 import { SubsEditorHeader } from "./Header";

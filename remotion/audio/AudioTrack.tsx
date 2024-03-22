@@ -1,9 +1,9 @@
 import React from "react";
 import { Audio, interpolate, Sequence, useVideoConfig } from "remotion";
-import type { SceneAndMetadata } from "../config/scenes";
-import { getAudioSource } from "../config/sounds";
-import { TRANSITION_DURATION } from "../config/transitions";
-import { getShouldTransitionOut, isATextCard } from "./animations/transitions";
+import type { SceneAndMetadata } from "../../config/scenes";
+import { getAudioSource } from "../../config/sounds";
+import { TRANSITION_DURATION } from "../../config/transitions";
+import { getShouldTransitionOut, isATextCard } from "../animations/transitions";
 
 type TAudioTrack = {
   from: number;

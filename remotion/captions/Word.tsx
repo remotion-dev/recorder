@@ -12,7 +12,7 @@ import {
 } from "../../config/fonts";
 import type { Theme } from "../../config/themes";
 import { COLORS } from "../../config/themes";
-import type { Word } from "../sub-types";
+import type { Word } from "./types";
 
 const style: React.CSSProperties = {
   display: "inline",

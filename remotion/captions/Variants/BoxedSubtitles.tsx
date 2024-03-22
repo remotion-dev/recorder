@@ -1,9 +1,9 @@
 import type { CanvasLayout } from "../../../config/layout";
 import type { Theme } from "../../../config/themes";
 import type { Layout } from "../../layout/layout-types";
-import type { Segment, Word } from "../../sub-types";
 import { getHorizontalPaddingForSubtitles } from "../postprocess-subs";
 import { getSubtitlesFontSize, getSubtitlesLines } from "../Segment";
+import type { Segment, Word } from "../types";
 import { Words } from "../Words";
 
 export const LINE_HEIGHT = 1.2;
