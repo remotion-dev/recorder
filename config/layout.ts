@@ -20,3 +20,6 @@ export const DIMENSIONS: { [key in CanvasLayout]: Dimensions } = {
 };
 
 export const LANDSCAPE_DISPLAY_MAX_WIDTH_OF_CANVAS = 0.77;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getSafeSpace = (_canvasLayout: CanvasLayout) => 30;

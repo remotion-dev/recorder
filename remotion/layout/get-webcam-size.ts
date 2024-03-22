@@ -1,5 +1,5 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
-import { safeSpace } from "./safe-space";
+import { getSafeSpace } from "../../config/layout";
 
 const webcamRatio = 400 / 350;
 
@@ -14,7 +14,7 @@ export const getWebcamSize = ({
 }): Dimensions => {
   if (canvasLayout === "square") {
     const remainingHeight =
-      canvasSize.height - displaySize.height - safeSpace(canvasLayout) * 3;
+      canvasSize.height - displaySize.height - getSafeSpace(canvasLayout) * 3;
 
     return {
       height: remainingHeight,
@@ -24,7 +24,7 @@ export const getWebcamSize = ({
 
   if (canvasLayout === "landscape") {
     const remainingWidth =
-      canvasSize.width - displaySize.width - safeSpace(canvasLayout) * 3;
+      canvasSize.width - displaySize.width - getSafeSpace(canvasLayout) * 3;
     const maxWidth = 450;
     const width = Math.min(remainingWidth, maxWidth);
 

@@ -22,7 +22,7 @@ import type { MainProps } from "./Main";
 const getPairs = (prefix: string) => {
   const files = getStaticFiles().filter((f) => f.name.startsWith(prefix));
 
-  const pairs = files
+  return files
     .map((f): Pair | null => {
       if (f.name.startsWith(`${prefix}/webcam`)) {
         const timestamp = f.name
@@ -46,7 +46,6 @@ const getPairs = (prefix: string) => {
       return null;
     })
     .filter(Boolean) as Pair[];
-  return pairs;
 };
 
 export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({

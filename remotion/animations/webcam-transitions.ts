@@ -1,12 +1,12 @@
 import { interpolateStyles } from "@remotion/animation-utils";
 import type { CanvasLayout } from "../../config/layout";
+import { getSafeSpace } from "../../config/layout";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
   WebcamPosition,
 } from "../../config/scenes";
 import type { Layout } from "../layout/layout-types";
-import { safeSpace } from "../layout/safe-space";
 
 export const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
   return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
@@ -154,8 +154,8 @@ const getWebcamEndLayout = ({
     ...nextScene.layout.webcamLayout,
     left: currentLayout.left,
     top: isWebCamAtBottom(currentScene.finalWebcamPosition)
-      ? height + safeSpace(canvasLayout)
-      : -currentLayout.height - safeSpace(canvasLayout),
+      ? height + getSafeSpace(canvasLayout)
+      : -currentLayout.height - getSafeSpace(canvasLayout),
   };
 };
 
@@ -220,14 +220,14 @@ const getWebCamStartLayout = ({
   if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
     return {
       ...currentLayout,
-      top: height + safeSpace(canvasLayout),
+      top: height + getSafeSpace(canvasLayout),
     };
   }
 
   // Square, moving top down
   return {
     ...currentLayout,
-    top: -currentLayout.height - safeSpace(canvasLayout),
+    top: -currentLayout.height - getSafeSpace(canvasLayout),
   };
 };
 

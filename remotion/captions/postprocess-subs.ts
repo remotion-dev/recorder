@@ -6,7 +6,7 @@ import {
   REGULAR_FONT_WEIGHT,
 } from "../../config/fonts";
 import type { CanvasLayout } from "../../config/layout";
-import { safeSpace } from "../layout/safe-space";
+import { getSafeSpace } from "../../config/layout";
 import { hasMonoSpaceInIt } from "./monospace";
 import { remapWord } from "./remap-words";
 import type { SubtitleType } from "./Segment";
@@ -165,7 +165,7 @@ export const getHorizontalPaddingForSubtitles = (
   canvasLayout: CanvasLayout,
 ) => {
   if (subtitleType === "boxed") {
-    return safeSpace(canvasLayout);
+    return getSafeSpace(canvasLayout);
   }
 
   if (subtitleType === "overlayed-center") {

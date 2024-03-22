@@ -1,10 +1,10 @@
 import type { CanvasLayout } from "../../config/layout";
-import { safeSpace } from "./safe-space";
+import { getSafeSpace } from "../../config/layout";
 
 export const getBottomSafeSpace = (canvasLayout: CanvasLayout) => {
   if (canvasLayout === "landscape") {
     return 140;
   }
 
-  return safeSpace(canvasLayout);
+  return getSafeSpace(canvasLayout);
 };

@@ -1,4 +1,5 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
+import { getSafeSpace } from "../../config/layout";
 import type { SceneVideos, WebcamPosition } from "../../config/scenes";
 import {
   isWebCamAtBottom,
@@ -12,7 +13,6 @@ import { getDisplaySize } from "./get-display-size";
 import { getBottomSafeSpace } from "./get-safe-space";
 import { getWebcamSize } from "./get-webcam-size";
 import type { Layout } from "./layout-types";
-import { safeSpace } from "./safe-space";
 
 export const borderRadius = 20;
 
@@ -30,7 +30,7 @@ const fullscreenLayout = ({
   if (canvasLayout === "square") {
     const aspectRatio = webcamSize.width / webcamSize.height;
 
-    const actualWidth = canvasSize.width - safeSpace(canvasLayout) * 2;
+    const actualWidth = canvasSize.width - getSafeSpace(canvasLayout) * 2;
 
     const height = actualWidth / aspectRatio;
     const isTopAligned =
@@ -38,10 +38,10 @@ const fullscreenLayout = ({
 
     // TODO: Will look weird with vertical video
     return {
-      left: safeSpace(canvasLayout),
+      left: getSafeSpace(canvasLayout),
       top: isTopAligned
-        ? safeSpace(canvasLayout)
-        : canvasSize.height - height - safeSpace(canvasLayout),
+        ? getSafeSpace(canvasLayout)
+        : canvasSize.height - height - getSafeSpace(canvasLayout),
       width: actualWidth,
       height,
       borderRadius,
@@ -73,7 +73,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
   if (webcamPosition === "bottom-right") {
     return {
       ...webcamSize,
-      left: canvasSize.width - webcamSize.width - safeSpace(canvasLayout),
+      left: canvasSize.width - webcamSize.width - getSafeSpace(canvasLayout),
       top:
         canvasSize.height -
         webcamSize.height -
@@ -86,7 +86,7 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
   if (webcamPosition === "bottom-left") {
     return {
       ...webcamSize,
-      left: safeSpace(canvasLayout),
+      left: getSafeSpace(canvasLayout),
       top:
         canvasSize.height -
         webcamSize.height -
@@ -99,8 +99,8 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
   if (webcamPosition === "top-left") {
     return {
       ...webcamSize,
-      left: safeSpace(canvasLayout),
-      top: safeSpace(canvasLayout),
+      left: getSafeSpace(canvasLayout),
+      top: getSafeSpace(canvasLayout),
       borderRadius,
       opacity: 1,
     };
@@ -109,8 +109,8 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
   if (webcamPosition === "top-right") {
     return {
       ...webcamSize,
-      left: canvasSize.width - webcamSize.width - safeSpace(canvasLayout),
-      top: safeSpace(canvasLayout),
+      left: canvasSize.width - webcamSize.width - getSafeSpace(canvasLayout),
+      top: getSafeSpace(canvasLayout),
       borderRadius,
       opacity: 1,
     };
@@ -138,7 +138,7 @@ const getFullScreenWebcamSize = ({
   const aspectRatio =
     webcamVideoResolution.width / webcamVideoResolution.height;
 
-  const actualWidth = canvasSize.width - safeSpace(canvasLayout) * 2;
+  const actualWidth = canvasSize.width - getSafeSpace(canvasLayout) * 2;
 
   const actualHeight = actualWidth / aspectRatio;
 
@@ -238,14 +238,14 @@ export const getLayout = ({
 
   if (canvasLayout === "landscape") {
     const totalWidth =
-      displaySize.width + webcamSize.width + safeSpace(canvasLayout);
+      displaySize.width + webcamSize.width + getSafeSpace(canvasLayout);
 
     const totalHeight = Math.max(displaySize.height, webcamSize.height);
 
     const left = (canvasSize.width - totalWidth) / 2;
     const top =
       (canvasSize.height - totalHeight) / 2 -
-      (getBottomSafeSpace(canvasLayout) - safeSpace(canvasLayout)) / 2;
+      (getBottomSafeSpace(canvasLayout) - getSafeSpace(canvasLayout)) / 2;
 
     const displayLayout: Layout = {
       borderRadius,
@@ -254,7 +254,7 @@ export const getLayout = ({
       opacity: 1,
       left: isWebCamRight(webcamPosition)
         ? left
-        : left + safeSpace("landscape") + webcamSize.width,
+        : left + getSafeSpace("landscape") + webcamSize.width,
       top,
     };
 
@@ -264,7 +264,7 @@ export const getLayout = ({
       width: webcamSize.width,
       opacity: 1,
       left: isWebCamRight(webcamPosition)
-        ? left + displaySize.width + safeSpace("landscape")
+        ? left + displaySize.width + getSafeSpace("landscape")
         : left,
       top: isWebCamAtBottom(webcamPosition)
         ? top + displaySize.height - webcamSize.height
