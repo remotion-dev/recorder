@@ -1,7 +1,12 @@
 import React from "react";
 import { Audio, interpolate, Sequence, useVideoConfig } from "remotion";
 import type { SceneAndMetadata } from "../../config/scenes";
-import { getAudioSource } from "../../config/sounds";
+import {
+  AUDIO_FADE_IN_FRAMES,
+  BACKGROUND_VOLUME,
+  getAudioSource,
+  REGULAR_VOLUME,
+} from "../../config/sounds";
 import { TRANSITION_DURATION } from "../../config/transitions";
 import { getShouldTransitionOut, isATextCard } from "../animations/transitions";
 
@@ -11,8 +16,6 @@ type TAudioTrack = {
   duration: number;
   loudParts: [number, number][];
 };
-
-const FADE = 30;
 
 const AudioClip: React.FC<{
   src: string;
@@ -24,9 +27,8 @@ const AudioClip: React.FC<{
     <Audio
       volume={(f) => {
         let isLoudPart: null | [number, number] = null;
-        for (let i = 0; i < loudParts.length; i++) {
-          // @ts-expect-error
-          const [from, to] = loudParts[i];
+        for (const loudPart of loudParts) {
+          const [from, to] = loudPart;
           if (f >= from && f <= to) {
             isLoudPart = [from, to];
             break;
@@ -35,8 +37,13 @@ const AudioClip: React.FC<{
 
         const regularVolume = interpolate(
           f,
-          [0, FADE, durationInFrames - FADE, durationInFrames - 1],
-          [0, 0.04, 0.04, 0],
+          [
+            0,
+            AUDIO_FADE_IN_FRAMES,
+            durationInFrames - AUDIO_FADE_IN_FRAMES,
+            durationInFrames - 1,
+          ],
+          [0, BACKGROUND_VOLUME, BACKGROUND_VOLUME, 0],
           {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
@@ -48,11 +55,11 @@ const AudioClip: React.FC<{
             f,
             [
               isLoudPart[0],
-              isLoudPart[0] + FADE,
-              isLoudPart[1] - FADE,
+              isLoudPart[0] + AUDIO_FADE_IN_FRAMES,
+              isLoudPart[1] - AUDIO_FADE_IN_FRAMES,
               isLoudPart[1],
             ],
-            [regularVolume, 1, 1, regularVolume],
+            [regularVolume, REGULAR_VOLUME, REGULAR_VOLUME, regularVolume],
           );
         }
 
@@ -135,7 +142,7 @@ export const AudioTrack: React.FC<{
             <AudioClip
               src={clip.src}
               loudParts={clip.loudParts.map((l) => {
-                return [l[0] - clip.from, l[1] - clip.from];
+                return [l[0] - clip.from, l[1] - clip.from] as [number, number];
               })}
             />
           </Sequence>
