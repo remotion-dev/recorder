@@ -1,3 +1,4 @@
+import { downloadWhisperModel } from "@remotion/install-whisper-cpp";
 import { execSync } from "node:child_process";
 import {
   existsSync,
@@ -10,6 +11,41 @@ import {
 import os from "node:os";
 import path from "path";
 import * as prettier from "prettier";
+
+const validModelNames = [
+  "tiny",
+  "tiny.en",
+  "base",
+  "base.en",
+  "small",
+  "small.en",
+  "medium",
+  "medium.en",
+  "large-v1",
+  "large-v2",
+  "large-v3",
+];
+
+// available models: tiny, tiny.en, base, base.en, small, small.en, medium, medium.en, large-v1, large-v2, large-v3
+const SELECTED_WHISPER_MODEL = "base.en"; // TODO: make this typesafe once this is a .ts file
+
+const getModelPathByName = (name) => {
+  const whisperLocation = path.join(process.cwd(), "whisper.cpp");
+  if (!validModelNames.includes(name)) {
+    throw new Error(`Model ${name} is not supported`);
+  }
+
+  const prefix = "/ggml-";
+  const suffix = ".bin";
+
+  return `${whisperLocation}${prefix}${name}${suffix}`;
+};
+
+const modelExists = (name) => {
+  const modelPath = getModelPathByName(name);
+
+  return existsSync(modelPath);
+};
 
 const isWhisperInstalled = () => {
   if (os.platform() === "darwin" || os.platform() === "linux") {
@@ -35,11 +71,20 @@ const subFile = async (filePath, fileName, folder) => {
     `public/${folder}/${fileName.replace(".wav", ".json")}`,
   );
 
+  if (!modelExists(SELECTED_WHISPER_MODEL)) {
+    await downloadWhisperModel({
+      model: SELECTED_WHISPER_MODEL,
+      folder: path.join(process.cwd(), "whisper.cpp"),
+    });
+  }
+
+  const selectedModelPath = getModelPathByName(SELECTED_WHISPER_MODEL);
+
   if (os.platform() === "darwin" || os.platform() === "linux") {
     execSync(
       `./main -f ${filePath} --output-file ${
         outPath.split(".")[0]
-      } --output-json --max-len 1 `,
+      } --output-json --max-len 1 --model ${selectedModelPath}`,
       { cwd: path.join(process.cwd(), "whisper.cpp") },
     );
   } else if (os.platform() === "win32") {
@@ -47,7 +92,7 @@ const subFile = async (filePath, fileName, folder) => {
     execSync(
       `main.exe -f ${filePath} --output-file ${
         outPath.split(".")[0]
-      } --output-json --max-len 1 `,
+      } --output-json --max-len 1 --model ${selectedModelPath}`,
       { cwd: path.join(process.cwd(), "whisper-bin-x64") },
     );
   }
