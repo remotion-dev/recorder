@@ -51,7 +51,7 @@ const getShownWordColor = ({
 
   return interpolateColors(
     time,
-    [word.start, word.start + 0.1],
+    [word.start, word.start + 100],
     [wordColor.greyed, wordColor.appeared],
   );
 };
