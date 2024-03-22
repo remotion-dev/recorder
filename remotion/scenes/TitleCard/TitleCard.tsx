@@ -10,7 +10,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { transitionDuration } from "../../configuration";
+import { TRANSITION_DURATION } from "../../../config/transitions";
 import { borderRadius } from "../../layout/get-layout";
 import { safeSpace } from "../../layout/safe-space";
 
@@ -26,7 +26,7 @@ export const TitleCard: React.FC<{
     spring({
       fps,
       frame,
-      durationInFrames: transitionDuration,
+      durationInFrames: TRANSITION_DURATION,
       config: {
         damping: 200,
       },

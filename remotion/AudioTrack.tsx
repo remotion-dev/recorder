@@ -1,8 +1,8 @@
 import React from "react";
 import { Audio, interpolate, Sequence, useVideoConfig } from "remotion";
 import type { SceneAndMetadata } from "../config/scenes";
+import { TRANSITION_DURATION } from "../config/transitions";
 import { getShouldTransitionOut, isATextCard } from "./animations/transitions";
-import { transitionDuration } from "./configuration";
 import { getAudioSource } from "./layout/music";
 
 type TAudioTrack = {
@@ -82,7 +82,7 @@ export const AudioTrack: React.FC<{
       nextScene: scenesAndMetadata[i + 1] ?? null,
     });
     if (isTransitioningOut) {
-      addedUpDurations -= transitionDuration;
+      addedUpDurations -= TRANSITION_DURATION;
     }
 
     const isLoud = isATextCard(scene.scene);
@@ -95,7 +95,7 @@ export const AudioTrack: React.FC<{
           metadataForScene.durationInFrames;
         if (isTransitioningOut) {
           (audioClips[audioClips.length - 1] as TAudioTrack).duration -=
-            transitionDuration;
+            TRANSITION_DURATION;
         }
 
         if (isLoud) {

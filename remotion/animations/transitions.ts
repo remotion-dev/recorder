@@ -1,5 +1,5 @@
 import type { SceneAndMetadata, SceneType } from "../../config/scenes";
-import { transitionDuration } from "../configuration";
+import { TRANSITION_DURATION } from "../../config/transitions";
 
 export const isATextCard = (scene: SceneType) => {
   return (
@@ -100,6 +100,6 @@ export const getSumUpDuration = ({
     scene,
     previousScene,
   })
-    ? scene.durationInFrames - transitionDuration
+    ? scene.durationInFrames - TRANSITION_DURATION
     : scene.durationInFrames;
 };
