@@ -12,12 +12,12 @@ import {
   getShouldTransitionOut,
   getSumUpDuration,
 } from "./animations/transitions";
-import { FPS } from "./configuration";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
 import { truthy } from "./truthy";
 
 import { getStaticFiles } from "remotion";
+import { FPS } from "../config/fps";
 import { TRANSITION_DURATION } from "../config/transitions";
 
 const getPairs = (prefix: string) => {
@@ -193,6 +193,7 @@ export const calcMetadata: CalculateMetadataFunction<AllProps> = async ({
   return {
     durationInFrames: totalDuration,
     ...getDimensionsForLayout(props.canvasLayout),
+    fps: FPS,
     props: {
       canvasLayout: props.canvasLayout,
       prefix: compositionId,

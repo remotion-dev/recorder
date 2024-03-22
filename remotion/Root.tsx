@@ -4,15 +4,12 @@ import { videoConf } from "../config/scenes";
 import { All } from "./All";
 
 import { calcMetadata } from "./calc-metadata";
-import { FPS } from "./configuration";
 
 export const Root = () => {
   return (
     <>
       <Composition
         component={All}
-        fps={FPS}
-        durationInFrames={100}
         id="augustupdate"
         schema={videoConf}
         defaultProps={{
@@ -172,8 +169,6 @@ export const Root = () => {
       />
       <Composition
         component={All}
-        fps={FPS}
-        durationInFrames={100}
         id="test"
         schema={videoConf}
         defaultProps={{
@@ -204,8 +199,6 @@ export const Root = () => {
       />
       <Composition
         component={All}
-        fps={FPS}
-        durationInFrames={100}
         id="timing"
         schema={videoConf}
         defaultProps={{
@@ -447,8 +440,6 @@ export const Root = () => {
       />
       <Composition
         component={All}
-        fps={FPS}
-        durationInFrames={100}
         id="january"
         schema={videoConf}
         defaultProps={{
@@ -665,8 +656,6 @@ export const Root = () => {
       />{" "}
       <Composition
         component={All}
-        fps={FPS}
-        durationInFrames={100}
         id="pirates"
         schema={videoConf}
         defaultProps={{
@@ -878,8 +867,6 @@ export const Root = () => {
       />{" "}
       <Composition
         component={All}
-        fps={FPS}
-        durationInFrames={100}
         id="bunbun"
         schema={videoConf}
         defaultProps={{
@@ -991,8 +978,6 @@ export const Root = () => {
       />{" "}
       <Composition
         component={All}
-        fps={FPS}
-        durationInFrames={100}
         id="tiktok"
         schema={videoConf}
         defaultProps={{

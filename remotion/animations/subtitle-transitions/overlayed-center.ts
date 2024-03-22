@@ -3,7 +3,6 @@ import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
-import type {} from "../../configuration";
 import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,
