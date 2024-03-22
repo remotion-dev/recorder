@@ -44,3 +44,5 @@ console.log(
 );
 console.log("Please review the changes and commit them.");
 rmdirSync(tmp, { recursive: true });
+
+await $`git status`;
