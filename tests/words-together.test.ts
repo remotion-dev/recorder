@@ -1,8 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="../../node_modules/bun-types/types.d.ts" />
 
 import { expect, test } from "bun:test";
-import { wordsTogether } from "./words-together";
+import { wordsTogether } from "../remotion/Subs/words-together";
 
 const example = [
   {
@@ -38,17 +37,17 @@ test("join words correctly", () => {
     {
       end: 5.94,
       start: 5.42,
-      word: " `bun",
+      word: " `bun`",
     },
     {
       end: 6.54,
       start: 5.94,
-      word: " run",
+      word: " `run`",
     },
     {
       start: 6.54,
       end: 6.96,
-      word: " dev`.",
+      word: " `dev`.",
     },
     {
       end: 8.36,

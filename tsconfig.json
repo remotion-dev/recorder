@@ -26,7 +26,7 @@
     "scripts",
     "config",
     "studio.ts",
-    "tests/index.tsx"
+    "tests"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
