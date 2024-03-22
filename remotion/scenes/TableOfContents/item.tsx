@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useVideoConfig } from "remotion";
+import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
 
 const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
@@ -33,9 +34,9 @@ export const TableOfContentItem: React.FC<{
   return (
     <div
       style={{
-        fontFamily: "GT Planar",
+        fontFamily: TITLE_FONT_FAMILY,
         fontSize: 46,
-        fontWeight: 400,
+        fontWeight: TITLE_FONT_WEIGHT,
         display: "flex",
         flexDirection: "row",
         width: "100%",

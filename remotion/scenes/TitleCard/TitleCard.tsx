@@ -10,6 +10,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
 import { TRANSITION_DURATION } from "../../../config/transitions";
 import { borderRadius } from "../../layout/get-layout";
 import { safeSpace } from "../../layout/safe-space";
@@ -84,11 +85,11 @@ export const TitleCard: React.FC<{
       >
         <div
           style={{
-            fontFamily: "GT Planar",
+            fontFamily: TITLE_FONT_FAMILY,
             fontSize: 60,
             color: "#000",
             lineHeight: 1.1,
-            fontWeight: "bolder",
+            fontWeight: TITLE_FONT_WEIGHT,
             border: "10px solid black",
             borderRadius: 20,
             padding: "15px 40px",
@@ -105,7 +106,7 @@ export const TitleCard: React.FC<{
         <AbsoluteFill>
           <h1
             style={{
-              fontFamily: "GT Planar",
+              fontFamily: TITLE_FONT_FAMILY,
               fontSize: 50,
               textAlign: "center",
               lineHeight: 1.5,

@@ -8,6 +8,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
 
 const size = 180;
 const padding = 20;
@@ -49,10 +50,10 @@ const rowWithOutTopBorder: React.CSSProperties = {
 };
 
 const fatTitle: React.CSSProperties = {
-  fontFamily: "GT Planar",
+  fontFamily: TITLE_FONT_FAMILY,
   fontSize: 140,
   lineHeight: 1,
-  fontWeight: "bold",
+  fontWeight: TITLE_FONT_WEIGHT,
 };
 
 type Icon = {

@@ -1,12 +1,13 @@
-import { loadFont } from "@remotion/google-fonts/RobotoCondensed";
 import React from "react";
 import { AbsoluteFill } from "remotion";
+import {
+  REGULAR_FONT_FAMILY,
+  REGULAR_FONT_WEIGHT,
+} from "../../../config/fonts";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
 import type { ChapterType } from "../../chapters/make-chapters";
 import { TableOfContentItem } from "./item";
-
-loadFont();
 
 export const TableOfContents: React.FC<{
   chapters: ChapterType[];
@@ -25,7 +26,8 @@ export const TableOfContents: React.FC<{
     >
       <strong
         style={{
-          fontFamily: "GT Planar",
+          fontFamily: REGULAR_FONT_FAMILY,
+          fontWeight: REGULAR_FONT_WEIGHT,
           fontSize: 46,
           marginBottom: 30,
         }}

@@ -5,6 +5,11 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import {
+  MONOSPACE_FONT_FAMILY,
+  MONOSPACE_FONT_WEIGHT,
+  REGULAR_FONT_FAMILY,
+} from "../../config/fonts";
 import type { Theme } from "../../config/themes";
 import { COLORS } from "../../config/themes";
 import type { Word } from "../sub-types";
@@ -70,21 +75,13 @@ const getWordColor = ({
     greyed: COLORS[theme].WORD_COLOR_ON_BG_GREYED,
   };
 
-  const wordColor =
-    monospace && appeared
-      ? {
-          appeared: COLORS[theme].WORD_HIGHLIGHT_COLOR,
-          greyed: COLORS[theme].WORD_COLOR_ON_BG_GREYED,
-        }
-      : normalWordColor;
-  return wordColor;
+  return monospace && appeared
+    ? {
+        appeared: COLORS[theme].WORD_HIGHLIGHT_COLOR,
+        greyed: COLORS[theme].WORD_COLOR_ON_BG_GREYED,
+      }
+    : normalWordColor;
 };
-
-export const regularFontWeight = 600;
-export const regularFont = "Inter";
-
-export const monospaceFontWeight = 500;
-export const monospaceFont = "GT Planar";
 
 export const WORD_HIGHLIGHT_BORDER_RADIUS = 10;
 
@@ -152,9 +149,13 @@ export const WordComp: React.FC<{
         onClick={() => onOpenSubEditor(word)}
         style={{
           ...style,
-          fontFamily: word.monospace ? monospaceFont : regularFont,
+          fontFamily: word.monospace
+            ? MONOSPACE_FONT_FAMILY
+            : REGULAR_FONT_FAMILY,
           color: shownWordColor,
-          fontWeight: word.monospace ? monospaceFontWeight : regularFontWeight,
+          fontWeight: word.monospace
+            ? MONOSPACE_FONT_WEIGHT
+            : MONOSPACE_FONT_FAMILY,
           backgroundColor,
           outline: hovered
             ? "2px solid black"

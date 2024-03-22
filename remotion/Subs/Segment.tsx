@@ -1,4 +1,3 @@
-import { loadFont } from "@remotion/google-fonts/Inter";
 import React from "react";
 import { Sequence, useVideoConfig } from "remotion";
 import type { CanvasLayout } from "../../config/scenes";
@@ -9,8 +8,6 @@ import { FadeSentence } from "./FadeSentence";
 import { BelowVideoSubtitles } from "./types/BelowVideoSubtitles";
 import { BoxedSubtitles } from "./types/BoxedSubtitles";
 import { OverlayedCenterSubtitles } from "./types/OverlayedCenterSubtitles";
-
-loadFont();
 
 export const getStartOfSegment = (segment: Segment) => {
   if (segment.words.length === 0) {
