@@ -13,6 +13,7 @@ import {
   useVideoConfig,
   watchStaticFile,
 } from "remotion";
+import type { Word } from "../../config/autocorrect";
 import type { CanvasLayout } from "../../config/layout";
 import type {
   SceneAndMetadata,
@@ -40,7 +41,7 @@ import {
   TransitionFromPreviousSubtitles,
   TransitionToNextSubtitles,
 } from "./TransitionBetweenSubtitles";
-import type { WhisperOutput, Word } from "./types";
+import type { WhisperOutput } from "./types";
 
 const LINE_HEIGHT = 1.2;
 

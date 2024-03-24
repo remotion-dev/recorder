@@ -1,6 +1,7 @@
 import React from "react";
+import type { Word } from "../../config/autocorrect";
 import type { Theme } from "../../config/themes";
-import type { Segment, Word } from "./types";
+import type { Segment } from "./types";
 import { WordComp } from "./Word";
 
 export const Words: React.FC<{

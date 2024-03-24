@@ -1,6 +1,11 @@
-import type { Word } from "../types";
+export type Word = {
+  word: string;
+  start: number;
+  end: number;
+  monospace?: boolean;
+};
 
-export const remapWord = (word: Word): Word => {
+export const autocorrectWord = (word: Word): Word => {
   if (word.word === " github") {
     return {
       ...word,
