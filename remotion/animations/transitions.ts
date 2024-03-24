@@ -1,15 +1,5 @@
-import type { SceneAndMetadata, SceneType } from "../../config/scenes";
+import type { SceneAndMetadata } from "../../config/scenes";
 import { TRANSITION_DURATION } from "../../config/transitions";
-
-export const isATextCard = (scene: SceneType) => {
-  return (
-    scene.type === "title" ||
-    scene.type === "titlecard" ||
-    scene.type === "endcard" ||
-    scene.type === "tableofcontents" ||
-    scene.type === "remotionupdate"
-  );
-};
 
 export const getShouldTransitionOut = ({
   sceneAndMetadata,
