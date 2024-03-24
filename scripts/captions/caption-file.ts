@@ -1,6 +1,7 @@
 import { transcribe } from "@remotion/install-whisper-cpp";
 import { execSync } from "child_process";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
+import { tmpdir } from "os";
 import path from "path";
 import { WHISPER_MODEL, WHISPER_PATH } from "./install-whisper";
 
@@ -40,11 +41,13 @@ export const captionFile = async ({
     return { outPath };
   }
 
-  if (!existsSync(path.join(process.cwd(), "temp"))) {
-    mkdirSync("temp");
+  const tmpDir = path.join(tmpdir(), "remotion-recorder");
+
+  if (!existsSync(tmpDir)) {
+    mkdirSync(tmpDir);
   }
 
-  const wavFile = path.join(process.cwd(), `temp/${fileName}`);
+  const wavFile = path.join(tmpDir, fileName);
   extractToTempAudioFile(fileToTranscribe, wavFile);
 
   const output = await transcribe({
