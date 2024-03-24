@@ -1,4 +1,6 @@
 import { fillTextBox } from "@remotion/layout-utils";
+import type { Word } from "../../../config/autocorrect";
+import { autocorrectWord } from "../../../config/autocorrect";
 import {
   MONOSPACE_FONT_FAMILY,
   MONOSPACE_FONT_WEIGHT,
@@ -14,10 +16,8 @@ import {
   type Segment,
   type SubTypes,
   type WhisperOutput,
-  type Word,
 } from "../types";
 import { hasMonoSpaceInIt } from "./has-monospace-in-word";
-import { remapWord } from "./remap-words";
 import { splitWordIntoMonospaceSegment } from "./split-word-into-monospace-segment";
 import { wordsTogether } from "./words-together";
 
@@ -193,7 +193,7 @@ export const postprocessSubtitles = ({
   const allWords = wordsTogether(
     subTypes.transcription
       .map(whisperWordToWord)
-      .map(remapWord)
+      .map(autocorrectWord)
       .map((word) => {
         return {
           ...word,

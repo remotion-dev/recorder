@@ -1,11 +1,12 @@
 import React from "react";
 import { Sequence, useVideoConfig } from "remotion";
+import type { Word } from "../../config/autocorrect";
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import type {} from "../../config/scenes";
 import type { Theme } from "../../config/themes";
 import type { Layout } from "../layout/layout-types";
 import { FadeSentence } from "./FadeSentence";
-import type { Segment, Word } from "./types";
+import type { Segment } from "./types";
 import { BelowVideoSubtitles } from "./Variants/BelowVideoSubtitles";
 import { BoxedSubtitles } from "./Variants/BoxedSubtitles";
 import { OverlayedCenterSubtitles } from "./Variants/OverlayedCenterSubtitles";

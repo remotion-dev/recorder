@@ -1,4 +1,4 @@
-import type { Word } from "../types";
+import type { Word } from "../../../config/autocorrect";
 
 export const wordsTogether = (words: Word[]): Word[] => {
   const newWords: Word[] = [];

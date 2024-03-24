@@ -1,3 +1,5 @@
+import type { Word } from "../../config/autocorrect";
+
 export type WhisperWord = {
   offsets: {
     from: number;
@@ -19,13 +21,6 @@ export type SubTypes = {
 
 export type Segment = {
   words: Word[];
-};
-
-export type Word = {
-  word: string;
-  start: number;
-  end: number;
-  monospace?: boolean;
 };
 
 export const whisperWordToWord = (word: WhisperWord): Word => {
