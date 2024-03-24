@@ -8,7 +8,7 @@ import {
   REGULAR_VOLUME,
 } from "../../config/sounds";
 import { TRANSITION_DURATION } from "../../config/transitions";
-import { getShouldTransitionOut, isATextCard } from "../animations/transitions";
+import { getShouldTransitionOut } from "../animations/transitions";
 
 type TAudioTrack = {
   from: number;
@@ -92,7 +92,7 @@ export const AudioTrack: React.FC<{
       addedUpDurations -= TRANSITION_DURATION;
     }
 
-    const isLoud = isATextCard(scene.scene);
+    const isLoud = scene.type !== "video-scene";
 
     const { music } = scene.scene;
 
