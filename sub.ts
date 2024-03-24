@@ -1,4 +1,4 @@
-import { lstatSync, readdirSync } from "node:fs";
+import { existsSync, lstatSync, readdirSync } from "node:fs";
 import path from "path";
 import { captionFile } from "./scripts/captions/caption-file";
 import { ensureWhisper } from "./scripts/captions/install-whisper";
@@ -6,26 +6,33 @@ import { ensureWhisper } from "./scripts/captions/install-whisper";
 await ensureWhisper();
 
 const publicFolder = path.join(process.cwd(), "public");
-const folders = readdirSync(publicFolder).filter((f) => f !== ".DS_Store");
+const foldersInPublicFolder = readdirSync(publicFolder).filter((f) => {
+  return lstatSync(path.join(publicFolder, f)).isDirectory();
+});
 
-for (const folder of folders) {
-  if (!lstatSync(path.join(publicFolder, folder)).isDirectory()) {
-    continue;
-  }
+for (const folder of foldersInPublicFolder) {
+  const absoluteFolder = path.join(publicFolder, folder);
 
-  const files = readdirSync(path.join(publicFolder, folder)).filter(
-    (f) => f !== ".DS_Store",
-  );
+  const files = readdirSync(absoluteFolder).filter((f) => f !== ".DS_Store");
 
   for (const file of files) {
     if (!file.startsWith("webcam")) {
       continue;
     }
 
-    const fileToTranscribe = path.join(publicFolder, folder, file);
+    const fileToTranscribe = path.join(absoluteFolder, file);
 
-    console.log("Transcribing", fileToTranscribe);
-    const { outPath } = await captionFile({ file, folder, fileToTranscribe });
-    console.log("Transcribed to", outPath);
+    const outPath = path.join(
+      absoluteFolder,
+      `${(file.split(".")[0] as string).replace("webcam", "subs")}.json`,
+    );
+
+    if (existsSync(outPath)) {
+      console.log("Already transcribed", outPath);
+    } else {
+      console.log("Transcribing", fileToTranscribe);
+      await captionFile({ file, outPath, fileToTranscribe });
+      console.log("Transcribed to", outPath);
+    }
   }
 }

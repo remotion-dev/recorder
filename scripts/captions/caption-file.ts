@@ -5,50 +5,25 @@ import { tmpdir } from "os";
 import path from "path";
 import { WHISPER_MODEL, WHISPER_PATH } from "./install-whisper";
 
-const extractToTempAudioFile = (
-  fileToTranscribe: string,
-  tempOutFile: string,
-) => {
-  // extracting audio from mp4 and save it as 16khz wav file
-  execSync(
-    `npx remotion ffmpeg -i ${fileToTranscribe} -ar 16000 ${tempOutFile}`,
-  );
-};
-
 export const captionFile = async ({
   file,
-  folder,
   fileToTranscribe,
+  outPath,
 }: {
   file: string;
-  folder: string;
   fileToTranscribe: string;
-}) => {
-  const fileName = file.split(".")[0] + ".wav";
-
-  const isTranscribed = existsSync(
-    fileToTranscribe.replace(".mp4", ".json").replace("webcam", "subs"),
-  );
-  // defining the output file location and name
-  const outPath = path
-    .join(
-      process.cwd(),
-      `public/${folder}/${fileName.replace(".wav", ".json")}`,
-    )
-    .replace("webcam", "subs");
-
-  if (isTranscribed) {
-    return { outPath };
-  }
-
+  outPath: string;
+}): Promise<void> => {
   const tmpDir = path.join(tmpdir(), "remotion-recorder");
 
   if (!existsSync(tmpDir)) {
     mkdirSync(tmpDir);
   }
 
-  const wavFile = path.join(tmpDir, fileName);
-  extractToTempAudioFile(fileToTranscribe, wavFile);
+  const wavFile = path.join(tmpDir, `${file.split(".")[0]}.wav`);
+
+  // extracting audio from mp4 and save it as 16khz wav file
+  execSync(`npx remotion ffmpeg -i ${fileToTranscribe} -ar 16000 ${wavFile}`);
 
   const output = await transcribe({
     inputPath: wavFile,
@@ -61,6 +36,4 @@ export const captionFile = async ({
 
   rmSync(wavFile);
   writeFileSync(outPath, JSON.stringify(output, null, 2));
-
-  return { outPath };
 };
