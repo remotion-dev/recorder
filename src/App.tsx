@@ -70,8 +70,9 @@ const mediaRecorderOptions: MediaRecorderOptions = {
 };
 
 const App = () => {
-  const [showAlternativeViews, setShowAlternativeViews] =
-    useState<boolean>(false); // load from local storage
+  const [showAlternativeViews, setShowAlternativeViews] = useState<boolean>(
+    localStorage.getItem("showAlternativeViews") === "true",
+  ); // load from local storage
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
@@ -86,6 +87,16 @@ const App = () => {
 
     return { ...gridContainer, maxHeight: "50%" };
   }, [showAlternativeViews]);
+
+  const handleShowMore = useCallback(() => {
+    setShowAlternativeViews(true);
+    localStorage.setItem("showAlternativeViews", "true");
+  }, []);
+
+  const handleShowLess = useCallback(() => {
+    setShowAlternativeViews(false);
+    localStorage.setItem("showAlternativeViews", "false");
+  }, []);
 
   const setMediaStream = useCallback(
     (prefix: Prefix, source: MediaStream | null) => {
@@ -239,15 +250,15 @@ const App = () => {
         {!showAlternativeViews ? (
           <Button
             variant={"ghost"}
-            onClick={() => setShowAlternativeViews(true)}
-            style={{ margin: "0px 10px", width: 100 }}
+            onClick={handleShowMore}
+            style={{ margin: "0px 10px" }}
           >
-            Show More...
+            Show more views...
           </Button>
         ) : (
           <Button
             variant={"ghost"}
-            onClick={() => setShowAlternativeViews(false)}
+            onClick={handleShowLess}
             style={{ margin: "0px 10px", width: 100 }}
           >
             Show Less...
