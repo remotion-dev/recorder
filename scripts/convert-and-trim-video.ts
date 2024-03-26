@@ -27,6 +27,7 @@ const convertAndRemoveSilence = ({
     [
       "npx remotion ffmpeg",
       ...ffmpegTrim,
+      "-hide_banner",
       "-i",
       input,
       "-movflags",
@@ -42,7 +43,7 @@ const convertAndRemoveSilence = ({
   );
 };
 
-export const removeSilence = async (
+export const convertAndTrimVideo = async (
   latestTimestamp: number,
   prefix: string,
 ) => {
