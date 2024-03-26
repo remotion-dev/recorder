@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {
   AbsoluteFill,
   spring,
@@ -52,188 +52,44 @@ export const CameraScene: React.FC<{
   const frame = useCurrentFrame();
 
   const enter = (() => {
-    if (shouldEnter) {
-      const spr = spring({
-        fps,
-        frame,
-        durationInFrames: TRANSITION_DURATION,
-        config: {
-          damping: 200,
-        },
-      });
-      return spr;
+    if (!shouldEnter) {
+      return 1;
     }
 
-    return 1;
+    return spring({
+      fps,
+      frame,
+      durationInFrames: TRANSITION_DURATION,
+      config: {
+        damping: 200,
+      },
+    });
   })();
 
   const exit = (() => {
-    if (shouldExit) {
-      const spr = spring({
-        fps,
-        frame,
-        durationInFrames: TRANSITION_DURATION,
-        config: {
-          damping: 200,
-        },
-        delay: durationInFrames - TRANSITION_DURATION,
-      });
-      return spr;
+    if (!shouldExit) {
+      return 0;
     }
 
-    return 0;
+    return spring({
+      fps,
+      frame,
+      durationInFrames: TRANSITION_DURATION,
+      config: {
+        damping: 200,
+      },
+      delay: durationInFrames - TRANSITION_DURATION,
+    });
   })();
 
   if (sceneAndMetadata.type !== "video-scene") {
     throw new Error("Not a camera scene");
   }
 
-  const chapterIndex = chapters.findIndex(
-    (c) => c.title === sceneAndMetadata.chapter,
-  );
-  const chapter = chapters[chapterIndex];
-
-  const shownChapters =
-    chapterIndex === 0
-      ? chapters.slice(0, 3)
-      : chapters.slice(
-          Math.max(0, chapterIndex - 1),
-          Math.min(chapters.length, chapterIndex + 2),
-        );
-
-  // Should slide from the previous chapter?
-  const enterChapterWithSlideFromBottom = useMemo(() => {
-    // Only if there is a previous scene
-    if (!previousScene) {
-      return false;
-    }
-
-    // Only if it is a video scene
-    if (previousScene.type !== "video-scene") {
-      return false;
-    }
-
-    // Only if the webcam is in the same place
-    if (
-      previousScene.finalWebcamPosition !== sceneAndMetadata.finalWebcamPosition
-    ) {
-      return false;
-    }
-
-    // Only if it is not the first or second chapter (highlight slides from top to middle)
-    if (!chapters[chapterIndex - 2]) {
-      return false;
-    }
-
-    // Only if the previous scene has a display video
-    if (!previousScene.layout.displayLayout) {
-      return false;
-    }
-
-    // Not if it is the last chapter (highlight slides from middle to bottom)
-    const isLastChapter = !chapters[chapterIndex + 1];
-    if (isLastChapter) {
-      return false;
-    }
-
-    return previousScene.chapter !== sceneAndMetadata.chapter;
-  }, [
-    chapterIndex,
-    chapters,
-    previousScene,
-    sceneAndMetadata.chapter,
-    sceneAndMetadata.finalWebcamPosition,
-  ]);
-
-  // Should slide to the next chapter?
-  const exitChapterWithSlideToTop = useMemo(() => {
-    // Only if there is a next scene
-    if (!nextScene) {
-      return false;
-    }
-
-    // Only if it is a video scene
-    if (nextScene.type !== "video-scene") {
-      return false;
-    }
-
-    // Only if the webcam is in the same place
-    if (
-      nextScene.finalWebcamPosition !== sceneAndMetadata.finalWebcamPosition
-    ) {
-      return false;
-    }
-
-    // Only if the next scene has a display video
-    if (!nextScene.layout.displayLayout) {
-      return false;
-    }
-
-    // Only if it is not the first chapter (highlight slides from top to middle)
-    const isFirstChapter = !chapters[chapterIndex - 1];
-
-    if (isFirstChapter) {
-      return false;
-    }
-
-    // Not if it is the last chapter or the second last (highlight slides from middle to bottom)
-    const isLastOrSecondLastChapter = !chapters[chapterIndex + 2];
-
-    if (isLastOrSecondLastChapter) {
-      return false;
-    }
-
-    // Only if it is a different chapter
-    return nextScene.chapter !== sceneAndMetadata.chapter;
-  }, [
-    chapterIndex,
-    chapters,
-    nextScene,
-    sceneAndMetadata.chapter,
-    sceneAndMetadata.finalWebcamPosition,
-  ]);
-
-  // Should the chapter have it's highlight animated in the beginning?
-  const shouldSlideHighlight = useMemo(() => {
-    // Only if it comes from a previous scene
-    if (!previousScene) {
-      return false;
-    }
-
-    // Only if it was a video scene
-    if (previousScene.type !== "video-scene") {
-      return false;
-    }
-
-    // Only if the chapter was not the same
-    if (previousScene.chapter === sceneAndMetadata.chapter) {
-      return false;
-    }
-
-    // Only if the webcam is in the same place
-    if (
-      previousScene.finalWebcamPosition !== sceneAndMetadata.finalWebcamPosition
-    ) {
-      return false;
-    }
-
-    // Only if the previous scene has a display video
-    if (!previousScene.layout.displayLayout) {
-      return false;
-    }
-
-    return true;
-  }, [
-    previousScene,
-    sceneAndMetadata.chapter,
-    sceneAndMetadata.finalWebcamPosition,
-  ]);
-
   return (
     <>
       <AbsoluteFill>
-        {sceneAndMetadata.layout.displayLayout &&
-        sceneAndMetadata.pair.display ? (
+        {sceneAndMetadata.pair.display ? (
           <Screen
             scene={sceneAndMetadata}
             enter={enter}
@@ -245,7 +101,7 @@ export const CameraScene: React.FC<{
             canvasLayout={canvasLayout}
           />
         ) : null}
-        {chapter && canvasLayout === "landscape" ? (
+        {canvasLayout === "landscape" ? (
           <SelectedChapters
             inTransition={getChapterInTransition({
               currentScene: sceneAndMetadata,
@@ -255,19 +111,15 @@ export const CameraScene: React.FC<{
               currentScene: sceneAndMetadata,
               nextScene,
             })}
-            activeIndex={chapter.index}
             scene={sceneAndMetadata}
             nextScene={nextScene?.type === "video-scene" ? nextScene : null}
             previousScene={
               previousScene?.type === "video-scene" ? previousScene : null
             }
-            enterWithSlideFromBottom={enterChapterWithSlideFromBottom}
-            exitWithSlideToTop={exitChapterWithSlideToTop}
-            shouldSlideHighlight={shouldSlideHighlight}
-            shownChapters={shownChapters}
             enterProgress={enter}
             exitProgress={exit}
             theme={theme}
+            chapters={chapters}
           />
         ) : null}
         <Webcam

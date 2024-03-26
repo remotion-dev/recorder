@@ -23,32 +23,34 @@ import {
 export const SelectedChapters: React.FC<{
   inTransition: InTransition;
   outTransition: OutTransition;
-  shownChapters: ChapterType[];
   scene: VideoSceneAndMetadata;
   previousScene: VideoSceneAndMetadata | null;
   nextScene: VideoSceneAndMetadata | null;
-  activeIndex: number;
-  enterWithSlideFromBottom: boolean;
-  exitWithSlideToTop: boolean;
-  shouldSlideHighlight: boolean;
   enterProgress: number;
   exitProgress: number;
   theme: Theme;
+  chapters: ChapterType[];
 }> = ({
   inTransition,
   outTransition,
-  shownChapters,
-  activeIndex,
-  enterWithSlideFromBottom,
+  chapters,
   scene,
-  shouldSlideHighlight,
   nextScene,
   previousScene,
   enterProgress,
   exitProgress,
-  exitWithSlideToTop,
   theme,
 }) => {
+  const chapterIndex = chapters.findIndex((c) => c.title === scene.chapter);
+
+  const shownChapters =
+    chapterIndex === 0
+      ? chapters.slice(0, 3)
+      : chapters.slice(
+          Math.max(0, chapterIndex - 1),
+          Math.min(chapters.length, chapterIndex + 2),
+        );
+
   const { width, height } = useVideoConfig();
 
   const { x: xIn, y: yIn } = makeInTransition({
@@ -111,9 +113,134 @@ export const SelectedChapters: React.FC<{
     outTransition,
   ]);
 
+  // Should slide from the previous chapter?
+  const enterWithSlideFromBottom = useMemo(() => {
+    // Only if there is a previous scene
+    if (!previousScene) {
+      return false;
+    }
+
+    // Only if it is a video scene
+    if (previousScene.type !== "video-scene") {
+      return false;
+    }
+
+    // Only if the webcam is in the same place
+    if (previousScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+      return false;
+    }
+
+    // Only if it is not the first or second chapter (highlight slides from top to middle)
+    if (!chapters[chapterIndex - 2]) {
+      return false;
+    }
+
+    // Only if the previous scene has a display video
+    if (!previousScene.layout.displayLayout) {
+      return false;
+    }
+
+    // Not if it is the last chapter (highlight slides from middle to bottom)
+    const isLastChapter = !chapters[chapterIndex + 1];
+    if (isLastChapter) {
+      return false;
+    }
+
+    return previousScene.chapter !== scene.chapter;
+  }, [
+    chapterIndex,
+    chapters,
+    previousScene,
+    scene.chapter,
+    scene.finalWebcamPosition,
+  ]);
+
+  // Should slide to the next chapter?
+  const exitChapterWithSlideToTop = useMemo(() => {
+    // Only if there is a next scene
+    if (!nextScene) {
+      return false;
+    }
+
+    // Only if it is a video scene
+    if (nextScene.type !== "video-scene") {
+      return false;
+    }
+
+    // Only if the webcam is in the same place
+    if (nextScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+      return false;
+    }
+
+    // Only if the next scene has a display video
+    if (!nextScene.layout.displayLayout) {
+      return false;
+    }
+
+    // Only if it is not the first chapter (highlight slides from top to middle)
+    const isFirstChapter = !chapters[chapterIndex - 1];
+
+    if (isFirstChapter) {
+      return false;
+    }
+
+    // Not if it is the last chapter or the second last (highlight slides from middle to bottom)
+    const isLastOrSecondLastChapter = !chapters[chapterIndex + 2];
+
+    if (isLastOrSecondLastChapter) {
+      return false;
+    }
+
+    // Only if it is a different chapter
+    return nextScene.chapter !== scene.chapter;
+  }, [
+    chapterIndex,
+    chapters,
+    nextScene,
+    scene.chapter,
+    scene.finalWebcamPosition,
+  ]);
+
+  // Should the chapter have it's highlight animated in the beginning?
+  const shouldSlideHighlight = useMemo(() => {
+    // Only if it comes from a previous scene
+    if (!previousScene) {
+      return false;
+    }
+
+    // Only if it was a video scene
+    if (previousScene.type !== "video-scene") {
+      return false;
+    }
+
+    // Only if the chapter was not the same
+    if (previousScene.chapter === scene.chapter) {
+      return false;
+    }
+
+    // Only if the webcam is in the same place
+    if (previousScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+      return false;
+    }
+
+    // Only if the previous scene has a display video
+    if (!previousScene.layout.displayLayout) {
+      return false;
+    }
+
+    return true;
+  }, [previousScene, scene.chapter, scene.finalWebcamPosition]);
+
   if (scene.layout.displayLayout === null) {
     return null;
   }
+
+  const chapter = chapters[chapterIndex];
+  if (!chapter) {
+    return null;
+  }
+
+  const activeIndex = chapter.index;
 
   return (
     <AbsoluteFill
@@ -130,15 +257,15 @@ export const SelectedChapters: React.FC<{
           ...styles,
         }}
       >
-        {shownChapters.map((chapter, i) => {
+        {shownChapters.map((chap, i) => {
           return (
-            <div key={chapter.id}>
+            <div key={chap.id}>
               <WideLayoutChapter
                 activeIndex={activeIndex}
-                chapter={chapter}
+                chapter={chap}
                 enterWithSlide={enterWithSlideFromBottom}
                 slideHighlight={shouldSlideHighlight}
-                fadeOut={i === 0 && exitWithSlideToTop}
+                fadeOut={i === 0 && exitChapterWithSlideToTop}
                 isFirst={i === 0}
                 theme={theme}
                 isLast={i === shownChapters.length - 1}
@@ -148,7 +275,7 @@ export const SelectedChapters: React.FC<{
                 rightAligned={rightAligned}
                 enterProgress={enterProgress}
                 exitProgress={exitProgress}
-                exitWithSlide={exitWithSlideToTop}
+                exitWithSlide={exitChapterWithSlideToTop}
               />
             </div>
           );
