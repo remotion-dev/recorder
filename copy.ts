@@ -1,7 +1,7 @@
 import fs from "fs";
 import { WEBCAM_PREFIX } from "./config/cameras";
+import { convertAndTrimVideo } from "./scripts/convert-and-trim-video";
 import { getDownloadsFolder } from "./scripts/get-downloads-folder";
-import { removeSilence } from "./scripts/remove-silence";
 
 const prefix = "empty";
 
@@ -21,6 +21,6 @@ const sorted = webcam.sort((a, b) => {
 const latest = sorted[0];
 const latestTimestamp = Number(latest.match(/([0-9]+)/)![1]);
 
-await removeSilence(latestTimestamp, prefix);
+await convertAndTrimVideo(latestTimestamp, prefix);
 
 console.log("Copied", latest);
