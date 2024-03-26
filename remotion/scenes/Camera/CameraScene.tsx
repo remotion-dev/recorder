@@ -267,6 +267,7 @@ export const CameraScene: React.FC<{
             shownChapters={shownChapters}
             enterProgress={enter}
             exitProgress={exit}
+            theme={theme}
           />
         ) : null}
         <Webcam
@@ -298,6 +299,7 @@ export const CameraScene: React.FC<{
         <SquareChapter
           webcamPosition={sceneAndMetadata.finalWebcamPosition}
           title={sceneAndMetadata.scene.newChapter}
+          theme={theme}
         />
       ) : null}
       <SoundEffects

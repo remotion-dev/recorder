@@ -2,6 +2,7 @@ import { interpolateStyles, translate } from "@remotion/animation-utils";
 import React, { useMemo } from "react";
 import { AbsoluteFill, useVideoConfig } from "remotion";
 import type { VideoSceneAndMetadata } from "../../../config/scenes";
+import { Theme } from "../../../config/themes";
 import { isWebCamRight } from "../../animations/webcam-transitions";
 import type {
   InTransition,
@@ -32,6 +33,7 @@ export const SelectedChapters: React.FC<{
   shouldSlideHighlight: boolean;
   enterProgress: number;
   exitProgress: number;
+  theme: Theme;
 }> = ({
   inTransition,
   outTransition,
@@ -45,6 +47,7 @@ export const SelectedChapters: React.FC<{
   enterProgress,
   exitProgress,
   exitWithSlideToTop,
+  theme,
 }) => {
   const { width, height } = useVideoConfig();
 
@@ -137,6 +140,7 @@ export const SelectedChapters: React.FC<{
                 slideHighlight={shouldSlideHighlight}
                 fadeOut={i === 0 && exitWithSlideToTop}
                 isFirst={i === 0}
+                theme={theme}
                 isLast={i === shownChapters.length - 1}
                 fadeIn={
                   i === shownChapters.length - 1 && enterWithSlideFromBottom
