@@ -2,6 +2,7 @@ import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "child_process";
 import fs, { existsSync, mkdirSync } from "fs";
 import path from "path";
+import { WEBCAM_PREFIX } from "./config/cameras";
 import { getDownloadsFolder } from "./scripts/get-downloads-folder";
 
 const prefix = "empty";
@@ -10,7 +11,10 @@ const downloadsDir = getDownloadsFolder();
 
 const filesFromDownloads = fs.readdirSync(downloadsDir);
 
-const webcam = filesFromDownloads.filter((file) => file.includes("webcam"));
+const webcam = filesFromDownloads.filter((file) =>
+  file.startsWith(WEBCAM_PREFIX),
+);
+
 const sorted = webcam.sort((a, b) => {
   const timestampA = Number(a.match(/([0-9]+)/)![1]);
   const timestampB = Number(b.match(/([0-9]+)/)![1]);
@@ -24,10 +28,9 @@ const latestTimestamp = Number(latest.match(/([0-9]+)/)![1]);
 const folder = `public${path.sep}${prefix}`;
 
 const displayLatest = `display${latestTimestamp}.webm`;
-const webcamLatest = `webcam${latestTimestamp}.webm`;
+const webcamLatest = `${WEBCAM_PREFIX}${latestTimestamp}.webm`;
 
 const displaySrc = path.join(downloadsDir, displayLatest);
-
 const webcamSrc = path.join(downloadsDir, webcamLatest);
 
 mkdirSync(folder, { recursive: true });

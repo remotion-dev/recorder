@@ -1,6 +1,7 @@
 import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import { getStaticFiles } from "remotion";
+import { WEBCAM_PREFIX } from "../config/cameras";
 import { FPS } from "../config/fps";
 import type {
   Pair,
@@ -24,9 +25,9 @@ const getPairs = (prefix: string) => {
 
   return files
     .map((f): Pair | null => {
-      if (f.name.startsWith(`${prefix}/webcam`)) {
+      if (f.name.startsWith(`${prefix}/${WEBCAM_PREFIX}`)) {
         const timestamp = f.name
-          .replace(`${prefix}/webcam`, "")
+          .replace(`${prefix}/${WEBCAM_PREFIX}`, "")
           .replace(".webm", "")
           .replace(".mp4", "");
 
