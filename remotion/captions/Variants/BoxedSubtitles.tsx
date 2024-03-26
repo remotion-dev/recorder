@@ -33,7 +33,7 @@ export const BoxedSubtitles: React.FC<{
           getSubtitlesLines("boxed") *
           getSubtitlesFontSize("boxed", displayLayout) *
           LINE_HEIGHT,
-        marginTop: -5,
+        marginTop: 75,
       }}
     >
       <span
