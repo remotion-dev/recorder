@@ -42,7 +42,8 @@ const balanceWords = ({
   }
 
   for (let i = 1; i < 4; i++) {
-    const index = bestCut - i;
+    const index = bestCut - i > -1 ? bestCut - i : 0;
+
     const word = (words[index] as Word).word.trim();
     if (word.endsWith(",") || word.endsWith(".")) {
       bestCut = index + 1;
