@@ -1,6 +1,7 @@
 /* eslint-disable no-alert */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
+import { Button } from "./components/ui/button";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
 import { onVideo } from "./on-video";
@@ -54,7 +55,6 @@ const outer: React.CSSProperties = {
 const gridContainer: React.CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(2, 1fr)",
-  gridTemplateRows: "repeat(2, 1fr)",
   alignItems: "center",
   justifyItems: "center",
   flex: 1,
@@ -70,12 +70,22 @@ const mediaRecorderOptions: MediaRecorderOptions = {
 };
 
 const App = () => {
+  const [showAlternativeViews, setShowAlternativeViews] =
+    useState<boolean>(false); // load from local storage
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
   }>({ webcam: null, display: null, alternative1: null, alternative2: null });
+
+  const dynamicGridContainer = useMemo(() => {
+    if (showAlternativeViews) {
+      return { ...gridContainer, gridTemplateRows: "repeat(2, 1fr)" };
+    }
+
+    return { ...gridContainer, maxHeight: "50%" };
+  }, [showAlternativeViews]);
 
   const setMediaStream = useCallback(
     (prefix: Prefix, source: MediaStream | null) => {
@@ -194,7 +204,8 @@ const App = () => {
         recording={recording}
         disabledByParent={recordingDisabled}
       />
-      <div style={gridContainer}>
+      {showAlternativeViews ? null : <div style={{ height: "15%" }} />}
+      <div style={dynamicGridContainer}>
         <View
           prefix={"webcam"}
           devices={devices}
@@ -207,19 +218,33 @@ const App = () => {
           setMediaStream={setMediaStream}
           mediaStream={mediaSources.display}
         />
-        <View
-          prefix={"alternative1"}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative1}
-        />
-        <View
-          prefix={"alternative2"}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative2}
-        />
+        {showAlternativeViews ? (
+          <>
+            <View
+              prefix={"alternative1"}
+              devices={devices}
+              setMediaStream={setMediaStream}
+              mediaStream={mediaSources.alternative1}
+            />
+            <View
+              prefix={"alternative2"}
+              devices={devices}
+              setMediaStream={setMediaStream}
+              mediaStream={mediaSources.alternative2}
+            />
+          </>
+        ) : null}
       </div>
+
+      {/* eslint-disable-next-line no-negated-condition */}
+      {!showAlternativeViews ? (
+        <Button
+          onClick={() => setShowAlternativeViews(true)}
+          style={{ margin: "0px 10px" }}
+        >
+          Show More...
+        </Button>
+      ) : null}
     </div>
   );
 };
