@@ -1,6 +1,6 @@
 import { fillTextBox } from "@remotion/layout-utils";
 import type { Word } from "../../../config/autocorrect";
-import { autocorrectWord } from "../../../config/autocorrect";
+import { autocorrectWords } from "../../../config/autocorrect";
 import {
   MONOSPACE_FONT_FAMILY,
   MONOSPACE_FONT_WEIGHT,
@@ -190,16 +190,16 @@ export const postprocessSubtitles = ({
   canvasLayout: CanvasLayout;
   subtitleType: SubtitleType;
 }): SubTypes => {
+  const words = subTypes.transcription.map(whisperWordToWord);
+  const correctedWords = autocorrectWords(words);
+
   const allWords = wordsTogether(
-    subTypes.transcription
-      .map(whisperWordToWord)
-      .map(autocorrectWord)
-      .map((word) => {
-        return {
-          ...word,
-          word: word.word.replaceAll(/`\s/g, " `"),
-        };
-      }),
+    correctedWords.map((word) => {
+      return {
+        ...word,
+        word: word.word.replaceAll(/`\s/g, " `"),
+      };
+    }),
   );
 
   const preFilteredWords = removeWhisperBlankWords(allWords);

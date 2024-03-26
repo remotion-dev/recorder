@@ -5,47 +5,27 @@ export type Word = {
   monospace?: boolean;
 };
 
-export const autocorrectWord = (word: Word): Word => {
+const autocorrectWord = (word: Word): Word => {
+  // Replace a single word with another one
   if (word.word === " github") {
     return {
       ...word,
-      word: " GitHub",
+      word: word.word.replace("github", " GitHub"),
     };
   }
 
-  if (word.word === " BUN") {
-    return {
-      ...word,
-      word: " Bun",
-    };
-  }
-
-  if (word.word === " javascript") {
-    return {
-      ...word,
-      word: " JavaScript",
-    };
-  }
-
-  if (word.word.includes(" Algorra")) {
-    return {
-      ...word,
-      word: word.word.replace(" Algorra", " Algora"),
-    };
-  }
-
+  // Replace a pattern with a specific word
   if (word.word.match(/ remotion\.$/)) {
     return {
       ...word,
       word: word.word.replace(/ remotion.$/, " Remotion."),
     };
   }
+  // Add your own function to remap specific words.
 
-  return {
-    ...word,
-    word: word.word
-      .replace(" ReMotion", " Remotion")
-      .replace(" Monorepo", " monorepo")
-      .replace(" rust.", " Rust."),
-  };
+  return word;
+};
+
+export const autocorrectWords = (words: Word[]): Word[] => {
+  return words.map(autocorrectWord);
 };
