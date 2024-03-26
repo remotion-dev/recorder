@@ -6,14 +6,10 @@ import type {
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
-import {
-  getChapterInTransition,
-  getChapterOutTransition,
-} from "../../animations/widescreen-chapter-transitions";
 import { Subs } from "../../captions/Subs";
 import type { ChapterType } from "../../chapters/make-chapters";
 import { SquareChapter } from "../../chapters/square/SquareChapter";
-import { SelectedChapters } from "../../chapters/widescreen/SelectedChapters";
+import { LandscapeChapters } from "../../chapters/widescreen/SelectedChapters";
 import { Screen } from "./Screen";
 import { SoundEffects } from "./SoundEffects";
 import { Webcam } from "./Webcam";
@@ -62,18 +58,12 @@ export const CameraScene: React.FC<{
           />
         ) : null}
         {canvasLayout === "landscape" ? (
-          <SelectedChapters
-            inTransition={getChapterInTransition({
-              currentScene: sceneAndMetadata,
-              previousScene,
-            })}
-            outTransition={getChapterOutTransition({
-              currentScene: sceneAndMetadata,
-              nextScene,
-            })}
+          <LandscapeChapters
             scene={sceneAndMetadata}
-            nextScene={nextScene?.type === "video-scene" ? nextScene : null}
-            previousScene={
+            nextVideoScene={
+              nextScene?.type === "video-scene" ? nextScene : null
+            }
+            previousVideoScene={
               previousScene?.type === "video-scene" ? previousScene : null
             }
             enterProgress={enter}
