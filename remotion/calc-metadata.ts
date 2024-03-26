@@ -43,8 +43,8 @@ const getPairs = (prefix: string) => {
       const display = files.find((_f) =>
         _f.name.startsWith(`${prefix}/${DISPLAY_PREFIX}${timestamp}`),
       );
-      const sub = files.find(
-        (_f) => _f.name === `${prefix}/${SUBS_PREFIX}${timestamp}`,
+      const sub = files.find((_f) =>
+        _f.name.startsWith(`${prefix}/${SUBS_PREFIX}${timestamp}`),
       );
       const alternative1 = files.find((_f) =>
         _f.name.startsWith(`${prefix}/${ALTERNATIVE1_PREFIX}${timestamp}`),

@@ -37,13 +37,20 @@ type Props = {
   theme: Theme;
 };
 
-const InnerScene: React.FC<Props> = ({
+const InnerScene: React.FC<
+  Props & {
+    enter: number;
+    exit: number;
+  }
+> = ({
   canvasLayout,
   chapters,
   nextScene,
   previousScene,
   sceneAndMetadata,
   theme,
+  enter,
+  exit,
 }) => {
   if (sceneAndMetadata.scene.type === "title") {
     return (
@@ -87,15 +94,9 @@ const InnerScene: React.FC<Props> = ({
 
   return (
     <CameraScene
-      shouldEnter={getShouldTransitionIn({
-        scene: sceneAndMetadata,
-        previousScene,
-      })}
+      enter={enter}
       canvasLayout={canvasLayout}
-      shouldExit={getShouldTransitionOut({
-        sceneAndMetadata,
-        nextScene,
-      })}
+      exit={exit}
       nextScene={nextScene}
       previousScene={previousScene}
       sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
@@ -165,7 +166,7 @@ const SceneWithTransition: React.FC<Props> = (props) => {
 
   return (
     <AbsoluteFill style={style}>
-      <InnerScene {...props} />
+      <InnerScene {...props} enter={enter} exit={exit} />
     </AbsoluteFill>
   );
 };
