@@ -3,7 +3,7 @@ import { execSync } from "child_process";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import path from "path";
-import { WHISPER_MODEL, WHISPER_PATH } from "./install-whisper";
+import { WHISPER_MODEL, WHISPER_PATH } from "../../config/whisper";
 
 export const captionFile = async ({
   file,
