@@ -2,7 +2,6 @@ import { $ } from "bun";
 import { cpSync, rmdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { SOUNDS_FOLDER } from "./config/sounds";
 
 const tmp = path.join(tmpdir(), "recorder");
 
@@ -26,7 +25,7 @@ const getFilesInGit = async (folder: string) => {
     .filter(Boolean)
     .filter((file) => {
       if (file.startsWith("public")) {
-        return file.startsWith("public/" + SOUNDS_FOLDER);
+        return false;
       }
 
       if (file === ".gitattributes") {
