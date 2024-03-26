@@ -204,7 +204,6 @@ const App = () => {
         recording={recording}
         disabledByParent={recordingDisabled}
       />
-      {showAlternativeViews ? null : <div style={{ height: "15%" }} />}
       <div style={dynamicGridContainer}>
         <View
           prefix={"webcam"}
