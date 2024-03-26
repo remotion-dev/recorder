@@ -23,7 +23,9 @@ export const captionFile = async ({
   const wavFile = path.join(tmpDir, `${file.split(".")[0]}.wav`);
 
   // extracting audio from mp4 and save it as 16khz wav file
-  execSync(`npx remotion ffmpeg -i ${fileToTranscribe} -ar 16000 ${wavFile}`);
+  execSync(
+    `npx remotion ffmpeg -hide_banner -i ${fileToTranscribe} -ar 16000 -y ${wavFile}`,
+  );
 
   const output = await transcribe({
     inputPath: wavFile,
