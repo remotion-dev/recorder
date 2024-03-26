@@ -1,5 +1,6 @@
 import { existsSync, lstatSync, readdirSync } from "node:fs";
 import path from "path";
+import { WEBCAM_PREFIX } from "./config/cameras";
 import { captionFile } from "./scripts/captions/caption-file";
 import { ensureWhisper } from "./scripts/captions/install-whisper";
 
@@ -16,7 +17,7 @@ for (const folder of foldersInPublicFolder) {
   const files = readdirSync(absoluteFolder).filter((f) => f !== ".DS_Store");
 
   for (const file of files) {
-    if (!file.startsWith("webcam")) {
+    if (!file.startsWith(WEBCAM_PREFIX)) {
       continue;
     }
 
@@ -24,7 +25,7 @@ for (const folder of foldersInPublicFolder) {
 
     const outPath = path.join(
       absoluteFolder,
-      `${(file.split(".")[0] as string).replace("webcam", "subs")}.json`,
+      `${(file.split(".")[0] as string).replace(WEBCAM_PREFIX, "subs")}.json`,
     );
 
     if (existsSync(outPath)) {

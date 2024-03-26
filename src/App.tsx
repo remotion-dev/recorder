@@ -1,5 +1,6 @@
 /* eslint-disable no-alert */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { WEBCAM_PREFIX } from "../config/cameras";
 import "./App.css";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
@@ -96,7 +97,7 @@ const App = () => {
       }
 
       const mimeType =
-        prefix === "webcam"
+        prefix === WEBCAM_PREFIX
           ? "video/webm;codecs=vp8,opus"
           : "video/webm;codecs=vp8";
 
@@ -196,7 +197,7 @@ const App = () => {
       />
       <div style={gridContainer}>
         <View
-          prefix={"webcam"}
+          prefix={WEBCAM_PREFIX}
           devices={devices}
           setMediaStream={setMediaStream}
           mediaStream={mediaSources.webcam}
