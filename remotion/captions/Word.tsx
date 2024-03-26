@@ -77,7 +77,7 @@ const getWordColor = ({
 
   return monospace && appeared
     ? {
-        appeared: COLORS[theme].WORD_HIGHLIGHT_COLOR,
+        appeared: COLORS[theme].ACCENT_COLOR,
         greyed: COLORS[theme].WORD_COLOR_ON_BG_GREYED,
       }
     : normalWordColor;
@@ -134,7 +134,7 @@ export const WordComp: React.FC<{
 
   const backgroundColor = active
     ? word.monospace
-      ? COLORS[theme].WORD_HIGHLIGHT_COLOR
+      ? COLORS[theme].ACCENT_COLOR
       : "transparent"
     : "transparent";
 
@@ -144,9 +144,6 @@ export const WordComp: React.FC<{
     <>
       <span>{startsWithSpace && " "}</span>
       <span
-        onPointerEnter={() => setHovered(true)}
-        onPointerLeave={() => setHovered(false)}
-        onClick={() => onOpenSubEditor(word)}
         style={{
           ...style,
           fontFamily: word.monospace
@@ -171,6 +168,9 @@ export const WordComp: React.FC<{
           display: "inline",
           cursor: "pointer",
         }}
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
+        onClick={() => onOpenSubEditor(word)}
       >
         {word.word.trim()}
       </span>

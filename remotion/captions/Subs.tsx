@@ -269,8 +269,9 @@ export const Subs: React.FC<{
           setWhisperOutput={setAndSaveWhisperOutput}
           whisperOutput={whisperOutput}
           fileName={file.name}
-          onCloseSubEditor={onCloseSubEditor}
           trimStart={trimStart}
+          theme={theme}
+          onCloseSubEditor={onCloseSubEditor}
         />
       ) : null}
     </AbsoluteFill>

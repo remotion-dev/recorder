@@ -50,12 +50,13 @@ const InnerScene: React.FC<Props> = ({
       <Title
         subtitle={sceneAndMetadata.scene.subtitle}
         title={sceneAndMetadata.scene.title}
+        theme={theme}
       />
     );
   }
 
   if (sceneAndMetadata.scene.type === "remotionupdate") {
-    return <UpdateScene />;
+    return <UpdateScene theme={theme} />;
   }
 
   if (sceneAndMetadata.scene.type === "titlecard") {

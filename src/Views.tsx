@@ -225,7 +225,7 @@ export const View: React.FC<{
   ]);
   const selectScreen = () => {
     window.navigator.mediaDevices
-      // getDisplayMedia asks the user for permission to capture the screen
+      // GetDisplayMedia asks the user for permission to capture the screen
       .getDisplayMedia({ video: true })
       .then((stream) => {
         setMediaStream(prefix, stream);
@@ -303,8 +303,8 @@ export const View: React.FC<{
       <div style={videoWrapper} id={prefix + "-video-container"}>
         <video
           ref={sourceRef}
-          style={dynamicVideoStyle}
           muted
+          style={dynamicVideoStyle}
           onLoadedMetadata={onLoadedMetadata}
         />
 

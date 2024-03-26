@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { interpolate } from "remotion";
 import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
+import { COLORS, Theme } from "../../../config/themes";
 import type { ChapterType } from "../make-chapters";
 
 export const CHAPTER_HEIGHT = 80;
@@ -19,6 +20,7 @@ export const WideLayoutChapter: React.FC<{
   rightAligned: boolean;
   exitProgress: number;
   enterProgress: number;
+  theme: Theme;
 }> = ({
   chapter,
   activeIndex,
@@ -32,6 +34,7 @@ export const WideLayoutChapter: React.FC<{
   exitProgress,
   enterProgress,
   exitWithSlide,
+  theme,
 }) => {
   const isPrevious = chapter.index === activeIndex - 1;
   const isCurrent = chapter.index === activeIndex;
@@ -136,7 +139,7 @@ export const WideLayoutChapter: React.FC<{
         <div
           style={{
             ...textStyle,
-            backgroundColor: "#0b84f3",
+            backgroundColor: COLORS[theme].ACCENT_COLOR,
             color: "white",
             WebkitMaskImage: maskImage,
             maskImage,
@@ -150,7 +153,7 @@ export const WideLayoutChapter: React.FC<{
         <div
           style={{
             ...textStyle,
-            backgroundColor: "#0b84f3",
+            backgroundColor: COLORS[theme].ACCENT_COLOR,
             color: "white",
             WebkitMaskImage: previousMaskImage,
             maskImage: previousMaskImage,
