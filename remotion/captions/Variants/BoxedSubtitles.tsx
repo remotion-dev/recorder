@@ -44,6 +44,7 @@ export const BoxedSubtitles: React.FC<{
           WebkitBoxDecorationBreak: "clone",
           paddingLeft: padding,
           paddingRight: padding,
+          wordBreak: "break-all",
         }}
       >
         <Words
