@@ -49,7 +49,6 @@ const getPairs = (prefix: string) => {
       const alternative1 = files.find((_f) =>
         _f.name.startsWith(`${prefix}/${ALTERNATIVE1_PREFIX}${timestamp}`),
       );
-
       const alternative2 = files.find((_f) =>
         _f.name.startsWith(`${prefix}/${ALTERNATIVE2_PREFIX}${timestamp}`),
       );
