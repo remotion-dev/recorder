@@ -9,7 +9,8 @@ import {
   useVideoConfig,
 } from "remotion";
 import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
-import { COLORS, Theme } from "../../../config/themes";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 
 const size = 180;
 const padding = 20;

@@ -2,7 +2,12 @@
 /* eslint-disable no-alert */
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { WEBCAM_PREFIX } from "../config/cameras";
+import {
+  ALTERNATIVE1_PREFIX,
+  ALTERNATIVE2_PREFIX,
+  DISPLAY_PREFIX,
+  WEBCAM_PREFIX,
+} from "../config/cameras";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
 import { Spinner } from "./components/Spinner";
@@ -59,9 +64,9 @@ const viewName: React.CSSProperties = {
 
 export const prefixes = [
   WEBCAM_PREFIX,
-  "display",
-  "alternative1",
-  "alternative2",
+  DISPLAY_PREFIX,
+  ALTERNATIVE1_PREFIX,
+  ALTERNATIVE2_PREFIX,
 ] as const;
 export type Prefix = (typeof prefixes)[number];
 

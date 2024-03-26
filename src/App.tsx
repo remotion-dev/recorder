@@ -1,6 +1,11 @@
 /* eslint-disable no-alert */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { WEBCAM_PREFIX } from "../config/cameras";
+import {
+  ALTERNATIVE1_PREFIX,
+  ALTERNATIVE2_PREFIX,
+  DISPLAY_PREFIX,
+  WEBCAM_PREFIX,
+} from "../config/cameras";
 import "./App.css";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
@@ -76,7 +81,12 @@ const App = () => {
   const [recording, setRecording] = useState<false | number>(false);
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
-  }>({ webcam: null, display: null, alternative1: null, alternative2: null });
+  }>({
+    webcam: null,
+    display: null,
+    alternative1: null,
+    alternative2: null,
+  });
 
   const setMediaStream = useCallback(
     (prefix: Prefix, source: MediaStream | null) => {
@@ -203,19 +213,19 @@ const App = () => {
           mediaStream={mediaSources.webcam}
         />
         <View
-          prefix={"display"}
+          prefix={DISPLAY_PREFIX}
           devices={devices}
           setMediaStream={setMediaStream}
           mediaStream={mediaSources.display}
         />
         <View
-          prefix={"alternative1"}
+          prefix={ALTERNATIVE1_PREFIX}
           devices={devices}
           setMediaStream={setMediaStream}
           mediaStream={mediaSources.alternative1}
         />
         <View
-          prefix={"alternative2"}
+          prefix={ALTERNATIVE2_PREFIX}
           devices={devices}
           setMediaStream={setMediaStream}
           mediaStream={mediaSources.alternative2}
