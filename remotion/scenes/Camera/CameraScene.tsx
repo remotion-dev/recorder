@@ -1,17 +1,11 @@
 import React from "react";
-import {
-  AbsoluteFill,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { AbsoluteFill } from "remotion";
 import type { CanvasLayout } from "../../../config/layout";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
-import { TRANSITION_DURATION } from "../../../config/transitions";
 import {
   getChapterInTransition,
   getChapterOutTransition,
@@ -25,8 +19,8 @@ import { SoundEffects } from "./SoundEffects";
 import { Webcam } from "./Webcam";
 
 export const CameraScene: React.FC<{
-  shouldEnter: boolean;
-  shouldExit: boolean;
+  enter: number;
+  exit: number;
   canvasLayout: CanvasLayout;
   sceneAndMetadata: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
@@ -34,8 +28,8 @@ export const CameraScene: React.FC<{
   theme: Theme;
   chapters: ChapterType[];
 }> = ({
-  shouldEnter,
-  shouldExit,
+  enter,
+  exit,
   sceneAndMetadata,
   canvasLayout,
   nextScene,
@@ -47,40 +41,6 @@ export const CameraScene: React.FC<{
 
   const startFrom = scene.trimStart ?? 0;
   const endAt = scene.duration ? startFrom + scene.duration : undefined;
-
-  const { fps, durationInFrames } = useVideoConfig();
-  const frame = useCurrentFrame();
-
-  const enter = (() => {
-    if (!shouldEnter) {
-      return 1;
-    }
-
-    return spring({
-      fps,
-      frame,
-      durationInFrames: TRANSITION_DURATION,
-      config: {
-        damping: 200,
-      },
-    });
-  })();
-
-  const exit = (() => {
-    if (!shouldExit) {
-      return 0;
-    }
-
-    return spring({
-      fps,
-      frame,
-      durationInFrames: TRANSITION_DURATION,
-      config: {
-        damping: 200,
-      },
-      delay: durationInFrames - TRANSITION_DURATION,
-    });
-  })();
 
   if (sceneAndMetadata.type !== "video-scene") {
     throw new Error("Not a camera scene");
@@ -157,7 +117,6 @@ export const CameraScene: React.FC<{
       <SoundEffects
         previousScene={previousScene}
         sceneAndMetadata={sceneAndMetadata}
-        shouldEnter={shouldEnter}
       />
     </>
   );

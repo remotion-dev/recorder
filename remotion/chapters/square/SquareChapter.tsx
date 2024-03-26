@@ -8,7 +8,8 @@ import {
 import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
 import { getSafeSpace } from "../../../config/layout";
 import type { WebcamPosition } from "../../../config/scenes";
-import { COLORS, Theme } from "../../../config/themes";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 import { borderRadius } from "../../layout/get-layout";
 
 export const SquareChapter: React.FC<{

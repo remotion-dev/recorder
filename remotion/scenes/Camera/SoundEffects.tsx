@@ -11,12 +11,7 @@ import {
 export const SoundEffects: React.FC<{
   previousScene: SceneAndMetadata | null;
   sceneAndMetadata: VideoSceneAndMetadata;
-  shouldEnter: boolean;
-}> = ({ previousScene, sceneAndMetadata, shouldEnter }) => {
-  if (!shouldEnter) {
-    return null;
-  }
-
+}> = ({ previousScene, sceneAndMetadata }) => {
   if (
     previousScene &&
     isShrinkingToMiniature({
