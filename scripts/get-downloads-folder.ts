@@ -30,11 +30,16 @@ function windows() {
 }
 
 export const getDownloadsFolder = () => {
-  return {
-    darwin,
-    freebsd: unix,
-    linux: unix,
-    sunos: unix,
-    win32: windows,
-  }[os.platform()]();
+  switch (os.platform()) {
+    case "darwin":
+      return darwin();
+    case "freebsd":
+    case "linux":
+    case "sunos":
+      return unix();
+    case "win32":
+      return windows();
+    default:
+      throw new Error("Unsupported platform");
+  }
 };
