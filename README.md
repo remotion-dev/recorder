@@ -7,4 +7,13 @@
   </a>
 </p>
 
-View documentation at https://remotion.dev/recorder
+<p align="center"><strong>Video production for developers</strong></p>
+
+Remotion Recorder is a customizable template for recording, editing and rendering videos in JavaScript.
+
+View documentation at: [remotion.dev/recorder](https://remotion.dev/recorder)
+
+## License
+
+Note that for some entities a company license is needed. [Read the terms here](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md).  
+Additionally, you may not share the source code of this private template with others.
