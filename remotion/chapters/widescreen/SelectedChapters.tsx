@@ -2,7 +2,7 @@ import { interpolateStyles, translate } from "@remotion/animation-utils";
 import React, { useMemo } from "react";
 import { AbsoluteFill, useVideoConfig } from "remotion";
 import type { VideoSceneAndMetadata } from "../../../config/scenes";
-import { Theme } from "../../../config/themes";
+import type { Theme } from "../../../config/themes";
 import { isWebCamRight } from "../../animations/webcam-transitions";
 import type {
   InTransition,

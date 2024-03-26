@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
 import { interpolate } from "remotion";
 import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
-import { COLORS, Theme } from "../../../config/themes";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 import type { ChapterType } from "../make-chapters";
 
 export const CHAPTER_HEIGHT = 80;

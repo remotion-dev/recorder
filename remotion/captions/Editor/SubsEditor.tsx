@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import ReactDOM from "react-dom";
 import { AbsoluteFill } from "remotion";
 import type { Word } from "../../../config/autocorrect";
-import { Theme } from "../../../config/themes";
+import type { Theme } from "../../../config/themes";
 import type { WhisperOutput } from "../types";
 import { EditWord } from "./EditWord";
 import { SubsEditorFooter } from "./Footer";

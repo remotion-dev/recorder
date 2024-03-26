@@ -1,7 +1,8 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
 import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
-import { COLORS, Theme } from "../../../config/themes";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 
 export const Title: React.FC<{
   title: string;
