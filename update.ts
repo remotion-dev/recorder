@@ -29,6 +29,10 @@ const getFilesInGit = async (folder: string) => {
         return file.startsWith("public/" + SOUNDS_FOLDER);
       }
 
+      if (file === ".gitattributes") {
+        return false;
+      }
+
       if (file.startsWith("config")) {
         const knownConfigs = [
           "endcard.ts",
