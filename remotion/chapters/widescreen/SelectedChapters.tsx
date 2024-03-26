@@ -4,11 +4,9 @@ import { AbsoluteFill, useVideoConfig } from "remotion";
 import type { VideoSceneAndMetadata } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
 import { isWebCamRight } from "../../animations/webcam-transitions";
-import type {
-  InTransition,
-  OutTransition,
-} from "../../animations/widescreen-chapter-transitions";
 import {
+  getChapterInTransition,
+  getChapterOutTransition,
   makeInTransition,
   makeOutTransition,
 } from "../../animations/widescreen-chapter-transitions";
@@ -20,28 +18,32 @@ import {
   WideLayoutChapter,
 } from "./WideLayoutChapter";
 
-export const SelectedChapters: React.FC<{
-  inTransition: InTransition;
-  outTransition: OutTransition;
+export const LandscapeChapters: React.FC<{
   scene: VideoSceneAndMetadata;
-  previousScene: VideoSceneAndMetadata | null;
-  nextScene: VideoSceneAndMetadata | null;
+  previousVideoScene: VideoSceneAndMetadata | null;
+  nextVideoScene: VideoSceneAndMetadata | null;
   enterProgress: number;
   exitProgress: number;
   theme: Theme;
   chapters: ChapterType[];
 }> = ({
-  inTransition,
-  outTransition,
   chapters,
   scene,
-  nextScene,
-  previousScene,
+  nextVideoScene,
+  previousVideoScene,
   enterProgress,
   exitProgress,
   theme,
 }) => {
   const chapterIndex = chapters.findIndex((c) => c.title === scene.chapter);
+  const inTransition = getChapterInTransition({
+    currentScene: scene,
+    previousScene: previousVideoScene,
+  });
+  const outTransition = getChapterOutTransition({
+    currentScene: scene,
+    nextScene: nextVideoScene,
+  });
 
   const shownChapters =
     chapterIndex === 0
@@ -81,12 +83,12 @@ export const SelectedChapters: React.FC<{
   const styles = useMemo((): React.CSSProperties => {
     const currentStyle = getWidescreenChapterStyle(scene, tableOfContentHeight);
 
-    const previousChapterStyle = previousScene
-      ? getWidescreenChapterStyle(previousScene, tableOfContentHeight)
+    const previousChapterStyle = previousVideoScene
+      ? getWidescreenChapterStyle(previousVideoScene, tableOfContentHeight)
       : null;
 
-    const nextChapterStyle = nextScene
-      ? getWidescreenChapterStyle(nextScene, tableOfContentHeight)
+    const nextChapterStyle = nextVideoScene
+      ? getWidescreenChapterStyle(nextVideoScene, tableOfContentHeight)
       : null;
 
     return interpolateStyles(
@@ -105,8 +107,8 @@ export const SelectedChapters: React.FC<{
   }, [
     scene,
     tableOfContentHeight,
-    previousScene,
-    nextScene,
+    previousVideoScene,
+    nextVideoScene,
     enterProgress,
     exitProgress,
     inTransition,
@@ -116,17 +118,17 @@ export const SelectedChapters: React.FC<{
   // Should slide from the previous chapter?
   const enterWithSlideFromBottom = useMemo(() => {
     // Only if there is a previous scene
-    if (!previousScene) {
+    if (!previousVideoScene) {
       return false;
     }
 
     // Only if it is a video scene
-    if (previousScene.type !== "video-scene") {
+    if (previousVideoScene.type !== "video-scene") {
       return false;
     }
 
     // Only if the webcam is in the same place
-    if (previousScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+    if (previousVideoScene.finalWebcamPosition !== scene.finalWebcamPosition) {
       return false;
     }
 
@@ -136,7 +138,7 @@ export const SelectedChapters: React.FC<{
     }
 
     // Only if the previous scene has a display video
-    if (!previousScene.layout.displayLayout) {
+    if (!previousVideoScene.layout.displayLayout) {
       return false;
     }
 
@@ -146,11 +148,11 @@ export const SelectedChapters: React.FC<{
       return false;
     }
 
-    return previousScene.chapter !== scene.chapter;
+    return previousVideoScene.chapter !== scene.chapter;
   }, [
     chapterIndex,
     chapters,
-    previousScene,
+    previousVideoScene,
     scene.chapter,
     scene.finalWebcamPosition,
   ]);
@@ -158,22 +160,22 @@ export const SelectedChapters: React.FC<{
   // Should slide to the next chapter?
   const exitChapterWithSlideToTop = useMemo(() => {
     // Only if there is a next scene
-    if (!nextScene) {
+    if (!nextVideoScene) {
       return false;
     }
 
     // Only if it is a video scene
-    if (nextScene.type !== "video-scene") {
+    if (nextVideoScene.type !== "video-scene") {
       return false;
     }
 
     // Only if the webcam is in the same place
-    if (nextScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+    if (nextVideoScene.finalWebcamPosition !== scene.finalWebcamPosition) {
       return false;
     }
 
     // Only if the next scene has a display video
-    if (!nextScene.layout.displayLayout) {
+    if (!nextVideoScene.layout.displayLayout) {
       return false;
     }
 
@@ -192,11 +194,11 @@ export const SelectedChapters: React.FC<{
     }
 
     // Only if it is a different chapter
-    return nextScene.chapter !== scene.chapter;
+    return nextVideoScene.chapter !== scene.chapter;
   }, [
     chapterIndex,
     chapters,
-    nextScene,
+    nextVideoScene,
     scene.chapter,
     scene.finalWebcamPosition,
   ]);
@@ -204,32 +206,32 @@ export const SelectedChapters: React.FC<{
   // Should the chapter have it's highlight animated in the beginning?
   const shouldSlideHighlight = useMemo(() => {
     // Only if it comes from a previous scene
-    if (!previousScene) {
+    if (!previousVideoScene) {
       return false;
     }
 
     // Only if it was a video scene
-    if (previousScene.type !== "video-scene") {
+    if (previousVideoScene.type !== "video-scene") {
       return false;
     }
 
     // Only if the chapter was not the same
-    if (previousScene.chapter === scene.chapter) {
+    if (previousVideoScene.chapter === scene.chapter) {
       return false;
     }
 
     // Only if the webcam is in the same place
-    if (previousScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+    if (previousVideoScene.finalWebcamPosition !== scene.finalWebcamPosition) {
       return false;
     }
 
     // Only if the previous scene has a display video
-    if (!previousScene.layout.displayLayout) {
+    if (!previousVideoScene.layout.displayLayout) {
       return false;
     }
 
     return true;
-  }, [previousScene, scene.chapter, scene.finalWebcamPosition]);
+  }, [previousVideoScene, scene.chapter, scene.finalWebcamPosition]);
 
   if (scene.layout.displayLayout === null) {
     return null;
