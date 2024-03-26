@@ -282,11 +282,11 @@ export const CameraScene: React.FC<{
           previousScene={previousScene}
         />
       </AbsoluteFill>
-      {sceneAndMetadata.pair.sub ? (
+      {sceneAndMetadata.pair.subs ? (
         <Subs
           canvasLayout={canvasLayout}
           trimStart={startFrom}
-          file={sceneAndMetadata.pair.sub}
+          file={sceneAndMetadata.pair.subs}
           enter={enter}
           exit={exit}
           scene={sceneAndMetadata}

@@ -1,7 +1,13 @@
 import { getVideoMetadata } from "@remotion/media-utils";
 import type { CalculateMetadataFunction } from "remotion";
 import { getStaticFiles } from "remotion";
-import { WEBCAM_PREFIX } from "../config/cameras";
+import {
+  ALTERNATIVE1_PREFIX,
+  ALTERNATIVE2_PREFIX,
+  DISPLAY_PREFIX,
+  SUBS_PREFIX,
+  WEBCAM_PREFIX,
+} from "../config/cameras";
 import { FPS } from "../config/fps";
 import type {
   Pair,
@@ -24,27 +30,37 @@ const getPairs = (prefix: string) => {
   const files = getStaticFiles().filter((f) => f.name.startsWith(prefix));
 
   return files
-    .map((f): Pair | null => {
-      if (f.name.startsWith(`${prefix}/${WEBCAM_PREFIX}`)) {
-        const timestamp = f.name
-          .replace(`${prefix}/${WEBCAM_PREFIX}`, "")
-          .replace(".webm", "")
-          .replace(".mp4", "");
-
-        const display = files.find(
-          (_f) =>
-            _f.name === `${prefix}/display${timestamp}.webm` ||
-            _f.name === `${prefix}/display${timestamp}.mp4`,
-        );
-
-        const sub = files.find((_f) => {
-          return _f.name === `${prefix}/subs${timestamp}.json`;
-        });
-
-        return { display: display ?? null, webcam: f, sub: sub ?? null };
+    .map((file): Pair | null => {
+      if (!file.name.startsWith(`${prefix}/${WEBCAM_PREFIX}`)) {
+        return null;
       }
 
-      return null;
+      const timestamp = file.name
+        .replace(`${prefix}/${WEBCAM_PREFIX}`, "")
+        .replace(".webm", "")
+        .replace(".mp4", "");
+
+      const display = files.find((_f) =>
+        _f.name.startsWith(`${prefix}/${DISPLAY_PREFIX}${timestamp}`),
+      );
+      const sub = files.find(
+        (_f) => _f.name === `${prefix}/${SUBS_PREFIX}${timestamp}`,
+      );
+      const alternative1 = files.find((_f) =>
+        _f.name.startsWith(`${prefix}/${ALTERNATIVE1_PREFIX}${timestamp}`),
+      );
+
+      const alternative2 = files.find((_f) =>
+        _f.name.startsWith(`${prefix}/${ALTERNATIVE2_PREFIX}${timestamp}`),
+      );
+
+      return {
+        webcam: file,
+        display: display ?? null,
+        subs: sub ?? null,
+        alternative1: alternative1 ?? null,
+        alternative2: alternative2 ?? null,
+      };
     })
     .filter(Boolean) as Pair[];
 };
