@@ -234,16 +234,26 @@ const App = () => {
           </>
         ) : null}
       </div>
-
-      {/* eslint-disable-next-line no-negated-condition */}
-      {!showAlternativeViews ? (
-        <Button
-          onClick={() => setShowAlternativeViews(true)}
-          style={{ margin: "0px 10px" }}
-        >
-          Show More...
-        </Button>
-      ) : null}
+      <div style={{ marginBottom: 10 }}>
+        {/* eslint-disable-next-line no-negated-condition */}
+        {!showAlternativeViews ? (
+          <Button
+            variant={"ghost"}
+            onClick={() => setShowAlternativeViews(true)}
+            style={{ margin: "0px 10px", width: 100 }}
+          >
+            Show More...
+          </Button>
+        ) : (
+          <Button
+            variant={"ghost"}
+            onClick={() => setShowAlternativeViews(false)}
+            style={{ margin: "0px 10px", width: 100 }}
+          >
+            Show Less...
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
