@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { COLORS, Theme } from "../../../config/themes";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 import type { WhisperWord } from "../types";
 import {
   FIRST_COLUMN_WIDTH,
