@@ -1,5 +1,5 @@
 import { $ } from "bun";
-import { cpSync, rmdirSync, rmSync } from "node:fs";
+import { cpSync, existsSync, rmdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -79,7 +79,9 @@ for (const file of filesInUpstream) {
 
 for (const file of filesNotInUpstream) {
   const fullPath = path.join(process.cwd(), file);
-  rmSync(fullPath);
+  if (existsSync(fullPath)) {
+    rmSync(fullPath);
+  }
 }
 
 rmdirSync(tmp, { recursive: true });
