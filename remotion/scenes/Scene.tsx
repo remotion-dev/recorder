@@ -21,6 +21,7 @@ import {
 } from "../animations/transitions";
 import type { ChapterType } from "../chapters/make-chapters";
 import { CameraScene } from "./Camera/CameraScene";
+import { SoundEffects } from "./Camera/SoundEffects";
 import { EndCard } from "./EndCard";
 import { TableOfContents } from "./TableOfContents";
 import { Title } from "./Title/Title";
@@ -167,6 +168,11 @@ const SceneWithTransition: React.FC<Props> = (props) => {
   return (
     <AbsoluteFill style={style}>
       <InnerScene {...props} enter={enter} exit={exit} />
+      <SoundEffects
+        previousScene={props.previousScene}
+        sceneAndMetadata={props.sceneAndMetadata}
+        shouldEnter={shouldEnter}
+      />
     </AbsoluteFill>
   );
 };
@@ -183,8 +189,7 @@ export const Scene: React.FC<Props> = ({
   const chapter =
     sceneAndMetadata.scene.type === "videoscene"
       ? sceneAndMetadata.scene.newChapter
-      : "";
-
+      : undefined;
   return (
     <Sequence
       name={`Scene ${index} ${chapter ? `(${chapter})` : ""}`}
