@@ -10,6 +10,7 @@ import {
   MONOSPACE_FONT_FAMILY,
   MONOSPACE_FONT_WEIGHT,
   REGULAR_FONT_FAMILY,
+  REGULAR_FONT_WEIGHT,
 } from "../../config/fonts";
 import type { Theme } from "../../config/themes";
 import { COLORS } from "../../config/themes";
@@ -152,7 +153,8 @@ export const WordComp: React.FC<{
           color: shownWordColor,
           fontWeight: word.monospace
             ? MONOSPACE_FONT_WEIGHT
-            : MONOSPACE_FONT_FAMILY,
+            : REGULAR_FONT_WEIGHT,
+
           backgroundColor,
           outline: hovered
             ? "2px solid black"
