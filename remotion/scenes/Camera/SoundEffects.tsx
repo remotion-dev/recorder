@@ -1,8 +1,5 @@
 import { Audio, staticFile } from "remotion";
-import type {
-  SceneAndMetadata,
-  VideoSceneAndMetadata,
-} from "../../../config/scenes";
+import type { SceneAndMetadata } from "../../../config/scenes";
 import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,
@@ -10,8 +7,13 @@ import {
 
 export const SoundEffects: React.FC<{
   previousScene: SceneAndMetadata | null;
-  sceneAndMetadata: VideoSceneAndMetadata;
-}> = ({ previousScene, sceneAndMetadata }) => {
+  sceneAndMetadata: SceneAndMetadata;
+  shouldEnter: boolean;
+}> = ({ previousScene, sceneAndMetadata, shouldEnter }) => {
+  if (!shouldEnter) {
+    return null;
+  }
+
   if (
     previousScene &&
     isShrinkingToMiniature({

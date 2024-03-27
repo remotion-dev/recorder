@@ -57,7 +57,7 @@ const getShownWordColor = ({
 
   return interpolateColors(
     time,
-    [word.start, word.start + 100],
+    [word.firstTimestamp, word.firstTimestamp + 100],
     [wordColor.greyed, wordColor.appeared],
   );
 };
@@ -100,12 +100,12 @@ export const WordComp: React.FC<{
   const [hovered, setHovered] = useState(false);
 
   const scale = word.monospace
-    ? word.start > time
+    ? word.firstTimestamp > time
       ? 1
       : spring({
           fps,
           frame,
-          delay: word.start * fps,
+          delay: word.firstTimestamp * fps,
           config: {
             damping: 200,
           },
@@ -115,9 +115,11 @@ export const WordComp: React.FC<{
         0.95
     : 1;
 
-  const appeared = word.start <= time;
+  const appeared = word.firstTimestamp <= time;
 
-  const active = word.start <= time && (word.end > time || isLast);
+  const active =
+    word.firstTimestamp <= time &&
+    (word.lastTimestamp === null || word.lastTimestamp > time || isLast);
 
   const wordColor = getWordColor({
     appeared,
@@ -154,7 +156,6 @@ export const WordComp: React.FC<{
           fontWeight: word.monospace
             ? MONOSPACE_FONT_WEIGHT
             : REGULAR_FONT_WEIGHT,
-
           backgroundColor,
           outline: hovered
             ? "2px solid black"
