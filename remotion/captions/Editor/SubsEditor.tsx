@@ -77,7 +77,7 @@ export const SubsEditor: React.FC<{
               index={i}
               longestWordLength={longestNumberLength}
               word={word}
-              isInitialWord={word.offsets.from === initialWord.start}
+              isInitialWord={word.offsets.from === initialWord.firstTimestamp}
               trimStart={trimStart}
               onUpdateText={onChangeText}
               onCloseEditor={onCloseSubEditor}

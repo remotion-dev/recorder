@@ -16,7 +16,7 @@ export const wordsTogether = (words: Word[]): Word[] => {
     if (!word.word.startsWith(" ") && previousWord) {
       const lastAddedWord = newWords[newWords.length - 1] as Word;
       lastAddedWord.word += word.word;
-      lastAddedWord.end = word.end;
+      lastAddedWord.lastTimestamp = word.lastTimestamp;
     } else {
       newWords.push(word);
     }

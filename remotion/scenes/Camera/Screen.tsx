@@ -35,7 +35,7 @@ export const Screen: React.FC<{
 
   const { width, height } = useVideoConfig();
 
-  const displayTranslation = getDisplayPosition({
+  const displayStyle = getDisplayPosition({
     enterProgress: enter,
     exitProgress: exit,
     width,
@@ -49,14 +49,9 @@ export const Screen: React.FC<{
   return (
     <div
       style={{
-        width: displayTranslation.width,
-        height: displayTranslation.height,
-        left: displayTranslation.left,
-        top: displayTranslation.top,
         position: "absolute",
-        borderRadius: scene.layout.displayLayout.borderRadius,
-        opacity: displayTranslation.opacity,
         background: "black",
+        ...displayStyle,
       }}
     >
       <OffthreadVideo
@@ -64,10 +59,10 @@ export const Screen: React.FC<{
         endAt={endAt}
         src={scene.pair.display.src}
         style={{
-          width: displayTranslation.width,
-          height: displayTranslation.height,
+          width: displayStyle.width,
+          height: displayStyle.height,
+          borderRadius: displayStyle.borderRadius,
           objectFit: "cover",
-          borderRadius: scene.layout.displayLayout.borderRadius,
         }}
       />
     </div>
