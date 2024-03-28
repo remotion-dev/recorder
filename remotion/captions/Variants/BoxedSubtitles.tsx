@@ -16,6 +16,7 @@ export const BoxedSubtitles: React.FC<{
   displayLayout: Layout | null;
   onOpenSubEditor: (word: Word) => void;
   canvasLayout: CanvasLayout;
+  captionBoxHeight: number;
 }> = ({
   segment,
   startFrame,
@@ -23,14 +24,16 @@ export const BoxedSubtitles: React.FC<{
   displayLayout,
   canvasLayout,
   onOpenSubEditor,
+  captionBoxHeight,
 }) => {
   const padding = getHorizontalPaddingForSubtitles("boxed", canvasLayout);
+  const fontSize = getSubtitlesFontSize("boxed", displayLayout);
   return (
     <div
       style={{
         height:
-          getSubtitlesLines("boxed", displayLayout !== null) *
-          getSubtitlesFontSize("boxed", displayLayout) *
+          getSubtitlesLines("boxed", captionBoxHeight, fontSize) *
+          fontSize *
           LINE_HEIGHT,
       }}
     >
@@ -42,7 +45,7 @@ export const BoxedSubtitles: React.FC<{
           WebkitBoxDecorationBreak: "clone",
           paddingLeft: padding,
           paddingRight: padding,
-          wordBreak: "break-all",
+          wordBreak: "break-word",
         }}
       >
         <Words

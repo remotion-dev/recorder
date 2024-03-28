@@ -8,7 +8,7 @@ import type { Layout } from "../layout/layout-types";
 import { FadeSentence } from "./FadeSentence";
 import type { Segment } from "./types";
 import { BelowVideoSubtitles } from "./Variants/BelowVideoSubtitles";
-import { BoxedSubtitles } from "./Variants/BoxedSubtitles";
+import { BoxedSubtitles, LINE_HEIGHT } from "./Variants/BoxedSubtitles";
 import { OverlayedCenterSubtitles } from "./Variants/OverlayedCenterSubtitles";
 
 const getStartOfSegment = (segment: Segment) => {
@@ -72,10 +72,12 @@ export const getSubtitlesFontSize = (
 
 export const getSubtitlesLines = (
   subtitleType: SubtitleType,
-  hasDisplay: boolean,
+  boxHeight: number,
+  fontSize: number,
 ) => {
   if (subtitleType === "boxed") {
-    return hasDisplay ? 4 : 3;
+    const nrOfLines = Math.floor(boxHeight / (fontSize * LINE_HEIGHT));
+    return nrOfLines;
   }
 
   return 1;
@@ -127,6 +129,7 @@ export const CaptionSentence: React.FC<{
   subtitleType: SubtitleType;
   displayLayout: Layout | null;
   theme: Theme;
+  captionBoxHeight: number;
   onOpenSubEditor: (word: Word) => void;
 }> = ({
   segment,
@@ -137,11 +140,11 @@ export const CaptionSentence: React.FC<{
   isFirst,
   isLast,
   theme,
+  captionBoxHeight,
   onOpenSubEditor,
 }) => {
   const { fps } = useVideoConfig();
   const normalStartFrame = (getStartOfSegment(segment) / 1000) * fps;
-
   // If first caption of a segment, show it a bit earlier to avoid flicker
   // of caption showing only shortly after the video
   const startFrame = isFirst ? normalStartFrame - fps : normalStartFrame;
@@ -170,6 +173,7 @@ export const CaptionSentence: React.FC<{
             segment={segment}
             startFrame={startFrame}
             theme={theme}
+            captionBoxHeight={captionBoxHeight}
           />
         ) : subtitleType === "below-video" ? (
           <BelowVideoSubtitles
