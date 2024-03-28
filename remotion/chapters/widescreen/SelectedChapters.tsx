@@ -4,11 +4,9 @@ import { AbsoluteFill, useVideoConfig } from "remotion";
 import type { VideoSceneAndMetadata } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
 import { isWebCamRight } from "../../animations/webcam-transitions";
-import type {
-  InTransition,
-  OutTransition,
-} from "../../animations/widescreen-chapter-transitions";
 import {
+  getChapterInTransition,
+  getChapterOutTransition,
   makeInTransition,
   makeOutTransition,
 } from "../../animations/widescreen-chapter-transitions";
@@ -20,35 +18,41 @@ import {
   WideLayoutChapter,
 } from "./WideLayoutChapter";
 
-export const SelectedChapters: React.FC<{
-  inTransition: InTransition;
-  outTransition: OutTransition;
-  shownChapters: ChapterType[];
+export const LandscapeChapters: React.FC<{
   scene: VideoSceneAndMetadata;
-  previousScene: VideoSceneAndMetadata | null;
-  nextScene: VideoSceneAndMetadata | null;
-  activeIndex: number;
-  enterWithSlideFromBottom: boolean;
-  exitWithSlideToTop: boolean;
-  shouldSlideHighlight: boolean;
+  previousVideoScene: VideoSceneAndMetadata | null;
+  nextVideoScene: VideoSceneAndMetadata | null;
   enterProgress: number;
   exitProgress: number;
   theme: Theme;
+  chapters: ChapterType[];
 }> = ({
-  inTransition,
-  outTransition,
-  shownChapters,
-  activeIndex,
-  enterWithSlideFromBottom,
+  chapters,
   scene,
-  shouldSlideHighlight,
-  nextScene,
-  previousScene,
+  nextVideoScene,
+  previousVideoScene,
   enterProgress,
   exitProgress,
-  exitWithSlideToTop,
   theme,
 }) => {
+  const chapterIndex = chapters.findIndex((c) => c.title === scene.chapter);
+  const inTransition = getChapterInTransition({
+    currentScene: scene,
+    previousScene: previousVideoScene,
+  });
+  const outTransition = getChapterOutTransition({
+    currentScene: scene,
+    nextScene: nextVideoScene,
+  });
+
+  const shownChapters =
+    chapterIndex === 0
+      ? chapters.slice(0, 3)
+      : chapters.slice(
+          Math.max(0, chapterIndex - 1),
+          Math.min(chapters.length, chapterIndex + 2),
+        );
+
   const { width, height } = useVideoConfig();
 
   const { x: xIn, y: yIn } = makeInTransition({
@@ -79,12 +83,12 @@ export const SelectedChapters: React.FC<{
   const styles = useMemo((): React.CSSProperties => {
     const currentStyle = getWidescreenChapterStyle(scene, tableOfContentHeight);
 
-    const previousChapterStyle = previousScene
-      ? getWidescreenChapterStyle(previousScene, tableOfContentHeight)
+    const previousChapterStyle = previousVideoScene
+      ? getWidescreenChapterStyle(previousVideoScene, tableOfContentHeight)
       : null;
 
-    const nextChapterStyle = nextScene
-      ? getWidescreenChapterStyle(nextScene, tableOfContentHeight)
+    const nextChapterStyle = nextVideoScene
+      ? getWidescreenChapterStyle(nextVideoScene, tableOfContentHeight)
       : null;
 
     return interpolateStyles(
@@ -103,17 +107,142 @@ export const SelectedChapters: React.FC<{
   }, [
     scene,
     tableOfContentHeight,
-    previousScene,
-    nextScene,
+    previousVideoScene,
+    nextVideoScene,
     enterProgress,
     exitProgress,
     inTransition,
     outTransition,
   ]);
 
+  // Should slide from the previous chapter?
+  const enterWithSlideFromBottom = useMemo(() => {
+    // Only if there is a previous scene
+    if (!previousVideoScene) {
+      return false;
+    }
+
+    // Only if it is a video scene
+    if (previousVideoScene.type !== "video-scene") {
+      return false;
+    }
+
+    // Only if the webcam is in the same place
+    if (previousVideoScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+      return false;
+    }
+
+    // Only if it is not the first or second chapter (highlight slides from top to middle)
+    if (!chapters[chapterIndex - 2]) {
+      return false;
+    }
+
+    // Only if the previous scene has a display video
+    if (!previousVideoScene.layout.displayLayout) {
+      return false;
+    }
+
+    // Not if it is the last chapter (highlight slides from middle to bottom)
+    const isLastChapter = !chapters[chapterIndex + 1];
+    if (isLastChapter) {
+      return false;
+    }
+
+    return previousVideoScene.chapter !== scene.chapter;
+  }, [
+    chapterIndex,
+    chapters,
+    previousVideoScene,
+    scene.chapter,
+    scene.finalWebcamPosition,
+  ]);
+
+  // Should slide to the next chapter?
+  const exitChapterWithSlideToTop = useMemo(() => {
+    // Only if there is a next scene
+    if (!nextVideoScene) {
+      return false;
+    }
+
+    // Only if it is a video scene
+    if (nextVideoScene.type !== "video-scene") {
+      return false;
+    }
+
+    // Only if the webcam is in the same place
+    if (nextVideoScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+      return false;
+    }
+
+    // Only if the next scene has a display video
+    if (!nextVideoScene.layout.displayLayout) {
+      return false;
+    }
+
+    // Only if it is not the first chapter (highlight slides from top to middle)
+    const isFirstChapter = !chapters[chapterIndex - 1];
+
+    if (isFirstChapter) {
+      return false;
+    }
+
+    // Not if it is the last chapter or the second last (highlight slides from middle to bottom)
+    const isLastOrSecondLastChapter = !chapters[chapterIndex + 2];
+
+    if (isLastOrSecondLastChapter) {
+      return false;
+    }
+
+    // Only if it is a different chapter
+    return nextVideoScene.chapter !== scene.chapter;
+  }, [
+    chapterIndex,
+    chapters,
+    nextVideoScene,
+    scene.chapter,
+    scene.finalWebcamPosition,
+  ]);
+
+  // Should the chapter have it's highlight animated in the beginning?
+  const shouldSlideHighlight = useMemo(() => {
+    // Only if it comes from a previous scene
+    if (!previousVideoScene) {
+      return false;
+    }
+
+    // Only if it was a video scene
+    if (previousVideoScene.type !== "video-scene") {
+      return false;
+    }
+
+    // Only if the chapter was not the same
+    if (previousVideoScene.chapter === scene.chapter) {
+      return false;
+    }
+
+    // Only if the webcam is in the same place
+    if (previousVideoScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+      return false;
+    }
+
+    // Only if the previous scene has a display video
+    if (!previousVideoScene.layout.displayLayout) {
+      return false;
+    }
+
+    return true;
+  }, [previousVideoScene, scene.chapter, scene.finalWebcamPosition]);
+
   if (scene.layout.displayLayout === null) {
     return null;
   }
+
+  const chapter = chapters[chapterIndex];
+  if (!chapter) {
+    return null;
+  }
+
+  const activeIndex = chapter.index;
 
   return (
     <AbsoluteFill
@@ -130,15 +259,15 @@ export const SelectedChapters: React.FC<{
           ...styles,
         }}
       >
-        {shownChapters.map((chapter, i) => {
+        {shownChapters.map((chap, i) => {
           return (
-            <div key={chapter.id}>
+            <div key={chap.id}>
               <WideLayoutChapter
                 activeIndex={activeIndex}
-                chapter={chapter}
+                chapter={chap}
                 enterWithSlide={enterWithSlideFromBottom}
                 slideHighlight={shouldSlideHighlight}
-                fadeOut={i === 0 && exitWithSlideToTop}
+                fadeOut={i === 0 && exitChapterWithSlideToTop}
                 isFirst={i === 0}
                 theme={theme}
                 isLast={i === shownChapters.length - 1}
@@ -148,7 +277,7 @@ export const SelectedChapters: React.FC<{
                 rightAligned={rightAligned}
                 enterProgress={enterProgress}
                 exitProgress={exitProgress}
-                exitWithSlide={exitWithSlideToTop}
+                exitWithSlide={exitChapterWithSlideToTop}
               />
             </div>
           );

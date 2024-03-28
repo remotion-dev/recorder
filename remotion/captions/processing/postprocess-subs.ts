@@ -191,7 +191,9 @@ export const postprocessSubtitles = ({
   canvasLayout: CanvasLayout;
   subtitleType: SubtitleType;
 }): SubTypes => {
-  const words = subTypes.transcription.map(whisperWordToWord);
+  const words = subTypes.transcription.map((w, i) => {
+    return whisperWordToWord(w, subTypes.transcription[i + 1] ?? null);
+  });
   const correctedWords = autocorrectWords(words);
 
   const allWords = wordsTogether(

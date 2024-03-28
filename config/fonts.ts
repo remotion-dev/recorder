@@ -1,8 +1,11 @@
 import {
-  fontFamily as monospaceFont,
   fontFamily as regularFont,
-  loadFont as loadMonospace,
   loadFont as loadRegular,
+} from "@remotion/google-fonts/Inter";
+
+import {
+  fontFamily as monospaceFont,
+  loadFont as loadMonospace,
 } from "@remotion/google-fonts/RobotoCondensed";
 
 loadRegular();

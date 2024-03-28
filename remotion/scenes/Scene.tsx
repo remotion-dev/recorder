@@ -21,6 +21,7 @@ import {
 } from "../animations/transitions";
 import type { ChapterType } from "../chapters/make-chapters";
 import { CameraScene } from "./Camera/CameraScene";
+import { SoundEffects } from "./Camera/SoundEffects";
 import { EndCard } from "./EndCard";
 import { TableOfContents } from "./TableOfContents";
 import { Title } from "./Title/Title";
@@ -37,13 +38,20 @@ type Props = {
   theme: Theme;
 };
 
-const InnerScene: React.FC<Props> = ({
+const InnerScene: React.FC<
+  Props & {
+    enter: number;
+    exit: number;
+  }
+> = ({
   canvasLayout,
   chapters,
   nextScene,
   previousScene,
   sceneAndMetadata,
   theme,
+  enter,
+  exit,
 }) => {
   if (sceneAndMetadata.scene.type === "title") {
     return (
@@ -87,15 +95,9 @@ const InnerScene: React.FC<Props> = ({
 
   return (
     <CameraScene
-      shouldEnter={getShouldTransitionIn({
-        scene: sceneAndMetadata,
-        previousScene,
-      })}
+      enter={enter}
       canvasLayout={canvasLayout}
-      shouldExit={getShouldTransitionOut({
-        sceneAndMetadata,
-        nextScene,
-      })}
+      exit={exit}
       nextScene={nextScene}
       previousScene={previousScene}
       sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
@@ -165,7 +167,12 @@ const SceneWithTransition: React.FC<Props> = (props) => {
 
   return (
     <AbsoluteFill style={style}>
-      <InnerScene {...props} />
+      <InnerScene {...props} enter={enter} exit={exit} />
+      <SoundEffects
+        previousScene={props.previousScene}
+        sceneAndMetadata={props.sceneAndMetadata}
+        shouldEnter={shouldEnter}
+      />
     </AbsoluteFill>
   );
 };
@@ -182,8 +189,7 @@ export const Scene: React.FC<Props> = ({
   const chapter =
     sceneAndMetadata.scene.type === "videoscene"
       ? sceneAndMetadata.scene.newChapter
-      : "";
-
+      : undefined;
   return (
     <Sequence
       name={`Scene ${index} ${chapter ? `(${chapter})` : ""}`}
