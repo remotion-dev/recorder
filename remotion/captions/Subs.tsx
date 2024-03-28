@@ -43,7 +43,7 @@ import {
 } from "./TransitionBetweenSubtitles";
 import type { WhisperOutput } from "./types";
 
-const LINE_HEIGHT = 1.2;
+const LINE_HEIGHT = 1.1;
 
 export const Subs: React.FC<{
   file: StaticFile;
@@ -124,7 +124,6 @@ export const Subs: React.FC<{
     currentScene: scene,
     nextScene: previousScene,
   });
-
   const animatedSubLayout = getAnimatedSubtitleLayout({
     enterProgress: enter,
     exitProgress: exit,
@@ -146,7 +145,10 @@ export const Subs: React.FC<{
     return postprocessSubtitles({
       subTypes: whisperOutput,
       boxWidth: animatedSubLayout.width,
-      maxLines: getSubtitlesLines(subtitleType),
+      maxLines: getSubtitlesLines(
+        subtitleType,
+        scene.layout.displayLayout !== null,
+      ),
       fontSize: getSubtitlesFontSize(subtitleType, scene.layout.displayLayout),
       canvasLayout,
       subtitleType,
@@ -232,7 +234,6 @@ export const Subs: React.FC<{
       subtitleType,
     }),
   };
-
   return (
     <AbsoluteFill style={outer}>
       <TransitionFromPreviousSubtitles

@@ -29,7 +29,7 @@ export const BelowVideoSubtitles: React.FC<{
     <div
       style={{
         height:
-          getSubtitlesLines("below-video") *
+          getSubtitlesLines("below-video", displayLayout !== null) *
           getSubtitlesFontSize("below-video", displayLayout) *
           LINE_HEIGHT,
         marginTop: 0,

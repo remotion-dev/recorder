@@ -7,7 +7,7 @@ import { getSubtitlesFontSize, getSubtitlesLines } from "../Segment";
 import type { Segment } from "../types";
 import { Words } from "../Words";
 
-export const LINE_HEIGHT = 1.1;
+export const LINE_HEIGHT = 1.2;
 
 export const BoxedSubtitles: React.FC<{
   segment: Segment;
@@ -29,10 +29,9 @@ export const BoxedSubtitles: React.FC<{
     <div
       style={{
         height:
-          getSubtitlesLines("boxed") *
+          getSubtitlesLines("boxed", displayLayout !== null) *
           getSubtitlesFontSize("boxed", displayLayout) *
           LINE_HEIGHT,
-        marginTop: 65,
       }}
     >
       <span
