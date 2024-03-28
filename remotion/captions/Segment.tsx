@@ -70,9 +70,12 @@ export const getSubtitlesFontSize = (
   return 48;
 };
 
-export const getSubtitlesLines = (subtitleType: SubtitleType) => {
+export const getSubtitlesLines = (
+  subtitleType: SubtitleType,
+  hasDisplay: boolean,
+) => {
   if (subtitleType === "boxed") {
-    return 4;
+    return hasDisplay ? 4 : 3;
   }
 
   return 1;
@@ -137,7 +140,6 @@ export const CaptionSentence: React.FC<{
   onOpenSubEditor,
 }) => {
   const { fps } = useVideoConfig();
-
   const normalStartFrame = (getStartOfSegment(segment) / 1000) * fps;
 
   // If first caption of a segment, show it a bit earlier to avoid flicker
