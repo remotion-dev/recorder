@@ -142,14 +142,15 @@ export const Subs: React.FC<{
       return null;
     }
 
+    const fontSize = getSubtitlesFontSize(
+      subtitleType,
+      scene.layout.displayLayout,
+    );
     return postprocessSubtitles({
       subTypes: whisperOutput,
       boxWidth: animatedSubLayout.width,
-      maxLines: getSubtitlesLines(
-        subtitleType,
-        scene.layout.displayLayout !== null,
-      ),
-      fontSize: getSubtitlesFontSize(subtitleType, scene.layout.displayLayout),
+      maxLines: getSubtitlesLines(subtitleType, 300, fontSize),
+      fontSize,
       canvasLayout,
       subtitleType,
     });
@@ -258,6 +259,7 @@ export const Subs: React.FC<{
                 theme={theme}
                 displayLayout={scene.layout.displayLayout}
                 onOpenSubEditor={onOpenSubEditor}
+                captionBoxHeight={animatedSubLayout.height}
               />
             );
           })}
