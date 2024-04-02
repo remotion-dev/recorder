@@ -8,6 +8,7 @@ import {
   SUBS_PREFIX,
   WEBCAM_PREFIX,
 } from "../config/cameras";
+import { waitForFonts } from "../config/fonts";
 import { FPS } from "../config/fps";
 import type {
   Pair,
@@ -156,6 +157,8 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
 
   let addedUpDurations = 0;
   let currentChapter: string | null = null;
+
+  await waitForFonts();
 
   const scenesAndMetadata = scenesAndMetadataWithoutDuration.map(
     (sceneAndMetadata, i) => {
