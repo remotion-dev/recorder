@@ -74,12 +74,21 @@ export const getBoxedExit = ({
     isWebCamAtBottom(nextScene.finalWebcamPosition) ===
     isWebCamAtBottom(scene.finalWebcamPosition);
 
+  const hasDisplay = scene.layout.displayLayout;
+  if (!isSamePositionHorizontal && hasDisplay) {
+    if (isWebCamAtBottom(scene.finalWebcamPosition)) {
+      return translate(0, currentLayout.height + getSafeSpace("square"));
+    }
+
+    return translate(0, -currentLayout.height - getSafeSpace("square"));
+  }
+
   if (!isSamePositionHorizontal) {
     return translate(
       0,
       isWebCamAtBottom(scene.finalWebcamPosition)
-        ? scene.layout.webcamLayout.height + getSafeSpace("square")
-        : -(currentLayout.height + getSafeSpace("square") * 2),
+        ? -(currentLayout.height + getSafeSpace("square"))
+        : currentLayout.height + getSafeSpace("square"),
     );
   }
 
@@ -116,10 +125,8 @@ export const getBoxedEnter = ({
   ) {
     const isWebcamLeft = !isWebCamRight(scene.finalWebcamPosition);
     const atBottom = isWebCamAtBottom(scene.finalWebcamPosition);
-
     const transX = currentLayout.width + getSafeSpace("square");
     const transY = height - currentLayout.height - getSafeSpace("square") * 2;
-
     const previousAtBottom = isWebCamAtBottom(
       previousScene.finalWebcamPosition,
     );
@@ -175,12 +182,21 @@ export const getBoxedEnter = ({
     isWebCamAtBottom(previousScene.finalWebcamPosition) ===
     isWebCamAtBottom(scene.finalWebcamPosition);
 
+  const hasDisplay = scene.layout.displayLayout;
+  if (!isSamePositionHorizontal && hasDisplay) {
+    if (isWebCamAtBottom(scene.finalWebcamPosition)) {
+      return translate(0, currentLayout.height + getSafeSpace("square"));
+    }
+
+    return translate(0, -currentLayout.height - getSafeSpace("square"));
+  }
+
   if (!isSamePositionHorizontal) {
     return translate(
       0,
       isWebCamAtBottom(scene.finalWebcamPosition)
-        ? currentLayout.height + getSafeSpace("square")
-        : -(scene.layout.webcamLayout.height + getSafeSpace("square")),
+        ? -currentLayout.height - getSafeSpace("square") // subtitles above webcam
+        : currentLayout.height + getSafeSpace("square"), // subtitles below webcam
     );
   }
 
