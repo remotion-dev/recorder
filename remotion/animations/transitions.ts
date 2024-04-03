@@ -19,6 +19,14 @@ export const getShouldTransitionOut = ({
     return false;
   }
 
+  if (
+    nextScene.scene.type === "endcard" &&
+    sceneAndMetadata.scene.type === "videoscene" &&
+    sceneAndMetadata.scene.transitionToNextScene
+  ) {
+    return true;
+  }
+
   const areBothVideoScenes =
     sceneAndMetadata.type === "video-scene" && nextScene.type === "video-scene";
 
