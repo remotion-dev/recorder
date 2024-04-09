@@ -30,6 +30,30 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       />
+
+      <Composition
+        component={Main}
+        id="newone"
+        schema={videoConf}
+        defaultProps={{
+          theme: "light" as const,
+          canvasLayout: "square" as const,
+          scenes: [
+            {
+              type: "videoscene" as const,
+              webcamPosition: "previous" as const,
+              trimStart: 0,
+              duration: null,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+            },
+          ],
+          scenesAndMetadata: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
     </>
   );
 };
