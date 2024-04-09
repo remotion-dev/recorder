@@ -1,33 +1,34 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 
 import { expect, test } from "bun:test";
+import type { Word } from "../config/autocorrect";
 import { wordsTogether } from "../remotion/captions/processing/words-together";
 
-const example = [
+const example: Word[] = [
   {
     word: " `bun`",
-    start: 5.42,
-    end: 5.94,
+    lastTimestamp: 5.94,
+    firstTimestamp: 0,
   },
   {
     word: " `run`",
-    start: 5.94,
-    end: 6.54,
+    lastTimestamp: 6.54,
+    firstTimestamp: 0,
   },
   {
     word: " `dev`",
-    start: 6.54,
-    end: 6.96,
+    lastTimestamp: 6.96,
+    firstTimestamp: 0,
   },
   {
     word: ". It",
-    start: 7.76,
-    end: 8.36,
+    lastTimestamp: 8.36,
+    firstTimestamp: 0,
   },
   {
     word: " looks",
-    start: 8.36,
-    end: 8.62,
+    lastTimestamp: 8.62,
+    firstTimestamp: 0,
   },
 ];
 
@@ -35,29 +36,29 @@ test("join words correctly", () => {
   const words = wordsTogether(example);
   expect(words).toEqual([
     {
-      end: 5.94,
-      start: 5.42,
+      lastTimestamp: 5.94,
       word: " `bun`",
+      firstTimestamp: 0,
     },
     {
-      end: 6.54,
-      start: 5.94,
+      lastTimestamp: 6.54,
       word: " `run`",
+      firstTimestamp: 0,
     },
     {
-      start: 6.54,
-      end: 6.96,
+      lastTimestamp: 6.96,
       word: " `dev`.",
+      firstTimestamp: 0,
     },
     {
-      end: 8.36,
-      start: 7.76,
+      lastTimestamp: 8.36,
       word: " It",
+      firstTimestamp: 0,
     },
     {
-      end: 8.62,
-      start: 8.36,
+      lastTimestamp: 8.62,
       word: " looks",
+      firstTimestamp: 0,
     },
   ]);
 });

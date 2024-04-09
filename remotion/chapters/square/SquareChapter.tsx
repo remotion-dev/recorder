@@ -8,12 +8,15 @@ import {
 import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
 import { getSafeSpace } from "../../../config/layout";
 import type { WebcamPosition } from "../../../config/scenes";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 import { borderRadius } from "../../layout/get-layout";
 
 export const SquareChapter: React.FC<{
   title: string;
   webcamPosition: WebcamPosition;
-}> = ({ title, webcamPosition }) => {
+  theme: Theme;
+}> = ({ title, webcamPosition, theme }) => {
   const isTop = webcamPosition === "top-left" || webcamPosition === "top-right";
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
@@ -39,7 +42,7 @@ export const SquareChapter: React.FC<{
         style={{
           color: "white",
           padding: "16px 30px",
-          background: "#0b84f3",
+          background: COLORS[theme].ACCENT_COLOR,
           fontFamily: TITLE_FONT_FAMILY,
           position: "absolute",
           top: isTop ? undefined : getSafeSpace("square") * 2,

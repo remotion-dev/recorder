@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 import type { WhisperWord } from "../types";
 import {
   FIRST_COLUMN_WIDTH,
@@ -30,6 +32,7 @@ export const EditWord: React.FC<{
   onCloseEditor: () => void;
   isInitialWord: boolean;
   trimStart: number;
+  theme: Theme;
 }> = ({
   word,
   longestWordLength,
@@ -38,6 +41,7 @@ export const EditWord: React.FC<{
   isInitialWord,
   onCloseEditor,
   trimStart,
+  theme,
 }) => {
   const { width, fps } = useVideoConfig();
   const frame = useCurrentFrame();
@@ -151,31 +155,35 @@ export const EditWord: React.FC<{
         }}
       >
         <input
-          type={"text"}
+          type="text"
           autoFocus={isInitialWord}
           style={{
             fontSize: 30,
             fontFamily: isMonospaced ? "monospace" : "Helvetica",
             backgroundColor: "transparent",
             border: "none",
-            color: isMonospaced ? "#3B82EB" : "black",
+            color: isMonospaced ? COLORS[theme].ACCENT_COLOR : "black",
           }}
+          value={word.text}
           onKeyDown={onInputKeyDown}
           onChange={onChange}
-          value={word.text}
         />
       </div>
       <div>
         <div
-          onClick={toggleMonospace}
           style={{
             width: 30,
             height: 30,
-            border: isMonospaced ? "2px solid #3B82EB" : "2px solid gray",
+            border: isMonospaced
+              ? "2px solid " + COLORS[theme].ACCENT_COLOR
+              : "2px solid gray",
             borderRadius: 3,
             cursor: "pointer",
-            background: isMonospaced ? "#3B82EB" : "transparent",
+            background: isMonospaced
+              ? COLORS[theme].ACCENT_COLOR
+              : "transparent",
           }}
+          onClick={toggleMonospace}
         />
       </div>
     </div>
