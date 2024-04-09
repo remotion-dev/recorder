@@ -18,6 +18,13 @@ const sorted = webcam.sort((a, b) => {
   return timestampB - timestampA;
 });
 
+if (sorted.length === 0) {
+  console.log(
+    "No recordings found in your downloads folder. Copy process aborted.",
+  );
+  process.abort();
+}
+
 const latest = sorted[0];
 const latestTimestamp = Number(latest.match(/([0-9]+)/)![1]);
 
