@@ -7,6 +7,7 @@ import {
   WEBCAM_PREFIX,
 } from "../config/cameras";
 import "./App.css";
+import { Button } from "./components/ui/button";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
 import { onVideo } from "./on-video";
@@ -60,7 +61,6 @@ const outer: React.CSSProperties = {
 const gridContainer: React.CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(2, 1fr)",
-  gridTemplateRows: "repeat(2, 1fr)",
   alignItems: "center",
   justifyItems: "center",
   flex: 1,
@@ -76,6 +76,9 @@ const mediaRecorderOptions: MediaRecorderOptions = {
 };
 
 const App = () => {
+  const [showAlternativeViews, setShowAlternativeViews] = useState<boolean>(
+    localStorage.getItem("showAlternativeViews") === "true",
+  ); // load from local storage
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
@@ -87,6 +90,24 @@ const App = () => {
     alternative1: null,
     alternative2: null,
   });
+
+  const dynamicGridContainer = useMemo(() => {
+    if (showAlternativeViews) {
+      return { ...gridContainer, gridTemplateRows: "repeat(2, 1fr)" };
+    }
+
+    return { ...gridContainer, maxHeight: "50%" };
+  }, [showAlternativeViews]);
+
+  const handleShowMore = useCallback(() => {
+    setShowAlternativeViews(true);
+    localStorage.setItem("showAlternativeViews", "true");
+  }, []);
+
+  const handleShowLess = useCallback(() => {
+    setShowAlternativeViews(false);
+    localStorage.setItem("showAlternativeViews", "false");
+  }, []);
 
   const setMediaStream = useCallback(
     (prefix: Prefix, source: MediaStream | null) => {
@@ -205,7 +226,7 @@ const App = () => {
         recording={recording}
         disabledByParent={recordingDisabled}
       />
-      <div style={gridContainer}>
+      <div style={dynamicGridContainer}>
         <View
           prefix={WEBCAM_PREFIX}
           devices={devices}
@@ -218,7 +239,9 @@ const App = () => {
           setMediaStream={setMediaStream}
           mediaStream={mediaSources.display}
         />
-        <View
+        {showAlternativeViews ? (
+          <>
+           <View
           prefix={ALTERNATIVE1_PREFIX}
           devices={devices}
           setMediaStream={setMediaStream}
@@ -230,6 +253,28 @@ const App = () => {
           setMediaStream={setMediaStream}
           mediaStream={mediaSources.alternative2}
         />
+          </>
+        ) : null}
+      </div>
+      <div style={{ marginBottom: 10 }}>
+        {/* eslint-disable-next-line no-negated-condition */}
+        {!showAlternativeViews ? (
+          <Button
+            variant={"ghost"}
+            onClick={handleShowMore}
+            style={{ margin: "0px 10px" }}
+          >
+            Show more views...
+          </Button>
+        ) : (
+          <Button
+            variant={"ghost"}
+            onClick={handleShowLess}
+            style={{ margin: "0px 10px", width: 100 }}
+          >
+            Show Less...
+          </Button>
+        )}
       </div>
     </div>
   );
