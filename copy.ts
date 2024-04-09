@@ -19,14 +19,20 @@ const sorted = webcam.sort((a, b) => {
 });
 
 if (sorted.length === 0) {
-  console.log(
+  console.error(
     "No recordings found in your downloads folder. Copy process aborted.",
   );
-  process.abort();
+  process.exit();
 }
 
 const latest = sorted[0];
-const latestTimestamp = Number(latest.match(/([0-9]+)/)![1]);
+let latestTimestamp: number;
+try {
+  latestTimestamp = Number(latest.match(/([0-9]+)/)![1]);
+} catch (err) {
+  console.error("An error occured in the copying process: ", err);
+  process.exit();
+}
 
 await convertAndTrimVideo(latestTimestamp, prefix);
 
