@@ -6,30 +6,30 @@ import { splitWordIntoMonospaceSegment } from "../remotion/captions/processing/s
 
 test("Should split up into monospace words", () => {
   const word: Word = {
-    start: 10,
-    end: 100,
     word: "This is a `monospace` word",
     monospace: false,
+    firstTimestamp: 0,
+    lastTimestamp: 0,
   };
 
   expect(splitWordIntoMonospaceSegment(word)).toEqual([
     {
-      start: 10,
-      end: 100,
       word: "This is a ",
       monospace: false,
+      firstTimestamp: 0,
+      lastTimestamp: 0,
     },
     {
-      start: 10,
-      end: 100,
       word: "monospace",
       monospace: true,
+      firstTimestamp: 0,
+      lastTimestamp: 0,
     },
     {
-      start: 10,
-      end: 100,
       word: " word",
       monospace: false,
+      firstTimestamp: 0,
+      lastTimestamp: 0,
     },
   ]);
 });

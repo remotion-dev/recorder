@@ -10,6 +10,7 @@ import {
   MONOSPACE_FONT_FAMILY,
   MONOSPACE_FONT_WEIGHT,
   REGULAR_FONT_FAMILY,
+  REGULAR_FONT_WEIGHT,
 } from "../../config/fonts";
 import type { Theme } from "../../config/themes";
 import { COLORS } from "../../config/themes";
@@ -56,7 +57,7 @@ const getShownWordColor = ({
 
   return interpolateColors(
     time,
-    [word.start, word.start + 100],
+    [word.firstTimestamp, word.firstTimestamp + 100],
     [wordColor.greyed, wordColor.appeared],
   );
 };
@@ -77,7 +78,7 @@ const getWordColor = ({
 
   return monospace && appeared
     ? {
-        appeared: COLORS[theme].WORD_HIGHLIGHT_COLOR,
+        appeared: COLORS[theme].ACCENT_COLOR,
         greyed: COLORS[theme].WORD_COLOR_ON_BG_GREYED,
       }
     : normalWordColor;
@@ -99,12 +100,12 @@ export const WordComp: React.FC<{
   const [hovered, setHovered] = useState(false);
 
   const scale = word.monospace
-    ? word.start > time
+    ? word.firstTimestamp > time
       ? 1
       : spring({
           fps,
           frame,
-          delay: word.start * fps,
+          delay: word.firstTimestamp * fps,
           config: {
             damping: 200,
           },
@@ -114,9 +115,11 @@ export const WordComp: React.FC<{
         0.95
     : 1;
 
-  const appeared = word.start <= time;
+  const appeared = word.firstTimestamp <= time;
 
-  const active = word.start <= time && (word.end > time || isLast);
+  const active =
+    word.firstTimestamp <= time &&
+    (word.lastTimestamp === null || word.lastTimestamp > time || isLast);
 
   const wordColor = getWordColor({
     appeared,
@@ -134,7 +137,7 @@ export const WordComp: React.FC<{
 
   const backgroundColor = active
     ? word.monospace
-      ? COLORS[theme].WORD_HIGHLIGHT_COLOR
+      ? COLORS[theme].ACCENT_COLOR
       : "transparent"
     : "transparent";
 
@@ -144,9 +147,6 @@ export const WordComp: React.FC<{
     <>
       <span>{startsWithSpace && " "}</span>
       <span
-        onPointerEnter={() => setHovered(true)}
-        onPointerLeave={() => setHovered(false)}
-        onClick={() => onOpenSubEditor(word)}
         style={{
           ...style,
           fontFamily: word.monospace
@@ -155,7 +155,7 @@ export const WordComp: React.FC<{
           color: shownWordColor,
           fontWeight: word.monospace
             ? MONOSPACE_FONT_WEIGHT
-            : MONOSPACE_FONT_FAMILY,
+            : REGULAR_FONT_WEIGHT,
           backgroundColor,
           outline: hovered
             ? "2px solid black"
@@ -171,6 +171,9 @@ export const WordComp: React.FC<{
           display: "inline",
           cursor: "pointer",
         }}
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
+        onClick={() => onOpenSubEditor(word)}
       >
         {word.word.trim()}
       </span>

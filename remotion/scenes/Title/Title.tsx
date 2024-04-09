@@ -1,11 +1,14 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
 import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 
 export const Title: React.FC<{
   title: string;
   subtitle: string | null;
-}> = ({ subtitle, title }) => {
+  theme: Theme;
+}> = ({ subtitle, title, theme }) => {
   return (
     <AbsoluteFill
       style={{
@@ -24,7 +27,7 @@ export const Title: React.FC<{
           borderRadius: 20,
           padding: "15px 40px",
           display: "inline",
-          background: subtitle ? "white" : "#0B84F3",
+          background: subtitle ? "white" : COLORS[theme].ACCENT_COLOR,
           marginLeft: subtitle ? 30 : 0,
           position: "absolute",
           marginTop: subtitle ? 100 : 0,
@@ -37,7 +40,7 @@ export const Title: React.FC<{
           style={{
             fontFamily: TITLE_FONT_FAMILY,
             fontSize: 60,
-            background: "#0B84F3",
+            background: COLORS[theme].ACCENT_COLOR,
             lineHeight: 1.1,
             fontWeight: TITLE_FONT_WEIGHT,
             display: "inline",

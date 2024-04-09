@@ -31,7 +31,7 @@ export const Webcam: React.FC<{
 }) => {
   const { height, width } = useVideoConfig();
 
-  const webcamLayoutWithTransitions = getWebcamLayout({
+  const webcamStyle = getWebcamLayout({
     enterProgress,
     exitProgress,
     height,
@@ -53,7 +53,7 @@ export const Webcam: React.FC<{
         style={{
           overflow: "hidden",
           position: "relative",
-          ...webcamLayoutWithTransitions,
+          ...webcamStyle,
         }}
       >
         <OffthreadVideo

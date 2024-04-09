@@ -1,8 +1,7 @@
 import { $ } from "bun";
-import { cpSync, rmdirSync, rmSync } from "node:fs";
+import { cpSync, existsSync, rmdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { SOUNDS_FOLDER } from "./config/sounds";
 
 const tmp = path.join(tmpdir(), "recorder");
 
@@ -26,7 +25,11 @@ const getFilesInGit = async (folder: string) => {
     .filter(Boolean)
     .filter((file) => {
       if (file.startsWith("public")) {
-        return file.startsWith("public/" + SOUNDS_FOLDER);
+        return false;
+      }
+
+      if (file === ".gitattributes") {
+        return false;
       }
 
       if (file.startsWith("config")) {
@@ -41,6 +44,9 @@ const getFilesInGit = async (folder: string) => {
           "themes.ts",
           "transitions.ts",
           "autocorrect.ts",
+          "whisper.ts",
+          "cameras.ts",
+          "silence-removal.ts",
         ];
 
         // Don't override config files with defaults
@@ -73,7 +79,9 @@ for (const file of filesInUpstream) {
 
 for (const file of filesNotInUpstream) {
   const fullPath = path.join(process.cwd(), file);
-  rmSync(fullPath);
+  if (existsSync(fullPath)) {
+    rmSync(fullPath);
+  }
 }
 
 rmdirSync(tmp, { recursive: true });

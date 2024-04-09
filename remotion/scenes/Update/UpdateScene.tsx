@@ -9,6 +9,8 @@ import {
   useVideoConfig,
 } from "remotion";
 import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 
 const size = 180;
 const padding = 20;
@@ -89,7 +91,8 @@ const icons: { [key in IconType]: Icon } = {
 const RandomPie: React.FC<{
   seed: string;
   type: IconType;
-}> = ({ seed, type }) => {
+  theme: Theme;
+}> = ({ seed, type, theme }) => {
   const frame = useCurrentFrame();
   const posterizedFrame = Math.floor(frame / 5) * 5 - random(seed) * 10;
   const rotation = random(seed);
@@ -120,7 +123,7 @@ const RandomPie: React.FC<{
         stroke="black"
         strokeWidth={7}
         progress={Math.min(1, progress)}
-        fill="#0b84f3"
+        fill={COLORS[theme].ACCENT_COLOR}
         radius={size / 2}
         style={{
           position: "absolute",
@@ -141,7 +144,9 @@ const RandomPie: React.FC<{
   );
 };
 
-export const UpdateScene: React.FC<{}> = () => {
+export const UpdateScene: React.FC<{
+  theme: Theme;
+}> = ({ theme }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const posterizedFrame = Math.floor(frame / 5) * 5;
@@ -180,26 +185,26 @@ export const UpdateScene: React.FC<{}> = () => {
           </div>
         </div>
         <div style={square}>
-          <RandomPie seed={"4"} type="check" />
+          <RandomPie theme={theme} seed="4" type="check" />
         </div>
       </div>
       <div style={rowWithOutTopBorder}>
         <div style={squareWithBorder}>
-          <RandomPie seed={"5"} type="bug" />
+          <RandomPie theme={theme} seed="5" type="bug" />
         </div>
         <div style={squareWithBorder}>
-          <RandomPie seed={"6"} type="check" />
+          <RandomPie theme={theme} seed="6" type="check" />
         </div>
         <div style={squareWithBorder}>
-          <RandomPie seed={"8"} type="sparkles" />
+          <RandomPie theme={theme} seed="8" type="sparkles" />
         </div>
         <div style={square}>
-          <RandomPie seed={"7"} type="up" />
+          <RandomPie theme={theme} seed="7" type="up" />
         </div>
       </div>
       <div style={rowWithOutTopBorder}>
         <div style={squareWithBorder}>
-          <RandomPie seed={"9"} type="sparkles" />
+          <RandomPie theme={theme} seed="9" type="sparkles" />
         </div>
         <div style={threeSquares}>
           <div
@@ -218,16 +223,16 @@ export const UpdateScene: React.FC<{}> = () => {
       </div>
       <div style={rowWithOutTopBorder}>
         <div style={squareWithBorder}>
-          <RandomPie seed={"13"} type="info" />
+          <RandomPie theme={theme} seed="13" type="info" />
         </div>
         <div style={squareWithBorder}>
-          <RandomPie seed={"14"} type="bug" />
+          <RandomPie theme={theme} seed="14" type="bug" />
         </div>
         <div style={squareWithBorder}>
-          <RandomPie seed={"15"} type="check" />
+          <RandomPie theme={theme} seed="15" type="check" />
         </div>
         <div style={square}>
-          <RandomPie seed={"16"} type="sparkles" />
+          <RandomPie theme={theme} seed="16" type="sparkles" />
         </div>
       </div>
     </AbsoluteFill>

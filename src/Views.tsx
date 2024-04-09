@@ -2,6 +2,12 @@
 /* eslint-disable no-alert */
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ALTERNATIVE1_PREFIX,
+  ALTERNATIVE2_PREFIX,
+  DISPLAY_PREFIX,
+  WEBCAM_PREFIX,
+} from "../config/cameras";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
 import { Spinner } from "./components/Spinner";
@@ -57,10 +63,10 @@ const viewName: React.CSSProperties = {
 };
 
 export const prefixes = [
-  "webcam",
-  "display",
-  "alternative1",
-  "alternative2",
+  WEBCAM_PREFIX,
+  DISPLAY_PREFIX,
+  ALTERNATIVE1_PREFIX,
+  ALTERNATIVE2_PREFIX,
 ] as const;
 export type Prefix = (typeof prefixes)[number];
 
@@ -78,7 +84,8 @@ export const View: React.FC<{
 
   const initialCropIndicatorState = useMemo(() => {
     return (
-      localStorage.getItem(localStorageKey) === "true" && prefix === "webcam"
+      localStorage.getItem(localStorageKey) === "true" &&
+      prefix === WEBCAM_PREFIX
     );
   }, [prefix]);
 
@@ -90,7 +97,7 @@ export const View: React.FC<{
     useState<ConstrainDOMString | null>(null);
   const [selectedVideoSource, setSelectedVideoSource] =
     useState<ConstrainDOMString | null>(null);
-  const recordAudio = prefix === "webcam";
+  const recordAudio = prefix === WEBCAM_PREFIX;
   const [resolutionString, setResolutionString] = useState<string>("");
   const [streamState, setStreamState] = useState<StreamState>("initial");
 
@@ -225,7 +232,7 @@ export const View: React.FC<{
   ]);
   const selectScreen = () => {
     window.navigator.mediaDevices
-      // getDisplayMedia asks the user for permission to capture the screen
+      // GetDisplayMedia asks the user for permission to capture the screen
       .getDisplayMedia({ video: true })
       .then((stream) => {
         setMediaStream(prefix, stream);
@@ -252,7 +259,7 @@ export const View: React.FC<{
           <br />
           {derivedResolutionString}
         </div>
-        {prefix === "webcam" ? (
+        {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop
             pressed={showCropIndicator}
             onPressedChange={handleChange}
@@ -285,7 +292,7 @@ export const View: React.FC<{
           </SelectContent>
         </Select>
 
-        {prefix !== "webcam" ? (
+        {prefix !== WEBCAM_PREFIX ? (
           <Button type="button" onClick={selectScreen}>
             Select screen
           </Button>
@@ -299,12 +306,14 @@ export const View: React.FC<{
           />
         ) : null}
       </div>
-      {prefix === "webcam" ? <VolumeMeter mediaStream={mediaStream} /> : null}
+      {prefix === WEBCAM_PREFIX ? (
+        <VolumeMeter mediaStream={mediaStream} />
+      ) : null}
       <div style={videoWrapper} id={prefix + "-video-container"}>
         <video
           ref={sourceRef}
-          style={dynamicVideoStyle}
           muted
+          style={dynamicVideoStyle}
           onLoadedMetadata={onLoadedMetadata}
         />
 
