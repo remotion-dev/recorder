@@ -1,3 +1,3 @@
-import { startServer } from "./server";
+import { startExpressServer } from "../scripts/server/express-server";
 
-await startServer();
+await startExpressServer();

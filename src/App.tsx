@@ -78,7 +78,7 @@ const mediaRecorderOptions: MediaRecorderOptions = {
 const App = () => {
   const [showAlternativeViews, setShowAlternativeViews] = useState<boolean>(
     localStorage.getItem("showAlternativeViews") === "true",
-  ); // load from local storage
+  );
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
@@ -241,18 +241,18 @@ const App = () => {
         />
         {showAlternativeViews ? (
           <>
-           <View
-          prefix={ALTERNATIVE1_PREFIX}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative1}
-        />
-        <View
-          prefix={ALTERNATIVE2_PREFIX}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative2}
-        />
+            <View
+              prefix={ALTERNATIVE1_PREFIX}
+              devices={devices}
+              setMediaStream={setMediaStream}
+              mediaStream={mediaSources.alternative1}
+            />
+            <View
+              prefix={ALTERNATIVE2_PREFIX}
+              devices={devices}
+              setMediaStream={setMediaStream}
+              mediaStream={mediaSources.alternative2}
+            />
           </>
         ) : null}
       </div>

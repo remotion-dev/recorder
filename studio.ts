@@ -1,3 +1,3 @@
 import { startStudioAndServer } from "./scripts/server";
 
-startStudioAndServer();
+await startStudioAndServer();
