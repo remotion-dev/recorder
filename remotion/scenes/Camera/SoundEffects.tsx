@@ -34,5 +34,5 @@ export const SoundEffects: React.FC<{
     return <Audio src={staticFile("sounds/grow.m4a")} volume={0.2} />;
   }
 
-  return <Audio src={staticFile("sounds/whipwhoosh.mp3")} volume={0.1} />;
+  return <Audio src={staticFile("sounds/whip.wav")} volume={0.1} />;
 };
