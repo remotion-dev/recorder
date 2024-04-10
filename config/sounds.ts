@@ -16,15 +16,15 @@ export const getAudioSource = (track: Music) => {
   }
 
   if (track === "soft") {
-    return staticFile(`${SOUNDS_FOLDER}/Nature.mp3`);
+    return staticFile(`${SOUNDS_FOLDER}/utope-nature.mp3`);
   }
 
   if (track === "euphoric") {
-    return staticFile(`${SOUNDS_FOLDER}/IWokeUpInADream.mp3`);
+    return staticFile(`${SOUNDS_FOLDER}/utope-i-woke-up-in-a-dream.mp3`);
   }
 
   if (track === "epic") {
-    return staticFile(`${SOUNDS_FOLDER}/RhythmicReverie.mp3`);
+    return staticFile(`${SOUNDS_FOLDER}/utope-rhythmic-reverie.mp3`);
   }
 
   throw new Error(`No sound track for ${track}`);
