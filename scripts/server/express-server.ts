@@ -8,7 +8,7 @@ import { SERVER_PORT } from "../../config/server";
 import { indexHtmlDev } from "../../index-html";
 import { copyEndpoint } from "../../server/copy-example";
 import { SAVE_SUBTITLES } from "./constants";
-import { saveSubtitles } from "./subtitles";
+import { getOptions, saveSubtitles } from "./subtitles";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -41,6 +41,7 @@ export const startExpressServer = async () => {
 
   app.post("/api/copy", copyEndpoint);
   app.post(SAVE_SUBTITLES, saveSubtitles);
+  app.options(SAVE_SUBTITLES, getOptions);
 
   const port = process.env.PORT || SERVER_PORT;
 
