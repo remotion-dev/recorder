@@ -32,14 +32,14 @@ const formatTime = (ms: number) => {
 export const TopBar: React.FC<{
   start: () => void;
   stop: () => void;
-  handleVideos: () => void;
+  keepVideos: () => void;
   discardVideos: () => void;
   recording: false | number;
   disabledByParent: boolean;
 }> = ({
   start,
   stop,
-  handleVideos,
+  keepVideos,
   discardVideos,
   recording,
   disabledByParent,
@@ -55,7 +55,7 @@ export const TopBar: React.FC<{
   }, []);
 
   const handleUseTake = () => {
-    handleVideos();
+    keepVideos();
     setShowHandleVideos(false);
   };
 

@@ -8,9 +8,9 @@ import {
 } from "../config/cameras";
 import "./App.css";
 import { Button } from "./components/ui/button";
+import { handleUploadFile } from "./download-video";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
-import { downloadVideo } from "./on-video";
 import { TopBar } from "./TopBar";
 import { useKeyPress } from "./use-key-press";
 import type { Prefix, prefixes } from "./Views";
@@ -139,21 +139,22 @@ const App = () => {
     localStorage.setItem("showAlternativeViews", "false");
   }, []);
 
-  const handleVideos = useCallback(() => {
+  const keepVideos = useCallback(() => {
     if (currentBlobs.endDate === null) {
       return;
     }
 
-    for (const [key, value] of Object.entries(currentBlobs.blobs)) {
-      if (value === null) {
+    for (const [prefix, blob] of Object.entries(currentBlobs.blobs)) {
+      if (blob === null) {
         return;
       }
 
-      downloadVideo(value, currentBlobs.endDate, key);
+      handleUploadFile(blob, endDate, prefix);
+      // downloadVideo(blob, currentBlobs.endDate, prefix);
     }
 
     setCurrentBlobs(currentBlobsInit);
-  }, [currentBlobs.blobs, currentBlobs.endDate]);
+  }, [currentBlobs.blobs, currentBlobs.endDate, currentBlobsInit]);
 
   const discardVideos = useCallback(() => {
     setCurrentBlobs(currentBlobsInit);
@@ -280,7 +281,7 @@ const App = () => {
       <TopBar
         start={start}
         stop={stop}
-        handleVideos={handleVideos}
+        keepVideos={keepVideos}
         discardVideos={discardVideos}
         recording={recording}
         disabledByParent={recordingDisabled}
