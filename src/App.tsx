@@ -10,7 +10,7 @@ import "./App.css";
 import { Button } from "./components/ui/button";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
-import { onVideo } from "./on-video";
+import { downloadVideo } from "./on-video";
 import { TopBar } from "./TopBar";
 import { useKeyPress } from "./use-key-press";
 import type { Prefix, prefixes } from "./Views";
@@ -91,6 +91,36 @@ const App = () => {
     alternative2: null,
   });
 
+  const currentBlobsInit = {
+    endDate: null,
+    blobs: {
+      webcam: null,
+      display: null,
+      alt1: null,
+      alt2: null,
+    },
+  };
+  const [currentBlobs, setCurrentBlobs] = useState<
+    | {
+        endDate: number;
+        blobs: {
+          webcam: Blob | null;
+          display: Blob | null;
+          alt1: Blob | null;
+          alt2: Blob | null;
+        };
+      }
+    | {
+        endDate: null;
+        blobs: {
+          webcam: null;
+          display: null;
+          alt1: null;
+          alt2: null;
+        };
+      }
+  >(currentBlobsInit);
+
   const dynamicGridContainer = useMemo(() => {
     if (showAlternativeViews) {
       return { ...gridContainer, gridTemplateRows: "repeat(2, 1fr)" };
@@ -108,6 +138,26 @@ const App = () => {
     setShowAlternativeViews(false);
     localStorage.setItem("showAlternativeViews", "false");
   }, []);
+
+  const handleVideos = useCallback(() => {
+    if (currentBlobs.endDate === null) {
+      return;
+    }
+
+    for (const [key, value] of Object.entries(currentBlobs.blobs)) {
+      if (value === null) {
+        return;
+      }
+
+      downloadVideo(value, currentBlobs.endDate, key);
+    }
+
+    setCurrentBlobs(currentBlobsInit);
+  }, [currentBlobs.blobs, currentBlobs.endDate]);
+
+  const discardVideos = useCallback(() => {
+    setCurrentBlobs(currentBlobsInit);
+  }, [currentBlobsInit]);
 
   const setMediaStream = useCallback(
     (prefix: Prefix, source: MediaStream | null) => {
@@ -141,7 +191,14 @@ const App = () => {
       newRecorders.push(recorder);
 
       recorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, endDate, prefix);
+        setCurrentBlobs((prev) => ({
+          ...prev,
+          endDate,
+          blobs: {
+            ...prev.blobs,
+            [prefix]: data,
+          },
+        }));
       });
 
       recorder.addEventListener("error", (event) => {
@@ -223,6 +280,8 @@ const App = () => {
       <TopBar
         start={start}
         stop={stop}
+        handleVideos={handleVideos}
+        discardVideos={discardVideos}
         recording={recording}
         disabledByParent={recordingDisabled}
       />

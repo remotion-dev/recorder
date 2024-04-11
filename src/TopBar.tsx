@@ -32,19 +32,37 @@ const formatTime = (ms: number) => {
 export const TopBar: React.FC<{
   start: () => void;
   stop: () => void;
+  handleVideos: () => void;
+  discardVideos: () => void;
   recording: false | number;
   disabledByParent: boolean;
-}> = ({ start, stop, recording, disabledByParent }) => {
-  const disabled = disabledByParent || recording !== false;
-
+}> = ({
+  start,
+  stop,
+  handleVideos,
+  discardVideos,
+  recording,
+  disabledByParent,
+}) => {
+  const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState(true);
-
+  const disabled = disabledByParent || recording !== false || showHandleVideos;
   useEffect(() => {
     const intervalId = setInterval(() => {
       setIsVisible((prev) => !prev);
     }, 800);
     return () => clearInterval(intervalId);
   }, []);
+
+  const handleUseTake = () => {
+    handleVideos();
+    setShowHandleVideos(false);
+  };
+
+  const handleDiscardTake = () => {
+    discardVideos();
+    setShowHandleVideos(false);
+  };
 
   const recordCircle = (
     <svg
@@ -76,7 +94,10 @@ export const TopBar: React.FC<{
             variant={"outline"}
             type="button"
             disabled={!recording}
-            onClick={stop}
+            onClick={() => {
+              stop();
+              setShowHandleVideos(true);
+            }}
             style={{ display: "flex", alignItems: "center", gap: 10 }}
             title="Press R to stop recording"
           >
@@ -106,6 +127,26 @@ export const TopBar: React.FC<{
           </Button>
         </div>
       )}
+      {showHandleVideos ? (
+        <>
+          <Button
+            variant={"default"}
+            type="button"
+            onClick={handleUseTake}
+            title="Press R to start recording"
+          >
+            Use this take
+          </Button>
+          <Button
+            variant={"destructive"}
+            type="button"
+            onClick={handleDiscardTake}
+            title="Press R to start recording"
+          >
+            Discard Videos
+          </Button>
+        </>
+      ) : null}
     </div>
   );
 };
