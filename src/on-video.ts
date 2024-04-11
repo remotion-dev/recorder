@@ -1,4 +1,4 @@
-export const onVideo = (data: Blob, endDate: number, prefix: string) => {
+export const downloadVideo = (data: Blob, endDate: number, prefix: string) => {
   let webcamchunks: Blob[] = [];
   if (data.size > 0) {
     webcamchunks.push(data);
