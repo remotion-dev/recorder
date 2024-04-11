@@ -1,4 +1,6 @@
+import type { SetStateAction } from "react";
 import React, { useEffect, useState } from "react";
+import { SelectedProject } from "./components/SelectProject";
 import { Button } from "./components/ui/button";
 
 const topBarContainer: React.CSSProperties = {
@@ -35,14 +37,20 @@ export const TopBar: React.FC<{
   keepVideos: () => void;
   discardVideos: () => void;
   recording: false | number;
+  projects: string[] | null;
   disabledByParent: boolean;
+  selectedProject: string | null;
+  setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
 }> = ({
   start,
   stop,
   keepVideos,
   discardVideos,
+  projects,
   recording,
   disabledByParent,
+  selectedProject,
+  setSelectedProject,
 }) => {
   const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -146,6 +154,14 @@ export const TopBar: React.FC<{
             Discard Videos
           </Button>
         </>
+      ) : null}
+      <div style={{ flex: 1 }} />
+      {projects ? (
+        <SelectedProject
+          projects={projects}
+          selectedProject={selectedProject}
+          setSelectedProject={setSelectedProject}
+        />
       ) : null}
     </div>
   );

@@ -22,16 +22,16 @@ export const handleUploadFileToServer = async (
   data: Blob,
   endDate: number,
   prefix: string,
+  selectedProject: string,
 ) => {
   try {
     const videoFile = new File([data], "video.webm", { type: data.type });
     const fileName = prefix + endDate.toString() + ".webm";
-    console.log(fileName);
 
     const url = new URL(`/api/upload-video`, window.location.origin);
 
     url.search = new URLSearchParams({
-      folder: "hello",
+      folder: selectedProject,
       file: fileName,
     }).toString();
 
