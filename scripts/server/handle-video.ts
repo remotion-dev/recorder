@@ -6,7 +6,6 @@ export const handleVideoUpload = (req: Request, res: Response) => {
   console.log("handling the video upload");
   try {
     const { file } = req.query; // = name of the file
-    console.log("file: ", file);
     // const folder = req.query.folder;
     if (typeof file !== "string") {
       throw new Error("No `file` provided");
@@ -18,7 +17,6 @@ export const handleVideoUpload = (req: Request, res: Response) => {
 
     const folderPath = path.join(process.cwd(), "public"); // replace this with actual folder from query params
     const filePath = path.join(folderPath, file);
-    console.log("destinationPath: ", folderPath);
 
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
 

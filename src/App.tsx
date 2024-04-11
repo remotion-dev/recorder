@@ -8,7 +8,7 @@ import {
 } from "../config/cameras";
 import "./App.css";
 import { Button } from "./components/ui/button";
-import { handleUploadFile } from "./download-video";
+import { downloadVideo, handleUploadFileToServer } from "./download-video";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
 import { TopBar } from "./TopBar";
@@ -140,6 +140,7 @@ const App = () => {
   }, []);
 
   const keepVideos = useCallback(() => {
+    const runsOnServer = Boolean(window.remotionServerEnabled);
     if (currentBlobs.endDate === null) {
       return;
     }
@@ -149,8 +150,11 @@ const App = () => {
         return;
       }
 
-      handleUploadFile(blob, endDate, prefix);
-      // downloadVideo(blob, currentBlobs.endDate, prefix);
+      if (runsOnServer) {
+        handleUploadFileToServer(blob, endDate, prefix);
+      } else {
+        downloadVideo(blob, currentBlobs.endDate, prefix);
+      }
     }
 
     setCurrentBlobs(currentBlobsInit);

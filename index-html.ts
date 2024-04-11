@@ -8,8 +8,12 @@ export const indexHtmlDev = (vite: ViteDevServer, viteDir: string) => {
   return async (req: Request, response: Response) => {
     const template = readFileSync(index, "utf-8");
     const transformed = await vite.transformIndexHtml(req.url, template);
+    const injected = transformed.replace(
+      "<!--remotion-server-placeholder-->",
+      "<script>window.remotionServerEnabled = true</script>",
+    );
     response.status(200);
-    response.send(transformed);
+    response.send(injected);
     response.end();
   };
 };
