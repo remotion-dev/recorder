@@ -18,27 +18,33 @@ export const downloadVideo = (data: Blob, endDate: number, prefix: string) => {
   webcamchunks = [];
 };
 
-export const handleUploadFile = async (
+export const handleUploadFileToServer = async (
   data: Blob,
   endDate: number,
   prefix: string,
 ) => {
-  const videoFile = new File([data], "video.webm", { type: data.type });
-  const fileName = prefix + endDate.toString() + ".webm";
-  console.log(fileName);
+  try {
+    const videoFile = new File([data], "video.webm", { type: data.type });
+    const fileName = prefix + endDate.toString() + ".webm";
+    console.log(fileName);
 
-  const url = new URL(`/api/upload-video`, window.location.origin);
+    const url = new URL(`/api/upload-video`, window.location.origin);
 
-  url.search = new URLSearchParams({
-    folder: "hello",
-    file: fileName,
-  }).toString();
+    url.search = new URLSearchParams({
+      folder: "hello",
+      file: fileName,
+    }).toString();
 
-  // might add query params to define name & folder
-  const res = await fetch(url, {
-    method: "POST",
-    body: videoFile,
-  });
+    // might add query params to define name & folder
+    const res = await fetch(url, {
+      method: "POST",
+      body: videoFile,
+    });
 
-  console.log(res.status);
+    if (res.status !== 200) {
+      throw new Error("Error occured while downloading the video");
+    }
+  } catch (error) {
+    console.error("An error occured while downloading the video", error);
+  }
 };
