@@ -3,16 +3,15 @@ import { startExpressServer } from "./express-server";
 
 export const startStudioAndServer = async () => {
   await startExpressServer();
-
-  const proc = spawn("npm", ["run", "remotion", "studio"], {
+  const bunxProcess = spawn("bunx", ["remotion", "studio"], {
     stdio: "inherit",
     shell: process.platform === "win32" ? "cmd.exe" : undefined,
     detached: false,
   });
 
-  setTimeout(() => {
-    proc.ref();
-    proc.kill();
-    console.log("kill");
-  }, 3000);
+  // Must be started with Node.js for the moment (npx tsx studio.ts)
+  process.on("uncaughtException", (e) => {
+    console.error(e);
+    bunxProcess.kill();
+  });
 };
