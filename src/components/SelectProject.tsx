@@ -1,0 +1,51 @@
+import type { SetStateAction } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+
+export const SelectedProject: React.FC<{
+  projects: string[];
+  selectedProject: string | null;
+  setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
+}> = ({ projects, selectedProject, setSelectedProject }) => {
+  if (!projects) {
+    return;
+  }
+
+  const placeholder = selectedProject ?? projects[0];
+  return (
+    <div
+      style={{
+        marginRight: 10,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+      }}
+    >
+      Project:
+      <Select
+        onValueChange={(value) => {
+          setSelectedProject(value);
+        }}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder={placeholder}>{selectedProject}</SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {projects.map((project, i) => {
+            return (
+              <SelectItem key={i} value={project}>
+                {project}
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};

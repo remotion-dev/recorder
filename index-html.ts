@@ -3,6 +3,12 @@ import { readFileSync } from "node:fs";
 import path from "path";
 import type { ViteDevServer } from "vite";
 
+declare global {
+  interface Window {
+    remotionServerEnabled: boolean | undefined;
+  }
+}
+
 export const indexHtmlDev = (vite: ViteDevServer, viteDir: string) => {
   const index = path.join(viteDir, "index.html");
   return async (req: Request, response: Response) => {

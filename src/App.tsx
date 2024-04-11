@@ -9,6 +9,7 @@ import {
 import "./App.css";
 import { Button } from "./components/ui/button";
 import { downloadVideo, handleUploadFileToServer } from "./download-video";
+import { fetchProjectFolders } from "./get-projects";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
 import { TopBar } from "./TopBar";
@@ -75,6 +76,16 @@ const mediaRecorderOptions: MediaRecorderOptions = {
   videoBitsPerSecond: 8 * 4000000,
 };
 
+const currentBlobsInit = {
+  endDate: null,
+  blobs: {
+    webcam: null,
+    display: null,
+    alt1: null,
+    alt2: null,
+  },
+};
+
 const App = () => {
   const [showAlternativeViews, setShowAlternativeViews] = useState<boolean>(
     localStorage.getItem("showAlternativeViews") === "true",
@@ -82,6 +93,9 @@ const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
+  const [projectFolders, setProjectFolders] = useState<string[] | null>(null);
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
   }>({
@@ -91,15 +105,6 @@ const App = () => {
     alternative2: null,
   });
 
-  const currentBlobsInit = {
-    endDate: null,
-    blobs: {
-      webcam: null,
-      display: null,
-      alt1: null,
-      alt2: null,
-    },
-  };
   const [currentBlobs, setCurrentBlobs] = useState<
     | {
         endDate: number;
@@ -151,18 +156,22 @@ const App = () => {
       }
 
       if (runsOnServer) {
-        handleUploadFileToServer(blob, endDate, prefix);
+        if (selectedProject === null) {
+          throw new Error("No project selected!");
+        }
+
+        handleUploadFileToServer(blob, endDate, prefix, selectedProject);
       } else {
         downloadVideo(blob, currentBlobs.endDate, prefix);
       }
     }
 
     setCurrentBlobs(currentBlobsInit);
-  }, [currentBlobs.blobs, currentBlobs.endDate, currentBlobsInit]);
+  }, [currentBlobs.blobs, currentBlobs.endDate, selectedProject]);
 
   const discardVideos = useCallback(() => {
     setCurrentBlobs(currentBlobsInit);
-  }, [currentBlobsInit]);
+  }, []);
 
   const setMediaStream = useCallback(
     (prefix: Prefix, source: MediaStream | null) => {
@@ -245,6 +254,18 @@ const App = () => {
   useKeyPress(["r"], onPressR);
 
   useEffect(() => {
+    const loadFromServer = async () => {
+      if (!window.remotionServerEnabled) {
+        return;
+      }
+
+      const jsn = await fetchProjectFolders();
+      setProjectFolders(jsn.folders);
+    };
+
+    loadFromServer();
+  }, []);
+  useEffect(() => {
     const checkDeviceLabels = async () => {
       const fetchedDevices = await navigator.mediaDevices.enumerateDevices();
       const hasEmptyLabels = fetchedDevices.some(
@@ -289,6 +310,9 @@ const App = () => {
         discardVideos={discardVideos}
         recording={recording}
         disabledByParent={recordingDisabled}
+        projects={projectFolders}
+        selectedProject={selectedProject}
+        setSelectedProject={setSelectedProject}
       />
       <div style={dynamicGridContainer}>
         <View
