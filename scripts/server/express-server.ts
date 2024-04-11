@@ -6,15 +6,16 @@ import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 import { SERVER_PORT } from "../../config/server";
 import { indexHtmlDev } from "../../index-html";
-import { copyEndpoint } from "../../server/copy-example";
 import { SAVE_SUBTITLES } from "./constants";
+import { copyEndpoint } from "./copy-example";
 import { getOptions, saveSubtitles } from "./subtitles";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const startExpressServer = async () => {
+  console.log("starting express server...");
   const app = express();
-  // app.use(bodyParser.json());
+  app.use(bodyParser.json());
 
   const rootDir = path.join(__dirname, "..", "..");
   const viteDir = rootDir; // will change once vite is put in its own directory
@@ -35,9 +36,7 @@ export const startExpressServer = async () => {
     vite.middlewares.handle(req, res, next);
   });
 
-  app.use(bodyParser.json());
-
-  app.get("/recorder", indexHtmlDev(vite, viteDir));
+  app.get("/", indexHtmlDev(vite, viteDir));
 
   app.post("/api/copy", copyEndpoint);
   app.post(SAVE_SUBTITLES, saveSubtitles);
@@ -46,5 +45,5 @@ export const startExpressServer = async () => {
   const port = process.env.PORT || SERVER_PORT;
 
   app.listen(port);
-  console.log(`Listening on http://localhost:${port}`);
+  console.log(`Recorder running on http://localhost:${port}`);
 };
