@@ -1,5 +1,5 @@
 import type { ChangeEvent, SetStateAction } from "react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { createProject } from "../create-project";
 import { Button } from "./ui/button";
 import {
@@ -24,6 +24,25 @@ export const ProjectDialog: React.FC<{
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNewProject(event.target.value);
   };
+
+  const getRegex = () => /^([a-zA-Z0-9-\u4E00-\u9FFF])+$/g;
+
+  const invalidInput = useMemo(() => {
+    const match = newProject.match(getRegex());
+    if (newProject.length === 0) {
+      return null;
+    }
+
+    if (!match || match.length === 0) {
+      return "Project names can't contain spaces or special symbols.";
+    }
+
+    return null;
+  }, [newProject]);
+
+  const disabled = useMemo(() => {
+    return invalidInput !== null || newProject.length === 0;
+  }, [invalidInput, newProject.length]);
 
   const handleSubmit = async () => {
     const res = await createProject(newProject);
@@ -53,6 +72,7 @@ export const ProjectDialog: React.FC<{
             <Label htmlFor="name" className="text-right">
               Project Name
             </Label>
+
             <Input
               id="name"
               placeholder="Add your project name..."
@@ -60,10 +80,13 @@ export const ProjectDialog: React.FC<{
               className="col-span-3"
               onChange={handleChange}
             />
+            <Label className="col-start-2 col-end-5 text-red-600">
+              {invalidInput ?? null}
+            </Label>
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleSubmit}>
+          <Button type="submit" onClick={handleSubmit} disabled={disabled}>
             Create Project
           </Button>
         </DialogFooter>
