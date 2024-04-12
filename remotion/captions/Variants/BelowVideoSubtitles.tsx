@@ -2,7 +2,6 @@ import type { Word } from "../../../config/autocorrect";
 import type { CanvasLayout } from "../../../config/layout";
 import type { Theme } from "../../../config/themes";
 import { getHorizontalPaddingForSubtitles } from "../processing/postprocess-subs";
-import { getSubtitlesLines } from "../Segment";
 import type { Segment } from "../types";
 import { Words } from "../Words";
 import { LINE_HEIGHT } from "./BoxedSubtitles";
@@ -13,7 +12,6 @@ export const BelowVideoSubtitles: React.FC<{
   theme: Theme;
   onOpenSubEditor: (word: Word) => void;
   canvasLayout: CanvasLayout;
-  captionBoxHeight: number;
   fontSize: number;
   lines: number;
 }> = ({
@@ -23,21 +21,14 @@ export const BelowVideoSubtitles: React.FC<{
   fontSize,
   canvasLayout,
   onOpenSubEditor,
-  captionBoxHeight,
+  lines,
 }) => {
   const padding = getHorizontalPaddingForSubtitles("below-video", canvasLayout);
 
   return (
     <div
       style={{
-        height:
-          getSubtitlesLines({
-            subtitleType: "below-video",
-            boxHeight: captionBoxHeight,
-            fontSize,
-          }) *
-          fontSize *
-          LINE_HEIGHT,
+        height: lines * fontSize * LINE_HEIGHT,
         marginTop: 0,
       }}
     >
