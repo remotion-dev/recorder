@@ -103,7 +103,7 @@ export const getSubsAlign = ({
 
   if (canvasLayout === "landscape") {
     return {
-      maxLines: 2,
+      maxLines: 1,
       textAlign: "center",
       justifyContent: "center",
       alignItems: "center",
@@ -134,6 +134,7 @@ export const CaptionSentence: React.FC<{
   captionBoxHeight: number;
   onOpenSubEditor: (word: Word) => void;
   fontSize: number;
+  lines: number;
 }> = ({
   segment,
   trimStart,
@@ -145,6 +146,7 @@ export const CaptionSentence: React.FC<{
   captionBoxHeight,
   onOpenSubEditor,
   fontSize,
+  lines,
 }) => {
   const { fps } = useVideoConfig();
   const normalStartFrame = (getStartOfSegment(segment) / 1000) * fps;
@@ -187,6 +189,7 @@ export const CaptionSentence: React.FC<{
             theme={theme}
             captionBoxHeight={captionBoxHeight}
             fontSize={fontSize}
+            lines={lines}
           />
         ) : (
           <OverlayedCenterSubtitles

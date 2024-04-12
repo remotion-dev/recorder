@@ -6,7 +6,11 @@ import {
   isWebCamRight,
 } from "../animations/webcam-transitions";
 import type { SubtitleType } from "../captions/Segment";
-import { getSubtitlesFontSize, getSubtitlesType } from "../captions/Segment";
+import {
+  getSubtitlesFontSize,
+  getSubtitlesLines,
+  getSubtitlesType,
+} from "../captions/Segment";
 import { getSubsLayout } from "../captions/subs-layout";
 import { getDimensionsForLayout } from "./dimensions";
 import { getDisplayLayout } from "./get-display-layout";
@@ -156,6 +160,7 @@ export type CameraSceneLayout = {
   subLayout: Layout;
   subtitleType: SubtitleType;
   subtitleFontSize: number;
+  subtitleLines: number;
 };
 
 export const getLayout = ({
@@ -192,20 +197,29 @@ export const getLayout = ({
 
     const subtitleFontSize = getSubtitlesFontSize(subtitleType, null);
 
+    const subLayout = getSubsLayout({
+      canvasLayout,
+      canvasSize,
+      displayLayout: null,
+      subtitleType,
+      webcamLayout,
+      webcamPosition,
+      fontSize: subtitleFontSize,
+    });
+
+    const subtitleLines = getSubtitlesLines({
+      boxHeight: subLayout.height,
+      fontSize: subtitleFontSize,
+      subtitleType,
+    });
+
     return {
       displayLayout: null,
       webcamLayout,
-      subLayout: getSubsLayout({
-        canvasLayout,
-        canvasSize,
-        displayLayout: null,
-        subtitleType,
-        webcamLayout,
-        webcamPosition,
-        fontSize: subtitleFontSize,
-      }),
+      subLayout,
       subtitleType,
       subtitleFontSize,
+      subtitleLines,
     };
   }
 
@@ -243,6 +257,11 @@ export const getLayout = ({
     });
 
     const subtitleFontSize = getSubtitlesFontSize(subtitleType, displayLayout);
+    const subtitleLines = getSubtitlesLines({
+      boxHeight: displayLayout.height,
+      fontSize: subtitleFontSize,
+      subtitleType,
+    });
 
     return {
       displayLayout,
@@ -258,6 +277,7 @@ export const getLayout = ({
       }),
       subtitleType,
       subtitleFontSize,
+      subtitleLines,
     };
   }
 
@@ -303,6 +323,12 @@ export const getLayout = ({
 
     const subtitleFontSize = getSubtitlesFontSize(subtitleType, displayLayout);
 
+    const subtitleLines = getSubtitlesLines({
+      boxHeight: displayLayout.height,
+      fontSize: subtitleFontSize,
+      subtitleType,
+    });
+
     return {
       displayLayout,
       webcamLayout,
@@ -317,6 +343,7 @@ export const getLayout = ({
       }),
       subtitleType,
       subtitleFontSize,
+      subtitleLines,
     };
   }
 
