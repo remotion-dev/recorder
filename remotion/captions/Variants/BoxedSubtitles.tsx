@@ -2,7 +2,6 @@ import type { Word } from "../../../config/autocorrect";
 import type { CanvasLayout } from "../../../config/layout";
 import type { Theme } from "../../../config/themes";
 import { getHorizontalPaddingForSubtitles } from "../processing/postprocess-subs";
-import { getSubtitlesLines } from "../Segment";
 import type { Segment } from "../types";
 import { Words } from "../Words";
 
@@ -14,30 +13,23 @@ export const BoxedSubtitles: React.FC<{
   theme: Theme;
   onOpenSubEditor: (word: Word) => void;
   canvasLayout: CanvasLayout;
-  captionBoxHeight: number;
   fontSize: number;
+  lines: number;
 }> = ({
   segment,
   startFrame,
   theme,
   canvasLayout,
   onOpenSubEditor,
-  captionBoxHeight,
   fontSize,
+  lines,
 }) => {
   const padding = getHorizontalPaddingForSubtitles("boxed", canvasLayout);
 
   return (
     <div
       style={{
-        height:
-          getSubtitlesLines({
-            subtitleType: "boxed",
-            boxHeight: captionBoxHeight,
-            fontSize,
-          }) *
-          fontSize *
-          LINE_HEIGHT,
+        height: lines * fontSize * LINE_HEIGHT,
       }}
     >
       <span
