@@ -137,6 +137,8 @@ export const Subs: React.FC<{
     shouldTransitionToNext,
   });
 
+  const boxHeight = scene.layout.subLayout.height;
+
   const postprocessed = useMemo(() => {
     if (!whisperOutput) {
       return null;
@@ -149,16 +151,21 @@ export const Subs: React.FC<{
     return postprocessSubtitles({
       subTypes: whisperOutput,
       boxWidth: animatedSubLayout.width,
-      maxLines: getSubtitlesLines({ subtitleType, boxHeight: 300, fontSize }),
+      maxLines: getSubtitlesLines({
+        subtitleType,
+        boxHeight,
+        fontSize,
+      }),
       fontSize,
       canvasLayout,
       subtitleType,
     });
   }, [
     whisperOutput,
-    animatedSubLayout.width,
     subtitleType,
     scene.layout.displayLayout,
+    animatedSubLayout.width,
+    boxHeight,
     canvasLayout,
   ]);
 
@@ -259,7 +266,7 @@ export const Subs: React.FC<{
                 theme={theme}
                 displayLayout={scene.layout.displayLayout}
                 onOpenSubEditor={onOpenSubEditor}
-                captionBoxHeight={animatedSubLayout.height}
+                captionBoxHeight={boxHeight}
               />
             );
           })}
