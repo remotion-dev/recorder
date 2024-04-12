@@ -149,7 +149,7 @@ export const Subs: React.FC<{
     return postprocessSubtitles({
       subTypes: whisperOutput,
       boxWidth: animatedSubLayout.width,
-      maxLines: getSubtitlesLines(subtitleType, 300, fontSize),
+      maxLines: getSubtitlesLines({ subtitleType, boxHeight: 300, fontSize }),
       fontSize,
       canvasLayout,
       subtitleType,

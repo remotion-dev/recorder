@@ -32,7 +32,11 @@ export const BoxedSubtitles: React.FC<{
     <div
       style={{
         height:
-          getSubtitlesLines("boxed", captionBoxHeight, fontSize) *
+          getSubtitlesLines({
+            subtitleType: "boxed",
+            boxHeight: captionBoxHeight,
+            fontSize,
+          }) *
           fontSize *
           LINE_HEIGHT,
       }}
