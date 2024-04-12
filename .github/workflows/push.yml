@@ -1,5 +1,7 @@
 on: push
 name: Install and Test
+env:
+  FORCE_COLOR: 1
 jobs:
   install:
     name: Test
