@@ -3,6 +3,10 @@
   "style": "default",
   "rsc": false,
   "tsx": true,
+  "aliases": {
+    "utils": "src/lib",
+    "components": "src/components"
+  },
   "tailwind": {
     "config": "tailwind.config.js",
     "css": "src/index.css",
