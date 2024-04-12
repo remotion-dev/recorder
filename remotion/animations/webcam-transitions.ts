@@ -86,14 +86,6 @@ export const isGrowingOrShrinkingToMiniature = ({
     isShrinkingToMiniature({
       firstScene: currentScene,
       secondScene: otherScene,
-    }) ||
-    isGrowingFromMiniature({
-      firstScene: otherScene,
-      secondScene: currentScene,
-    }) ||
-    isShrinkingToMiniature({
-      firstScene: otherScene,
-      secondScene: currentScene,
     })
   );
 };
@@ -216,7 +208,19 @@ const getWebCamStartLayout = ({
   }
 
   if (
-    isGrowingOrShrinkingToMiniature({ currentScene, otherScene: previousScene })
+    isGrowingFromMiniature({
+      firstScene: previousScene,
+      secondScene: currentScene,
+    })
+  ) {
+    return previousScene.layout.webcamLayout;
+  }
+
+  if (
+    isShrinkingToMiniature({
+      firstScene: previousScene,
+      secondScene: currentScene,
+    })
   ) {
     return previousScene.layout.webcamLayout;
   }
