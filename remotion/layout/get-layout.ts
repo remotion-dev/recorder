@@ -32,18 +32,24 @@ const squareFullscreenWebcamLayout = ({
 }) => {
   const aspectRatio = webcamSize.width / webcamSize.height;
 
-  const actualWidth = canvasSize.width - getSafeSpace("square") * 2;
+  const maxWidth = canvasSize.width - getSafeSpace("square") * 2;
+  // Video can take up 75% of the height to leave place for the subtitles
+  const maxHeight = (canvasSize.height - getSafeSpace("square") * 2) * 0.75;
 
-  const height = actualWidth / aspectRatio;
+  const provisionalHeight = maxWidth / aspectRatio;
+  const width =
+    provisionalHeight > maxHeight ? maxHeight * aspectRatio : maxWidth;
+  const height = width / aspectRatio;
+
   const isTopAligned = !isWebCamAtBottom(webcamPosition);
+  const left = (canvasSize.width - width) / 2;
 
-  // TODO: Will look weird with vertical video
   return {
-    left: getSafeSpace("square"),
+    left,
     top: isTopAligned
       ? getSafeSpace("square")
-      : canvasSize.height - height - getSafeSpace("square"),
-    width: actualWidth,
+      : canvasSize.height - provisionalHeight - getSafeSpace("square"),
+    width,
     height,
     borderRadius,
     opacity: 1,

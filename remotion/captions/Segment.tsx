@@ -79,7 +79,11 @@ export const getSubtitlesLines = ({
   fontSize: number;
 }) => {
   if (subtitleType === "boxed") {
-    const nrOfLines = Math.floor(boxHeight / (fontSize * LINE_HEIGHT));
+    const boxPadding = 24;
+
+    const nrOfLines = Math.floor(
+      (boxHeight - boxPadding) / (fontSize * LINE_HEIGHT),
+    );
     return nrOfLines;
   }
 
@@ -131,7 +135,6 @@ export const CaptionSentence: React.FC<{
   canvasLayout: CanvasLayout;
   subtitleType: SubtitleType;
   theme: Theme;
-  captionBoxHeight: number;
   onOpenSubEditor: (word: Word) => void;
   fontSize: number;
   lines: number;
@@ -143,7 +146,6 @@ export const CaptionSentence: React.FC<{
   isFirst,
   isLast,
   theme,
-  captionBoxHeight,
   onOpenSubEditor,
   fontSize,
   lines,
@@ -177,8 +179,8 @@ export const CaptionSentence: React.FC<{
             segment={segment}
             startFrame={startFrame}
             theme={theme}
-            captionBoxHeight={captionBoxHeight}
             fontSize={fontSize}
+            lines={lines}
           />
         ) : subtitleType === "below-video" ? (
           <BelowVideoSubtitles
@@ -187,7 +189,6 @@ export const CaptionSentence: React.FC<{
             segment={segment}
             startFrame={startFrame}
             theme={theme}
-            captionBoxHeight={captionBoxHeight}
             fontSize={fontSize}
             lines={lines}
           />
