@@ -1,5 +1,5 @@
 export type Word = {
-  word: string;
+  text: string;
   firstTimestamp: number;
   lastTimestamp: number | null;
   monospace?: boolean;
@@ -7,18 +7,18 @@ export type Word = {
 
 const autocorrectWord = (word: Word): Word => {
   // Replace a single word with another one
-  if (word.word === " github") {
+  if (word.text === " github") {
     return {
       ...word,
-      word: word.word.replace("github", " GitHub"),
+      text: word.text.replace("github", " GitHub"),
     };
   }
 
   // Replace a pattern with a specific word
-  if (word.word.match(/ remotion\.$/)) {
+  if (word.text.match(/ remotion\.$/)) {
     return {
       ...word,
-      word: word.word.replace(/ remotion.$/, " Remotion."),
+      text: word.text.replace(/ remotion.$/, " Remotion."),
     };
   }
   // Add your own function to remap specific words.
