@@ -8,7 +8,7 @@ import type { Layout } from "../layout/layout-types";
 import { FadeSentence } from "./FadeSentence";
 import type { Segment } from "./types";
 import { BelowVideoSubtitles } from "./Variants/BelowVideoSubtitles";
-import { BoxedSubtitles } from "./Variants/BoxedSubtitles";
+import { BoxedSubtitles, LINE_HEIGHT } from "./Variants/BoxedSubtitles";
 import { OverlayedCenterSubtitles } from "./Variants/OverlayedCenterSubtitles";
 
 const getStartOfSegment = (segment: Segment) => {
@@ -70,9 +70,18 @@ export const getSubtitlesFontSize = (
   return 48;
 };
 
-export const getSubtitlesLines = (subtitleType: SubtitleType) => {
+export const getSubtitlesLines = ({
+  subtitleType,
+  boxHeight,
+  fontSize,
+}: {
+  subtitleType: SubtitleType;
+  boxHeight: number;
+  fontSize: number;
+}) => {
   if (subtitleType === "boxed") {
-    return 4;
+    const nrOfLines = Math.floor(boxHeight / (fontSize * LINE_HEIGHT));
+    return nrOfLines;
   }
 
   return 1;
@@ -124,6 +133,7 @@ export const CaptionSentence: React.FC<{
   subtitleType: SubtitleType;
   displayLayout: Layout | null;
   theme: Theme;
+  captionBoxHeight: number;
   onOpenSubEditor: (word: Word) => void;
 }> = ({
   segment,
@@ -134,12 +144,11 @@ export const CaptionSentence: React.FC<{
   isFirst,
   isLast,
   theme,
+  captionBoxHeight,
   onOpenSubEditor,
 }) => {
   const { fps } = useVideoConfig();
-
   const normalStartFrame = (getStartOfSegment(segment) / 1000) * fps;
-
   // If first caption of a segment, show it a bit earlier to avoid flicker
   // of caption showing only shortly after the video
   const startFrame = isFirst ? normalStartFrame - fps : normalStartFrame;
@@ -168,6 +177,7 @@ export const CaptionSentence: React.FC<{
             segment={segment}
             startFrame={startFrame}
             theme={theme}
+            captionBoxHeight={captionBoxHeight}
           />
         ) : subtitleType === "below-video" ? (
           <BelowVideoSubtitles
@@ -177,6 +187,7 @@ export const CaptionSentence: React.FC<{
             segment={segment}
             startFrame={startFrame}
             theme={theme}
+            captionBoxHeight={captionBoxHeight}
           />
         ) : (
           <OverlayedCenterSubtitles

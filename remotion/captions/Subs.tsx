@@ -124,7 +124,6 @@ export const Subs: React.FC<{
     currentScene: scene,
     nextScene: previousScene,
   });
-
   const animatedSubLayout = getAnimatedSubtitleLayout({
     enterProgress: enter,
     exitProgress: exit,
@@ -138,24 +137,35 @@ export const Subs: React.FC<{
     shouldTransitionToNext,
   });
 
+  const boxHeight = scene.layout.subLayout.height;
+
   const postprocessed = useMemo(() => {
     if (!whisperOutput) {
       return null;
     }
 
+    const fontSize = getSubtitlesFontSize(
+      subtitleType,
+      scene.layout.displayLayout,
+    );
     return postprocessSubtitles({
       subTypes: whisperOutput,
       boxWidth: animatedSubLayout.width,
-      maxLines: getSubtitlesLines(subtitleType),
-      fontSize: getSubtitlesFontSize(subtitleType, scene.layout.displayLayout),
+      maxLines: getSubtitlesLines({
+        subtitleType,
+        boxHeight,
+        fontSize,
+      }),
+      fontSize,
       canvasLayout,
       subtitleType,
     });
   }, [
     whisperOutput,
-    animatedSubLayout.width,
     subtitleType,
     scene.layout.displayLayout,
+    animatedSubLayout.width,
+    boxHeight,
     canvasLayout,
   ]);
 
@@ -232,7 +242,6 @@ export const Subs: React.FC<{
       subtitleType,
     }),
   };
-
   return (
     <AbsoluteFill style={outer}>
       <TransitionFromPreviousSubtitles
@@ -257,6 +266,7 @@ export const Subs: React.FC<{
                 theme={theme}
                 displayLayout={scene.layout.displayLayout}
                 onOpenSubEditor={onOpenSubEditor}
+                captionBoxHeight={boxHeight}
               />
             );
           })}
