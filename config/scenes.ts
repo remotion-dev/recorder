@@ -57,10 +57,15 @@ export const configuration = z.discriminatedUnion("type", [
     music,
     channel: brand,
     platform,
-    links: z.array(linkType),
+    links: z.array(linkType).default([]),
   }),
   z.object({
     type: z.literal("tableofcontents"),
+    durationInFrames: z.number().int().default(200),
+    music,
+  }),
+  z.object({
+    type: z.literal("recorder"),
     durationInFrames: z.number().int().default(200),
     music,
   }),
