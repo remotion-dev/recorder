@@ -23,6 +23,7 @@ import type { ChapterType } from "../chapters/make-chapters";
 import { CameraScene } from "./Camera/CameraScene";
 import { SoundEffects } from "./Camera/SoundEffects";
 import { EndCard } from "./EndCard";
+import { RecorderScene } from "./Recorder";
 import { TableOfContents } from "./TableOfContents";
 import { Title } from "./Title/Title";
 import { TitleCard } from "./TitleCard/TitleCard";
@@ -70,6 +71,10 @@ const InnerScene: React.FC<
         youTubePlug={sceneAndMetadata.scene.youTubePlug}
       />
     );
+  }
+
+  if (sceneAndMetadata.scene.type === "recorder") {
+    return <RecorderScene theme={theme} />;
   }
 
   if (sceneAndMetadata.scene.type === "endcard") {
