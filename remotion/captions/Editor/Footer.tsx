@@ -46,7 +46,16 @@ export const SubsEditorFooter: React.FC<{
           type={"button"}
           onClick={onCloseSubEditor}
         >
-          Done
+          Done{" "}
+          <kbd
+            style={{
+              color: "rgba(255, 255, 255, 0.4)",
+              fontSize: "0.9em",
+              marginLeft: 5,
+            }}
+          >
+            Esc
+          </kbd>
         </button>
       </div>
     </div>
