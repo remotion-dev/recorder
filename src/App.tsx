@@ -255,18 +255,21 @@ const App = () => {
 
   useKeyPress(["r"], onPressR);
 
+  const refreshProjectList = useCallback(async () => {
+    const jsn = await fetchProjectFolders();
+    setProjectFolders(jsn.folders);
+    if (selectedProject && !jsn.folders.includes(selectedProject)) {
+      setSelectedProject(jsn.folders[0] ?? "");
+    }
+  }, [selectedProject]);
+
   useEffect(() => {
     if (!window.remotionServerEnabled) {
       return;
     }
 
-    const loadFromServer = async () => {
-      const jsn = await fetchProjectFolders();
-      setProjectFolders(jsn.folders);
-    };
-
-    loadFromServer();
-  }, []);
+    refreshProjectList();
+  }, [refreshProjectList]);
 
   useEffect(() => {
     if (!window.remotionServerEnabled) {
@@ -324,6 +327,7 @@ const App = () => {
         projects={projectFolders}
         selectedProject={selectedProject}
         setSelectedProject={setSelectedProject}
+        refreshProjectList={refreshProjectList}
       />
       <div style={dynamicGridContainer}>
         <View

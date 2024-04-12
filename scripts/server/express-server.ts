@@ -8,7 +8,7 @@ import { createServer } from "vite";
 import { SERVER_PORT } from "../../config/server";
 import { indexHtmlDev } from "../../index-html";
 import { SAVE_SUBTITLES } from "./constants";
-import { copyEndpoint } from "./copy-example";
+import { createProject } from "./create-project";
 import { handleVideoUpload } from "./handle-video";
 import { getProjectFolder } from "./projects";
 import { getOptions, saveSubtitles } from "./subtitles";
@@ -40,10 +40,12 @@ export const startExpressServer = async () => {
 
   app.get("/", indexHtmlDev(vite, viteDir));
 
-  app.post("/api/copy", copyEndpoint);
-
   app.get("/api/projects", (req: Request, res: Response) => {
     getProjectFolder(req, res, rootDir);
+  });
+
+  app.post("/api/create-project", (req: Request, res: Response) => {
+    createProject(req, res, rootDir);
   });
 
   app.post("/api/upload-video", handleVideoUpload);

@@ -1,13 +1,13 @@
 import type { SetStateAction } from "react";
 import React, { useEffect, useState } from "react";
+import { ProjectDialog } from "./components/ProjectDialog";
 import { SelectedProject } from "./components/SelectProject";
 import { Button } from "./components/ui/button";
 
 const topBarContainer: React.CSSProperties = {
   display: "flex",
   gap: 10,
-  marginTop: 10,
-  marginLeft: 10,
+  margin: 10,
   alignItems: "center",
 };
 
@@ -41,6 +41,7 @@ export const TopBar: React.FC<{
   disabledByParent: boolean;
   selectedProject: string | null;
   setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
+  refreshProjectList: () => Promise<void>;
 }> = ({
   start,
   stop,
@@ -51,6 +52,7 @@ export const TopBar: React.FC<{
   disabledByParent,
   selectedProject,
   setSelectedProject,
+  refreshProjectList,
 }) => {
   const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -157,11 +159,17 @@ export const TopBar: React.FC<{
       ) : null}
       <div style={{ flex: 1 }} />
       {projects ? (
-        <SelectedProject
-          projects={projects}
-          selectedProject={selectedProject}
-          setSelectedProject={setSelectedProject}
-        />
+        <>
+          <SelectedProject
+            projects={projects}
+            selectedProject={selectedProject}
+            setSelectedProject={setSelectedProject}
+          />
+          <ProjectDialog
+            refreshProjectList={refreshProjectList}
+            setSelectedProject={setSelectedProject}
+          />
+        </>
       ) : null}
     </div>
   );
