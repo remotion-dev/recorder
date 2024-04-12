@@ -52,11 +52,6 @@ export const configuration = z.discriminatedUnion("type", [
     youTubePlug: z.boolean().default(false),
   }),
   z.object({
-    type: z.literal("remotionupdate"),
-    durationInFrames: z.number().int().default(100),
-    music,
-  }),
-  z.object({
     type: z.literal("endcard"),
     durationInFrames: z.number().int().default(200),
     music,

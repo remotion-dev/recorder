@@ -80,8 +80,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           scene.type === "title" ||
           scene.type === "titlecard" ||
           scene.type === "endcard" ||
-          scene.type === "tableofcontents" ||
-          scene.type === "remotionupdate"
+          scene.type === "tableofcontents"
         ) {
           return {
             type: "other-scene",
