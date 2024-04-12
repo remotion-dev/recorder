@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
+import type { Word } from "../../../config/autocorrect";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
-import type { WhisperWord } from "../types";
 import {
   FIRST_COLUMN_WIDTH,
   SECOND_COLUMN_WIDTH,
@@ -14,6 +14,7 @@ const Indent: React.FC<{ value: number; digits: number }> = ({
   value,
 }) => {
   const indentTo = digits - String(value).length;
+
   return (
     <span style={{ opacity: 0 }}>
       {new Array(indentTo)
@@ -25,7 +26,7 @@ const Indent: React.FC<{ value: number; digits: number }> = ({
 };
 
 export const EditWord: React.FC<{
-  word: WhisperWord;
+  word: Word;
   longestWordLength: number;
   index: number;
   onUpdateText: (index: number, newText: string) => void;
@@ -47,7 +48,8 @@ export const EditWord: React.FC<{
   const frame = useCurrentFrame();
   const milliSeconds = ((frame + trimStart) / fps) * 1000;
   const active =
-    word.offsets.from <= milliSeconds && word.offsets.to >= milliSeconds;
+    word.firstTimestamp <= milliSeconds &&
+    (word.lastTimestamp === null || word.lastTimestamp >= milliSeconds);
   const usableWidth = width - SIDE_PADDING * 2;
   const ref = useRef<HTMLDivElement>(null);
 
@@ -115,8 +117,13 @@ export const EditWord: React.FC<{
         e.preventDefault();
         onCloseEditor();
       }
+
+      if (e.key === "i" && e.metaKey) {
+        e.preventDefault();
+        toggleMonospace();
+      }
     },
-    [onCloseEditor],
+    [onCloseEditor, toggleMonospace],
   );
 
   return (
@@ -143,10 +150,13 @@ export const EditWord: React.FC<{
           paddingRight: 30,
         }}
       >
-        <Indent value={word.offsets.from} digits={longestWordLength} />
-        {word.offsets.from} :{" "}
-        <Indent value={word.offsets.to} digits={longestWordLength} />
-        {word.offsets.to}
+        <Indent value={word.firstTimestamp} digits={longestWordLength} />
+        {String(word.firstTimestamp)} :{" "}
+        <Indent
+          value={word.lastTimestamp ? word.lastTimestamp : word.firstTimestamp}
+          digits={longestWordLength}
+        />
+        {word.lastTimestamp ? word.lastTimestamp : word.firstTimestamp}
       </div>
       <div
         style={{

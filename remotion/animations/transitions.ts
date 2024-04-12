@@ -12,11 +12,8 @@ export const getShouldTransitionOut = ({
     return false;
   }
 
-  if (
-    sceneAndMetadata.type === "video-scene" &&
-    !sceneAndMetadata.scene.transitionToNextScene
-  ) {
-    return false;
+  if (sceneAndMetadata.scene.transitionToNextScene) {
+    return true;
   }
 
   const areBothVideoScenes =

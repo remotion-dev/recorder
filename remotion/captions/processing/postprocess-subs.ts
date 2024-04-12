@@ -42,9 +42,8 @@ const balanceWords = ({
   }
 
   for (let i = 1; i < 4; i++) {
-    const index = bestCut - i > -1 ? bestCut - i : 0;
-
-    const word = (words[index] as Word).word.trim();
+    const index = bestCut - i;
+    const word = (words[index] as Word).text.trim();
     if (word.endsWith(",") || word.endsWith(".")) {
       bestCut = index + 1;
       break;
@@ -53,7 +52,7 @@ const balanceWords = ({
 
   while (
     hasMonoSpaceInIt(words[bestCut - 1] as Word) ||
-    (words[bestCut - 1] as Word).word.trim() === ""
+    (words[bestCut - 1] as Word).text.trim() === ""
   ) {
     bestCut--;
   }
@@ -89,7 +88,7 @@ const cutWords = ({
 
   for (const word of words) {
     const { exceedsBox } = add({
-      text: word.word,
+      text: word.text,
       fontFamily: word.monospace ? MONOSPACE_FONT_FAMILY : REGULAR_FONT_FAMILY,
       fontWeight: word.monospace ? MONOSPACE_FONT_WEIGHT : REGULAR_FONT_WEIGHT,
       fontSize,
@@ -126,31 +125,31 @@ export const removeWhisperBlankWords = (original: Word[]): Word[] => {
 
   words.forEach((word, index) => {
     const wordCopy = { ...word };
-    wordCopy.word = wordCopy.word.trim();
-    if (wordCopy.word.includes("[")) {
+    wordCopy.text = wordCopy.text.trim();
+    if (wordCopy.text.includes("[")) {
       inBlank = true;
       firstIdx = index;
     }
 
     if (
       inBlank &&
-      (blankAudio.includes(wordCopy.word) || pause.includes(wordCopy.word))
+      (blankAudio.includes(wordCopy.text) || pause.includes(wordCopy.text))
     ) {
-      concatentatedWord += wordCopy.word;
+      concatentatedWord += wordCopy.text;
     }
 
-    if (inBlank && wordCopy.word.includes("]")) {
-      concatentatedWord += wordCopy.word;
+    if (inBlank && wordCopy.text.includes("]")) {
+      concatentatedWord += wordCopy.text;
       if (
         concatentatedWord.includes(blankAudio) ||
         concatentatedWord.includes(pause)
       ) {
         for (let i = firstIdx; i <= index; i++) {
           const currentWord = words[i];
-          if (currentWord?.word !== undefined) {
+          if (currentWord?.text !== undefined) {
             words[i] = {
               ...currentWord,
-              word: "",
+              text: "",
             };
           }
         }
@@ -200,7 +199,7 @@ export const postprocessSubtitles = ({
     correctedWords.map((word) => {
       return {
         ...word,
-        word: word.word.replaceAll(/`\s/g, " `"),
+        word: word.text.replaceAll(/`\s/g, " `"),
       };
     }),
   );

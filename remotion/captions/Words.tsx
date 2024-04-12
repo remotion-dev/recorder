@@ -16,7 +16,7 @@ export const Words: React.FC<{
         return (
           <WordComp
             // eslint-disable-next-line react/no-array-index-key
-            key={word.firstTimestamp + word.word + index}
+            key={word.firstTimestamp + word.text + index}
             isLast={index === segment.words.length - 1}
             word={word}
             theme={theme}

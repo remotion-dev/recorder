@@ -50,6 +50,7 @@ export const BoxedSubtitles: React.FC<{
           paddingLeft: padding,
           paddingRight: padding,
           wordBreak: "break-word",
+          width: "100%",
         }}
       >
         <Words

@@ -7,17 +7,17 @@ export const splitWordIntoMonospaceSegment = (word: Word): Word[] => {
   let lastIndex = 0;
 
   let match;
-  while ((match = regex.exec(word.word)) !== null) {
+  while ((match = regex.exec(word.text)) !== null) {
     if (match.index > lastIndex) {
-      result.push({ ...word, word: word.word.slice(lastIndex, match.index) });
+      result.push({ ...word, text: word.text.slice(lastIndex, match.index) });
     }
 
-    result.push({ ...word, word: match[1] as string, monospace: true });
+    result.push({ ...word, text: match[1] as string, monospace: true });
     lastIndex = regex.lastIndex;
   }
 
-  if (lastIndex < word.word.length) {
-    result.push({ ...word, word: word.word.slice(lastIndex) });
+  if (lastIndex < word.text.length) {
+    result.push({ ...word, text: word.text.slice(lastIndex) });
   }
 
   return result;
