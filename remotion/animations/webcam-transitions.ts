@@ -67,29 +67,6 @@ export const isShrinkingToMiniature = ({
   );
 };
 
-export const isGrowingOrShrinkingToMiniature = ({
-  currentScene,
-  otherScene,
-}: {
-  currentScene: VideoSceneAndMetadata;
-  otherScene: SceneAndMetadata;
-}) => {
-  if (otherScene.type !== "video-scene") {
-    return false;
-  }
-
-  return (
-    isGrowingFromMiniature({
-      firstScene: currentScene,
-      secondScene: otherScene,
-    }) ||
-    isShrinkingToMiniature({
-      firstScene: currentScene,
-      secondScene: otherScene,
-    })
-  );
-};
-
 const getWebcamEndLayout = ({
   width,
   canvasLayout,
@@ -114,7 +91,11 @@ const getWebcamEndLayout = ({
   }
 
   if (
-    isGrowingOrShrinkingToMiniature({ currentScene, otherScene: nextScene })
+    isGrowingFromMiniature({
+      firstScene: currentScene,
+      secondScene: nextScene,
+    }) ||
+    isShrinkingToMiniature({ firstScene: currentScene, secondScene: nextScene })
   ) {
     return nextScene.layout.webcamLayout;
   }

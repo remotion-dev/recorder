@@ -79,7 +79,7 @@ export const getSubtitlesLines = ({
   fontSize: number;
 }) => {
   if (subtitleType === "boxed") {
-    const boxPadding = 24;
+    const boxPadding = 50;
 
     const nrOfLines = Math.floor(
       (boxHeight - boxPadding) / (fontSize * LINE_HEIGHT),
