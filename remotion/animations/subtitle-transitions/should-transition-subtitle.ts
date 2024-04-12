@@ -1,9 +1,7 @@
-import type { CanvasLayout } from "../../../config/layout";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
-import { getSubtitlesType } from "../../captions/Segment";
 
 // An inline subtitle transition:
 // - The subtitle stays at the same position and is the same subtitle type
@@ -12,16 +10,11 @@ import { getSubtitlesType } from "../../captions/Segment";
 export const shouldInlineTransitionSubtitles = ({
   currentScene,
   nextScene,
-  canvasLayout,
 }: {
   currentScene: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
-  canvasLayout: CanvasLayout;
 }) => {
-  const currentSubtitleType = getSubtitlesType({
-    canvasLayout,
-    displayLayout: currentScene.layout.displayLayout,
-  });
+  const currentSubtitleType = currentScene.layout.subtitleType;
   if (nextScene === null) {
     return false;
   }
@@ -30,10 +23,7 @@ export const shouldInlineTransitionSubtitles = ({
     return false;
   }
 
-  const nextSubtitleType = getSubtitlesType({
-    canvasLayout,
-    displayLayout: nextScene.layout.displayLayout,
-  });
+  const nextSubtitleType = nextScene.layout.subtitleType;
 
   if (currentSubtitleType === "boxed" && nextSubtitleType === "boxed") {
     // In boxed layout, we resize the box if the aspect ratio of the videos has changed.
