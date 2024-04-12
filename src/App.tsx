@@ -9,7 +9,7 @@ import {
 import "./App.css";
 import { Button } from "./components/ui/button";
 import { downloadVideo, handleUploadFileToServer } from "./download-video";
-import { fetchProjectFolders } from "./get-projects";
+import { fetchProjectFolders, loadSelectedProjectFromLS } from "./get-projects";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
 import { TopBar } from "./TopBar";
@@ -94,7 +94,9 @@ const App = () => {
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
   const [projectFolders, setProjectFolders] = useState<string[] | null>(null);
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<string | null>(
+    loadSelectedProjectFromLS(),
+  );
 
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
@@ -254,17 +256,26 @@ const App = () => {
   useKeyPress(["r"], onPressR);
 
   useEffect(() => {
-    const loadFromServer = async () => {
-      if (!window.remotionServerEnabled) {
-        return;
-      }
+    if (!window.remotionServerEnabled) {
+      return;
+    }
 
+    const loadFromServer = async () => {
       const jsn = await fetchProjectFolders();
       setProjectFolders(jsn.folders);
     };
 
     loadFromServer();
   }, []);
+
+  useEffect(() => {
+    if (!window.remotionServerEnabled) {
+      return;
+    }
+
+    window.localStorage.setItem("selectedProject", selectedProject ?? "");
+  }, [selectedProject]);
+
   useEffect(() => {
     const checkDeviceLabels = async () => {
       const fetchedDevices = await navigator.mediaDevices.enumerateDevices();

@@ -10,3 +10,16 @@ export const fetchProjectFolders = async () => {
 
   return projectFolders;
 };
+
+export const loadSelectedProjectFromLS = () => {
+  if (!window.remotionServerEnabled) {
+    return null;
+  }
+
+  const projectFromLS = window.localStorage.getItem("selectedProject");
+  if (projectFromLS === "") {
+    return null;
+  }
+
+  return projectFromLS;
+};
