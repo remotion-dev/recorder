@@ -1,11 +1,5 @@
 import React, { useMemo } from "react";
-import {
-  Audio,
-  interpolate,
-  Sequence,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { Audio, interpolate, Sequence, useVideoConfig } from "remotion";
 import type { SceneAndMetadata } from "../../config/scenes";
 import {
   AUDIO_FADE_IN_FRAMES,
@@ -78,14 +72,11 @@ const AudioClip: React.FC<{
   src: string;
   loudParts: LoudPart[];
 }> = ({ src, loudParts }) => {
-  const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
 
   const volumeFunction = useMemo(() => {
     return calculateVolume({ durationInFrames, loudParts });
   }, [durationInFrames, loudParts]);
-
-  console.log(volumeFunction(frame));
 
   return <Audio volume={volumeFunction} src={src} />;
 };
