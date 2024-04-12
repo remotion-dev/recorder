@@ -33,7 +33,6 @@ import {
   CaptionSentence,
   getBorderWidthForSubtitles,
   getSubsAlign,
-  getSubtitlesFontSize,
   getSubtitlesLines,
 } from "./Segment";
 import {
@@ -108,7 +107,7 @@ export const Subs: React.FC<{
     }
   }, [changeStatus, file.src, handle]);
 
-  const { subtitleType } = scene.layout;
+  const { subtitleType, subtitleFontSize } = scene.layout;
 
   const shouldTransitionToNext = shouldInlineTransitionSubtitles({
     currentScene: scene,
@@ -138,28 +137,24 @@ export const Subs: React.FC<{
       return null;
     }
 
-    const fontSize = getSubtitlesFontSize(
-      subtitleType,
-      scene.layout.displayLayout,
-    );
     return postprocessSubtitles({
       subTypes: whisperOutput,
       boxWidth: animatedSubLayout.width,
       maxLines: getSubtitlesLines({
         subtitleType,
         boxHeight,
-        fontSize,
+        fontSize: scene.layout.subtitleFontSize,
       }),
-      fontSize,
+      fontSize: scene.layout.subtitleFontSize,
       canvasLayout,
       subtitleType,
     });
   }, [
     whisperOutput,
-    subtitleType,
-    scene.layout.displayLayout,
     animatedSubLayout.width,
+    subtitleType,
     boxHeight,
+    scene.layout.subtitleFontSize,
     canvasLayout,
   ]);
 
@@ -209,7 +204,7 @@ export const Subs: React.FC<{
   }
 
   const outer: React.CSSProperties = {
-    fontSize: getSubtitlesFontSize(subtitleType, scene.layout.displayLayout),
+    fontSize: subtitleFontSize,
     display: "flex",
     lineHeight: LINE_HEIGHT,
     border: `${getBorderWidthForSubtitles(subtitleType)}px solid ${
@@ -258,7 +253,7 @@ export const Subs: React.FC<{
                 canvasLayout={canvasLayout}
                 subtitleType={subtitleType}
                 theme={theme}
-                displayLayout={scene.layout.displayLayout}
+                fontSize={scene.layout.subtitleFontSize}
                 onOpenSubEditor={onOpenSubEditor}
                 captionBoxHeight={boxHeight}
               />

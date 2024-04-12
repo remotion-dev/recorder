@@ -6,7 +6,7 @@ import {
   isWebCamRight,
 } from "../animations/webcam-transitions";
 import type { SubtitleType } from "../captions/Segment";
-import { getSubtitlesType } from "../captions/Segment";
+import { getSubtitlesFontSize, getSubtitlesType } from "../captions/Segment";
 import { getSubsLayout } from "../captions/subs-layout";
 import { getDimensionsForLayout } from "./dimensions";
 import { getDisplayLayout } from "./get-display-layout";
@@ -155,6 +155,7 @@ export type CameraSceneLayout = {
   displayLayout: Layout | null;
   subLayout: Layout;
   subtitleType: SubtitleType;
+  subtitleFontSize: number;
 };
 
 export const getLayout = ({
@@ -189,6 +190,8 @@ export const getLayout = ({
       displayLayout: null,
     });
 
+    const subtitleFontSize = getSubtitlesFontSize(subtitleType, null);
+
     return {
       displayLayout: null,
       webcamLayout,
@@ -199,8 +202,10 @@ export const getLayout = ({
         subtitleType,
         webcamLayout,
         webcamPosition,
+        fontSize: subtitleFontSize,
       }),
       subtitleType,
+      subtitleFontSize,
     };
   }
 
@@ -237,6 +242,8 @@ export const getLayout = ({
       displayLayout,
     });
 
+    const subtitleFontSize = getSubtitlesFontSize(subtitleType, displayLayout);
+
     return {
       displayLayout,
       webcamLayout,
@@ -247,8 +254,10 @@ export const getLayout = ({
         subtitleType,
         webcamLayout,
         webcamPosition,
+        fontSize: subtitleFontSize,
       }),
       subtitleType,
+      subtitleFontSize,
     };
   }
 
@@ -292,6 +301,8 @@ export const getLayout = ({
       displayLayout,
     });
 
+    const subtitleFontSize = getSubtitlesFontSize(subtitleType, displayLayout);
+
     return {
       displayLayout,
       webcamLayout,
@@ -302,8 +313,10 @@ export const getLayout = ({
         subtitleType,
         webcamLayout,
         webcamPosition,
+        fontSize: subtitleFontSize,
       }),
       subtitleType,
+      subtitleFontSize,
     };
   }
 
