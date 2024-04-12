@@ -19,6 +19,7 @@
     "@radix-ui/react-toggle": "^1.0.3",
     "@remotion/animation-utils": "4.0.140",
     "@remotion/layout-utils": "4.0.140",
+    "@remotion/shapes": "4.0.140",
     "@remotion/zod-types": "4.0.140",
     "@types/bun": "^1.0.0",
     "@types/dom-mediacapture-record": "^1.0.17",
