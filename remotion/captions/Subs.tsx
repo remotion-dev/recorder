@@ -35,7 +35,6 @@ import {
   getSubsAlign,
   getSubtitlesFontSize,
   getSubtitlesLines,
-  getSubtitlesType,
 } from "./Segment";
 import {
   TransitionFromPreviousSubtitles,
@@ -109,18 +108,13 @@ export const Subs: React.FC<{
     }
   }, [changeStatus, file.src, handle]);
 
-  const subtitleType = getSubtitlesType({
-    canvasLayout,
-    displayLayout: scene.layout.displayLayout,
-  });
+  const { subtitleType } = scene.layout;
 
   const shouldTransitionToNext = shouldInlineTransitionSubtitles({
-    canvasLayout,
     currentScene: scene,
     nextScene,
   });
   const shouldTransitionFromPrevious = shouldInlineTransitionSubtitles({
-    canvasLayout,
     currentScene: scene,
     nextScene: previousScene,
   });

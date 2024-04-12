@@ -5,6 +5,7 @@ import {
   isWebCamAtBottom,
   isWebCamRight,
 } from "../animations/webcam-transitions";
+import type { SubtitleType } from "../captions/Segment";
 import { getSubtitlesType } from "../captions/Segment";
 import { getSubsLayout } from "../captions/subs-layout";
 import { getDimensionsForLayout } from "./dimensions";
@@ -153,6 +154,7 @@ export type CameraSceneLayout = {
   webcamLayout: Layout;
   displayLayout: Layout | null;
   subLayout: Layout;
+  subtitleType: SubtitleType;
 };
 
 export const getLayout = ({
@@ -165,6 +167,7 @@ export const getLayout = ({
   webcamPosition: FinalWebcamPosition;
 }): CameraSceneLayout => {
   const canvasSize = getDimensionsForLayout(canvasLayout);
+
   if (!videos.display) {
     const webcamLayout =
       canvasLayout === "square"
@@ -197,6 +200,7 @@ export const getLayout = ({
         webcamLayout,
         webcamPosition,
       }),
+      subtitleType,
     };
   }
 
@@ -228,6 +232,11 @@ export const getLayout = ({
       webcamSize,
     });
 
+    const subtitleType = getSubtitlesType({
+      canvasLayout,
+      displayLayout,
+    });
+
     return {
       displayLayout,
       webcamLayout,
@@ -235,10 +244,11 @@ export const getLayout = ({
         canvasLayout,
         canvasSize,
         displayLayout,
-        subtitleType: getSubtitlesType({ canvasLayout, displayLayout }),
+        subtitleType,
         webcamLayout,
         webcamPosition,
       }),
+      subtitleType,
     };
   }
 
@@ -277,6 +287,11 @@ export const getLayout = ({
         : top,
     };
 
+    const subtitleType = getSubtitlesType({
+      canvasLayout,
+      displayLayout,
+    });
+
     return {
       displayLayout,
       webcamLayout,
@@ -284,10 +299,11 @@ export const getLayout = ({
         canvasLayout,
         canvasSize,
         displayLayout,
-        subtitleType: getSubtitlesType({ canvasLayout, displayLayout }),
+        subtitleType,
         webcamLayout,
         webcamPosition,
       }),
+      subtitleType,
     };
   }
 
