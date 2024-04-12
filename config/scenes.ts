@@ -15,6 +15,7 @@ const availablePositions = [
 ] as const;
 
 export type WebcamPosition = (typeof availablePositions)[number];
+export type FinalWebcamPosition = WebcamPosition | "center";
 
 const availablePositionsAndPrevious = [
   "previous",
@@ -106,7 +107,7 @@ export type VideoSceneAndMetadata = {
   videos: SceneVideos;
   layout: CameraSceneLayout;
   pair: Pair;
-  finalWebcamPosition: WebcamPosition;
+  finalWebcamPosition: FinalWebcamPosition;
   chapter: string | null;
 };
 

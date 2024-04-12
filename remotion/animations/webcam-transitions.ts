@@ -2,17 +2,25 @@ import { interpolateStyles } from "@remotion/animation-utils";
 import type { CanvasLayout } from "../../config/layout";
 import { getSafeSpace } from "../../config/layout";
 import type {
+  FinalWebcamPosition,
   SceneAndMetadata,
   VideoSceneAndMetadata,
-  WebcamPosition,
 } from "../../config/scenes";
 import type { Layout } from "../layout/layout-types";
 
-export const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
+export const isWebCamAtBottom = (webcamPosition: FinalWebcamPosition) => {
+  if (webcamPosition === "center") {
+    throw new Error("Webcam position cannot be center if checking at bottom");
+  }
+
   return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
 };
 
-export const isWebCamRight = (webcamPosition: WebcamPosition) => {
+export const isWebCamRight = (webcamPosition: FinalWebcamPosition) => {
+  if (webcamPosition === "center") {
+    throw new Error("Webcam position cannot be center if checking at right");
+  }
+
   return webcamPosition === "top-right" || webcamPosition === "bottom-right";
 };
 
@@ -119,6 +127,10 @@ const getWebcamEndLayout = ({
     return nextScene.layout.webcamLayout;
   }
 
+  if (currentScene.finalWebcamPosition === "center") {
+    return currentLayout;
+  }
+
   const samePositionHorizontal =
     isWebCamAtBottom(nextScene.finalWebcamPosition) ===
     isWebCamAtBottom(currentScene.finalWebcamPosition);
@@ -207,6 +219,10 @@ const getWebCamStartLayout = ({
     isGrowingOrShrinkingToMiniature({ currentScene, otherScene: previousScene })
   ) {
     return previousScene.layout.webcamLayout;
+  }
+
+  if (currentScene.finalWebcamPosition === "center") {
+    return currentLayout;
   }
 
   const samePositionHorizontal =

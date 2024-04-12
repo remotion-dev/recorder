@@ -1,6 +1,10 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { getSafeSpace } from "../../config/layout";
-import type { WebcamPosition } from "../../config/scenes";
+import type { FinalWebcamPosition } from "../../config/scenes";
+import {
+  isWebCamAtBottom,
+  isWebCamRight,
+} from "../animations/webcam-transitions";
 import { borderRadius } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type { Layout } from "../layout/layout-types";
@@ -19,7 +23,7 @@ export const getSubsLayout = ({
   canvasLayout: CanvasLayout;
   canvasSize: Dimensions;
   webcamLayout: Layout;
-  webcamPosition: WebcamPosition;
+  webcamPosition: FinalWebcamPosition;
   displayLayout: Dimensions | null;
 }): Layout => {
   if (subtitleType === "overlayed-center") {
@@ -50,8 +54,7 @@ export const getSubsLayout = ({
   }
 
   if (displayLayout === null) {
-    const isTopAligned =
-      webcamPosition === "top-left" || webcamPosition === "top-right";
+    const isTopAligned = !isWebCamAtBottom(webcamPosition);
 
     return {
       height:
@@ -71,10 +74,9 @@ export const getSubsLayout = ({
   return {
     height: webcamLayout.height,
     top: webcamLayout.top,
-    left:
-      webcamPosition === "bottom-left" || webcamPosition === "top-left"
-        ? webcamLayout.width + getSafeSpace(canvasLayout) * 2
-        : getSafeSpace(canvasLayout),
+    left: isWebCamRight(webcamPosition)
+      ? getSafeSpace(canvasLayout)
+      : webcamLayout.width + getSafeSpace(canvasLayout) * 2,
     width:
       canvasSize.width - webcamLayout.width - getSafeSpace(canvasLayout) * 3,
     borderRadius,
