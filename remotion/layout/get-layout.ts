@@ -263,8 +263,18 @@ export const getLayout = ({
     });
 
     const subtitleFontSize = getSubtitlesFontSize(subtitleType, displayLayout);
+    const subLayout = getSubsLayout({
+      canvasLayout,
+      canvasSize,
+      displayLayout,
+      subtitleType,
+      webcamLayout,
+      webcamPosition,
+      fontSize: subtitleFontSize,
+    });
+
     const subtitleLines = getSubtitlesLines({
-      boxHeight: displayLayout.height,
+      boxHeight: subLayout.height,
       fontSize: subtitleFontSize,
       subtitleType,
     });
@@ -272,15 +282,7 @@ export const getLayout = ({
     return {
       displayLayout,
       webcamLayout,
-      subLayout: getSubsLayout({
-        canvasLayout,
-        canvasSize,
-        displayLayout,
-        subtitleType,
-        webcamLayout,
-        webcamPosition,
-        fontSize: subtitleFontSize,
-      }),
+      subLayout,
       subtitleType,
       subtitleFontSize,
       subtitleLines,
@@ -329,8 +331,18 @@ export const getLayout = ({
 
     const subtitleFontSize = getSubtitlesFontSize(subtitleType, displayLayout);
 
+    const subLayout = getSubsLayout({
+      canvasLayout,
+      canvasSize,
+      displayLayout,
+      subtitleType,
+      webcamLayout,
+      webcamPosition,
+      fontSize: subtitleFontSize,
+    });
+
     const subtitleLines = getSubtitlesLines({
-      boxHeight: displayLayout.height,
+      boxHeight: subLayout.height,
       fontSize: subtitleFontSize,
       subtitleType,
     });
@@ -338,15 +350,7 @@ export const getLayout = ({
     return {
       displayLayout,
       webcamLayout,
-      subLayout: getSubsLayout({
-        canvasLayout,
-        canvasSize,
-        displayLayout,
-        subtitleType,
-        webcamLayout,
-        webcamPosition,
-        fontSize: subtitleFontSize,
-      }),
+      subLayout,
       subtitleType,
       subtitleFontSize,
       subtitleLines,

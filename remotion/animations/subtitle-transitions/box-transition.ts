@@ -23,9 +23,7 @@ export const getAnimatedSubtitleLayout = ({
     previousScene && shouldTransitionFromPrevious
       ? previousScene.layout.subLayout
       : null;
-
   const currentLayout = scene.layout.subLayout;
-
   const nextLayout =
     nextScene && shouldTransitionToNext ? nextScene.layout.subLayout : null;
 
@@ -45,5 +43,5 @@ export const getAnimatedSubtitleLayout = ({
     ) as Layout;
   }
 
-  return currentLayout as Layout;
+  return currentLayout;
 };

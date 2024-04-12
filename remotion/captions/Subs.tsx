@@ -116,6 +116,7 @@ export const Subs: React.FC<{
     currentScene: scene,
     nextScene: previousScene,
   });
+
   const animatedSubLayout = getAnimatedSubtitleLayout({
     enterProgress: enter,
     exitProgress: exit,
@@ -136,7 +137,7 @@ export const Subs: React.FC<{
 
     return postprocessSubtitles({
       subTypes: whisperOutput,
-      boxWidth: animatedSubLayout.width,
+      boxWidth: scene.layout.subLayout.width,
       maxLines: scene.layout.subtitleLines,
       fontSize: scene.layout.subtitleFontSize,
       canvasLayout,
@@ -144,7 +145,7 @@ export const Subs: React.FC<{
     });
   }, [
     whisperOutput,
-    animatedSubLayout.width,
+    scene.layout.subLayout.width,
     scene.layout.subtitleLines,
     scene.layout.subtitleFontSize,
     canvasLayout,
@@ -254,7 +255,6 @@ export const Subs: React.FC<{
           })}
         </TransitionToNextSubtitles>
       </TransitionFromPreviousSubtitles>
-
       {whisperOutput && subEditorOpen ? (
         <SubsEditor
           initialWord={subEditorOpen}
