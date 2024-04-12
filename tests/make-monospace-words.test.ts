@@ -6,7 +6,7 @@ import { splitWordIntoMonospaceSegment } from "../remotion/captions/processing/s
 
 test("Should split up into monospace words", () => {
   const word: Word = {
-    word: "This is a `monospace` word",
+    text: "This is a `monospace` word",
     monospace: false,
     firstTimestamp: 0,
     lastTimestamp: 0,
@@ -14,19 +14,19 @@ test("Should split up into monospace words", () => {
 
   expect(splitWordIntoMonospaceSegment(word)).toEqual([
     {
-      word: "This is a ",
+      text: "This is a ",
       monospace: false,
       firstTimestamp: 0,
       lastTimestamp: 0,
     },
     {
-      word: "monospace",
+      text: "monospace",
       monospace: true,
       firstTimestamp: 0,
       lastTimestamp: 0,
     },
     {
-      word: " word",
+      text: " word",
       monospace: false,
       firstTimestamp: 0,
       lastTimestamp: 0,

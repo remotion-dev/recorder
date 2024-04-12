@@ -1,12 +1,9 @@
 import React from "react";
 import {
   AbsoluteFill,
-  Audio,
   Img,
   interpolate,
-  Sequence,
   spring,
-  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
@@ -43,12 +40,6 @@ export const TitleCard: React.FC<{
 
   return (
     <AbsoluteFill>
-      <Sequence from={6}>
-        <Audio src={staticFile("sounds/whipwhoosh2.mp3")} volume={0.5} />
-      </Sequence>
-      <Sequence from={20}>
-        <Audio src={staticFile("sounds/whipwhoosh.mp3")} volume={0.5} />
-      </Sequence>
       <AbsoluteFill
         style={{
           justifyContent: "center",

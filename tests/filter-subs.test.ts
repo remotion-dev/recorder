@@ -4,32 +4,32 @@ import { removeWhisperBlankWords } from "../remotion/captions/processing/postpro
 
 const example: Word[] = [
   {
-    word: "",
+    text: "",
     firstTimestamp: 0,
     lastTimestamp: 0,
   },
   {
-    word: " Test.",
+    text: " Test.",
     firstTimestamp: 0,
     lastTimestamp: 1580,
   },
   {
-    word: " Hello.",
+    text: " Hello.",
     firstTimestamp: 1580,
     lastTimestamp: 3240,
   },
   {
-    word: " Hello.",
+    text: " Hello.",
     firstTimestamp: 3240,
     lastTimestamp: 3710,
   },
   {
-    word: " Test.",
+    text: " Test.",
     firstTimestamp: 3710,
     lastTimestamp: 4000,
   },
   {
-    word: " [BLANK_AUDIO]",
+    text: " [BLANK_AUDIO]",
     firstTimestamp: 4000,
     lastTimestamp: 10000,
   },
@@ -39,32 +39,32 @@ test("filter out [BLANK_AUDIO]", () => {
   const words = removeWhisperBlankWords(example);
   expect(words).toEqual([
     {
-      word: "",
+      text: "",
       firstTimestamp: 0,
       lastTimestamp: 0,
     },
     {
-      word: " Test.",
+      text: " Test.",
       firstTimestamp: 0,
       lastTimestamp: 1580,
     },
     {
-      word: " Hello.",
+      text: " Hello.",
       firstTimestamp: 1580,
       lastTimestamp: 3240,
     },
     {
-      word: " Hello.",
+      text: " Hello.",
       firstTimestamp: 3240,
       lastTimestamp: 3710,
     },
     {
-      word: " Test.",
+      text: " Test.",
       firstTimestamp: 3710,
       lastTimestamp: 4000,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 4000,
       lastTimestamp: 10000,
     },
@@ -73,17 +73,17 @@ test("filter out [BLANK_AUDIO]", () => {
 
 const pauseExample = [
   {
-    word: "",
+    text: "",
     firstTimestamp: 0,
     lastTimestamp: 0,
   },
   {
-    word: " Test.",
+    text: " Test.",
     firstTimestamp: 0,
     lastTimestamp: 1580,
   },
   {
-    word: "[PAUSE]",
+    text: "[PAUSE]",
     firstTimestamp: 1580,
     lastTimestamp: 3240,
   },
@@ -93,17 +93,17 @@ test("filter out [PAUSE]", () => {
   const words = removeWhisperBlankWords(pauseExample);
   expect(words).toEqual([
     {
-      word: "",
+      text: "",
       firstTimestamp: 0,
       lastTimestamp: 0,
     },
     {
-      word: " Test.",
+      text: " Test.",
       firstTimestamp: 0,
       lastTimestamp: 1580,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 1580,
       lastTimestamp: 3240,
     },
@@ -112,32 +112,32 @@ test("filter out [PAUSE]", () => {
 
 const splittedBlankAudio = [
   {
-    word: "[",
+    text: "[",
     firstTimestamp: 0,
     lastTimestamp: 0,
   },
   {
-    word: "BLA",
+    text: "BLA",
     firstTimestamp: 0,
     lastTimestamp: 1580,
   },
   {
-    word: "NK",
+    text: "NK",
     firstTimestamp: 1580,
     lastTimestamp: 3240,
   },
   {
-    word: "_",
+    text: "_",
     firstTimestamp: 3240,
     lastTimestamp: 3710,
   },
   {
-    word: "AUDIO",
+    text: "AUDIO",
     firstTimestamp: 3710,
     lastTimestamp: 4000,
   },
   {
-    word: "]",
+    text: "]",
     firstTimestamp: 4000,
     lastTimestamp: 10000,
   },
@@ -147,32 +147,32 @@ test("filter out splitted [BLANK_AUDIO]", () => {
   const words = removeWhisperBlankWords(splittedBlankAudio);
   expect(words).toEqual([
     {
-      word: "",
+      text: "",
       firstTimestamp: 0,
       lastTimestamp: 0,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 0,
       lastTimestamp: 1580,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 1580,
       lastTimestamp: 3240,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 3240,
       lastTimestamp: 3710,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 3710,
       lastTimestamp: 4000,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 4000,
       lastTimestamp: 10000,
     },
@@ -181,17 +181,17 @@ test("filter out splitted [BLANK_AUDIO]", () => {
 
 const splittedPause = [
   {
-    word: "[P",
+    text: "[P",
     firstTimestamp: 0,
     lastTimestamp: 0,
   },
   {
-    word: "AUS",
+    text: "AUS",
     firstTimestamp: 0,
     lastTimestamp: 1580,
   },
   {
-    word: "E]",
+    text: "E]",
     firstTimestamp: 1580,
     lastTimestamp: 3240,
   },
@@ -201,17 +201,17 @@ test("filter out splitted [PAUSE]", () => {
   const words = removeWhisperBlankWords(splittedPause);
   expect(words).toEqual([
     {
-      word: "",
+      text: "",
       firstTimestamp: 0,
       lastTimestamp: 0,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 0,
       lastTimestamp: 1580,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 1580,
       lastTimestamp: 3240,
     },
@@ -220,32 +220,32 @@ test("filter out splitted [PAUSE]", () => {
 
 const splittedBlankAudioWithSpaces = [
   {
-    word: "  [",
+    text: "  [",
     firstTimestamp: 0,
     lastTimestamp: 0,
   },
   {
-    word: "BLA  ",
+    text: "BLA  ",
     firstTimestamp: 0,
     lastTimestamp: 1580,
   },
   {
-    word: "NK ",
+    text: "NK ",
     firstTimestamp: 1580,
     lastTimestamp: 3240,
   },
   {
-    word: "_",
+    text: "_",
     firstTimestamp: 3240,
     lastTimestamp: 3710,
   },
   {
-    word: " AUDIO",
+    text: " AUDIO",
     firstTimestamp: 3710,
     lastTimestamp: 4000,
   },
   {
-    word: " ]",
+    text: " ]",
     firstTimestamp: 4000,
     lastTimestamp: 10000,
   },
@@ -255,32 +255,32 @@ test("filter out splitted [BLANK_AUDIO] with spaces", () => {
   const words = removeWhisperBlankWords(splittedBlankAudioWithSpaces);
   expect(words).toEqual([
     {
-      word: "",
+      text: "",
       firstTimestamp: 0,
       lastTimestamp: 0,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 0,
       lastTimestamp: 1580,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 1580,
       lastTimestamp: 3240,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 3240,
       lastTimestamp: 3710,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 3710,
       lastTimestamp: 4000,
     },
     {
-      word: "",
+      text: "",
       firstTimestamp: 4000,
       lastTimestamp: 10000,
     },
@@ -289,32 +289,32 @@ test("filter out splitted [BLANK_AUDIO] with spaces", () => {
 
 const wordsWrappedInBrackets = [
   {
-    word: "[Some]",
+    text: "[Some]",
     firstTimestamp: 0,
     lastTimestamp: 0,
   },
   {
-    word: "[Random]",
+    text: "[Random]",
     firstTimestamp: 0,
     lastTimestamp: 1580,
   },
   {
-    word: "[Words]",
+    text: "[Words]",
     firstTimestamp: 1580,
     lastTimestamp: 3240,
   },
   {
-    word: "[In]",
+    text: "[In]",
     firstTimestamp: 3240,
     lastTimestamp: 3710,
   },
   {
-    word: "[Square]",
+    text: "[Square]",
     firstTimestamp: 3710,
     lastTimestamp: 4000,
   },
   {
-    word: "[braces]",
+    text: "[braces]",
     firstTimestamp: 4000,
     lastTimestamp: 10000,
   },
@@ -324,32 +324,32 @@ test("should not filter out other words warpped in []", () => {
   const words = removeWhisperBlankWords(wordsWrappedInBrackets);
   expect(words).toEqual([
     {
-      word: "[Some]",
+      text: "[Some]",
       firstTimestamp: 0,
       lastTimestamp: 0,
     },
     {
-      word: "[Random]",
+      text: "[Random]",
       firstTimestamp: 0,
       lastTimestamp: 1580,
     },
     {
-      word: "[Words]",
+      text: "[Words]",
       firstTimestamp: 1580,
       lastTimestamp: 3240,
     },
     {
-      word: "[In]",
+      text: "[In]",
       firstTimestamp: 3240,
       lastTimestamp: 3710,
     },
     {
-      word: "[Square]",
+      text: "[Square]",
       firstTimestamp: 3710,
       lastTimestamp: 4000,
     },
     {
-      word: "[braces]",
+      text: "[braces]",
       firstTimestamp: 4000,
       lastTimestamp: 10000,
     },
