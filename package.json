@@ -11,7 +11,8 @@
     "start": "bun studio.ts",
     "remotion": "remotion studio",
     "pull": "node copy-from-downloads.mjs",
-    "upgrade": "remotion upgrade"
+    "upgrade": "remotion upgrade",
+    "test": "bun run lint && bun test test.ts && tsc"
   },
   "dependencies": {
     "@radix-ui/react-select": "^2.0.0",
