@@ -12,18 +12,7 @@ export const getShouldTransitionOut = ({
     return false;
   }
 
-  if (
-    sceneAndMetadata.type === "video-scene" &&
-    !sceneAndMetadata.scene.transitionToNextScene
-  ) {
-    return false;
-  }
-
-  if (
-    nextScene.scene.type === "endcard" &&
-    sceneAndMetadata.scene.type === "videoscene" &&
-    sceneAndMetadata.scene.transitionToNextScene
-  ) {
+  if (sceneAndMetadata.scene.transitionToNextScene) {
     return true;
   }
 

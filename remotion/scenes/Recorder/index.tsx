@@ -11,6 +11,7 @@ import type { Theme } from "../../../config/themes";
 
 import { Rect, Triangle } from "@remotion/shapes";
 import { AbsoluteFill, interpolateColors } from "remotion";
+import { REGULAR_FONT_FAMILY } from "../../../config/fonts";
 
 const getBackground = (theme: Theme) => {
   return theme === "dark" ? "#2E2E2E" : "rgba(255, 255, 255, 1)";
@@ -408,7 +409,7 @@ export const Recorder: React.FC<{
   );
 };
 
-export const Logo: React.FC<{
+const Logo: React.FC<{
   theme: Theme;
 }> = ({ theme }) => {
   const { fps } = useVideoConfig();
@@ -542,7 +543,7 @@ export const Logo: React.FC<{
   );
 };
 
-export const All: React.FC<{
+const All: React.FC<{
   theme: Theme;
 }> = ({ theme }) => {
   return (
@@ -553,14 +554,46 @@ export const All: React.FC<{
   );
 };
 
-export const RecorderScene: React.FC<{
-  theme: "light" | "dark";
+const Attribution: React.FC<{
+  theme: Theme;
 }> = ({ theme }) => {
+  const frame = useCurrentFrame();
+  const opacity = interpolate(frame, [40, 50], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
   return (
     <AbsoluteFill
       style={{
         justifyContent: "center",
         alignItems: "center",
+        fontSize: 30,
+        fontFamily: REGULAR_FONT_FAMILY,
+        fontWeight: 500,
+        marginTop: 450,
+        color: getColor(theme),
+        opacity,
+      }}
+    >
+      <span>remotion.dev/recorder</span>
+    </AbsoluteFill>
+  );
+};
+
+export const RecorderScene: React.FC<{
+  theme: "light" | "dark";
+}> = ({ theme }) => {
+  const config = useVideoConfig();
+
+  return (
+    <Sequence
+      width={1080}
+      height={1080}
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        left: (config.width - 1080) / 2,
       }}
     >
       <AbsoluteFill
@@ -572,6 +605,7 @@ export const RecorderScene: React.FC<{
       >
         <All theme={theme} />
       </AbsoluteFill>
-    </AbsoluteFill>
+      <Attribution theme={theme} />
+    </Sequence>
   );
 };
