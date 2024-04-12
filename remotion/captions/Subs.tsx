@@ -43,7 +43,7 @@ import {
 } from "./TransitionBetweenSubtitles";
 import type { WhisperOutput } from "./types";
 
-const LINE_HEIGHT = 1.1;
+const LINE_HEIGHT = 1.2;
 
 export const Subs: React.FC<{
   file: StaticFile;
