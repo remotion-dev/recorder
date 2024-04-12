@@ -14,7 +14,7 @@ import {
 } from "../config/silence-removal";
 import { getDownloadsFolder } from "./get-downloads-folder";
 
-const convertAndRemoveSilence = ({
+export const convertAndRemoveSilence = ({
   input,
   output,
   ffmpegTrim,
@@ -43,28 +43,47 @@ const convertAndRemoveSilence = ({
   );
 };
 
-export const convertAndTrimVideo = async (
-  latestTimestamp: number,
-  prefix: string,
-) => {
-  const downloadsDir = getDownloadsFolder();
+type ScriptProps = {
+  caller: "script";
+  latestTimestamp: number;
+  prefix: string;
+};
+
+type ServerProps = {
+  caller: "server";
+  latestTimestamp: number;
+  customFileLocation: string;
+};
+
+export const convertAndTrimVideo = async (props: ScriptProps | ServerProps) => {
+  const { latestTimestamp, caller } = props;
+
+  let fileLocation;
+  if (props.caller === "server") {
+    fileLocation = props.customFileLocation;
+  } else {
+    fileLocation = getDownloadsFolder();
+  }
 
   const displayLatest = `${DISPLAY_PREFIX}${latestTimestamp}.webm`;
   const webcamLatest = `${WEBCAM_PREFIX}${latestTimestamp}.webm`;
   const alt1Latest = `${ALTERNATIVE1_PREFIX}${latestTimestamp}.webm`;
   const alt2Latest = `${ALTERNATIVE2_PREFIX}${latestTimestamp}.webm`;
 
-  const displaySrc = path.join(downloadsDir, displayLatest);
-  const webcamSrc = path.join(downloadsDir, webcamLatest);
-  const alt1Src = path.join(downloadsDir, alt1Latest);
-  const alt2Src = path.join(downloadsDir, alt2Latest);
+  const displaySrc = path.join(fileLocation, displayLatest);
+  const webcamSrc = path.join(fileLocation, webcamLatest);
+  const alt1Src = path.join(fileLocation, alt1Latest);
+  const alt2Src = path.join(fileLocation, alt2Latest);
 
   const { audibleParts } = await getSilentParts({
     src: webcamSrc,
     minDurationInSeconds: MIN_DURATION_IN_SECONDS,
   });
 
-  const folder = path.join("public", prefix);
+  const folder =
+    caller === "server"
+      ? props.customFileLocation
+      : path.join("public", props.prefix);
   mkdirSync(folder, { recursive: true });
 
   if (audibleParts.length === 0) {

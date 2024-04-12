@@ -9,7 +9,7 @@ import { SERVER_PORT } from "../../config/server";
 import { indexHtmlDev } from "../../index-html";
 import { SAVE_SUBTITLES } from "./constants";
 import { createProject } from "./create-project";
-import { handleVideoUpload } from "./handle-video";
+import { convertVideos, handleVideoUpload } from "./handle-video";
 import { getProjectFolder } from "./projects";
 import { getOptions, saveSubtitles } from "./subtitles";
 
@@ -48,7 +48,7 @@ export const startExpressServer = async () => {
     createProject(req, res, rootDir);
   });
 
-  app.post("/api/upload-video", handleVideoUpload);
+  app.post("/api/upload-video", handleVideoUpload, convertVideos);
   // app.post("/api/transcribe");
 
   app.post(SAVE_SUBTITLES, saveSubtitles);
