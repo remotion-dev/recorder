@@ -41,6 +41,7 @@ export const configuration = z.discriminatedUnion("type", [
     title: z.string(),
     subtitle: z.string().nullable(),
     durationInFrames: z.number().int().default(50),
+    transitionToNextScene: z.boolean().default(true),
     music,
   }),
   z.object({
@@ -49,6 +50,7 @@ export const configuration = z.discriminatedUnion("type", [
     title: z.string(),
     image: z.string(),
     music,
+    transitionToNextScene: z.boolean().default(true),
     youTubePlug: z.boolean().default(false),
   }),
   z.object({
@@ -57,12 +59,20 @@ export const configuration = z.discriminatedUnion("type", [
     music,
     channel: brand,
     platform,
-    links: z.array(linkType),
+    links: z.array(linkType).default([]),
+    transitionToNextScene: z.boolean().default(true),
   }),
   z.object({
     type: z.literal("tableofcontents"),
     durationInFrames: z.number().int().default(200),
     music,
+    transitionToNextScene: z.boolean().default(true),
+  }),
+  z.object({
+    type: z.literal("recorder"),
+    durationInFrames: z.number().int().default(90),
+    music,
+    transitionToNextScene: z.boolean().default(true),
   }),
 ]);
 
