@@ -44,8 +44,10 @@ export const getBoxedExit = ({
     const isAtBottomBefore = isWebCamAtBottom(scene.finalWebcamPosition);
     const isAtBottomAfter = isWebCamAtBottom(nextScene.finalWebcamPosition);
     if (isAtBottomBefore === isAtBottomAfter) {
-      // Display can cover the subtitles
-      return translate(0, 0);
+      return translate(
+        -currentLayout.width - currentLayout.left - getSafeSpace("square"),
+        0,
+      );
     }
 
     return translate(
@@ -105,9 +107,11 @@ export const getBoxedEnter = ({
   height: number;
   currentLayout: Layout;
 }): string => {
+  if (previousScene === null || previousScene.type !== "video-scene") {
+    return translate(0, 0);
+  }
+
   if (
-    previousScene &&
-    previousScene.type === "video-scene" &&
     isShrinkingToMiniature({
       firstScene: previousScene,
       secondScene: scene,
@@ -129,8 +133,6 @@ export const getBoxedEnter = ({
   }
 
   if (
-    previousScene &&
-    previousScene.type === "video-scene" &&
     isGrowingFromMiniature({
       firstScene: previousScene,
       secondScene: scene,
@@ -159,10 +161,6 @@ export const getBoxedEnter = ({
       isWebCamRight(previousScene.finalWebcamPosition) ? width : -width,
       currentlyAtBottom ? heightDifference : -heightDifference,
     );
-  }
-
-  if (previousScene === null || previousScene.type !== "video-scene") {
-    return translate(0, 0);
   }
 
   const isSamePositionVertical =

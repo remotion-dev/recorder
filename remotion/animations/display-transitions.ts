@@ -90,13 +90,11 @@ const getDisplayEnter = ({
   previousScene,
   width,
   canvasLayout,
-  height,
 }: {
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
   canvasLayout: CanvasLayout;
-  height: number;
 }): Layout => {
   if (
     currentScene.type !== "video-scene" ||
@@ -105,34 +103,43 @@ const getDisplayEnter = ({
     throw new Error("no transitions on non-video scenes");
   }
 
+  if (previousScene === null || previousScene.type !== "video-scene") {
+    return currentScene.layout.displayLayout;
+  }
+
   if (
-    previousScene &&
-    previousScene.type === "video-scene" &&
     isShrinkingToMiniature({
       firstScene: previousScene,
       secondScene: currentScene,
     })
   ) {
-    const previouslyAtBottom = isWebCamAtBottom(
-      previousScene.finalWebcamPosition,
-    );
-    const currentlyAtBottom = isWebCamAtBottom(
-      currentScene.finalWebcamPosition,
-    );
-    const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
+    if (canvasLayout === "square") {
+      if (isWebCamAtBottom(previousScene.finalWebcamPosition)) {
+        return {
+          ...currentScene.layout.displayLayout,
+          top: -currentScene.layout.displayLayout.height,
+        };
+      }
 
-    const translationY = currentScene.layout.displayLayout.height;
-    const y = isWebCamAtBottom(currentScene.finalWebcamPosition)
-      ? -translationY
-      : changedVerticalPosition
-        ? translationY
-        : height;
+      const samePositionHorizontal =
+        isWebCamAtBottom(previousScene.finalWebcamPosition) ===
+        isWebCamAtBottom(currentScene.finalWebcamPosition);
+
+      if (samePositionHorizontal) {
+        return {
+          ...currentScene.layout.displayLayout,
+          left: width,
+        };
+      }
+
+      return {
+        ...currentScene.layout.displayLayout,
+        top: currentScene.layout.displayLayout.height,
+      };
+    }
 
     // landscape, Slide in from left
-    if (
-      canvasLayout === "landscape" &&
-      isWebCamRight(currentScene.finalWebcamPosition)
-    ) {
+    if (isWebCamRight(currentScene.finalWebcamPosition)) {
       return {
         ...currentScene.layout.displayLayout,
         left:
@@ -141,26 +148,12 @@ const getDisplayEnter = ({
       };
     }
 
-    // Slide in from right
-    if (canvasLayout === "landscape") {
-      return {
-        ...currentScene.layout.displayLayout,
-        left: width + getSafeSpace(canvasLayout),
-        top: 0,
-      };
-    }
-
+    // landscape, Slide in from right
     return {
       ...currentScene.layout.displayLayout,
-      top: y,
+      left: width + getSafeSpace(canvasLayout),
+      top: 0,
     };
-  }
-
-  const currentandPreviousAreVideoScenes =
-    previousScene && previousScene.type === "video-scene";
-
-  if (currentandPreviousAreVideoScenes) {
-    return previousScene.layout.displayLayout as Layout;
   }
 
   return currentScene.layout.displayLayout;
@@ -186,7 +179,6 @@ const getDisplayTransitionOrigins = ({
     previousScene,
     width,
     canvasLayout,
-    height,
   });
 
   const exit = getDisplayExit({
@@ -213,6 +205,10 @@ const shouldTransitionDisplayVideo = ({
   }
 
   if (previousScene.type !== "video-scene") {
+    return false;
+  }
+
+  if (previousScene.videos.display === null) {
     return false;
   }
 
@@ -255,7 +251,6 @@ export const getDisplayPosition = ({
   });
 
   if (exit > 0) {
-    // TODO: Could use interpolateStyles() here
     return {
       left: Math.round(
         interpolate(
