@@ -57,7 +57,7 @@ export const ProjectDialog: React.FC<{
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-        <Button variant="outline">New Project</Button>
+        <Button variant="secondary">New Project</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[460px]">
         <DialogHeader>

@@ -22,7 +22,7 @@ export const copyToDownloads = async () => {
   const latest = sorted[0];
   const latestTimestamp = Number(latest.match(/([0-9]+)/)![1]);
 
-  await convertAndTrimVideo(latestTimestamp, prefix);
+  await convertAndTrimVideo({ caller: "script", latestTimestamp, prefix });
 
   console.log("Copied", latest);
 };

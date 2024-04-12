@@ -26,13 +26,13 @@ export const handleUploadFileToServer = async (
 ) => {
   try {
     const videoFile = new File([data], "video.webm", { type: data.type });
-    const fileName = prefix + endDate.toString() + ".webm";
 
     const url = new URL(`/api/upload-video`, window.location.origin);
 
     url.search = new URLSearchParams({
       folder: selectedProject,
-      file: fileName,
+      prefix,
+      endDateAsString: endDate.toString(),
     }).toString();
 
     // might add query params to define name & folder
