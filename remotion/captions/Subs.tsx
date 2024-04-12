@@ -129,8 +129,6 @@ export const Subs: React.FC<{
     shouldTransitionToNext,
   });
 
-  const boxHeight = scene.layout.subLayout.height;
-
   const postprocessed = useMemo(() => {
     if (!whisperOutput) {
       return null;
@@ -251,7 +249,6 @@ export const Subs: React.FC<{
                 fontSize={scene.layout.subtitleFontSize}
                 lines={scene.layout.subtitleLines}
                 onOpenSubEditor={onOpenSubEditor}
-                captionBoxHeight={boxHeight}
               />
             );
           })}
