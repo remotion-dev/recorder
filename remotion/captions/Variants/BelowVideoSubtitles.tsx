@@ -15,6 +15,7 @@ export const BelowVideoSubtitles: React.FC<{
   displayLayout: Layout | null;
   onOpenSubEditor: (word: Word) => void;
   canvasLayout: CanvasLayout;
+  captionBoxHeight: number;
 }> = ({
   segment,
   startFrame,
@@ -22,6 +23,7 @@ export const BelowVideoSubtitles: React.FC<{
   displayLayout,
   canvasLayout,
   onOpenSubEditor,
+  captionBoxHeight,
 }) => {
   const padding = getHorizontalPaddingForSubtitles("below-video", canvasLayout);
   const fontSize = getSubtitlesFontSize("below-video", displayLayout);
@@ -29,7 +31,11 @@ export const BelowVideoSubtitles: React.FC<{
     <div
       style={{
         height:
-          getSubtitlesLines("below-video", 300, fontSize) * // Rm hardcoded 300
+          getSubtitlesLines({
+            subtitleType: "below-video",
+            boxHeight: captionBoxHeight,
+            fontSize,
+          }) *
           fontSize *
           LINE_HEIGHT,
         marginTop: 0,

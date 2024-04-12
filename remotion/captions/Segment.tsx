@@ -70,11 +70,15 @@ export const getSubtitlesFontSize = (
   return 48;
 };
 
-export const getSubtitlesLines = (
-  subtitleType: SubtitleType,
-  boxHeight: number,
-  fontSize: number,
-) => {
+export const getSubtitlesLines = ({
+  subtitleType,
+  boxHeight,
+  fontSize,
+}: {
+  subtitleType: SubtitleType;
+  boxHeight: number;
+  fontSize: number;
+}) => {
   if (subtitleType === "boxed") {
     const nrOfLines = Math.floor(boxHeight / (fontSize * LINE_HEIGHT));
     return nrOfLines;
@@ -183,6 +187,7 @@ export const CaptionSentence: React.FC<{
             segment={segment}
             startFrame={startFrame}
             theme={theme}
+            captionBoxHeight={captionBoxHeight}
           />
         ) : (
           <OverlayedCenterSubtitles
