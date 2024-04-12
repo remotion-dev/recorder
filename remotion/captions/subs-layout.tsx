@@ -9,7 +9,6 @@ import { borderRadius } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type { Layout } from "../layout/layout-types";
 import type { SubtitleType } from "./Segment";
-import { getSubtitlesFontSize } from "./Segment";
 
 export const getSubsLayout = ({
   subtitleType,
@@ -18,6 +17,7 @@ export const getSubsLayout = ({
   webcamLayout,
   webcamPosition,
   displayLayout,
+  fontSize,
 }: {
   subtitleType: SubtitleType;
   canvasLayout: CanvasLayout;
@@ -25,9 +25,10 @@ export const getSubsLayout = ({
   webcamLayout: Layout;
   webcamPosition: FinalWebcamPosition;
   displayLayout: Dimensions | null;
+  fontSize: number;
 }): Layout => {
   if (subtitleType === "overlayed-center") {
-    const height = getSubtitlesFontSize(subtitleType, displayLayout) * 2;
+    const height = fontSize * 2;
     const width = (canvasSize.width / 3) * 2;
     const x = (canvasSize.width - width) / 2;
 
