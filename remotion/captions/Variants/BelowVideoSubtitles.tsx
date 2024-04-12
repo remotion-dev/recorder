@@ -15,6 +15,7 @@ export const BelowVideoSubtitles: React.FC<{
   canvasLayout: CanvasLayout;
   captionBoxHeight: number;
   fontSize: number;
+  lines: number;
 }> = ({
   segment,
   startFrame,

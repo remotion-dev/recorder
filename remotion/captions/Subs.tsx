@@ -33,7 +33,6 @@ import {
   CaptionSentence,
   getBorderWidthForSubtitles,
   getSubsAlign,
-  getSubtitlesLines,
 } from "./Segment";
 import {
   TransitionFromPreviousSubtitles,
@@ -140,11 +139,7 @@ export const Subs: React.FC<{
     return postprocessSubtitles({
       subTypes: whisperOutput,
       boxWidth: animatedSubLayout.width,
-      maxLines: getSubtitlesLines({
-        subtitleType,
-        boxHeight,
-        fontSize: scene.layout.subtitleFontSize,
-      }),
+      maxLines: scene.layout.subtitleLines,
       fontSize: scene.layout.subtitleFontSize,
       canvasLayout,
       subtitleType,
@@ -152,10 +147,10 @@ export const Subs: React.FC<{
   }, [
     whisperOutput,
     animatedSubLayout.width,
-    subtitleType,
-    boxHeight,
+    scene.layout.subtitleLines,
     scene.layout.subtitleFontSize,
     canvasLayout,
+    subtitleType,
   ]);
 
   const onOpenSubEditor = useCallback((word: Word) => {
@@ -254,6 +249,7 @@ export const Subs: React.FC<{
                 subtitleType={subtitleType}
                 theme={theme}
                 fontSize={scene.layout.subtitleFontSize}
+                lines={scene.layout.subtitleLines}
                 onOpenSubEditor={onOpenSubEditor}
                 captionBoxHeight={boxHeight}
               />
