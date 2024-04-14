@@ -13,18 +13,16 @@ import {
   isWebCamRight,
 } from "./webcam-transitions";
 
-const getDisplayExit = ({
+const getLandscapeDisplayExit = ({
   currentScene,
   nextScene,
   width,
-  canvasLayout,
   height,
 }: {
   nextScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
   height: number;
-  canvasLayout: CanvasLayout;
 }): Layout => {
   if (
     currentScene.type !== "video-scene" ||
@@ -55,16 +53,72 @@ const getDisplayExit = ({
     );
     const currentlyAtBottom = isWebCamAtBottom(nextScene.finalWebcamPosition);
     const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
-    const y =
-      canvasLayout === "landscape"
-        ? height - currentScene.layout.displayLayout.height
-        : isWebCamAtBottom(nextScene.finalWebcamPosition)
-          ? height -
-            nextScene.layout.webcamLayout.height -
-            currentScene.layout.displayLayout.height -
-            getSafeSpace(canvasLayout) * 2
-          : nextScene.layout.webcamLayout.height +
-            2 * getSafeSpace(canvasLayout);
+    const y = height - currentScene.layout.displayLayout.height;
+    if (changedVerticalPosition) {
+      return {
+        ...currentScene.layout.displayLayout,
+        top: y,
+      };
+    }
+
+    return {
+      ...currentScene.layout.displayLayout,
+      left: isWebCamRight(currentScene.finalWebcamPosition)
+        ? -(width - getSafeSpace("landscape") * 2)
+        : width + getSafeSpace("landscape"),
+      top: y,
+    };
+  }
+
+  return currentScene.layout.displayLayout;
+};
+
+const getSquareDisplayExit = ({
+  currentScene,
+  nextScene,
+  width,
+  height,
+}: {
+  nextScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+  height: number;
+}): Layout => {
+  if (
+    currentScene.type !== "video-scene" ||
+    currentScene.layout.displayLayout === null
+  ) {
+    throw new Error("no transitions on non-video scenes");
+  }
+
+  const nextAndCurrentAreVideoScenes =
+    nextScene &&
+    nextScene.type === "video-scene" &&
+    nextScene.layout.displayLayout !== null;
+
+  if (nextAndCurrentAreVideoScenes) {
+    return nextScene.layout.displayLayout as Layout;
+  }
+
+  if (
+    nextScene &&
+    isGrowingFromMiniature({ firstScene: currentScene, secondScene: nextScene })
+  ) {
+    if (nextScene.type !== "video-scene") {
+      throw new Error("no transitions on non-video scenes");
+    }
+
+    const previouslyAtBottom = isWebCamAtBottom(
+      currentScene.finalWebcamPosition,
+    );
+    const currentlyAtBottom = isWebCamAtBottom(nextScene.finalWebcamPosition);
+    const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
+    const y = isWebCamAtBottom(nextScene.finalWebcamPosition)
+      ? height -
+        nextScene.layout.webcamLayout.height -
+        currentScene.layout.displayLayout.height -
+        getSafeSpace("square") * 2
+      : nextScene.layout.webcamLayout.height + 2 * getSafeSpace("square");
 
     if (changedVerticalPosition) {
       return {
@@ -76,13 +130,42 @@ const getDisplayExit = ({
     return {
       ...currentScene.layout.displayLayout,
       left: isWebCamRight(currentScene.finalWebcamPosition)
-        ? -(width - getSafeSpace(canvasLayout) * 2)
-        : width + getSafeSpace(canvasLayout),
+        ? -(width - getSafeSpace("square") * 2)
+        : width + getSafeSpace("square"),
       top: y,
     };
   }
 
   return currentScene.layout.displayLayout;
+};
+
+const getDisplayExit = ({
+  currentScene,
+  nextScene,
+  width,
+  height,
+  canvasLayout,
+}: {
+  nextScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+  height: number;
+  canvasLayout: CanvasLayout;
+}): Layout => {
+  if (canvasLayout === "landscape") {
+    return getLandscapeDisplayExit({
+      currentScene,
+      nextScene,
+      width,
+      height,
+    });
+  }
+
+  if (canvasLayout === "square") {
+    return getSquareDisplayExit({ currentScene, nextScene, width, height });
+  }
+
+  throw new Error("Unknown canvas layout: " + canvasLayout);
 };
 
 const getLandscapeDisplayEnter = ({
