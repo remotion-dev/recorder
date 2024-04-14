@@ -67,68 +67,12 @@ export const isShrinkingToMiniature = ({
   );
 };
 
-const getLandscapeWebcamEndLayout = ({
-  width,
-  nextScene,
-  currentScene,
-}: {
-  nextScene: SceneAndMetadata | null;
-  currentScene: VideoSceneAndMetadata;
-  width: number;
-}): Layout => {
-  if (!currentScene || currentScene.type !== "video-scene") {
-    throw new Error("no transitions on non-video scenes");
-  }
-
-  const currentLayout = currentScene.layout.webcamLayout;
-
-  if (!nextScene || nextScene.type !== "video-scene") {
-    return currentLayout;
-  }
-
-  if (
-    isGrowingFromMiniature({
-      firstScene: currentScene,
-      secondScene: nextScene,
-    }) ||
-    isShrinkingToMiniature({ firstScene: currentScene, secondScene: nextScene })
-  ) {
-    return nextScene.layout.webcamLayout;
-  }
-
-  if (currentScene.finalWebcamPosition === "center") {
-    return currentLayout;
-  }
-
-  const isSamePositionVertical =
-    isWebCamRight(nextScene.finalWebcamPosition) ===
-    isWebCamRight(currentScene.finalWebcamPosition);
-
-  if (!isSamePositionVertical) {
-    // landscape, moving to the right
-    if (isWebCamRight(currentScene.finalWebcamPosition)) {
-      return {
-        ...currentLayout,
-        left: width,
-      };
-    }
-
-    // landscape, moving to the left
-    return {
-      ...currentLayout,
-      left: -currentLayout.width,
-    };
-  }
-
-  return nextScene.layout.webcamLayout;
-};
-
-const getSquareWebcamEndLayout = ({
-  nextScene,
+const getSquareWebcamStartOrEndLayout = ({
+  otherScene,
   currentScene,
   height,
 }: {
-  nextScene: SceneAndMetadata | null;
+  otherScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   height: number;
 }): Layout => {
@@ -138,31 +82,22 @@ const getSquareWebcamEndLayout = ({
 
   const currentLayout = currentScene.layout.webcamLayout;
 
-  if (!nextScene || nextScene.type !== "video-scene") {
-    return currentLayout;
+  // No entrance if the other scene is not a video scene
+  if (!otherScene || otherScene.type !== "video-scene") {
+    return currentScene.layout.webcamLayout;
   }
 
-  if (
-    isGrowingFromMiniature({
-      firstScene: currentScene,
-      secondScene: nextScene,
-    }) ||
-    isShrinkingToMiniature({ firstScene: currentScene, secondScene: nextScene })
-  ) {
-    return nextScene.layout.webcamLayout;
+  // When at least 1 scene is fullscreen, the webcam can just move to the new position
+  if (!currentScene.layout.displayLayout || !otherScene.layout.displayLayout) {
+    return otherScene.layout.webcamLayout;
   }
 
-  // Display is not in the way, webcam can just move to the new position
+  // Same position horizontally, webcam can just move to the new position
   if (
-    isWebCamAtBottom(nextScene.finalWebcamPosition) ===
+    isWebCamAtBottom(otherScene.finalWebcamPosition) ===
     isWebCamAtBottom(currentScene.finalWebcamPosition)
   ) {
-    return nextScene.layout.webcamLayout;
-  }
-
-  // In both scenes, webcam is fullscreen and there is no display, webcam can just move to the new position
-  if (!currentScene.layout.displayLayout) {
-    return nextScene.layout.webcamLayout;
+    return otherScene.layout.webcamLayout;
   }
 
   // Display is moving from bottom to top or vice versa
@@ -180,6 +115,49 @@ const getSquareWebcamEndLayout = ({
   };
 };
 
+const getLandscapeWebCamStartOrEndLayout = ({
+  width,
+  otherScene,
+  currentScene,
+}: {
+  otherScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+}): Layout => {
+  const currentLayout = currentScene.layout.webcamLayout;
+
+  if (!otherScene || otherScene.type !== "video-scene") {
+    return currentLayout;
+  }
+
+  // When at least 1 scene is fullscreen, the webcam can just move to the new position
+  if (!currentScene.layout.displayLayout || !otherScene.layout.displayLayout) {
+    return otherScene.layout.webcamLayout;
+  }
+
+  // Same position vertically, webcam can just move to the new position
+  if (
+    isWebCamRight(otherScene.finalWebcamPosition) ===
+    isWebCamRight(currentScene.finalWebcamPosition)
+  ) {
+    return otherScene.layout.webcamLayout;
+  }
+
+  // Display is in the way, webcam needs to animate out of the edge
+  // and appear from the other side
+  if (isWebCamRight(currentScene.finalWebcamPosition)) {
+    return {
+      ...currentLayout,
+      left: width + getSafeSpace("landscape"),
+    };
+  }
+
+  return {
+    ...currentLayout,
+    left: -getSafeSpace("landscape"),
+  };
+};
+
 const getWebcamEndLayout = ({
   width,
   canvasLayout,
@@ -194,138 +172,22 @@ const getWebcamEndLayout = ({
   canvasLayout: CanvasLayout;
 }): Layout => {
   if (canvasLayout === "landscape") {
-    return getLandscapeWebcamEndLayout({
+    return getLandscapeWebCamStartOrEndLayout({
       currentScene,
-      nextScene,
+      otherScene: nextScene,
       width,
     });
   }
 
   if (canvasLayout === "square") {
-    return getSquareWebcamEndLayout({
+    return getSquareWebcamStartOrEndLayout({
       currentScene,
       height,
-      nextScene,
+      otherScene: nextScene,
     });
   }
 
   throw new Error(`Unknown canvas layout: ${canvasLayout}`);
-};
-
-const getLandscapeWebCamStartLayout = ({
-  width,
-  previousScene,
-  currentScene,
-}: {
-  previousScene: SceneAndMetadata | null;
-  currentScene: VideoSceneAndMetadata;
-  width: number;
-}): Layout => {
-  const currentLayout = currentScene.layout.webcamLayout;
-
-  if (!previousScene || previousScene.type !== "video-scene") {
-    return currentLayout;
-  }
-
-  if (
-    isGrowingFromMiniature({
-      firstScene: previousScene,
-      secondScene: currentScene,
-    }) ||
-    isShrinkingToMiniature({
-      firstScene: previousScene,
-      secondScene: currentScene,
-    })
-  ) {
-    return previousScene.layout.webcamLayout;
-  }
-
-  // Not growing from miniature, not shrinking to miniature
-  // therefore previous scene was also fullscreen
-  if (currentScene.finalWebcamPosition === "center") {
-    return currentLayout;
-  }
-
-  if (
-    isWebCamRight(previousScene.finalWebcamPosition) ===
-    isWebCamRight(currentScene.finalWebcamPosition)
-  ) {
-    return previousScene.layout.webcamLayout;
-  }
-
-  // landscape layout, flying in from the right
-  if (isWebCamRight(currentScene.finalWebcamPosition)) {
-    return {
-      ...currentLayout,
-      left: width,
-    };
-  }
-
-  // landscape layout, flying in from the left
-  return {
-    ...currentLayout,
-    left: -currentLayout.width,
-  };
-};
-
-const getSquareWebCamStartLayout = ({
-  height,
-  previousScene,
-  currentScene,
-}: {
-  previousScene: SceneAndMetadata | null;
-  currentScene: VideoSceneAndMetadata;
-  height: number;
-}): Layout => {
-  const currentLayout = currentScene.layout.webcamLayout;
-
-  if (!previousScene || previousScene.type !== "video-scene") {
-    return currentLayout;
-  }
-
-  if (
-    isGrowingFromMiniature({
-      firstScene: previousScene,
-      secondScene: currentScene,
-    }) ||
-    isShrinkingToMiniature({
-      firstScene: previousScene,
-      secondScene: currentScene,
-    })
-  ) {
-    return previousScene.layout.webcamLayout;
-  }
-
-  const samePositionHorizontal =
-    isWebCamAtBottom(previousScene.finalWebcamPosition) ===
-    isWebCamAtBottom(currentScene.finalWebcamPosition);
-
-  const currentSubsBoxHeight = currentScene.layout.subLayout.height;
-
-  // Square layout, only moving from left to right
-  if (samePositionHorizontal) {
-    return previousScene.layout.webcamLayout;
-  }
-
-  // vertical and horizontal changes
-  // Square, moving bottom up
-  const hasDisplay = currentScene.layout.displayLayout;
-
-  if (hasDisplay) {
-    if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
-      return {
-        ...currentLayout,
-        top: height,
-      };
-    }
-
-    return {
-      ...currentLayout,
-      top: -currentSubsBoxHeight - getSafeSpace("square"),
-    };
-  }
-
-  return previousScene.layout.webcamLayout;
 };
 
 const getWebCamStartLayout = ({
@@ -342,18 +204,18 @@ const getWebCamStartLayout = ({
   canvasLayout: CanvasLayout;
 }): Layout => {
   if (canvasLayout === "landscape") {
-    return getLandscapeWebCamStartLayout({
+    return getLandscapeWebCamStartOrEndLayout({
       currentScene,
-      previousScene,
+      otherScene: previousScene,
       width,
     });
   }
 
   if (canvasLayout === "square") {
-    return getSquareWebCamStartLayout({
+    return getSquareWebcamStartOrEndLayout({
       currentScene,
       height,
-      previousScene,
+      otherScene: previousScene,
     });
   }
 
