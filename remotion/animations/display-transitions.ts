@@ -31,46 +31,42 @@ const getLandscapeDisplayExit = ({
     throw new Error("no transitions on non-video scenes");
   }
 
-  const nextAndCurrentAreVideoScenes =
-    nextScene &&
-    nextScene.type === "video-scene" &&
-    nextScene.layout.displayLayout !== null;
+  if (!nextScene || nextScene.type !== "video-scene") {
+    return currentScene.layout.displayLayout;
+  }
 
-  if (nextAndCurrentAreVideoScenes) {
+  if (nextScene.layout.displayLayout !== null) {
     return nextScene.layout.displayLayout as Layout;
   }
 
   if (
-    nextScene &&
-    isGrowingFromMiniature({ firstScene: currentScene, secondScene: nextScene })
+    !isGrowingFromMiniature({
+      firstScene: currentScene,
+      secondScene: nextScene,
+    })
   ) {
-    if (nextScene.type !== "video-scene") {
-      throw new Error("no transitions on non-video scenes");
-    }
+    return currentScene.layout.displayLayout;
+  }
 
-    const previouslyAtBottom = isWebCamAtBottom(
-      currentScene.finalWebcamPosition,
-    );
-    const currentlyAtBottom = isWebCamAtBottom(nextScene.finalWebcamPosition);
-    const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
-    const y = height - currentScene.layout.displayLayout.height;
-    if (changedVerticalPosition) {
-      return {
-        ...currentScene.layout.displayLayout,
-        top: y,
-      };
-    }
+  const previouslyAtBottom = isWebCamAtBottom(currentScene.finalWebcamPosition);
+  const currentlyAtBottom = isWebCamAtBottom(nextScene.finalWebcamPosition);
+  const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
+  const y = height - currentScene.layout.displayLayout.height;
 
+  if (changedVerticalPosition) {
     return {
       ...currentScene.layout.displayLayout,
-      left: isWebCamRight(currentScene.finalWebcamPosition)
-        ? -(width - getSafeSpace("landscape") * 2)
-        : width + getSafeSpace("landscape"),
       top: y,
     };
   }
 
-  return currentScene.layout.displayLayout;
+  return {
+    ...currentScene.layout.displayLayout,
+    left: isWebCamRight(currentScene.finalWebcamPosition)
+      ? -(width - getSafeSpace("landscape") * 2)
+      : width + getSafeSpace("landscape"),
+    top: y,
+  };
 };
 
 const getSquareDisplayExit = ({
