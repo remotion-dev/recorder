@@ -230,18 +230,69 @@ const getWebcamEndLayout = ({
   throw new Error(`Unknown canvas layout: ${canvasLayout}`);
 };
 
-const getWebCamStartLayout = ({
+const getLandscapeWebCamStartLayout = ({
   width,
-  height,
-  canvasLayout,
   previousScene,
   currentScene,
 }: {
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
+}): Layout => {
+  const currentLayout = currentScene.layout.webcamLayout;
+
+  if (!previousScene || previousScene.type !== "video-scene") {
+    return currentLayout;
+  }
+
+  if (
+    isGrowingFromMiniature({
+      firstScene: previousScene,
+      secondScene: currentScene,
+    }) ||
+    isShrinkingToMiniature({
+      firstScene: previousScene,
+      secondScene: currentScene,
+    })
+  ) {
+    return previousScene.layout.webcamLayout;
+  }
+
+  if (currentScene.finalWebcamPosition === "center") {
+    return currentLayout;
+  }
+
+  const isSamePositionVertical =
+    isWebCamRight(previousScene.finalWebcamPosition) ===
+    isWebCamRight(currentScene.finalWebcamPosition);
+
+  if (isSamePositionVertical) {
+    return previousScene.layout.webcamLayout;
+  }
+
+  // landscape layout, flying in from the right
+  if (isWebCamRight(currentScene.finalWebcamPosition)) {
+    return {
+      ...currentLayout,
+      left: width,
+    };
+  }
+
+  // landscape layout, flying in from the left
+  return {
+    ...currentLayout,
+    left: -currentLayout.width,
+  };
+};
+
+const getSquareWebCamStartLayout = ({
+  height,
+  previousScene,
+  currentScene,
+}: {
+  previousScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
   height: number;
-  canvasLayout: CanvasLayout;
 }): Layout => {
   const currentLayout = currentScene.layout.webcamLayout;
 
@@ -269,40 +320,19 @@ const getWebCamStartLayout = ({
   const samePositionHorizontal =
     isWebCamAtBottom(previousScene.finalWebcamPosition) ===
     isWebCamAtBottom(currentScene.finalWebcamPosition);
-  const isSamePositionVertical =
-    isWebCamRight(previousScene.finalWebcamPosition) ===
-    isWebCamRight(currentScene.finalWebcamPosition);
 
   const currentSubsBoxHeight = currentScene.layout.subLayout.height;
-  if (canvasLayout === "landscape") {
-    if (!isSamePositionVertical) {
-      // landscape layout, flying in from the right
-      if (isWebCamRight(currentScene.finalWebcamPosition)) {
-        return {
-          ...currentLayout,
-          left: width,
-        };
-      }
-
-      // landscape layout, flying in from the left
-      return {
-        ...currentLayout,
-        left: -currentLayout.width,
-      };
-    }
-
-    return previousScene.layout.webcamLayout;
-  }
 
   // Square layout, only moving from left to right
   if (samePositionHorizontal) {
     return previousScene.layout.webcamLayout;
   }
 
-  // veritcal and horizontal changes
+  // vertical and horizontal changes
   // Square, moving bottom up
   const hasDisplay = currentScene.layout.displayLayout;
-  if (!samePositionHorizontal && hasDisplay) {
+
+  if (hasDisplay) {
     if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
       return {
         ...currentLayout,
@@ -312,7 +342,7 @@ const getWebCamStartLayout = ({
 
     return {
       ...currentLayout,
-      top: -currentSubsBoxHeight - getSafeSpace(canvasLayout),
+      top: -currentSubsBoxHeight - getSafeSpace("square"),
     };
   }
 
@@ -320,7 +350,7 @@ const getWebCamStartLayout = ({
   if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
     return {
       ...currentLayout,
-      top: -currentSubsBoxHeight - getSafeSpace(canvasLayout),
+      top: -currentSubsBoxHeight - getSafeSpace("square"),
     };
   }
 
@@ -328,15 +358,47 @@ const getWebCamStartLayout = ({
   if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
     return {
       ...currentLayout,
-      top: getSafeSpace(canvasLayout),
+      top: getSafeSpace("square"),
     };
   }
 
   // Square layout, webcam moving bottom to top
   return {
     ...currentLayout,
-    top: currentSubsBoxHeight + getSafeSpace(canvasLayout),
+    top: currentSubsBoxHeight + getSafeSpace("square"),
   };
+};
+
+const getWebCamStartLayout = ({
+  width,
+  height,
+  canvasLayout,
+  previousScene,
+  currentScene,
+}: {
+  previousScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+  height: number;
+  canvasLayout: CanvasLayout;
+}): Layout => {
+  if (canvasLayout === "landscape") {
+    return getLandscapeWebCamStartLayout({
+      currentScene,
+      previousScene,
+      width,
+    });
+  }
+
+  if (canvasLayout === "square") {
+    return getSquareWebCamStartLayout({
+      currentScene,
+      height,
+      previousScene,
+    });
+  }
+
+  throw new Error(`Unknown canvas layout: ${canvasLayout}`);
 };
 
 const shouldTransitionWebcamVideo = ({
