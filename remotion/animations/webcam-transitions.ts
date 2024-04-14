@@ -152,8 +152,7 @@ const getSquareWebcamEndLayout = ({
     return nextScene.layout.webcamLayout;
   }
 
-  const currentSubsBoxHeight = currentScene.layout.subLayout.height;
-
+  // Display is not in the way, webcam can just move to the new position
   if (
     isWebCamAtBottom(nextScene.finalWebcamPosition) ===
     isWebCamAtBottom(currentScene.finalWebcamPosition)
@@ -161,35 +160,23 @@ const getSquareWebcamEndLayout = ({
     return nextScene.layout.webcamLayout;
   }
 
-  const hasDisplay = currentScene.layout.displayLayout;
-  // vertical and horizontal changes
-  if (hasDisplay) {
-    if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
-      return {
-        ...currentLayout,
-        top: height,
-      };
-    }
-
-    return {
-      ...currentLayout,
-      top: -currentLayout.height + getSafeSpace("square"),
-    };
+  // In both scenes, webcam is fullscreen and there is no display, webcam can just move to the new position
+  if (!currentScene.layout.displayLayout) {
+    return nextScene.layout.webcamLayout;
   }
 
-  // webcam moving from bottom to top (moving distance = height of the current subs box)
+  // Display is moving from bottom to top or vice versa
+  // Webcam will animate out of the edge and appear from the other side
   if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
     return {
-      ...nextScene.layout.webcamLayout,
-      top: getSafeSpace("square"),
+      ...currentLayout,
+      top: height + getSafeSpace("square"),
     };
   }
 
-  // webcam moving from top to bottom (moving distance = height of the current subs box)
   return {
-    ...nextScene.layout.webcamLayout,
-    left: currentLayout.left,
-    top: currentSubsBoxHeight + 2 * getSafeSpace("square"),
+    ...currentLayout,
+    top: -getSafeSpace("square"),
   };
 };
 
