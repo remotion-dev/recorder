@@ -8,7 +8,7 @@ import {
   isShrinkingToMiniature,
   isWebCamAtBottom,
   isWebCamRight,
-} from "./webcam-transitions";
+} from "./webcam-transitions/helpers";
 
 export type OutTransition = "none" | "up" | "down" | "left" | "right";
 export type InTransition =

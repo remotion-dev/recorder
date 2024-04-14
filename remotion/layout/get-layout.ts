@@ -1,10 +1,11 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { getSafeSpace } from "../../config/layout";
 import type { FinalWebcamPosition, SceneVideos } from "../../config/scenes";
+import {} from "../animations/webcam-transitions";
 import {
   isWebCamAtBottom,
   isWebCamRight,
-} from "../animations/webcam-transitions";
+} from "../animations/webcam-transitions/helpers";
 import type { SubtitleType } from "../captions/Segment";
 import {
   getSubtitlesFontSize,

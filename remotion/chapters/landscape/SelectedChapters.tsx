@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { AbsoluteFill, useVideoConfig } from "remotion";
 import type { VideoSceneAndMetadata } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
-import { isWebCamRight } from "../../animations/webcam-transitions";
+import { isWebCamRight } from "../../animations/webcam-transitions/helpers";
 import {
   getChapterInTransition,
   getChapterOutTransition,

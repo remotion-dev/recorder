@@ -1,10 +1,11 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { getSafeSpace } from "../../config/layout";
 import type { FinalWebcamPosition } from "../../config/scenes";
+import {} from "../animations/webcam-transitions";
 import {
   isWebCamAtBottom,
   isWebCamRight,
-} from "../animations/webcam-transitions";
+} from "../animations/webcam-transitions/helpers";
 import { borderRadius } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type { Layout } from "../layout/layout-types";
