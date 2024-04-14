@@ -6,7 +6,7 @@ import type {
 } from "../../../config/scenes";
 import type { Layout } from "../../layout/layout-types";
 import { getLandscapeDisplayEnter, getLandscapeDisplayExit } from "./landscape";
-import { getSquareDisplayEnter, getSquareDisplayExit } from "./square";
+import { getSquareDisplayEnterOrExit } from "./square";
 
 const getDisplayExit = ({
   currentScene,
@@ -31,7 +31,12 @@ const getDisplayExit = ({
   }
 
   if (canvasLayout === "square") {
-    return getSquareDisplayExit({ currentScene, nextScene, width, height });
+    return getSquareDisplayEnterOrExit({
+      currentScene,
+      otherScene: nextScene,
+      width,
+      height,
+    });
   }
 
   throw new Error("Unknown canvas layout: " + canvasLayout);
@@ -41,11 +46,14 @@ const getDisplayEnter = ({
   currentScene,
   previousScene,
   width,
+  // TODO: Which height?
+  height,
   canvasLayout,
 }: {
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
+  height: number;
   canvasLayout: CanvasLayout;
 }): Layout => {
   if (canvasLayout === "landscape") {
@@ -53,7 +61,12 @@ const getDisplayEnter = ({
   }
 
   if (canvasLayout === "square") {
-    return getSquareDisplayEnter({ currentScene, previousScene, width });
+    return getSquareDisplayEnterOrExit({
+      currentScene,
+      otherScene: previousScene,
+      width,
+      height,
+    });
   }
 
   throw new Error("Unknown canvas layout: " + canvasLayout);
@@ -79,6 +92,7 @@ const getDisplayTransitionOrigins = ({
     previousScene,
     width,
     canvasLayout,
+    height,
   });
 
   const exit = getDisplayExit({
