@@ -152,17 +152,12 @@ const getSquareWebcamEndLayout = ({
     return nextScene.layout.webcamLayout;
   }
 
-  if (currentScene.finalWebcamPosition === "center") {
-    return currentLayout;
-  }
-
-  const samePositionHorizontal =
-    isWebCamAtBottom(nextScene.finalWebcamPosition) ===
-    isWebCamAtBottom(currentScene.finalWebcamPosition);
-
   const currentSubsBoxHeight = currentScene.layout.subLayout.height;
 
-  if (samePositionHorizontal) {
+  if (
+    isWebCamAtBottom(nextScene.finalWebcamPosition) ===
+    isWebCamAtBottom(currentScene.finalWebcamPosition)
+  ) {
     return nextScene.layout.webcamLayout;
   }
 
@@ -258,15 +253,16 @@ const getLandscapeWebCamStartLayout = ({
     return previousScene.layout.webcamLayout;
   }
 
+  // Not growing from miniature, not shrinking to miniature
+  // therefore previous scene was also fullscreen
   if (currentScene.finalWebcamPosition === "center") {
     return currentLayout;
   }
 
-  const isSamePositionVertical =
+  if (
     isWebCamRight(previousScene.finalWebcamPosition) ===
-    isWebCamRight(currentScene.finalWebcamPosition);
-
-  if (isSamePositionVertical) {
+    isWebCamRight(currentScene.finalWebcamPosition)
+  ) {
     return previousScene.layout.webcamLayout;
   }
 
@@ -311,10 +307,6 @@ const getSquareWebCamStartLayout = ({
     })
   ) {
     return previousScene.layout.webcamLayout;
-  }
-
-  if (currentScene.finalWebcamPosition === "center") {
-    return currentLayout;
   }
 
   const samePositionHorizontal =
