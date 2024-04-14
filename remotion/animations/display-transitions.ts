@@ -35,30 +35,15 @@ const getLandscapeDisplayExit = ({
     return currentScene.layout.displayLayout;
   }
 
+  // Next scene also has a display layout, just move it there
   if (nextScene.layout.displayLayout !== null) {
-    return nextScene.layout.displayLayout as Layout;
+    return nextScene.layout.displayLayout;
   }
 
-  if (
-    !isGrowingFromMiniature({
-      firstScene: currentScene,
-      secondScene: nextScene,
-    })
-  ) {
-    return currentScene.layout.displayLayout;
-  }
-
-  const previouslyAtBottom = isWebCamAtBottom(currentScene.finalWebcamPosition);
-  const currentlyAtBottom = isWebCamAtBottom(nextScene.finalWebcamPosition);
-  const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
+  // Next scene has no display
+  // The webcam will zoom in to fullscreen, the display
+  // needs to move out of the way
   const y = height - currentScene.layout.displayLayout.height;
-
-  if (changedVerticalPosition) {
-    return {
-      ...currentScene.layout.displayLayout,
-      top: y,
-    };
-  }
 
   return {
     ...currentScene.layout.displayLayout,

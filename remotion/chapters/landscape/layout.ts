@@ -5,6 +5,7 @@ import {
   isWebCamRight,
 } from "../../animations/webcam-transitions";
 import type { Layout } from "../../layout/layout-types";
+
 export const getWidescreenChapterLayout = (
   scene: VideoSceneAndMetadata,
   tableOfContentHeight: number,

@@ -83,13 +83,15 @@ export const LandscapeChapters: React.FC<{
   const styles = useMemo((): React.CSSProperties => {
     const currentStyle = getWidescreenChapterStyle(scene, tableOfContentHeight);
 
-    const previousChapterStyle = previousVideoScene
-      ? getWidescreenChapterStyle(previousVideoScene, tableOfContentHeight)
-      : null;
+    const previousChapterStyle =
+      previousVideoScene && previousVideoScene.finalWebcamPosition !== "center"
+        ? getWidescreenChapterStyle(previousVideoScene, tableOfContentHeight)
+        : null;
 
-    const nextChapterStyle = nextVideoScene
-      ? getWidescreenChapterStyle(nextVideoScene, tableOfContentHeight)
-      : null;
+    const nextChapterStyle =
+      nextVideoScene && nextVideoScene.finalWebcamPosition !== "center"
+        ? getWidescreenChapterStyle(nextVideoScene, tableOfContentHeight)
+        : null;
 
     return interpolateStyles(
       enterProgress + exitProgress,
