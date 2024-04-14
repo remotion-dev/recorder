@@ -325,27 +325,7 @@ const getSquareWebCamStartLayout = ({
     };
   }
 
-  // Square layout, webcam moving top to bottom
-  if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
-    return {
-      ...currentLayout,
-      top: -currentSubsBoxHeight - getSafeSpace("square"),
-    };
-  }
-
-  // Square layout, webcam moving top to bottom
-  if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
-    return {
-      ...currentLayout,
-      top: getSafeSpace("square"),
-    };
-  }
-
-  // Square layout, webcam moving bottom to top
-  return {
-    ...currentLayout,
-    top: currentSubsBoxHeight + getSafeSpace("square"),
-  };
+  return previousScene.layout.webcamLayout;
 };
 
 const getWebCamStartLayout = ({
