@@ -10,7 +10,7 @@ import {
   isShrinkingToMiniature,
   isWebCamAtBottom,
   isWebCamRight,
-} from "../webcam-transitions";
+} from "../webcam-transitions/helpers";
 
 export const getBoxedExit = ({
   nextScene,

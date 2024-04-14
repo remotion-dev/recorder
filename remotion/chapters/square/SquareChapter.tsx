@@ -10,7 +10,7 @@ import { getSafeSpace } from "../../../config/layout";
 import type { FinalWebcamPosition } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
-import { isWebCamAtBottom } from "../../animations/webcam-transitions";
+import { isWebCamAtBottom } from "../../animations/webcam-transitions/helpers";
 import { borderRadius } from "../../layout/get-layout";
 
 export const SquareChapter: React.FC<{

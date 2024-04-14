@@ -11,7 +11,7 @@ import {
   isShrinkingToMiniature,
   isWebCamAtBottom,
   isWebCamRight,
-} from "./webcam-transitions";
+} from "./webcam-transitions/helpers";
 
 const getLandscapeDisplayExit = ({
   currentScene,
