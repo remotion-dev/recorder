@@ -85,16 +85,14 @@ const getDisplayExit = ({
   return currentScene.layout.displayLayout;
 };
 
-const getDisplayEnter = ({
+const getLandscapeDisplayEnter = ({
   currentScene,
   previousScene,
   width,
-  canvasLayout,
 }: {
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
-  canvasLayout: CanvasLayout;
 }): Layout => {
   if (
     currentScene.type !== "video-scene" ||
@@ -113,37 +111,12 @@ const getDisplayEnter = ({
       secondScene: currentScene,
     })
   ) {
-    if (canvasLayout === "square") {
-      if (isWebCamAtBottom(previousScene.finalWebcamPosition)) {
-        return {
-          ...currentScene.layout.displayLayout,
-          top: -currentScene.layout.displayLayout.height,
-        };
-      }
-
-      const samePositionHorizontal =
-        isWebCamAtBottom(previousScene.finalWebcamPosition) ===
-        isWebCamAtBottom(currentScene.finalWebcamPosition);
-
-      if (samePositionHorizontal) {
-        return {
-          ...currentScene.layout.displayLayout,
-          left: width,
-        };
-      }
-
-      return {
-        ...currentScene.layout.displayLayout,
-        top: currentScene.layout.displayLayout.height,
-      };
-    }
-
     // landscape, Slide in from left
     if (isWebCamRight(currentScene.finalWebcamPosition)) {
       return {
         ...currentScene.layout.displayLayout,
         left:
-          -currentScene.layout.displayLayout.width - getSafeSpace(canvasLayout),
+          -currentScene.layout.displayLayout.width - getSafeSpace("landscape"),
         top: 0,
       };
     }
@@ -151,12 +124,87 @@ const getDisplayEnter = ({
     // landscape, Slide in from right
     return {
       ...currentScene.layout.displayLayout,
-      left: width + getSafeSpace(canvasLayout),
+      left: width + getSafeSpace("landscape"),
       top: 0,
     };
   }
 
   return currentScene.layout.displayLayout;
+};
+
+const getSquareDisplayEnter = ({
+  currentScene,
+  previousScene,
+  width,
+}: {
+  previousScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+}): Layout => {
+  if (
+    currentScene.type !== "video-scene" ||
+    currentScene.layout.displayLayout === null
+  ) {
+    throw new Error("no transitions on non-video scenes");
+  }
+
+  if (previousScene === null || previousScene.type !== "video-scene") {
+    return currentScene.layout.displayLayout;
+  }
+
+  if (
+    isShrinkingToMiniature({
+      firstScene: previousScene,
+      secondScene: currentScene,
+    })
+  ) {
+    if (isWebCamAtBottom(previousScene.finalWebcamPosition)) {
+      return {
+        ...currentScene.layout.displayLayout,
+        top: -currentScene.layout.displayLayout.height,
+      };
+    }
+
+    const samePositionHorizontal =
+      isWebCamAtBottom(previousScene.finalWebcamPosition) ===
+      isWebCamAtBottom(currentScene.finalWebcamPosition);
+
+    if (samePositionHorizontal) {
+      return {
+        ...currentScene.layout.displayLayout,
+        left: width,
+      };
+    }
+
+    return {
+      ...currentScene.layout.displayLayout,
+      top: currentScene.layout.displayLayout.height,
+    };
+  }
+
+  return currentScene.layout.displayLayout;
+};
+
+const getDisplayEnter = ({
+  currentScene,
+  previousScene,
+  width,
+  canvasLayout,
+}: {
+  previousScene: SceneAndMetadata | null;
+  currentScene: VideoSceneAndMetadata;
+  width: number;
+  canvasLayout: CanvasLayout;
+}): Layout => {
+  if (canvasLayout === "landscape") {
+    return getLandscapeDisplayEnter({ currentScene, previousScene, width });
+  }
+
+  if (canvasLayout === "square") {
+    return getSquareDisplayEnter({ currentScene, previousScene, width });
+  }
+
+  throw new Error("Unknown canvas layout: " + canvasLayout);
 };
 
 const getDisplayTransitionOrigins = ({
