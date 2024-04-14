@@ -41,14 +41,13 @@ const squareFullscreenWebcamLayout = ({
     provisionalHeight > maxHeight ? maxHeight * aspectRatio : maxWidth;
   const height = width / aspectRatio;
 
-  const isTopAligned = !isWebCamAtBottom(webcamPosition);
   const left = (canvasSize.width - width) / 2;
 
   return {
     left,
-    top: isTopAligned
-      ? getSafeSpace("square")
-      : canvasSize.height - provisionalHeight - getSafeSpace("square"),
+    top: isWebCamAtBottom(webcamPosition)
+      ? canvasSize.height - height - getSafeSpace("square")
+      : getSafeSpace("square"),
     width,
     height,
     borderRadius,
