@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import type { SetStateAction } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { ProjectDialog } from "./components/ProjectDialog";
+import { SelectedProject } from "./components/SelectProject";
 import { Button } from "./components/ui/button";
 
 const topBarContainer: React.CSSProperties = {
   display: "flex",
   gap: 10,
-  marginTop: 10,
-  marginLeft: 10,
+  margin: 10,
   alignItems: "center",
 };
 
@@ -30,21 +32,54 @@ const formatTime = (ms: number) => {
 };
 
 export const TopBar: React.FC<{
-  start: () => void;
-  stop: () => void;
-  recording: false | number;
-  disabledByParent: boolean;
-}> = ({ start, stop, recording, disabledByParent }) => {
-  const disabled = disabledByParent || recording !== false;
-
+  readonly start: () => void;
+  readonly stop: () => void;
+  readonly keepVideos: () => Promise<void>;
+  readonly discardVideos: () => void;
+  readonly recording: false | number;
+  readonly projects: string[] | null;
+  readonly disabledByParent: boolean;
+  readonly selectedProject: string | null;
+  readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
+  readonly refreshProjectList: () => Promise<void>;
+}> = ({
+  start,
+  stop,
+  keepVideos,
+  discardVideos,
+  projects,
+  recording,
+  disabledByParent,
+  selectedProject,
+  setSelectedProject,
+  refreshProjectList,
+}) => {
+  const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState(true);
-
+  const disabled = disabledByParent || recording !== false || showHandleVideos;
   useEffect(() => {
     const intervalId = setInterval(() => {
       setIsVisible((prev) => !prev);
     }, 800);
     return () => clearInterval(intervalId);
   }, []);
+
+  const handleUseTake = useCallback(async () => {
+    try {
+      await keepVideos();
+
+      setShowHandleVideos(false);
+    } catch (err) {
+      console.log(err);
+      // eslint-disable-next-line no-alert
+      alert((err as Error).stack);
+    }
+  }, [keepVideos]);
+
+  const handleDiscardTake = useCallback(() => {
+    discardVideos();
+    setShowHandleVideos(false);
+  }, [discardVideos]);
 
   const recordCircle = (
     <svg
@@ -76,7 +111,10 @@ export const TopBar: React.FC<{
             variant={"outline"}
             type="button"
             disabled={!recording}
-            onClick={stop}
+            onClick={() => {
+              stop();
+              setShowHandleVideos(true);
+            }}
             style={{ display: "flex", alignItems: "center", gap: 10 }}
             title="Press R to stop recording"
           >
@@ -106,6 +144,40 @@ export const TopBar: React.FC<{
           </Button>
         </div>
       )}
+      {showHandleVideos ? (
+        <>
+          <Button
+            variant={"default"}
+            type="button"
+            onClick={handleUseTake}
+            title="Press R to start recording"
+          >
+            Use this take
+          </Button>
+          <Button
+            variant={"destructive"}
+            type="button"
+            onClick={handleDiscardTake}
+            title="Press R to start recording"
+          >
+            Discard Videos
+          </Button>
+        </>
+      ) : null}
+      <div style={{ flex: 1 }} />
+      {projects ? (
+        <>
+          <SelectedProject
+            projects={projects}
+            selectedProject={selectedProject}
+            setSelectedProject={setSelectedProject}
+          />
+          <ProjectDialog
+            refreshProjectList={refreshProjectList}
+            setSelectedProject={setSelectedProject}
+          />
+        </>
+      ) : null}
     </div>
   );
 };
