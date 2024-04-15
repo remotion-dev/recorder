@@ -1,0 +1,121 @@
+import type { ChangeEvent, SetStateAction } from "react";
+import React, {
+  createRef,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
+import { createProject } from "../create-project";
+import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+
+export const createProjectRef = createRef<{
+  openDialog: () => void;
+}>();
+
+export const ProjectDialog: React.FC<{
+  readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
+  readonly refreshProjectList: () => Promise<void>;
+}> = ({ refreshProjectList, setSelectedProject }) => {
+  const [newProject, setNewProject] = useState<string>("");
+  const [open, setOpen] = useState<boolean>(false);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setNewProject(event.target.value);
+  };
+
+  const getRegex = () => /^([a-zA-Z0-9-\u4E00-\u9FFF])+$/g;
+
+  const invalidInput = useMemo(() => {
+    const match = newProject.match(getRegex());
+    if (newProject.length === 0) {
+      return null;
+    }
+
+    if (!match || match.length === 0) {
+      return "Project names can't contain spaces or special symbols.";
+    }
+
+    return null;
+  }, [newProject]);
+
+  const disabled = useMemo(() => {
+    return invalidInput !== null || newProject.length === 0;
+  }, [invalidInput, newProject.length]);
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      const res = await createProject(newProject);
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+
+      setSelectedProject(newProject);
+      setNewProject("");
+      refreshProjectList();
+      setOpen(false);
+    } catch (e) {
+      // eslint-disable-next-line no-alert
+      alert((e as Error).stack);
+    }
+  }, [newProject, refreshProjectList, setSelectedProject]);
+
+  useImperativeHandle(
+    createProjectRef,
+    () => {
+      return {
+        openDialog: () => {
+          setOpen(true);
+        },
+      };
+    },
+    [],
+  );
+
+  return (
+    <Dialog onOpenChange={setOpen} open={open}>
+      <DialogContent className="sm:max-w-[460px]">
+        <DialogHeader>
+          <DialogTitle>New Folder</DialogTitle>
+          <DialogDescription>
+            Create a new subfolder in the <code>public/</code> directory. This
+            should map to the ID of your composition in the Remotion Studio.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Folder Name
+            </Label>
+
+            <Input
+              id="remotion_video_name"
+              placeholder="my-video"
+              value={newProject}
+              className="col-span-3"
+              onChange={handleChange}
+            />
+            <Label className="col-start-2 col-end-5 text-red-600">
+              {invalidInput ?? null}
+            </Label>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button type="submit" onClick={handleSubmit} disabled={disabled}>
+            Create subfolder
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};

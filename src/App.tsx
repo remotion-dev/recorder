@@ -8,9 +8,14 @@ import {
 } from "../config/cameras";
 import "./App.css";
 import { Button } from "./components/ui/button";
+import {
+  convertFilesInServer,
+  downloadVideo,
+  handleUploadFileToServer,
+} from "./download-video";
+import { fetchProjectFolders, loadSelectedProjectFromLS } from "./get-projects";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
-import { onVideo } from "./on-video";
 import { TopBar } from "./TopBar";
 import { useKeyPress } from "./use-key-press";
 import type { Prefix, prefixes } from "./Views";
@@ -75,13 +80,28 @@ const mediaRecorderOptions: MediaRecorderOptions = {
   videoBitsPerSecond: 8 * 4000000,
 };
 
+const currentBlobsInit = {
+  endDate: null,
+  blobs: {
+    webcam: null,
+    display: null,
+    alt1: null,
+    alt2: null,
+  },
+};
+
 const App = () => {
   const [showAlternativeViews, setShowAlternativeViews] = useState<boolean>(
     localStorage.getItem("showAlternativeViews") === "true",
-  ); // load from local storage
+  );
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
+  const [projects, setProjectFolders] = useState<string[] | null>(null);
+  const [selectedProject, setSelectedProject] = useState<string | null>(
+    loadSelectedProjectFromLS(),
+  );
+
   const [mediaSources, setMediaSources] = useState<{
     [key in (typeof prefixes)[number]]: MediaStream | null;
   }>({
@@ -90,6 +110,27 @@ const App = () => {
     alternative1: null,
     alternative2: null,
   });
+
+  const [currentBlobs, setCurrentBlobs] = useState<
+    | {
+        endDate: number;
+        blobs: {
+          webcam: Blob | null;
+          display: Blob | null;
+          alt1: Blob | null;
+          alt2: Blob | null;
+        };
+      }
+    | {
+        endDate: null;
+        blobs: {
+          webcam: null;
+          display: null;
+          alt1: null;
+          alt2: null;
+        };
+      }
+  >(currentBlobsInit);
 
   const dynamicGridContainer = useMemo(() => {
     if (showAlternativeViews) {
@@ -107,6 +148,54 @@ const App = () => {
   const handleShowLess = useCallback(() => {
     setShowAlternativeViews(false);
     localStorage.setItem("showAlternativeViews", "false");
+  }, []);
+
+  const actualSelectedProject = useMemo(() => {
+    return selectedProject ?? projects?.[0] ?? null;
+  }, [projects, selectedProject]);
+
+  const keepVideos = useCallback(async () => {
+    const runsOnServer = Boolean(window.remotionServerEnabled);
+    if (currentBlobs.endDate === null) {
+      return Promise.resolve();
+    }
+
+    for (const [prefix, blob] of Object.entries(currentBlobs.blobs)) {
+      if (blob === null) {
+        return Promise.resolve();
+      }
+
+      if (runsOnServer) {
+        if (actualSelectedProject === null) {
+          alert("Please select a folder first.");
+          return Promise.resolve();
+        }
+
+        await handleUploadFileToServer(
+          blob,
+          endDate,
+          prefix,
+          actualSelectedProject,
+        );
+      } else {
+        downloadVideo(blob, currentBlobs.endDate, prefix);
+      }
+    }
+
+    if (runsOnServer) {
+      if (!actualSelectedProject) {
+        throw new Error("No project selected");
+      }
+
+      await convertFilesInServer(endDate, actualSelectedProject);
+    }
+
+    setCurrentBlobs(currentBlobsInit);
+    return Promise.resolve();
+  }, [actualSelectedProject, currentBlobs.blobs, currentBlobs.endDate]);
+
+  const discardVideos = useCallback(() => {
+    setCurrentBlobs(currentBlobsInit);
   }, []);
 
   const setMediaStream = useCallback(
@@ -141,7 +230,14 @@ const App = () => {
       newRecorders.push(recorder);
 
       recorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, endDate, prefix);
+        setCurrentBlobs((prev) => ({
+          ...prev,
+          endDate,
+          blobs: {
+            ...prev.blobs,
+            [prefix]: data,
+          },
+        }));
       });
 
       recorder.addEventListener("error", (event) => {
@@ -181,6 +277,30 @@ const App = () => {
   };
 
   useKeyPress(["r"], onPressR);
+
+  const refreshProjectList = useCallback(async () => {
+    const jsn = await fetchProjectFolders();
+    setProjectFolders(jsn.folders);
+    if (selectedProject && !jsn.folders.includes(selectedProject)) {
+      setSelectedProject(jsn.folders[0] ?? "");
+    }
+  }, [selectedProject]);
+
+  useEffect(() => {
+    if (!window.remotionServerEnabled) {
+      return;
+    }
+
+    refreshProjectList();
+  }, [refreshProjectList]);
+
+  useEffect(() => {
+    if (!window.remotionServerEnabled) {
+      return;
+    }
+
+    window.localStorage.setItem("selectedProject", selectedProject ?? "");
+  }, [selectedProject]);
 
   useEffect(() => {
     const checkDeviceLabels = async () => {
@@ -223,8 +343,14 @@ const App = () => {
       <TopBar
         start={start}
         stop={stop}
+        keepVideos={keepVideos}
+        discardVideos={discardVideos}
         recording={recording}
         disabledByParent={recordingDisabled}
+        projects={projects}
+        selectedProject={selectedProject}
+        setSelectedProject={setSelectedProject}
+        refreshProjectList={refreshProjectList}
       />
       <div style={dynamicGridContainer}>
         <View
@@ -241,18 +367,18 @@ const App = () => {
         />
         {showAlternativeViews ? (
           <>
-           <View
-          prefix={ALTERNATIVE1_PREFIX}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative1}
-        />
-        <View
-          prefix={ALTERNATIVE2_PREFIX}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative2}
-        />
+            <View
+              prefix={ALTERNATIVE1_PREFIX}
+              devices={devices}
+              setMediaStream={setMediaStream}
+              mediaStream={mediaSources.alternative1}
+            />
+            <View
+              prefix={ALTERNATIVE2_PREFIX}
+              devices={devices}
+              setMediaStream={setMediaStream}
+              mediaStream={mediaSources.alternative2}
+            />
           </>
         ) : null}
       </div>
