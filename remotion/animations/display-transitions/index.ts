@@ -1,24 +1,19 @@
 import { interpolate } from "remotion";
-import type { CanvasLayout } from "../../config/layout";
-import { getSafeSpace } from "../../config/layout";
+import type { CanvasLayout } from "../../../config/layout";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
-} from "../../config/scenes";
-import type { Layout } from "../layout/layout-types";
-import {
-  isGrowingFromMiniature,
-  isShrinkingToMiniature,
-  isWebCamAtBottom,
-  isWebCamRight,
-} from "./webcam-transitions";
+} from "../../../config/scenes";
+import type { Layout } from "../../layout/layout-types";
+import { getLandscapeDisplayEnter, getLandscapeDisplayExit } from "./landscape";
+import { getSquareDisplayEnterOrExit } from "./square";
 
 const getDisplayExit = ({
   currentScene,
   nextScene,
   width,
-  canvasLayout,
   height,
+  canvasLayout,
 }: {
   nextScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
@@ -26,144 +21,55 @@ const getDisplayExit = ({
   height: number;
   canvasLayout: CanvasLayout;
 }): Layout => {
-  if (
-    currentScene.type !== "video-scene" ||
-    currentScene.layout.displayLayout === null
-  ) {
-    throw new Error("no transitions on non-video scenes");
+  if (canvasLayout === "landscape") {
+    return getLandscapeDisplayExit({
+      currentScene,
+      nextScene,
+      width,
+      height,
+    });
   }
 
-  const nextAndCurrentAreVideoScenes =
-    nextScene &&
-    nextScene.type === "video-scene" &&
-    nextScene.layout.displayLayout !== null;
-
-  if (nextAndCurrentAreVideoScenes) {
-    return nextScene.layout.displayLayout as Layout;
+  if (canvasLayout === "square") {
+    return getSquareDisplayEnterOrExit({
+      currentScene,
+      otherScene: nextScene,
+      width,
+      height,
+    });
   }
 
-  if (
-    nextScene &&
-    isGrowingFromMiniature({ firstScene: currentScene, secondScene: nextScene })
-  ) {
-    if (nextScene.type !== "video-scene") {
-      throw new Error("no transitions on non-video scenes");
-    }
-
-    const previouslyAtBottom = isWebCamAtBottom(
-      currentScene.finalWebcamPosition,
-    );
-    const currentlyAtBottom = isWebCamAtBottom(nextScene.finalWebcamPosition);
-    const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
-    const y =
-      canvasLayout === "landscape"
-        ? height - currentScene.layout.displayLayout.height
-        : isWebCamAtBottom(nextScene.finalWebcamPosition)
-          ? height -
-            nextScene.layout.webcamLayout.height -
-            currentScene.layout.displayLayout.height -
-            getSafeSpace(canvasLayout) * 2
-          : nextScene.layout.webcamLayout.height +
-            2 * getSafeSpace(canvasLayout);
-
-    if (changedVerticalPosition) {
-      return {
-        ...currentScene.layout.displayLayout,
-        top: y,
-      };
-    }
-
-    return {
-      ...currentScene.layout.displayLayout,
-      left: isWebCamRight(currentScene.finalWebcamPosition)
-        ? -(width - getSafeSpace(canvasLayout) * 2)
-        : width + getSafeSpace(canvasLayout),
-      top: y,
-    };
-  }
-
-  return currentScene.layout.displayLayout;
+  throw new Error("Unknown canvas layout: " + canvasLayout);
 };
 
 const getDisplayEnter = ({
   currentScene,
   previousScene,
   width,
-  canvasLayout,
+  // TODO: Which height?
   height,
+  canvasLayout,
 }: {
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   width: number;
-  canvasLayout: CanvasLayout;
   height: number;
+  canvasLayout: CanvasLayout;
 }): Layout => {
-  if (
-    currentScene.type !== "video-scene" ||
-    currentScene.layout.displayLayout === null
-  ) {
-    throw new Error("no transitions on non-video scenes");
+  if (canvasLayout === "landscape") {
+    return getLandscapeDisplayEnter({ currentScene, previousScene, width });
   }
 
-  if (
-    previousScene &&
-    previousScene.type === "video-scene" &&
-    isShrinkingToMiniature({
-      firstScene: previousScene,
-      secondScene: currentScene,
-    })
-  ) {
-    const previouslyAtBottom = isWebCamAtBottom(
-      previousScene.finalWebcamPosition,
-    );
-    const currentlyAtBottom = isWebCamAtBottom(
-      currentScene.finalWebcamPosition,
-    );
-    const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
-
-    const translationY = currentScene.layout.displayLayout.height;
-    const y = isWebCamAtBottom(currentScene.finalWebcamPosition)
-      ? -translationY
-      : changedVerticalPosition
-        ? translationY
-        : height;
-
-    // landscape, Slide in from left
-    if (
-      canvasLayout === "landscape" &&
-      isWebCamRight(currentScene.finalWebcamPosition)
-    ) {
-      return {
-        ...currentScene.layout.displayLayout,
-        left:
-          -currentScene.layout.displayLayout.width - getSafeSpace(canvasLayout),
-        top: 0,
-      };
-    }
-
-    // Slide in from right
-    if (canvasLayout === "landscape") {
-      return {
-        ...currentScene.layout.displayLayout,
-        left: width + getSafeSpace(canvasLayout),
-        top: 0,
-      };
-    }
-
-    return {
-      ...currentScene.layout.displayLayout,
-      top: y,
-    };
+  if (canvasLayout === "square") {
+    return getSquareDisplayEnterOrExit({
+      currentScene,
+      otherScene: previousScene,
+      width,
+      height,
+    });
   }
 
-  const currentandPreviousAreVideoScenes =
-    previousScene && previousScene.type === "video-scene";
-
-  if (currentandPreviousAreVideoScenes) {
-    return previousScene.layout.displayLayout as Layout;
-  }
-
-  return currentScene.layout.displayLayout;
+  throw new Error("Unknown canvas layout: " + canvasLayout);
 };
 
 const getDisplayTransitionOrigins = ({
@@ -216,6 +122,10 @@ const shouldTransitionDisplayVideo = ({
     return false;
   }
 
+  if (previousScene.videos.display === null) {
+    return false;
+  }
+
   return true;
 };
 
@@ -255,7 +165,6 @@ export const getDisplayPosition = ({
   });
 
   if (exit > 0) {
-    // TODO: Could use interpolateStyles() here
     return {
       left: Math.round(
         interpolate(

@@ -9,7 +9,6 @@
     "preview": "vite preview",
     "lint": "eslint . --ext .ts,.tsx",
     "start": "tsx studio.ts",
-    "remotion": "remotion studio",
     "upgrade": "remotion upgrade",
     "test": "bun run lint && bun test test.ts && tsc"
   },

@@ -6,7 +6,7 @@ import type {
 import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,
-} from "../webcam-transitions";
+} from "../webcam-transitions/helpers";
 
 export const belowVideoSubtitleEnter = ({
   previousScene,

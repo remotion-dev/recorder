@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { AbsoluteFill, useVideoConfig } from "remotion";
 import type { VideoSceneAndMetadata } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
-import { isWebCamRight } from "../../animations/webcam-transitions";
+import { isWebCamRight } from "../../animations/webcam-transitions/helpers";
 import {
   getChapterInTransition,
   getChapterOutTransition,
@@ -83,13 +83,15 @@ export const LandscapeChapters: React.FC<{
   const styles = useMemo((): React.CSSProperties => {
     const currentStyle = getWidescreenChapterStyle(scene, tableOfContentHeight);
 
-    const previousChapterStyle = previousVideoScene
-      ? getWidescreenChapterStyle(previousVideoScene, tableOfContentHeight)
-      : null;
+    const previousChapterStyle =
+      previousVideoScene && previousVideoScene.finalWebcamPosition !== "center"
+        ? getWidescreenChapterStyle(previousVideoScene, tableOfContentHeight)
+        : null;
 
-    const nextChapterStyle = nextVideoScene
-      ? getWidescreenChapterStyle(nextVideoScene, tableOfContentHeight)
-      : null;
+    const nextChapterStyle =
+      nextVideoScene && nextVideoScene.finalWebcamPosition !== "center"
+        ? getWidescreenChapterStyle(nextVideoScene, tableOfContentHeight)
+        : null;
 
     return interpolateStyles(
       enterProgress + exitProgress,
