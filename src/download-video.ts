@@ -1,3 +1,5 @@
+import { UPLOAD_VIDEO } from "../scripts/server/constants";
+
 export const downloadVideo = (data: Blob, endDate: number, prefix: string) => {
   let webcamchunks: Blob[] = [];
   if (data.size > 0) {
@@ -26,7 +28,7 @@ export const handleUploadFileToServer = async (
 ) => {
   const videoFile = new File([data], "video.webm", { type: data.type });
 
-  const url = new URL(`/api/upload-video`, window.location.origin);
+  const url = new URL(UPLOAD_VIDEO, window.location.origin);
 
   url.search = new URLSearchParams({
     folder: selectedProject,
