@@ -39,8 +39,9 @@ export const SelectedProject: React.FC<{
         </SelectTrigger>
         <SelectContent>
           {projects.map((project, i) => {
+            const key = i + project;
             return (
-              <SelectItem key={i} value={project}>
+              <SelectItem key={key} value={project}>
                 {project}
               </SelectItem>
             );
