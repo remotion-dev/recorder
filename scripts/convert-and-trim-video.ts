@@ -1,5 +1,4 @@
 import { getSilentParts } from "@remotion/renderer";
-import type { SilentParts } from "@remotion/renderer/dist/compositor/payloads";
 import { execSync } from "node:child_process";
 import { existsSync, mkdirSync } from "node:fs";
 import path from "path";
@@ -95,14 +94,10 @@ export const convertAndTrimVideo = async (props: ScriptProps | ServerProps) => {
     audibleParts.length > 0
       ? [
           "-ss",
-          String(
-            (audibleParts[0] as SilentParts[number]).startInSeconds -
-              PADDING_IN_SECONDS,
-          ),
+          String(audibleParts[0]!.startInSeconds - PADDING_IN_SECONDS),
           "-to",
           String(
-            (audibleParts[audibleParts.length - 1] as SilentParts[number])
-              .endInSeconds +
+            audibleParts[audibleParts.length - 1]!.endInSeconds +
               PADDING_IN_SECONDS * 2,
           ),
         ]
