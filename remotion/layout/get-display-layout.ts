@@ -1,6 +1,6 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { getSafeSpace } from "../../config/layout";
-import type { WebcamPosition } from "../../config/scenes";
+import type { FinalWebcamPosition } from "../../config/scenes";
 import { borderRadius } from "./get-layout";
 import { getBottomSafeSpace } from "./get-safe-space";
 import type { Layout } from "./layout-types";
@@ -14,7 +14,7 @@ export const getDisplayLayout = ({
 }: {
   canvasSize: Dimensions;
   canvasLayout: CanvasLayout;
-  webcamPosition: WebcamPosition;
+  webcamPosition: FinalWebcamPosition;
   displaySize: Dimensions;
 }): Layout => {
   const bottomSafeSpace = getBottomSafeSpace(canvasLayout);

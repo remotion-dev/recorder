@@ -1,11 +1,15 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { getSafeSpace } from "../../config/layout";
-import type { WebcamPosition } from "../../config/scenes";
+import type { FinalWebcamPosition } from "../../config/scenes";
+import {} from "../animations/webcam-transitions";
+import {
+  isWebCamAtBottom,
+  isWebCamRight,
+} from "../animations/webcam-transitions/helpers";
 import { borderRadius } from "../layout/get-layout";
 import { getBottomSafeSpace } from "../layout/get-safe-space";
 import type { Layout } from "../layout/layout-types";
 import type { SubtitleType } from "./Segment";
-import { getSubtitlesFontSize } from "./Segment";
 
 export const getSubsLayout = ({
   subtitleType,
@@ -14,16 +18,18 @@ export const getSubsLayout = ({
   webcamLayout,
   webcamPosition,
   displayLayout,
+  fontSize,
 }: {
   subtitleType: SubtitleType;
   canvasLayout: CanvasLayout;
   canvasSize: Dimensions;
   webcamLayout: Layout;
-  webcamPosition: WebcamPosition;
+  webcamPosition: FinalWebcamPosition;
   displayLayout: Dimensions | null;
+  fontSize: number;
 }): Layout => {
   if (subtitleType === "overlayed-center") {
-    const height = getSubtitlesFontSize(subtitleType, displayLayout) * 2;
+    const height = fontSize * 2;
     const width = (canvasSize.width / 3) * 2;
     const x = (canvasSize.width - width) / 2;
 
@@ -50,8 +56,7 @@ export const getSubsLayout = ({
   }
 
   if (displayLayout === null) {
-    const isTopAligned =
-      webcamPosition === "top-left" || webcamPosition === "top-right";
+    const isTopAligned = !isWebCamAtBottom(webcamPosition);
 
     return {
       height:
@@ -71,10 +76,9 @@ export const getSubsLayout = ({
   return {
     height: webcamLayout.height,
     top: webcamLayout.top,
-    left:
-      webcamPosition === "bottom-left" || webcamPosition === "top-left"
-        ? webcamLayout.width + getSafeSpace(canvasLayout) * 2
-        : getSafeSpace(canvasLayout),
+    left: isWebCamRight(webcamPosition)
+      ? getSafeSpace(canvasLayout)
+      : webcamLayout.width + getSafeSpace(canvasLayout) * 2,
     width:
       canvasSize.width - webcamLayout.width - getSafeSpace(canvasLayout) * 3,
     borderRadius,

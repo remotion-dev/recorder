@@ -7,17 +7,18 @@ import {
 } from "remotion";
 import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
 import { getSafeSpace } from "../../../config/layout";
-import type { WebcamPosition } from "../../../config/scenes";
+import type { FinalWebcamPosition } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
+import { isWebCamAtBottom } from "../../animations/webcam-transitions/helpers";
 import { borderRadius } from "../../layout/get-layout";
 
 export const SquareChapter: React.FC<{
   title: string;
-  webcamPosition: WebcamPosition;
+  webcamPosition: FinalWebcamPosition;
   theme: Theme;
 }> = ({ title, webcamPosition, theme }) => {
-  const isTop = webcamPosition === "top-left" || webcamPosition === "top-right";
+  const isTop = !isWebCamAtBottom(webcamPosition);
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
 

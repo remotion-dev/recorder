@@ -7,9 +7,9 @@ import type {
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
 import { Subs } from "../../captions/Subs";
+import { LandscapeChapters } from "../../chapters/landscape/SelectedChapters";
 import type { ChapterType } from "../../chapters/make-chapters";
 import { SquareChapter } from "../../chapters/square/SquareChapter";
-import { LandscapeChapters } from "../../chapters/widescreen/SelectedChapters";
 import { Screen } from "./Screen";
 import { Webcam } from "./Webcam";
 
@@ -56,7 +56,8 @@ export const CameraScene: React.FC<{
             canvasLayout={canvasLayout}
           />
         ) : null}
-        {canvasLayout === "landscape" ? (
+        {canvasLayout === "landscape" &&
+        sceneAndMetadata.finalWebcamPosition !== "center" ? (
           <LandscapeChapters
             scene={sceneAndMetadata}
             nextVideoScene={

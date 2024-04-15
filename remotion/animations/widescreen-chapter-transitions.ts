@@ -7,7 +7,8 @@ import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,
   isWebCamAtBottom,
-} from "./webcam-transitions";
+  isWebCamRight,
+} from "./webcam-transitions/helpers";
 
 export type OutTransition = "none" | "up" | "down" | "left" | "right";
 export type InTransition =
@@ -24,9 +25,7 @@ export const getChapterOutTransition = ({
   currentScene: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
 }): OutTransition => {
-  const isCurrentlyLeft =
-    currentScene.finalWebcamPosition === "bottom-left" ||
-    currentScene.finalWebcamPosition === "top-left";
+  const isCurrentlyLeft = !isWebCamRight(currentScene.finalWebcamPosition);
 
   if (nextScene === null || nextScene.type !== "video-scene") {
     return "left";
@@ -36,17 +35,9 @@ export const getChapterOutTransition = ({
     return "none";
   }
 
-  const isCurrentlyTop =
-    currentScene.finalWebcamPosition === "top-left" ||
-    currentScene.finalWebcamPosition === "top-right";
-
-  const isNextLeft =
-    nextScene.finalWebcamPosition === "bottom-left" ||
-    nextScene.finalWebcamPosition === "top-left";
-
-  const isNextTop =
-    nextScene.finalWebcamPosition === "top-left" ||
-    nextScene.finalWebcamPosition === "top-right";
+  const isCurrentlyTop = !isWebCamAtBottom(currentScene.finalWebcamPosition);
+  const isNextLeft = !isWebCamRight(nextScene.finalWebcamPosition);
+  const isNextTop = !isWebCamAtBottom(nextScene.finalWebcamPosition);
 
   if (isCurrentlyLeft && !isNextLeft) {
     return "left";

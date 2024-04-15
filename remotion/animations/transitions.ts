@@ -12,8 +12,8 @@ export const getShouldTransitionOut = ({
     return false;
   }
 
-  if (sceneAndMetadata.scene.transitionToNextScene) {
-    return true;
+  if (!sceneAndMetadata.scene.transitionToNextScene) {
+    return false;
   }
 
   const areBothVideoScenes =
@@ -26,8 +26,10 @@ export const getShouldTransitionOut = ({
   const hasSameWebcamPosition =
     sceneAndMetadata.finalWebcamPosition === nextScene.finalWebcamPosition;
   const hasSameWebcamSize =
-    sceneAndMetadata.videos.webcam.height === nextScene.videos.webcam.height &&
-    sceneAndMetadata.videos.webcam.width === nextScene.videos.webcam.width;
+    sceneAndMetadata.layout.webcamLayout.height ===
+      nextScene.layout.webcamLayout.height &&
+    sceneAndMetadata.layout.webcamLayout.width ===
+      nextScene.layout.webcamLayout.width;
   const hasBothDisplays =
     Boolean(sceneAndMetadata.videos.display) ===
     Boolean(nextScene.videos.display);
