@@ -2,6 +2,20 @@ import type { NextFunction, Request, Response } from "express";
 import fs, { createWriteStream } from "fs";
 import path from "path";
 import { convertAndTrimVideo } from "../convert-and-trim-video";
+import { checkVideoIntegrity } from "./check-video-integrity";
+
+const removeWebm = (filePath: string) => {
+  return new Promise<void>((resolve, reject) => {
+    // Remove the file
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+};
 
 export const handleVideoUpload = (
   req: Request,
@@ -76,6 +90,17 @@ export const convertVideos = async (req: Request, res: Response) => {
       latestTimestamp: endDate,
       customFileLocation: absoluteFolderPath,
     });
+
+    const file = `${prefix}${endDateAsString}.mp4`;
+    const mp4Path = path.join(absoluteFolderPath, file);
+    checkVideoIntegrity(mp4Path);
+    const webmPath = mp4Path.replace("mp4", "webm");
+
+    await removeWebm(webmPath).catch((err) => {
+      throw new Error(err);
+    });
+
+    console.log("Successfully converted to mp4.");
     res.status(200);
     return res.send(JSON.stringify({ success: true }));
   } catch (e) {
