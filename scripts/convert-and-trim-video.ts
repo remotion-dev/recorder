@@ -24,10 +24,12 @@ const convertAndRemoveSilence = ({
   output: string;
   ffmpegTrim: string[];
 }) => {
+  const ffmpegTrimOrEmpty = ffmpegTrim.length === 0 ? "" : ffmpegTrim;
+
   execSync(
     [
       "bunx remotion ffmpeg",
-      ...ffmpegTrim,
+      ...ffmpegTrimOrEmpty,
       "-hide_banner",
       "-i",
       input,
@@ -89,10 +91,6 @@ export const convertAndTrimVideo = async (props: ScriptProps | ServerProps) => {
       ? props.customFileLocation
       : path.join("public", props.prefix);
   mkdirSync(folder, { recursive: true });
-
-  if (audibleParts.length === 0) {
-    throw new Error("Video has no audio");
-  }
 
   const ffmpegTrim =
     audibleParts.length > 0
