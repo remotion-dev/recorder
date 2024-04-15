@@ -39,19 +39,19 @@ export const currentBlobsInitialState: CurrentBlobs = {
 export const UseThisTake: React.FC<{
   readonly currentBlobs: CurrentBlobs;
   readonly selectedProject: string | null;
-  readonly projects: string[] | null;
+  readonly folders: string[] | null;
   readonly setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
   readonly setShowHandleVideos: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   currentBlobs,
   selectedProject,
-  projects,
+  folders,
   setCurrentBlobs,
   setShowHandleVideos,
 }) => {
   const actualSelectedProject = useMemo(() => {
-    return selectedProject ?? projects?.[0] ?? null;
-  }, [projects, selectedProject]);
+    return selectedProject ?? folders?.[0] ?? null;
+  }, [folders, selectedProject]);
 
   const keepVideos = useCallback(async () => {
     const runsOnServer = Boolean(window.remotionServerEnabled);
