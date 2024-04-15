@@ -1,13 +1,9 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import fs, { createWriteStream } from "fs";
 import path from "path";
 import { convertAndTrimVideo } from "../convert-and-trim-video";
 
-export const handleVideoUpload = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const handleVideoUpload = (req: Request, res: Response) => {
   try {
     const { prefix, endDateAsString, folder } = req.query;
 
@@ -32,7 +28,8 @@ export const handleVideoUpload = (
 
     req.pipe(createWriteStream(filePath));
     req.on("end", () => {
-      next();
+      res.statusCode = 200;
+      res.end(JSON.stringify({ success: true }));
     });
   } catch (e) {
     console.error(e);

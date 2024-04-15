@@ -161,24 +161,22 @@ const App = () => {
     }
 
     for (const [prefix, blob] of Object.entries(currentBlobs.blobs)) {
-      if (blob === null) {
-        return Promise.resolve();
-      }
+      if (blob !== null) {
+        if (runsOnServer) {
+          if (actualSelectedProject === null) {
+            alert("Please select a folder first.");
+            return Promise.resolve();
+          }
 
-      if (runsOnServer) {
-        if (actualSelectedProject === null) {
-          alert("Please select a folder first.");
-          return Promise.resolve();
+          await handleUploadFileToServer(
+            blob,
+            endDate,
+            prefix,
+            actualSelectedProject,
+          );
+        } else {
+          downloadVideo(blob, currentBlobs.endDate, prefix);
         }
-
-        await handleUploadFileToServer(
-          blob,
-          endDate,
-          prefix,
-          actualSelectedProject,
-        );
-      } else {
-        downloadVideo(blob, currentBlobs.endDate, prefix);
       }
     }
 
