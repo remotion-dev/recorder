@@ -53,40 +53,31 @@ export const UseThisTake: React.FC<{
     return selectedProject ?? folders?.[0] ?? null;
   }, [folders, selectedProject]);
 
-  const keepVideos = useCallback(async () => {
-    const runsOnServer = Boolean(window.remotionServerEnabled);
+  const keepVideoOnServer = useCallback(async () => {
     if (currentBlobs.endDate === null) {
       return Promise.resolve();
     }
 
+    if (actualSelectedProject === null) {
+      // eslint-disable-next-line no-alert
+      alert("Please select a folder first.");
+      return Promise.resolve();
+    }
+
     for (const [prefix, blob] of Object.entries(currentBlobs.blobs)) {
-      if (blob !== null) {
-        if (runsOnServer) {
-          if (actualSelectedProject === null) {
-            // eslint-disable-next-line no-alert
-            alert("Please select a folder first.");
-            return Promise.resolve();
-          }
-
-          await handleUploadFileToServer(
-            blob,
-            currentBlobs.endDate,
-            prefix,
-            actualSelectedProject,
-          );
-        } else {
-          downloadVideo(blob, currentBlobs.endDate, prefix);
-        }
-      }
-    }
-
-    if (runsOnServer) {
-      if (!actualSelectedProject) {
-        throw new Error("No project selected");
+      if (blob === null) {
+        continue;
       }
 
-      await convertFilesInServer(currentBlobs.endDate, actualSelectedProject);
+      await handleUploadFileToServer(
+        blob,
+        currentBlobs.endDate,
+        prefix,
+        actualSelectedProject,
+      );
     }
+
+    await convertFilesInServer(currentBlobs.endDate, actualSelectedProject);
 
     setCurrentBlobs(currentBlobsInitialState);
     return Promise.resolve();
@@ -97,10 +88,36 @@ export const UseThisTake: React.FC<{
     setCurrentBlobs,
   ]);
 
+  const keepVideoOnClient = useCallback(() => {
+    if (currentBlobs.endDate === null) {
+      return Promise.resolve();
+    }
+
+    for (const [prefix, blob] of Object.entries(currentBlobs.blobs)) {
+      if (blob !== null) {
+        downloadVideo(blob, currentBlobs.endDate, prefix);
+      }
+    }
+
+    setCurrentBlobs(currentBlobsInitialState);
+  }, [currentBlobs.blobs, currentBlobs.endDate, setCurrentBlobs]);
+
+  const keepVideos = useCallback(async () => {
+    const runsOnServer = Boolean(window.remotionServerEnabled);
+    if (currentBlobs.endDate === null) {
+      return Promise.resolve();
+    }
+
+    if (runsOnServer) {
+      await keepVideoOnServer();
+    } else {
+      keepVideoOnClient();
+    }
+  }, [currentBlobs.endDate, keepVideoOnClient, keepVideoOnServer]);
+
   const handleUseTake = useCallback(async () => {
     try {
       await keepVideos();
-
       setShowHandleVideos(false);
     } catch (err) {
       console.log(err);
@@ -116,7 +133,7 @@ export const UseThisTake: React.FC<{
       onClick={handleUseTake}
       title="Copy this take"
     >
-      Use this take
+      Copy to public/{actualSelectedProject}
     </Button>
   );
 };
