@@ -6,27 +6,27 @@ import { wordsTogether } from "../remotion/captions/processing/words-together";
 
 const example: Word[] = [
   {
-    word: " `bun`",
+    text: " `bun`",
     lastTimestamp: 5.94,
     firstTimestamp: 0,
   },
   {
-    word: " `run`",
+    text: " `run`",
     lastTimestamp: 6.54,
     firstTimestamp: 0,
   },
   {
-    word: " `dev`",
+    text: " `dev`",
     lastTimestamp: 6.96,
     firstTimestamp: 0,
   },
   {
-    word: ". It",
+    text: ". It",
     lastTimestamp: 8.36,
     firstTimestamp: 0,
   },
   {
-    word: " looks",
+    text: " looks",
     lastTimestamp: 8.62,
     firstTimestamp: 0,
   },
@@ -37,27 +37,27 @@ test("join words correctly", () => {
   expect(words).toEqual([
     {
       lastTimestamp: 5.94,
-      word: " `bun`",
+      text: " `bun`",
       firstTimestamp: 0,
     },
     {
       lastTimestamp: 6.54,
-      word: " `run`",
+      text: " `run`",
       firstTimestamp: 0,
     },
     {
       lastTimestamp: 6.96,
-      word: " `dev`.",
+      text: " `dev`.",
       firstTimestamp: 0,
     },
     {
       lastTimestamp: 8.36,
-      word: " It",
+      text: " It",
       firstTimestamp: 0,
     },
     {
       lastTimestamp: 8.62,
-      word: " looks",
+      text: " looks",
       firstTimestamp: 0,
     },
   ]);
