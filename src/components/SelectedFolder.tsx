@@ -14,9 +14,13 @@ const NEW_FOLDER_TOKEN = "__remotion_new_folder";
 
 export const SelectedFolder: React.FC<{
   readonly folders: string[];
-  readonly selectedProject: string | null;
-  readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
-}> = ({ folders, selectedProject, setSelectedProject }) => {
+  readonly selectedFolder: string | null;
+  readonly setSelectedFolder: React.Dispatch<SetStateAction<string | null>>;
+}> = ({
+  folders,
+  selectedFolder: selectedProject,
+  setSelectedFolder: setSelectedProject,
+}) => {
   const onValueChange = useCallback(
     (value: string) => {
       if (value === NEW_FOLDER_TOKEN) {

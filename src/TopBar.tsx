@@ -2,7 +2,7 @@ import type { SetStateAction } from "react";
 import React, { useCallback, useState } from "react";
 import { RecordCircle } from "./BlinkingCircle";
 import { NewFolderDialog } from "./components/NewFolderDialog";
-import { SelectedFolder } from "./components/SelectProject";
+import { SelectedFolder } from "./components/SelectedFolder";
 import { Button } from "./components/ui/button";
 import type { CurrentBlobs } from "./components/UseThisTake";
 import { UseThisTake } from "./components/UseThisTake";
@@ -22,8 +22,8 @@ export const TopBar: React.FC<{
   readonly recording: false | number;
   readonly folders: string[] | null;
   readonly disabledByParent: boolean;
-  readonly selectedProject: string | null;
-  readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
+  readonly selectedFolder: string | null;
+  readonly setSelectedFolder: React.Dispatch<SetStateAction<string | null>>;
   readonly setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
   readonly refreshProjectList: () => Promise<void>;
   currentBlobs: CurrentBlobs;
@@ -34,8 +34,8 @@ export const TopBar: React.FC<{
   folders,
   recording,
   disabledByParent,
-  selectedProject,
-  setSelectedProject,
+  selectedFolder,
+  setSelectedFolder,
   refreshProjectList,
   currentBlobs,
   setCurrentBlobs,
@@ -71,8 +71,7 @@ export const TopBar: React.FC<{
             Discard and retake
           </Button>
           <UseThisTake
-            selectedProject={selectedProject}
-            folders={folders}
+            selectedFolder={selectedFolder}
             currentBlobs={currentBlobs}
             setCurrentBlobs={setCurrentBlobs}
             setShowHandleVideos={setShowHandleVideos}
@@ -84,12 +83,12 @@ export const TopBar: React.FC<{
         <>
           <SelectedFolder
             folders={folders}
-            selectedProject={selectedProject}
-            setSelectedProject={setSelectedProject}
+            selectedFolder={selectedFolder}
+            setSelectedFolder={setSelectedFolder}
           />
           <NewFolderDialog
             refreshProjectList={refreshProjectList}
-            setSelectedProject={setSelectedProject}
+            setSelectedFolder={setSelectedFolder}
           />
         </>
       ) : null}
