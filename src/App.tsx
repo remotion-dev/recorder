@@ -163,7 +163,8 @@ const App = () => {
 
       if (runsOnServer) {
         if (actualSelectedProject === null) {
-          throw new Error("No project selected");
+          alert("Please select a folder first.");
+          return Promise.resolve();
         }
 
         return handleUploadFileToServer(
