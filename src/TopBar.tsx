@@ -1,11 +1,14 @@
-import type { SetStateAction } from "react";
-import React, { useCallback, useState } from "react";
-import { RecordCircle } from "./BlinkingCircle";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { NewFolderDialog } from "./components/NewFolderDialog";
 import { SelectedFolder } from "./components/SelectedFolder";
-import { Button } from "./components/ui/button";
 import type { CurrentBlobs } from "./components/UseThisTake";
 import { UseThisTake } from "./components/UseThisTake";
+import {
+  fetchProjectFolders,
+  loadSelectedFolder,
+  persistSelectedFolder,
+} from "./get-projects";
+import type { MediaSources } from "./RecordButton";
 import { RecordButton } from "./RecordButton";
 
 const topBarContainer: React.CSSProperties = {
@@ -20,27 +23,51 @@ export const TopBar: React.FC<{
   readonly stop: () => void;
   readonly discardVideos: () => void;
   readonly recording: false | number;
-  readonly folders: string[] | null;
-  readonly disabledByParent: boolean;
-  readonly selectedFolder: string | null;
-  readonly setSelectedFolder: React.Dispatch<SetStateAction<string | null>>;
   readonly setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
-  readonly refreshProjectList: () => Promise<void>;
-  currentBlobs: CurrentBlobs;
+  readonly mediaSources: MediaSources;
+  readonly currentBlobs: CurrentBlobs;
 }> = ({
   start,
   stop,
   discardVideos,
-  folders,
   recording,
-  disabledByParent,
-  selectedFolder,
-  setSelectedFolder,
-  refreshProjectList,
   currentBlobs,
   setCurrentBlobs,
+  mediaSources,
 }) => {
+  const [folders, setFolders] = useState<string[] | null>(null);
+
   const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
+  const [preferredSelectedFolder, setSelectedFolder] = useState<string | null>(
+    loadSelectedFolder(),
+  );
+  const selectedFolder = useMemo(() => {
+    return preferredSelectedFolder ?? folders?.[0] ?? null;
+  }, [folders, preferredSelectedFolder]);
+
+  const refreshFoldersList = useCallback(async () => {
+    const json = await fetchProjectFolders();
+    setFolders(json.folders);
+    if (selectedFolder && !json.folders.includes(selectedFolder)) {
+      setSelectedFolder(json.folders[0] ?? "");
+    }
+  }, [selectedFolder]);
+
+  useEffect(() => {
+    if (!window.remotionServerEnabled) {
+      return;
+    }
+
+    refreshFoldersList();
+  }, [refreshFoldersList]);
+
+  useEffect(() => {
+    if (!window.remotionServerEnabled) {
+      return;
+    }
+
+    persistSelectedFolder(selectedFolder ?? "");
+  }, [selectedFolder]);
 
   const handleDiscardTake = useCallback(() => {
     discardVideos();
@@ -48,35 +75,31 @@ export const TopBar: React.FC<{
     start();
   }, [discardVideos, start]);
 
+  const recordingDisabled = useMemo(() => {
+    return (
+      mediaSources.webcam === null ||
+      mediaSources.webcam.getAudioTracks().length === 0
+    );
+  }, [mediaSources.webcam]);
+
   return (
     <div style={topBarContainer}>
       <RecordButton
         stop={stop}
         recording={recording}
-        disabledByParent={disabledByParent}
         setShowHandleVideos={setShowHandleVideos}
         showHandleVideos={showHandleVideos}
         start={start}
+        recordingDisabled={recordingDisabled}
+        onDiscard={handleDiscardTake}
       />
       {showHandleVideos ? (
-        <>
-          <Button
-            variant={"outline"}
-            type="button"
-            onClick={handleDiscardTake}
-            style={{ display: "flex", alignItems: "center", gap: 10 }}
-            title="Press R to start recording"
-          >
-            <RecordCircle disabledByParent={disabledByParent} />
-            Discard and retake
-          </Button>
-          <UseThisTake
-            selectedFolder={selectedFolder}
-            currentBlobs={currentBlobs}
-            setCurrentBlobs={setCurrentBlobs}
-            setShowHandleVideos={setShowHandleVideos}
-          />
-        </>
+        <UseThisTake
+          selectedFolder={selectedFolder}
+          currentBlobs={currentBlobs}
+          setCurrentBlobs={setCurrentBlobs}
+          setShowHandleVideos={setShowHandleVideos}
+        />
       ) : null}
       <div style={{ flex: 1 }} />
       {folders ? (
@@ -87,7 +110,7 @@ export const TopBar: React.FC<{
             setSelectedFolder={setSelectedFolder}
           />
           <NewFolderDialog
-            refreshProjectList={refreshProjectList}
+            refreshFoldersList={refreshFoldersList}
             setSelectedFolder={setSelectedFolder}
           />
         </>

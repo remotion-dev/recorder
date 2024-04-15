@@ -25,8 +25,8 @@ export const createNewFolderRef = createRef<{
 
 export const NewFolderDialog: React.FC<{
   readonly setSelectedFolder: React.Dispatch<SetStateAction<string | null>>;
-  readonly refreshProjectList: () => Promise<void>;
-}> = ({ refreshProjectList, setSelectedFolder }) => {
+  readonly refreshFoldersList: () => Promise<void>;
+}> = ({ refreshFoldersList, setSelectedFolder }) => {
   const [newProject, setNewProject] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
 
@@ -62,13 +62,13 @@ export const NewFolderDialog: React.FC<{
 
       setSelectedFolder(newProject);
       setNewProject("");
-      refreshProjectList();
+      refreshFoldersList();
       setOpen(false);
     } catch (e) {
       // eslint-disable-next-line no-alert
       alert((e as Error).stack);
     }
-  }, [newProject, refreshProjectList, setSelectedFolder]);
+  }, [newProject, refreshFoldersList, setSelectedFolder]);
 
   useImperativeHandle(
     createNewFolderRef,
