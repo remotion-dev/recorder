@@ -3,9 +3,9 @@ import { WEBCAM_PREFIX } from "./config/cameras";
 import { convertAndTrimVideo } from "./scripts/convert-and-trim-video";
 import { getDownloadsFolder } from "./scripts/get-downloads-folder";
 
-export const copyToDownloads = async () => {
-  const prefix = "empty";
+const prefix = "empty";
 
+export const copyToDownloads = async () => {
   const downloadsDir = getDownloadsFolder();
   const filesFromDownloads = fs.readdirSync(downloadsDir);
 
