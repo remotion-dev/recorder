@@ -31,7 +31,7 @@ export const createProject = (req: Request, res: Response, rootDir: string) => {
     res.status(500);
     return res.send({
       success: false,
-      message: "Something went wrong while creating the new project.",
+      message: "Something went wrong while creating the new folder.",
     });
   }
 };

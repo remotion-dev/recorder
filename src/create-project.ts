@@ -17,7 +17,6 @@ export const createProject = async (projectName: string) => {
   );
 
   const jsn = (await res.json()) as CreateProjectResBodyType;
-  console.log(jsn);
 
   if (res.status === 201) {
     return jsn;

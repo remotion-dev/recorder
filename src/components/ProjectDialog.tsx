@@ -1,5 +1,11 @@
 import type { ChangeEvent, SetStateAction } from "react";
-import React, { useMemo, useState } from "react";
+import React, {
+  createRef,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
 import { createProject } from "../create-project";
 import { Button } from "./ui/button";
 import {
@@ -9,10 +15,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+
+export const createProjectRef = createRef<{
+  openDialog: () => void;
+}>();
 
 export const ProjectDialog: React.FC<{
   readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
@@ -44,38 +53,54 @@ export const ProjectDialog: React.FC<{
     return invalidInput !== null || newProject.length === 0;
   }, [invalidInput, newProject.length]);
 
-  const handleSubmit = async () => {
-    const res = await createProject(newProject);
-    if (res.success) {
+  const handleSubmit = useCallback(async () => {
+    try {
+      const res = await createProject(newProject);
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+
       setSelectedProject(newProject);
       setNewProject("");
       refreshProjectList();
       setOpen(false);
+    } catch (e) {
+      // eslint-disable-next-line no-alert
+      alert((e as Error).stack);
     }
-  };
+  }, [newProject, refreshProjectList, setSelectedProject]);
+
+  useImperativeHandle(
+    createProjectRef,
+    () => {
+      return {
+        openDialog: () => {
+          setOpen(true);
+        },
+      };
+    },
+    [],
+  );
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger asChild>
-        <Button variant="secondary">New Project</Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-[460px]">
         <DialogHeader>
-          <DialogTitle>New Project</DialogTitle>
+          <DialogTitle>New Folder</DialogTitle>
           <DialogDescription>
-            Create a new video project. This will automatically create a new
-            project folder in the Remotion Studio.
+            Create a new subfolder in the <code>public/</code> directory. This
+            should map to the ID of your composition in the Remotion Studio.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Project Name
+              Folder Name
             </Label>
 
             <Input
-              id="name"
-              placeholder="Add your project name..."
+              id="remotion_video_name"
+              placeholder="my-video"
               value={newProject}
               className="col-span-3"
               onChange={handleChange}
@@ -87,7 +112,7 @@ export const ProjectDialog: React.FC<{
         </div>
         <DialogFooter>
           <Button type="submit" onClick={handleSubmit} disabled={disabled}>
-            Create Project
+            Create subfolder
           </Button>
         </DialogFooter>
       </DialogContent>
