@@ -8,12 +8,14 @@ import {
 } from "../config/cameras";
 import "./App.css";
 import { Button } from "./components/ui/button";
+import type { CurrentBlobs } from "./components/UseThisTake";
+import { currentBlobsInitialState } from "./components/UseThisTake";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
-import { onVideo } from "./on-video";
+import type { MediaSources } from "./RecordButton";
 import { TopBar } from "./TopBar";
 import { useKeyPress } from "./use-key-press";
-import type { Prefix, prefixes } from "./Views";
+import type { Prefix } from "./Views";
 import { View } from "./Views";
 
 export const getDeviceLabel = (device: MediaDeviceInfo): string => {
@@ -78,18 +80,21 @@ const mediaRecorderOptions: MediaRecorderOptions = {
 const App = () => {
   const [showAlternativeViews, setShowAlternativeViews] = useState<boolean>(
     localStorage.getItem("showAlternativeViews") === "true",
-  ); // load from local storage
+  );
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
-  const [mediaSources, setMediaSources] = useState<{
-    [key in (typeof prefixes)[number]]: MediaStream | null;
-  }>({
+
+  const [mediaSources, setMediaSources] = useState<MediaSources>({
     webcam: null,
     display: null,
     alternative1: null,
     alternative2: null,
   });
+
+  const [currentBlobs, setCurrentBlobs] = useState<CurrentBlobs>(
+    currentBlobsInitialState,
+  );
 
   const dynamicGridContainer = useMemo(() => {
     if (showAlternativeViews) {
@@ -109,6 +114,10 @@ const App = () => {
     localStorage.setItem("showAlternativeViews", "false");
   }, []);
 
+  const discardVideos = useCallback(() => {
+    setCurrentBlobs(currentBlobsInitialState);
+  }, []);
+
   const setMediaStream = useCallback(
     (prefix: Prefix, source: MediaStream | null) => {
       setMediaSources((prevMediaSources) => ({
@@ -118,7 +127,7 @@ const App = () => {
     },
     [],
   );
-  const start = () => {
+  const start = useCallback(() => {
     setRecording(() => Date.now());
     const toStart = [];
     const newRecorders: MediaRecorder[] = [];
@@ -141,7 +150,14 @@ const App = () => {
       newRecorders.push(recorder);
 
       recorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, endDate, prefix);
+        setCurrentBlobs((prev) => ({
+          ...prev,
+          endDate,
+          blobs: {
+            ...prev.blobs,
+            [prefix]: data,
+          },
+        }));
       });
 
       recorder.addEventListener("error", (event) => {
@@ -155,9 +171,9 @@ const App = () => {
 
     setRecorders(newRecorders);
     toStart.forEach((f) => f());
-  };
+  }, [mediaSources]);
 
-  const stop = () => {
+  const stop = useCallback(() => {
     if (recorders) {
       for (const recorder of recorders) {
         recorder.stop();
@@ -166,9 +182,9 @@ const App = () => {
 
     endDate = Date.now();
     setRecording(false);
-  };
+  }, [recorders]);
 
-  const onPressR = () => {
+  const onPressR = useCallback(() => {
     if (mediaSources.webcam === null || !mediaSources.webcam.active) {
       return;
     }
@@ -178,7 +194,7 @@ const App = () => {
     } else {
       start();
     }
-  };
+  }, [mediaSources.webcam, recording, start, stop]);
 
   useKeyPress(["r"], onPressR);
 
@@ -208,23 +224,16 @@ const App = () => {
     checkDeviceLabels();
   }, []);
 
-  const recordingDisabled = useMemo(() => {
-    if (
-      mediaSources.webcam === null ||
-      mediaSources.webcam.getAudioTracks().length === 0
-    ) {
-      return true;
-    }
-
-    return false;
-  }, [mediaSources.webcam]);
   return (
     <div style={outer}>
       <TopBar
         start={start}
         stop={stop}
+        discardVideos={discardVideos}
         recording={recording}
-        disabledByParent={recordingDisabled}
+        currentBlobs={currentBlobs}
+        setCurrentBlobs={setCurrentBlobs}
+        mediaSources={mediaSources}
       />
       <div style={dynamicGridContainer}>
         <View
@@ -241,18 +250,18 @@ const App = () => {
         />
         {showAlternativeViews ? (
           <>
-           <View
-          prefix={ALTERNATIVE1_PREFIX}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative1}
-        />
-        <View
-          prefix={ALTERNATIVE2_PREFIX}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative2}
-        />
+            <View
+              prefix={ALTERNATIVE1_PREFIX}
+              devices={devices}
+              setMediaStream={setMediaStream}
+              mediaStream={mediaSources.alternative1}
+            />
+            <View
+              prefix={ALTERNATIVE2_PREFIX}
+              devices={devices}
+              setMediaStream={setMediaStream}
+              mediaStream={mediaSources.alternative2}
+            />
           </>
         ) : null}
       </div>
@@ -264,7 +273,7 @@ const App = () => {
             onClick={handleShowMore}
             style={{ margin: "0px 10px" }}
           >
-            Show more views...
+            Show more views
           </Button>
         ) : (
           <Button
@@ -272,7 +281,7 @@ const App = () => {
             onClick={handleShowLess}
             style={{ margin: "0px 10px", width: 100 }}
           >
-            Show Less...
+            Show Less
           </Button>
         )}
       </div>
