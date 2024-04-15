@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   convertFilesInServer,
   downloadVideo,
@@ -37,8 +37,8 @@ export const currentBlobsInitialState: CurrentBlobs = {
 };
 
 export const UseThisTake: React.FC<{
-  readonly currentBlobs: CurrentBlobs;
   readonly selectedFolder: string | null;
+  readonly currentBlobs: CurrentBlobs;
   readonly setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
   readonly setShowHandleVideos: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
@@ -47,6 +47,8 @@ export const UseThisTake: React.FC<{
   setCurrentBlobs,
   setShowHandleVideos,
 }) => {
+  const [uploading, setUploading] = useState(false);
+
   const keepVideoOnServer = useCallback(async () => {
     if (currentBlobs.endDate === null) {
       return Promise.resolve();
@@ -113,6 +115,7 @@ export const UseThisTake: React.FC<{
   }, [currentBlobs.endDate, keepVideoOnClient, keepVideoOnServer]);
 
   const handleUseTake = useCallback(async () => {
+    setUploading(true);
     try {
       await keepVideos();
       setShowHandleVideos(false);
@@ -120,6 +123,8 @@ export const UseThisTake: React.FC<{
       console.log(err);
       // eslint-disable-next-line no-alert
       alert((err as Error).stack);
+    } finally {
+      setUploading(false);
     }
   }, [keepVideos, setShowHandleVideos]);
 
@@ -129,8 +134,9 @@ export const UseThisTake: React.FC<{
       type="button"
       onClick={handleUseTake}
       title="Copy this take"
+      disabled={uploading}
     >
-      Copy to public/{selectedFolder}
+      {uploading ? "Copying..." : `Copy to public/${selectedFolder}`}
     </Button>
   );
 };
