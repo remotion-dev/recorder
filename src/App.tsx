@@ -8,7 +8,11 @@ import {
 } from "../config/cameras";
 import "./App.css";
 import { Button } from "./components/ui/button";
-import { downloadVideo, handleUploadFileToServer } from "./download-video";
+import {
+  convertFilesInServer,
+  downloadVideo,
+  handleUploadFileToServer,
+} from "./download-video";
 import { fetchProjectFolders, loadSelectedProjectFromLS } from "./get-projects";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
@@ -176,6 +180,14 @@ const App = () => {
       } else {
         downloadVideo(blob, currentBlobs.endDate, prefix);
       }
+    }
+
+    if (runsOnServer) {
+      if (!actualSelectedProject) {
+        throw new Error("No project selected");
+      }
+
+      await convertFilesInServer(endDate, actualSelectedProject);
     }
 
     setCurrentBlobs(currentBlobsInit);
