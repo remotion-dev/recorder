@@ -150,7 +150,7 @@ const App = () => {
     return selectedProject ?? projects?.[0] ?? null;
   }, [projects, selectedProject]);
 
-  const keepVideos = useCallback(() => {
+  const keepVideos = useCallback(async () => {
     const runsOnServer = Boolean(window.remotionServerEnabled);
     if (currentBlobs.endDate === null) {
       return Promise.resolve();
@@ -167,15 +167,15 @@ const App = () => {
           return Promise.resolve();
         }
 
-        return handleUploadFileToServer(
+        await handleUploadFileToServer(
           blob,
           endDate,
           prefix,
           actualSelectedProject,
         );
+      } else {
+        downloadVideo(blob, currentBlobs.endDate, prefix);
       }
-
-      downloadVideo(blob, currentBlobs.endDate, prefix);
     }
 
     setCurrentBlobs(currentBlobsInit);
