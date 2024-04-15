@@ -9,9 +9,9 @@ import {
 } from "./ui/select";
 
 export const SelectedProject: React.FC<{
-  projects: string[];
-  selectedProject: string | null;
-  setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
+  readonly projects: string[];
+  readonly selectedProject: string | null;
+  readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
 }> = ({ projects, selectedProject, setSelectedProject }) => {
   if (!projects) {
     return null;

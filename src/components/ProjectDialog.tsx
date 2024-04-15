@@ -15,8 +15,8 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 export const ProjectDialog: React.FC<{
-  setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
-  refreshProjectList: () => Promise<void>;
+  readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
+  readonly refreshProjectList: () => Promise<void>;
 }> = ({ refreshProjectList, setSelectedProject }) => {
   const [newProject, setNewProject] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);

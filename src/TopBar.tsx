@@ -32,16 +32,16 @@ const formatTime = (ms: number) => {
 };
 
 export const TopBar: React.FC<{
-  start: () => void;
-  stop: () => void;
-  keepVideos: () => Promise<void>;
-  discardVideos: () => void;
-  recording: false | number;
-  projects: string[] | null;
-  disabledByParent: boolean;
-  selectedProject: string | null;
-  setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
-  refreshProjectList: () => Promise<void>;
+  readonly start: () => void;
+  readonly stop: () => void;
+  readonly keepVideos: () => Promise<void>;
+  readonly discardVideos: () => void;
+  readonly recording: false | number;
+  readonly projects: string[] | null;
+  readonly disabledByParent: boolean;
+  readonly selectedProject: string | null;
+  readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
+  readonly refreshProjectList: () => Promise<void>;
 }> = ({
   start,
   stop,
@@ -67,17 +67,19 @@ export const TopBar: React.FC<{
   const handleUseTake = useCallback(async () => {
     try {
       await keepVideos();
+
       setShowHandleVideos(false);
     } catch (err) {
       console.log(err);
+      // eslint-disable-next-line no-alert
       alert((err as Error).stack);
     }
-  }, []);
+  }, [keepVideos]);
 
   const handleDiscardTake = useCallback(() => {
     discardVideos();
     setShowHandleVideos(false);
-  }, []);
+  }, [discardVideos]);
 
   const recordCircle = (
     <svg
