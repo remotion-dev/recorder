@@ -76,18 +76,12 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
   const scenesAndMetadataWithoutDuration = (
     await Promise.all(
       props.scenes.map(async (scene, i): Promise<SceneAndMetadata | null> => {
-        if (
-          scene.type === "title" ||
-          scene.type === "titlecard" ||
-          scene.type === "endcard" ||
-          scene.type === "tableofcontents" ||
-          scene.type === "remotionupdate"
-        ) {
+        if (scene.type !== "videoscene") {
           return {
             type: "other-scene",
             scene,
             durationInFrames: scene.durationInFrames,
-            from: 0, // Placeholder
+            from: 0,
             chapter: null,
           };
         }

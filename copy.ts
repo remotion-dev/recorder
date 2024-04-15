@@ -19,8 +19,21 @@ export const copyToDownloads = async () => {
     return timestampB - timestampA;
   });
 
+  if (sorted.length === 0) {
+    console.error(
+      "No recordings found in your downloads folder. Copy process aborted.",
+    );
+    process.exit();
+  }
+
   const latest = sorted[0];
-  const latestTimestamp = Number(latest.match(/([0-9]+)/)![1]);
+  let latestTimestamp: number;
+  try {
+    latestTimestamp = Number(latest.match(/([0-9]+)/)![1]);
+  } catch (err) {
+    console.error("An error occured in the copying process: ", err);
+    process.exit();
+  }
 
   await convertAndTrimVideo({ caller: "script", latestTimestamp, prefix });
 

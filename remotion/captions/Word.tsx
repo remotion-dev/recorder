@@ -141,7 +141,7 @@ export const WordComp: React.FC<{
       : "transparent"
     : "transparent";
 
-  const startsWithSpace = word.word.startsWith(" ");
+  const startsWithSpace = word.text.startsWith(" ");
 
   return (
     <>
@@ -175,7 +175,7 @@ export const WordComp: React.FC<{
         onPointerLeave={() => setHovered(false)}
         onClick={() => onOpenSubEditor(word)}
       >
-        {word.word.trim()}
+        {word.text.trim()}
       </span>
     </>
   );
