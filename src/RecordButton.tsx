@@ -2,7 +2,7 @@ import type { SetStateAction } from "react";
 import React, { useCallback } from "react";
 import { BlinkingCircle, RecordCircle } from "./BlinkingCircle";
 import { Button } from "./components/ui/button";
-import { formatTime } from "./format-time";
+import { Timer } from "./Timer";
 import type { prefixes } from "./Views";
 
 export type MediaSources = {
@@ -47,7 +47,7 @@ export const RecordButton: React.FC<{
           Stop recording
         </Button>
         <BlinkingCircle />
-        {formatTime(Date.now() - recording)}
+        <Timer recording={recording} />
       </>
     );
   }
