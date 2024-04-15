@@ -10,16 +10,12 @@ import "./App.css";
 import { Button } from "./components/ui/button";
 import type { CurrentBlobs } from "./components/UseThisTake";
 import { currentBlobsInitialState } from "./components/UseThisTake";
-import {
-  fetchProjectFolders,
-  loadSelectedFolder,
-  persistSelectedFolder,
-} from "./get-projects";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
+import type { MediaSources } from "./RecordButton";
 import { TopBar } from "./TopBar";
 import { useKeyPress } from "./use-key-press";
-import type { Prefix, prefixes } from "./Views";
+import type { Prefix } from "./Views";
 import { View } from "./Views";
 
 export const getDeviceLabel = (device: MediaDeviceInfo): string => {
@@ -88,14 +84,8 @@ const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
-  const [folders, setFolders] = useState<string[] | null>(null);
-  const [preferredSelectedFolder, setSelectedFolder] = useState<string | null>(
-    loadSelectedFolder(),
-  );
 
-  const [mediaSources, setMediaSources] = useState<{
-    [key in (typeof prefixes)[number]]: MediaStream | null;
-  }>({
+  const [mediaSources, setMediaSources] = useState<MediaSources>({
     webcam: null,
     display: null,
     alternative1: null,
@@ -194,10 +184,6 @@ const App = () => {
     setRecording(false);
   }, [recorders]);
 
-  const selectedFolder = useMemo(() => {
-    return preferredSelectedFolder ?? folders?.[0] ?? null;
-  }, [folders, preferredSelectedFolder]);
-
   const onPressR = useCallback(() => {
     if (mediaSources.webcam === null || !mediaSources.webcam.active) {
       return;
@@ -211,30 +197,6 @@ const App = () => {
   }, [mediaSources.webcam, recording, start, stop]);
 
   useKeyPress(["r"], onPressR);
-
-  const refreshFoldersList = useCallback(async () => {
-    const json = await fetchProjectFolders();
-    setFolders(json.folders);
-    if (selectedFolder && !json.folders.includes(selectedFolder)) {
-      setSelectedFolder(json.folders[0] ?? "");
-    }
-  }, [selectedFolder]);
-
-  useEffect(() => {
-    if (!window.remotionServerEnabled) {
-      return;
-    }
-
-    refreshFoldersList();
-  }, [refreshFoldersList]);
-
-  useEffect(() => {
-    if (!window.remotionServerEnabled) {
-      return;
-    }
-
-    persistSelectedFolder(selectedFolder ?? "");
-  }, [selectedFolder]);
 
   useEffect(() => {
     const checkDeviceLabels = async () => {
@@ -262,13 +224,6 @@ const App = () => {
     checkDeviceLabels();
   }, []);
 
-  const recordingDisabled = useMemo(() => {
-    return (
-      mediaSources.webcam === null ||
-      mediaSources.webcam.getAudioTracks().length === 0
-    );
-  }, [mediaSources.webcam]);
-
   return (
     <div style={outer}>
       <TopBar
@@ -276,13 +231,9 @@ const App = () => {
         stop={stop}
         discardVideos={discardVideos}
         recording={recording}
-        disabledByParent={recordingDisabled}
-        folders={folders}
         currentBlobs={currentBlobs}
-        selectedFolder={preferredSelectedFolder}
-        setSelectedFolder={setSelectedFolder}
-        refreshProjectList={refreshFoldersList}
         setCurrentBlobs={setCurrentBlobs}
+        mediaSources={mediaSources}
       />
       <div style={dynamicGridContainer}>
         <View

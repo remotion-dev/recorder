@@ -1,25 +1,37 @@
 import type { SetStateAction } from "react";
-import React from "react";
+import React, { useCallback } from "react";
 import { BlinkingCircle, RecordCircle } from "./BlinkingCircle";
 import { Button } from "./components/ui/button";
 import { formatTime } from "./format-time";
+import type { prefixes } from "./Views";
+
+export type MediaSources = {
+  [key in (typeof prefixes)[number]]: MediaStream | null;
+};
 
 export const RecordButton: React.FC<{
   readonly recording: false | number;
   readonly start: () => void;
   readonly stop: () => void;
-  readonly disabledByParent: boolean;
   readonly setShowHandleVideos: React.Dispatch<SetStateAction<boolean>>;
   readonly showHandleVideos: boolean;
+  readonly recordingDisabled: boolean;
+  readonly onDiscard: () => void;
 }> = ({
   recording,
   stop,
-  disabledByParent,
   setShowHandleVideos,
   showHandleVideos,
   start,
+  recordingDisabled,
+  onDiscard,
 }) => {
-  const disabled = disabledByParent || recording !== false || showHandleVideos;
+  const disabled = recordingDisabled || recording !== false || showHandleVideos;
+
+  const onStop = useCallback(() => {
+    stop();
+    setShowHandleVideos(true);
+  }, [setShowHandleVideos, stop]);
 
   if (recording) {
     return (
@@ -28,10 +40,7 @@ export const RecordButton: React.FC<{
           variant={"outline"}
           type="button"
           disabled={!recording}
-          onClick={() => {
-            stop();
-            setShowHandleVideos(true);
-          }}
+          onClick={onStop}
           style={{ display: "flex", alignItems: "center", gap: 10 }}
           title="Press R to stop recording"
         >
@@ -44,7 +53,18 @@ export const RecordButton: React.FC<{
   }
 
   if (showHandleVideos) {
-    return null;
+    return (
+      <Button
+        variant={"outline"}
+        type="button"
+        onClick={onDiscard}
+        style={{ display: "flex", alignItems: "center", gap: 10 }}
+        title="Press R to start recording"
+      >
+        <RecordCircle recordingDisabled={recordingDisabled} />
+        Discard and retake
+      </Button>
+    );
   }
 
   return (
@@ -63,7 +83,7 @@ export const RecordButton: React.FC<{
         style={{ display: "flex", alignItems: "center", gap: 10 }}
         title="Press R to start recording"
       >
-        <RecordCircle disabledByParent={disabledByParent} />
+        <RecordCircle recordingDisabled={recordingDisabled} />
         Start recording
       </Button>
     </div>
