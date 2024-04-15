@@ -15,7 +15,7 @@ export const getOptions = (req: Request, res: Response) => {
   return res.send(null);
 };
 
-export const saveSubtitles = async (req: Request, res: Response) => {
+export const saveSubtitles = (req: Request, res: Response) => {
   const json = req.body as SaveSubtitlesPayload;
 
   const publicFolder = path.join(process.cwd(), "public");
