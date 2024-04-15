@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import {
   convertFilesInServer,
   downloadVideo,
@@ -38,27 +38,21 @@ export const currentBlobsInitialState: CurrentBlobs = {
 
 export const UseThisTake: React.FC<{
   readonly currentBlobs: CurrentBlobs;
-  readonly selectedProject: string | null;
-  readonly folders: string[] | null;
+  readonly selectedFolder: string | null;
   readonly setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
   readonly setShowHandleVideos: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   currentBlobs,
-  selectedProject,
-  folders,
+  selectedFolder,
   setCurrentBlobs,
   setShowHandleVideos,
 }) => {
-  const actualSelectedProject = useMemo(() => {
-    return selectedProject ?? folders?.[0] ?? null;
-  }, [folders, selectedProject]);
-
   const keepVideoOnServer = useCallback(async () => {
     if (currentBlobs.endDate === null) {
       return Promise.resolve();
     }
 
-    if (actualSelectedProject === null) {
+    if (selectedFolder === null) {
       // eslint-disable-next-line no-alert
       alert("Please select a folder first.");
       return Promise.resolve();
@@ -69,20 +63,23 @@ export const UseThisTake: React.FC<{
         continue;
       }
 
-      await handleUploadFileToServer(
+      await handleUploadFileToServer({
         blob,
-        currentBlobs.endDate,
+        endDate: currentBlobs.endDate,
         prefix,
-        actualSelectedProject,
-      );
+        selectedFolder,
+      });
     }
 
-    await convertFilesInServer(currentBlobs.endDate, actualSelectedProject);
+    await convertFilesInServer({
+      endDate: currentBlobs.endDate,
+      selectedFolder,
+    });
 
     setCurrentBlobs(currentBlobsInitialState);
     return Promise.resolve();
   }, [
-    actualSelectedProject,
+    selectedFolder,
     currentBlobs.blobs,
     currentBlobs.endDate,
     setCurrentBlobs,
@@ -133,7 +130,7 @@ export const UseThisTake: React.FC<{
       onClick={handleUseTake}
       title="Copy this take"
     >
-      Copy to public/{actualSelectedProject}
+      Copy to public/{selectedFolder}
     </Button>
   );
 };

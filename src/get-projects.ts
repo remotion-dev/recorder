@@ -12,15 +12,21 @@ export const fetchProjectFolders = async () => {
   return projectFolders;
 };
 
-export const loadSelectedProjectFromLS = () => {
+const KEY = "remotionrecorder.selectedFolder";
+
+export const loadSelectedFolder = () => {
   if (!window.remotionServerEnabled) {
     return null;
   }
 
-  const projectFromLS = window.localStorage.getItem("selectedProject");
+  const projectFromLS = window.localStorage.getItem(KEY);
   if (projectFromLS === "") {
     return null;
   }
 
   return projectFromLS;
+};
+
+export const persistSelectedFolder = (folder: string) => {
+  window.localStorage.setItem(KEY, folder);
 };

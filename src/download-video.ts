@@ -20,18 +20,23 @@ export const downloadVideo = (data: Blob, endDate: number, prefix: string) => {
   webcamchunks = [];
 };
 
-export const handleUploadFileToServer = async (
-  data: Blob,
-  endDate: number,
-  prefix: string,
-  selectedProject: string,
-) => {
-  const videoFile = new File([data], "video.webm", { type: data.type });
+export const handleUploadFileToServer = async ({
+  blob,
+  endDate,
+  prefix,
+  selectedFolder,
+}: {
+  blob: Blob;
+  endDate: number;
+  prefix: string;
+  selectedFolder: string;
+}) => {
+  const videoFile = new File([blob], "video.webm", { type: blob.type });
 
   const url = new URL(UPLOAD_VIDEO, window.location.origin);
 
   url.search = new URLSearchParams({
-    folder: selectedProject,
+    folder: selectedFolder,
     prefix,
     endDateAsString: endDate.toString(),
   }).toString();
@@ -48,14 +53,17 @@ export const handleUploadFileToServer = async (
   }
 };
 
-export const convertFilesInServer = async (
-  endDate: number,
-  selectedProject: string,
-) => {
+export const convertFilesInServer = async ({
+  endDate,
+  selectedFolder,
+}: {
+  endDate: number;
+  selectedFolder: string;
+}) => {
   const url = new URL(PROCESS_VIDEOS, window.location.origin);
 
   url.search = new URLSearchParams({
-    folder: selectedProject,
+    folder: selectedFolder,
     endDateAsString: endDate.toString(),
   }).toString();
 
