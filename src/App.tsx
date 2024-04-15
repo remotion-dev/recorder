@@ -93,7 +93,7 @@ const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
-  const [projectFolders, setProjectFolders] = useState<string[] | null>(null);
+  const [projects, setProjectFolders] = useState<string[] | null>(null);
   const [selectedProject, setSelectedProject] = useState<string | null>(
     loadSelectedProjectFromLS(),
   );
@@ -146,30 +146,40 @@ const App = () => {
     localStorage.setItem("showAlternativeViews", "false");
   }, []);
 
-  const keepVideos = useCallback(async () => {
+  const actualSelectedProject = useMemo(() => {
+    return selectedProject ?? projects?.[0] ?? null;
+  }, [projects, selectedProject]);
+
+  const keepVideos = useCallback(() => {
     const runsOnServer = Boolean(window.remotionServerEnabled);
     if (currentBlobs.endDate === null) {
-      return;
+      return Promise.resolve();
     }
 
     for (const [prefix, blob] of Object.entries(currentBlobs.blobs)) {
       if (blob === null) {
-        return;
+        return Promise.resolve();
       }
 
       if (runsOnServer) {
-        if (selectedProject === null) {
-          throw new Error("No project selected!");
+        if (actualSelectedProject === null) {
+          throw new Error("No project selected");
         }
 
-        await handleUploadFileToServer(blob, endDate, prefix, selectedProject);
-      } else {
-        downloadVideo(blob, currentBlobs.endDate, prefix);
+        return handleUploadFileToServer(
+          blob,
+          endDate,
+          prefix,
+          actualSelectedProject,
+        );
       }
+
+      downloadVideo(blob, currentBlobs.endDate, prefix);
     }
 
     setCurrentBlobs(currentBlobsInit);
-  }, [currentBlobs, selectedProject]);
+    return Promise.resolve();
+  }, [actualSelectedProject, currentBlobs.blobs, currentBlobs.endDate]);
 
   const discardVideos = useCallback(() => {
     setCurrentBlobs(currentBlobsInit);
@@ -324,7 +334,7 @@ const App = () => {
         discardVideos={discardVideos}
         recording={recording}
         disabledByParent={recordingDisabled}
-        projects={projectFolders}
+        projects={projects}
         selectedProject={selectedProject}
         setSelectedProject={setSelectedProject}
         refreshProjectList={refreshProjectList}

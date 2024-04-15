@@ -13,11 +13,6 @@ export const SelectedProject: React.FC<{
   readonly selectedProject: string | null;
   readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
 }> = ({ projects, selectedProject, setSelectedProject }) => {
-  if (!projects) {
-    return null;
-  }
-
-  const placeholder = selectedProject ?? projects[0];
   return (
     <div
       style={{
@@ -35,7 +30,9 @@ export const SelectedProject: React.FC<{
         }}
       >
         <SelectTrigger>
-          <SelectValue placeholder={placeholder}>{selectedProject}</SelectValue>
+          <SelectValue placeholder={selectedProject}>
+            {selectedProject}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           {projects.map((project, i) => {
