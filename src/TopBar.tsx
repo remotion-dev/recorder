@@ -79,7 +79,8 @@ export const TopBar: React.FC<{
   const handleDiscardTake = useCallback(() => {
     discardVideos();
     setShowHandleVideos(false);
-  }, [discardVideos]);
+    start();
+  }, [discardVideos, start]);
 
   const recordCircle = (
     <svg
@@ -123,7 +124,7 @@ export const TopBar: React.FC<{
           {blinkingCircle}
           {formatTime(Date.now() - recording)}
         </>
-      ) : (
+      ) : showHandleVideos ? null : (
         <div
           title={
             disabled
@@ -147,20 +148,20 @@ export const TopBar: React.FC<{
       {showHandleVideos ? (
         <>
           <Button
+            variant={"destructive"}
+            type="button"
+            onClick={handleDiscardTake}
+            title="Press R to start recording"
+          >
+            Retake
+          </Button>
+          <Button
             variant={"default"}
             type="button"
             onClick={handleUseTake}
             title="Press R to start recording"
           >
             Use this take
-          </Button>
-          <Button
-            variant={"destructive"}
-            type="button"
-            onClick={handleDiscardTake}
-            title="Press R to start recording"
-          >
-            Discard Videos
           </Button>
         </>
       ) : null}
