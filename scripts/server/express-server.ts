@@ -49,7 +49,6 @@ export const startExpressServer = async () => {
   });
 
   app.post("/api/upload-video", handleVideoUpload, convertVideos);
-  // app.post("/api/transcribe");
 
   app.post(SAVE_SUBTITLES, saveSubtitles);
   app.options(SAVE_SUBTITLES, getOptions);

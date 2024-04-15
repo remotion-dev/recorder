@@ -1,21 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
-import fs, { createWriteStream } from "fs";
+import fs, { createWriteStream, unlinkSync } from "fs";
 import path from "path";
 import { convertAndTrimVideo } from "../convert-and-trim-video";
 import { checkVideoIntegrity } from "./check-video-integrity";
-
-const removeWebm = (filePath: string) => {
-  return new Promise<void>((resolve, reject) => {
-    // Remove the file
-    fs.unlink(filePath, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
-};
 
 export const handleVideoUpload = (
   req: Request,
@@ -47,7 +34,6 @@ export const handleVideoUpload = (
     req.pipe(createWriteStream(filePath));
     req.on("end", () => {
       next();
-      // res.send(JSON.stringify({ success: true }));
     });
   } catch (e) {
     console.error(e);
@@ -96,9 +82,7 @@ export const convertVideos = async (req: Request, res: Response) => {
     checkVideoIntegrity(mp4Path);
     const webmPath = mp4Path.replace("mp4", "webm");
 
-    await removeWebm(webmPath).catch((err) => {
-      throw new Error(err);
-    });
+    unlinkSync(webmPath);
 
     console.log("Successfully converted to mp4.");
     res.status(200);
