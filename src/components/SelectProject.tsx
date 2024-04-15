@@ -14,7 +14,7 @@ export const SelectedProject: React.FC<{
   setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
 }> = ({ projects, selectedProject, setSelectedProject }) => {
   if (!projects) {
-    return;
+    return null;
   }
 
   const placeholder = selectedProject ?? projects[0];
