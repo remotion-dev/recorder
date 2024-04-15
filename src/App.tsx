@@ -146,7 +146,7 @@ const App = () => {
     localStorage.setItem("showAlternativeViews", "false");
   }, []);
 
-  const keepVideos = useCallback(() => {
+  const keepVideos = useCallback(async () => {
     const runsOnServer = Boolean(window.remotionServerEnabled);
     if (currentBlobs.endDate === null) {
       return;
@@ -162,7 +162,7 @@ const App = () => {
           throw new Error("No project selected!");
         }
 
-        handleUploadFileToServer(blob, endDate, prefix, selectedProject);
+        await handleUploadFileToServer(blob, endDate, prefix, selectedProject);
       } else {
         downloadVideo(blob, currentBlobs.endDate, prefix);
       }

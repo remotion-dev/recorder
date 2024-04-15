@@ -1,5 +1,5 @@
 import type { SetStateAction } from "react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ProjectDialog } from "./components/ProjectDialog";
 import { SelectedProject } from "./components/SelectProject";
 import { Button } from "./components/ui/button";
@@ -34,7 +34,7 @@ const formatTime = (ms: number) => {
 export const TopBar: React.FC<{
   start: () => void;
   stop: () => void;
-  keepVideos: () => void;
+  keepVideos: () => Promise<void>;
   discardVideos: () => void;
   recording: false | number;
   projects: string[] | null;
@@ -64,15 +64,20 @@ export const TopBar: React.FC<{
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleUseTake = () => {
-    keepVideos();
-    setShowHandleVideos(false);
-  };
+  const handleUseTake = useCallback(async () => {
+    try {
+      await keepVideos();
+      setShowHandleVideos(false);
+    } catch (err) {
+      console.log(err);
+      alert((err as Error).stack);
+    }
+  }, []);
 
-  const handleDiscardTake = () => {
+  const handleDiscardTake = useCallback(() => {
     discardVideos();
     setShowHandleVideos(false);
-  };
+  }, []);
 
   const recordCircle = (
     <svg

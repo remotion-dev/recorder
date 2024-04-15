@@ -24,27 +24,23 @@ export const handleUploadFileToServer = async (
   prefix: string,
   selectedProject: string,
 ) => {
-  try {
-    const videoFile = new File([data], "video.webm", { type: data.type });
+  const videoFile = new File([data], "video.webm", { type: data.type });
 
-    const url = new URL(`/api/upload-video`, window.location.origin);
+  const url = new URL(`/api/upload-video`, window.location.origin);
 
-    url.search = new URLSearchParams({
-      folder: selectedProject,
-      prefix,
-      endDateAsString: endDate.toString(),
-    }).toString();
+  url.search = new URLSearchParams({
+    folder: selectedProject,
+    prefix,
+    endDateAsString: endDate.toString(),
+  }).toString();
 
-    // might add query params to define name & folder
-    const res = await fetch(url, {
-      method: "POST",
-      body: videoFile,
-    });
+  // might add query params to define name & folder
+  const res = await fetch(url, {
+    method: "POST",
+    body: videoFile,
+  });
 
-    if (res.status !== 200) {
-      throw new Error("Error occured while downloading the video");
-    }
-  } catch (error) {
-    console.error("An error occured while downloading the video", error);
+  if (res.status !== 200) {
+    throw new Error("Error occured while downloading the video");
   }
 };
