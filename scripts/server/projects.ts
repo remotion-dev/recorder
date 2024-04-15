@@ -22,7 +22,9 @@ export const getProjectFolder = (
 
       const folders = files.filter((file) => file.isDirectory());
 
-      const folderNames = folders.map((folder) => folder.name);
+      const folderNames = folders
+        .map((folder) => folder.name)
+        .filter((f) => f !== "sounds");
 
       res.status(200);
       return res.send({ folders: folderNames });
