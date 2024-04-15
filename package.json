@@ -9,7 +9,6 @@
     "preview": "vite preview",
     "lint": "eslint . --ext .ts,.tsx",
     "start": "bun studio.ts",
-    "remotion": "remotion studio",
     "pull": "node copy-from-downloads.mjs",
     "upgrade": "remotion upgrade",
     "test": "bun run lint && bun test test.ts && tsc"
