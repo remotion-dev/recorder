@@ -1,7 +1,7 @@
 import type { SetStateAction } from "react";
 import React, { useCallback, useEffect, useState } from "react";
-import { ProjectDialog } from "./components/ProjectDialog";
-import { SelectedProject } from "./components/SelectProject";
+import { NewFolderDialog } from "./components/NewFolderDialog";
+import { SelectedFolder } from "./components/SelectProject";
 import { Button } from "./components/ui/button";
 import type { CurrentBlobs } from "./components/UseThisTake";
 import { UseThisTake } from "./components/UseThisTake";
@@ -38,7 +38,7 @@ export const TopBar: React.FC<{
   readonly stop: () => void;
   readonly discardVideos: () => void;
   readonly recording: false | number;
-  readonly projects: string[] | null;
+  readonly folders: string[] | null;
   readonly disabledByParent: boolean;
   readonly selectedProject: string | null;
   readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
@@ -49,7 +49,7 @@ export const TopBar: React.FC<{
   start,
   stop,
   discardVideos,
-  projects,
+  folders,
   recording,
   disabledByParent,
   selectedProject,
@@ -149,7 +149,7 @@ export const TopBar: React.FC<{
           </Button>
           <UseThisTake
             selectedProject={selectedProject}
-            projects={projects}
+            folders={folders}
             currentBlobs={currentBlobs}
             setCurrentBlobs={setCurrentBlobs}
             setShowHandleVideos={setShowHandleVideos}
@@ -157,14 +157,14 @@ export const TopBar: React.FC<{
         </>
       ) : null}
       <div style={{ flex: 1 }} />
-      {projects ? (
+      {folders ? (
         <>
-          <SelectedProject
-            projects={projects}
+          <SelectedFolder
+            folders={folders}
             selectedProject={selectedProject}
             setSelectedProject={setSelectedProject}
           />
-          <ProjectDialog
+          <NewFolderDialog
             refreshProjectList={refreshProjectList}
             setSelectedProject={setSelectedProject}
           />

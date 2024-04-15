@@ -19,11 +19,11 @@ import {
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
-export const createProjectRef = createRef<{
+export const createNewFolderRef = createRef<{
   openDialog: () => void;
 }>();
 
-export const ProjectDialog: React.FC<{
+export const NewFolderDialog: React.FC<{
   readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
   readonly refreshProjectList: () => Promise<void>;
 }> = ({ refreshProjectList, setSelectedProject }) => {
@@ -71,7 +71,7 @@ export const ProjectDialog: React.FC<{
   }, [newProject, refreshProjectList, setSelectedProject]);
 
   useImperativeHandle(
-    createProjectRef,
+    createNewFolderRef,
     () => {
       return {
         openDialog: () => {

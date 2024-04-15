@@ -84,7 +84,7 @@ const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
-  const [projects, setProjectFolders] = useState<string[] | null>(null);
+  const [folders, setFolders] = useState<string[] | null>(null);
   const [selectedProject, setSelectedProject] = useState<string | null>(
     loadSelectedProjectFromLS(),
   );
@@ -206,7 +206,7 @@ const App = () => {
 
   const refreshProjectList = useCallback(async () => {
     const jsn = await fetchProjectFolders();
-    setProjectFolders(jsn.folders);
+    setFolders(jsn.folders);
     if (selectedProject && !jsn.folders.includes(selectedProject)) {
       setSelectedProject(jsn.folders[0] ?? "");
     }
@@ -272,7 +272,7 @@ const App = () => {
         discardVideos={discardVideos}
         recording={recording}
         disabledByParent={recordingDisabled}
-        projects={projects}
+        folders={folders}
         currentBlobs={currentBlobs}
         selectedProject={selectedProject}
         setSelectedProject={setSelectedProject}
