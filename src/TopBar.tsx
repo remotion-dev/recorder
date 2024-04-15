@@ -3,6 +3,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ProjectDialog } from "./components/ProjectDialog";
 import { SelectedProject } from "./components/SelectProject";
 import { Button } from "./components/ui/button";
+import type { CurrentBlobs } from "./components/UseThisTake";
+import { UseThisTake } from "./components/UseThisTake";
 
 const topBarContainer: React.CSSProperties = {
   display: "flex",
@@ -34,18 +36,18 @@ const formatTime = (ms: number) => {
 export const TopBar: React.FC<{
   readonly start: () => void;
   readonly stop: () => void;
-  readonly keepVideos: () => Promise<void>;
   readonly discardVideos: () => void;
   readonly recording: false | number;
   readonly projects: string[] | null;
   readonly disabledByParent: boolean;
   readonly selectedProject: string | null;
   readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
+  readonly setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
   readonly refreshProjectList: () => Promise<void>;
+  currentBlobs: CurrentBlobs;
 }> = ({
   start,
   stop,
-  keepVideos,
   discardVideos,
   projects,
   recording,
@@ -53,6 +55,8 @@ export const TopBar: React.FC<{
   selectedProject,
   setSelectedProject,
   refreshProjectList,
+  currentBlobs,
+  setCurrentBlobs,
 }) => {
   const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -63,18 +67,6 @@ export const TopBar: React.FC<{
     }, 800);
     return () => clearInterval(intervalId);
   }, []);
-
-  const handleUseTake = useCallback(async () => {
-    try {
-      await keepVideos();
-
-      setShowHandleVideos(false);
-    } catch (err) {
-      console.log(err);
-      // eslint-disable-next-line no-alert
-      alert((err as Error).stack);
-    }
-  }, [keepVideos]);
 
   const handleDiscardTake = useCallback(() => {
     discardVideos();
@@ -155,14 +147,13 @@ export const TopBar: React.FC<{
           >
             Retake
           </Button>
-          <Button
-            variant={"default"}
-            type="button"
-            onClick={handleUseTake}
-            title="Press R to start recording"
-          >
-            Use this take
-          </Button>
+          <UseThisTake
+            selectedProject={selectedProject}
+            projects={projects}
+            currentBlobs={currentBlobs}
+            setCurrentBlobs={setCurrentBlobs}
+            setShowHandleVideos={setShowHandleVideos}
+          />
         </>
       ) : null}
       <div style={{ flex: 1 }} />

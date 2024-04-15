@@ -8,11 +8,8 @@ import {
 } from "../config/cameras";
 import "./App.css";
 import { Button } from "./components/ui/button";
-import {
-  convertFilesInServer,
-  downloadVideo,
-  handleUploadFileToServer,
-} from "./download-video";
+import type { CurrentBlobs } from "./components/UseThisTake";
+import { currentBlobsInitialState } from "./components/UseThisTake";
 import { fetchProjectFolders, loadSelectedProjectFromLS } from "./get-projects";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
@@ -80,16 +77,6 @@ const mediaRecorderOptions: MediaRecorderOptions = {
   videoBitsPerSecond: 8 * 4000000,
 };
 
-const currentBlobsInit = {
-  endDate: null,
-  blobs: {
-    webcam: null,
-    display: null,
-    alt1: null,
-    alt2: null,
-  },
-};
-
 const App = () => {
   const [showAlternativeViews, setShowAlternativeViews] = useState<boolean>(
     localStorage.getItem("showAlternativeViews") === "true",
@@ -111,26 +98,9 @@ const App = () => {
     alternative2: null,
   });
 
-  const [currentBlobs, setCurrentBlobs] = useState<
-    | {
-        endDate: number;
-        blobs: {
-          webcam: Blob | null;
-          display: Blob | null;
-          alt1: Blob | null;
-          alt2: Blob | null;
-        };
-      }
-    | {
-        endDate: null;
-        blobs: {
-          webcam: null;
-          display: null;
-          alt1: null;
-          alt2: null;
-        };
-      }
-  >(currentBlobsInit);
+  const [currentBlobs, setCurrentBlobs] = useState<CurrentBlobs>(
+    currentBlobsInitialState,
+  );
 
   const dynamicGridContainer = useMemo(() => {
     if (showAlternativeViews) {
@@ -150,50 +120,8 @@ const App = () => {
     localStorage.setItem("showAlternativeViews", "false");
   }, []);
 
-  const actualSelectedProject = useMemo(() => {
-    return selectedProject ?? projects?.[0] ?? null;
-  }, [projects, selectedProject]);
-
-  const keepVideos = useCallback(async () => {
-    const runsOnServer = Boolean(window.remotionServerEnabled);
-    if (currentBlobs.endDate === null) {
-      return Promise.resolve();
-    }
-
-    for (const [prefix, blob] of Object.entries(currentBlobs.blobs)) {
-      if (blob !== null) {
-        if (runsOnServer) {
-          if (actualSelectedProject === null) {
-            alert("Please select a folder first.");
-            return Promise.resolve();
-          }
-
-          await handleUploadFileToServer(
-            blob,
-            endDate,
-            prefix,
-            actualSelectedProject,
-          );
-        } else {
-          downloadVideo(blob, currentBlobs.endDate, prefix);
-        }
-      }
-    }
-
-    if (runsOnServer) {
-      if (!actualSelectedProject) {
-        throw new Error("No project selected");
-      }
-
-      await convertFilesInServer(endDate, actualSelectedProject);
-    }
-
-    setCurrentBlobs(currentBlobsInit);
-    return Promise.resolve();
-  }, [actualSelectedProject, currentBlobs.blobs, currentBlobs.endDate]);
-
   const discardVideos = useCallback(() => {
-    setCurrentBlobs(currentBlobsInit);
+    setCurrentBlobs(currentBlobsInitialState);
   }, []);
 
   const setMediaStream = useCallback(
@@ -341,14 +269,15 @@ const App = () => {
       <TopBar
         start={start}
         stop={stop}
-        keepVideos={keepVideos}
         discardVideos={discardVideos}
         recording={recording}
         disabledByParent={recordingDisabled}
         projects={projects}
+        currentBlobs={currentBlobs}
         selectedProject={selectedProject}
         setSelectedProject={setSelectedProject}
         refreshProjectList={refreshProjectList}
+        setCurrentBlobs={setCurrentBlobs}
       />
       <div style={dynamicGridContainer}>
         <View
