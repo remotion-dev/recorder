@@ -204,11 +204,11 @@ const App = () => {
 
   useKeyPress(["r"], onPressR);
 
-  const refreshProjectList = useCallback(async () => {
-    const jsn = await fetchProjectFolders();
-    setFolders(jsn.folders);
-    if (selectedProject && !jsn.folders.includes(selectedProject)) {
-      setSelectedProject(jsn.folders[0] ?? "");
+  const refreshFoldersList = useCallback(async () => {
+    const json = await fetchProjectFolders();
+    setFolders(json.folders);
+    if (selectedProject && !json.folders.includes(selectedProject)) {
+      setSelectedProject(json.folders[0] ?? "");
     }
   }, [selectedProject]);
 
@@ -217,8 +217,8 @@ const App = () => {
       return;
     }
 
-    refreshProjectList();
-  }, [refreshProjectList]);
+    refreshFoldersList();
+  }, [refreshFoldersList]);
 
   useEffect(() => {
     if (!window.remotionServerEnabled) {
@@ -255,15 +255,12 @@ const App = () => {
   }, []);
 
   const recordingDisabled = useMemo(() => {
-    if (
+    return (
       mediaSources.webcam === null ||
       mediaSources.webcam.getAudioTracks().length === 0
-    ) {
-      return true;
-    }
-
-    return false;
+    );
   }, [mediaSources.webcam]);
+
   return (
     <div style={outer}>
       <TopBar
@@ -276,7 +273,7 @@ const App = () => {
         currentBlobs={currentBlobs}
         selectedProject={selectedProject}
         setSelectedProject={setSelectedProject}
-        refreshProjectList={refreshProjectList}
+        refreshProjectList={refreshFoldersList}
         setCurrentBlobs={setCurrentBlobs}
       />
       <div style={dynamicGridContainer}>
@@ -317,7 +314,7 @@ const App = () => {
             onClick={handleShowMore}
             style={{ margin: "0px 10px" }}
           >
-            Show more views...
+            Show more views
           </Button>
         ) : (
           <Button
@@ -325,7 +322,7 @@ const App = () => {
             onClick={handleShowLess}
             style={{ margin: "0px 10px", width: 100 }}
           >
-            Show Less...
+            Show Less
           </Button>
         )}
       </div>
