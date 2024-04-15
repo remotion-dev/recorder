@@ -1,0 +1,67 @@
+import react from "@vitejs/plugin-react-swc";
+import bodyParser from "body-parser";
+import type { Request, Response } from "express";
+import express from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { createServer } from "vite";
+import { SERVER_PORT } from "../../config/server";
+import { indexHtmlDev } from "../../index-html";
+import {
+  CREATE_PROJECTS,
+  GET_FOLDERS,
+  PROCESS_VIDEOS,
+  SAVE_SUBTITLES,
+  UPLOAD_VIDEO,
+} from "./constants";
+import { createProject } from "./create-project";
+import { convertVideos, handleVideoUpload } from "./handle-video";
+import { getProjectFolder } from "./projects";
+import { getOptions, saveSubtitles } from "./subtitles";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export const startExpressServer = async () => {
+  console.log("Starting recording interface");
+  const app = express();
+  app.use(bodyParser.json());
+
+  const rootDir = path.join(__dirname, "..", "..");
+  const publicDir = path.join(rootDir, "public");
+
+  const vite = await createServer({
+    configFile: false,
+    root: rootDir,
+    server: {
+      middlewareMode: true,
+    },
+    appType: "custom",
+    plugins: [react()],
+    publicDir,
+  });
+
+  app.use((req, res, next) => {
+    vite.middlewares.handle(req, res, next);
+  });
+
+  app.get("/", indexHtmlDev(vite, rootDir));
+
+  app.get(GET_FOLDERS, (req: Request, res: Response) => {
+    getProjectFolder(req, res, rootDir);
+  });
+
+  app.post(CREATE_PROJECTS, (req: Request, res: Response) => {
+    createProject(req, res, rootDir);
+  });
+
+  app.post(UPLOAD_VIDEO, handleVideoUpload);
+  app.post(PROCESS_VIDEOS, convertVideos);
+
+  app.post(SAVE_SUBTITLES, saveSubtitles);
+  app.options(SAVE_SUBTITLES, getOptions);
+
+  const port = process.env.PORT || SERVER_PORT;
+
+  app.listen(port);
+  console.log(`Recording interface running on http://localhost:${port}`);
+};

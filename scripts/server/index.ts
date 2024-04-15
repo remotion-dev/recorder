@@ -1,10 +1,17 @@
-import { startServer } from "./server";
+import { spawn } from "child_process";
+import { startExpressServer } from "./express-server";
 
-export const startStudioAndServer = () => {
-  startServer();
-
-  Bun.spawn(["bunx", "remotion", "studio"], {
-    stdout: "inherit",
+export const startStudioAndServer = async () => {
+  await startExpressServer();
+  const bunxProcess = spawn("bunx", ["remotion", "studio"], {
+    stdio: "inherit",
     shell: process.platform === "win32" ? "cmd.exe" : undefined,
+    detached: false,
+  });
+
+  // Must be started with Node.js for the moment (npx tsx studio.ts)
+  process.on("uncaughtException", (e) => {
+    console.error(e);
+    bunxProcess.kill();
   });
 };
