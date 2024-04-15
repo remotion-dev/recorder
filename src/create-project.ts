@@ -1,4 +1,5 @@
 import { SERVER_PORT } from "../config/server";
+import { CREATE_PROJECTS } from "../scripts/server/constants";
 
 type CreateProjectResBodyType = {
   success: boolean;
@@ -7,14 +8,11 @@ type CreateProjectResBodyType = {
 
 export const createProject = async (projectName: string) => {
   const payload = { projectName };
-  const res = await fetch(
-    `http://localhost:${SERVER_PORT}/api/create-project`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    },
-  );
+  const res = await fetch(`http://localhost:${SERVER_PORT}${CREATE_PROJECTS}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 
   const jsn = (await res.json()) as CreateProjectResBodyType;
 

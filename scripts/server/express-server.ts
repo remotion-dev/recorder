@@ -7,7 +7,12 @@ import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 import { SERVER_PORT } from "../../config/server";
 import { indexHtmlDev } from "../../index-html";
-import { SAVE_SUBTITLES } from "./constants";
+import {
+  CREATE_PROJECTS,
+  GET_FOLDERS,
+  SAVE_SUBTITLES,
+  UPLOAD_VIDEO,
+} from "./constants";
 import { createProject } from "./create-project";
 import { convertVideos, handleVideoUpload } from "./handle-video";
 import { getProjectFolder } from "./projects";
@@ -16,16 +21,16 @@ import { getOptions, saveSubtitles } from "./subtitles";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const startExpressServer = async () => {
-  console.log("starting express server...");
+  console.log("Starting recording interface");
   const app = express();
   app.use(bodyParser.json());
 
   const rootDir = path.join(__dirname, "..", "..");
-  const viteDir = rootDir; // will change once vite is put in its own directory
   const publicDir = path.join(rootDir, "public");
+
   const vite = await createServer({
     configFile: false,
-    root: viteDir,
+    root: rootDir,
     server: {
       middlewareMode: true,
     },
@@ -38,17 +43,17 @@ export const startExpressServer = async () => {
     vite.middlewares.handle(req, res, next);
   });
 
-  app.get("/", indexHtmlDev(vite, viteDir));
+  app.get("/", indexHtmlDev(vite, rootDir));
 
-  app.get("/api/projects", (req: Request, res: Response) => {
+  app.get(GET_FOLDERS, (req: Request, res: Response) => {
     getProjectFolder(req, res, rootDir);
   });
 
-  app.post("/api/create-project", (req: Request, res: Response) => {
+  app.post(CREATE_PROJECTS, (req: Request, res: Response) => {
     createProject(req, res, rootDir);
   });
 
-  app.post("/api/upload-video", handleVideoUpload, convertVideos);
+  app.post(UPLOAD_VIDEO, handleVideoUpload, convertVideos);
 
   app.post(SAVE_SUBTITLES, saveSubtitles);
   app.options(SAVE_SUBTITLES, getOptions);
@@ -56,5 +61,5 @@ export const startExpressServer = async () => {
   const port = process.env.PORT || SERVER_PORT;
 
   app.listen(port);
-  console.log(`Recorder running on http://localhost:${port}`);
+  console.log(`Recording interface running on http://localhost:${port}`);
 };
