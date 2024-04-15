@@ -1,6 +1,6 @@
 import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "node:child_process";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, unlinkSync } from "node:fs";
 import path from "path";
 import {
   ALTERNATIVE1_PREFIX,
@@ -13,6 +13,7 @@ import {
   PADDING_IN_SECONDS,
 } from "../config/silence-removal";
 import { getDownloadsFolder } from "./get-downloads-folder";
+import { checkVideoIntegrity } from "./server/check-video-integrity";
 
 const convertAndRemoveSilence = ({
   input,
@@ -41,6 +42,9 @@ const convertAndRemoveSilence = ({
       stdio: "inherit",
     },
   );
+
+  checkVideoIntegrity(output);
+  unlinkSync(input);
 };
 
 type ScriptProps = {

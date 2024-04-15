@@ -1,8 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import fs, { createWriteStream, unlinkSync } from "fs";
+import fs, { createWriteStream } from "fs";
 import path from "path";
 import { convertAndTrimVideo } from "../convert-and-trim-video";
-import { checkVideoIntegrity } from "./check-video-integrity";
 
 export const handleVideoUpload = (
   req: Request,
@@ -45,11 +44,7 @@ export const handleVideoUpload = (
 export const convertVideos = async (req: Request, res: Response) => {
   console.log("converting videos...");
   try {
-    const { prefix, endDateAsString, folder } = req.query;
-
-    if (typeof prefix !== "string") {
-      throw new Error("No `prefix` provided");
-    }
+    const { endDateAsString, folder } = req.query;
 
     if (typeof endDateAsString !== "string") {
       throw new Error("No `endDate` provided");
@@ -76,13 +71,6 @@ export const convertVideos = async (req: Request, res: Response) => {
       latestTimestamp: endDate,
       customFileLocation: absoluteFolderPath,
     });
-
-    const file = `${prefix}${endDateAsString}.mp4`;
-    const mp4Path = path.join(absoluteFolderPath, file);
-    checkVideoIntegrity(mp4Path);
-    const webmPath = mp4Path.replace("mp4", "webm");
-
-    unlinkSync(webmPath);
 
     console.log("Successfully converted to mp4.");
     res.status(200);

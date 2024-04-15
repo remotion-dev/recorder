@@ -1,4 +1,4 @@
-import { UPLOAD_VIDEO } from "../scripts/server/constants";
+import { PROCESS_VIDEOS, UPLOAD_VIDEO } from "../scripts/server/constants";
 
 export const downloadVideo = (data: Blob, endDate: number, prefix: string) => {
   let webcamchunks: Blob[] = [];
@@ -40,6 +40,28 @@ export const handleUploadFileToServer = async (
   const res = await fetch(url, {
     method: "POST",
     body: videoFile,
+  });
+
+  const json = await res.json();
+  if (!json.success) {
+    throw new Error(json.message);
+  }
+};
+
+export const convertFilesInServer = async (
+  endDate: number,
+  selectedProject: string,
+) => {
+  const url = new URL(PROCESS_VIDEOS, window.location.origin);
+
+  url.search = new URLSearchParams({
+    folder: selectedProject,
+    endDateAsString: endDate.toString(),
+  }).toString();
+
+  // might add query params to define name & folder
+  const res = await fetch(url, {
+    method: "POST",
   });
 
   const json = await res.json();

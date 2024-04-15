@@ -10,6 +10,7 @@ import { indexHtmlDev } from "../../index-html";
 import {
   CREATE_PROJECTS,
   GET_FOLDERS,
+  PROCESS_VIDEOS,
   SAVE_SUBTITLES,
   UPLOAD_VIDEO,
 } from "./constants";
@@ -53,7 +54,8 @@ export const startExpressServer = async () => {
     createProject(req, res, rootDir);
   });
 
-  app.post(UPLOAD_VIDEO, handleVideoUpload, convertVideos);
+  app.post(UPLOAD_VIDEO, handleVideoUpload);
+  app.post(PROCESS_VIDEOS, convertVideos);
 
   app.post(SAVE_SUBTITLES, saveSubtitles);
   app.options(SAVE_SUBTITLES, getOptions);
