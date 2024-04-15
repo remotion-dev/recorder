@@ -42,7 +42,8 @@ export const handleUploadFileToServer = async (
     body: videoFile,
   });
 
-  if (res.status !== 200) {
-    throw new Error("Error occured while downloading the video");
+  const json = await res.json();
+  if (!json.success) {
+    throw new Error(json.message);
   }
 };

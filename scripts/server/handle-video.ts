@@ -92,7 +92,9 @@ export const convertVideos = async (req: Request, res: Response) => {
     res.status(500);
     return res.send({
       success: false,
-      message: "Something went wrong while converting the webm files to mp4.",
+      message:
+        "Something went wrong while converting the webm files to mp4: " +
+        (e as Error).message,
     });
   }
 };
