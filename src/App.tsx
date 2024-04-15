@@ -169,7 +169,7 @@ const App = () => {
     }
 
     setCurrentBlobs(currentBlobsInit);
-  }, [currentBlobs.blobs, currentBlobs.endDate, selectedProject]);
+  }, [currentBlobs, selectedProject]);
 
   const discardVideos = useCallback(() => {
     setCurrentBlobs(currentBlobsInit);

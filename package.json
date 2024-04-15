@@ -33,6 +33,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "eslint": "^8.50.0",
+    "eslint-plugin-react": "^7.34.1",
     "express": "^4.19.2",
     "lucide-react": "^0.290.0",
     "prettier": "^3.0.3",
