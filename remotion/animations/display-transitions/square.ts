@@ -40,17 +40,74 @@ export const getSquareDisplayEnterOrExit = ({
     return currentScene.layout.displayLayout;
   }
 
-  if (isWebCamAtBottom(otherScene.finalWebcamPosition)) {
+  // Assuming now: currentScene is a display video that needs to be moved in
+  // the canvas because other scene had no display video
+
+  // 1. From bottom left/right to top: Display should disappear top edge
+  if (
+    isWebCamAtBottom(currentScene.finalWebcamPosition) &&
+    !isWebCamAtBottom(otherScene.finalWebcamPosition)
+  ) {
     return {
       ...currentScene.layout.displayLayout,
-      top: -currentScene.layout.displayLayout.height - getSafeSpace("square"),
+      top: -currentScene.layout.displayLayout.height,
     };
   }
 
-  return {
-    ...currentScene.layout.displayLayout,
-    top: height + getSafeSpace("square"),
-    // TODO: Animation is also dependent on the video width
-    left: width + getSafeSpace("square"),
-  };
+  // 2. From top to bottom left/right: Display should appear from bottom edge
+  if (
+    !isWebCamAtBottom(currentScene.finalWebcamPosition) &&
+    isWebCamAtBottom(otherScene.finalWebcamPosition)
+  ) {
+    return {
+      ...currentScene.layout.displayLayout,
+      top: height,
+    };
+  }
+
+  // 3. From top right to top: Should slide display to left
+  if (currentScene.finalWebcamPosition === "top-right") {
+    return {
+      ...currentScene.layout.displayLayout,
+      left: -currentScene.layout.displayLayout.width - getSafeSpace("square"),
+      top: otherScene.layout.webcamLayout.height + getSafeSpace("square") * 2,
+    };
+  }
+
+  // 4. From top left to top: Should slide display to right
+  if (currentScene.finalWebcamPosition === "top-left") {
+    return {
+      ...currentScene.layout.displayLayout,
+      left: width + getSafeSpace("square"),
+      top: otherScene.layout.webcamLayout.height + getSafeSpace("square") * 2,
+    };
+  }
+
+  // 5. From bottom left to bottom: Display should disappear to right
+  if (currentScene.finalWebcamPosition === "bottom-left") {
+    return {
+      ...currentScene.layout.displayLayout,
+      left: width + getSafeSpace("square"),
+      top:
+        height -
+        currentScene.layout.displayLayout.height -
+        otherScene.layout.webcamLayout.height -
+        getSafeSpace("square") * 2,
+    };
+  }
+
+  // 6. From bottom right to bottom: Display should disappear to left
+  if (currentScene.finalWebcamPosition === "bottom-right") {
+    return {
+      ...currentScene.layout.displayLayout,
+      left: -currentScene.layout.displayLayout.width - getSafeSpace("square"),
+      top:
+        height -
+        currentScene.layout.displayLayout.height -
+        otherScene.layout.webcamLayout.height -
+        getSafeSpace("square") * 2,
+    };
+  }
+
+  throw new Error("Unhandled case");
 };
