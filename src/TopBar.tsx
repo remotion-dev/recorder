@@ -64,10 +64,12 @@ export const TopBar: React.FC<{
       return;
     }
 
-    const inputElements = document.getElementsByTagName("input");
     const dialog = document.querySelector('[role="dialog"]');
 
-    if (inputElements.length > 0 || dialog) {
+    if (
+      (document.activeElement && document.activeElement.tagName === "input") ||
+      dialog
+    ) {
       return;
     }
 
