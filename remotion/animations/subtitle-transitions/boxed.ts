@@ -7,11 +7,10 @@ import type {
 import type { Layout } from "../../layout/layout-types";
 import {
   isGrowingFromMiniature,
-  isGrowingOrShrinkingToMiniature,
   isShrinkingToMiniature,
   isWebCamAtBottom,
   isWebCamRight,
-} from "../webcam-transitions";
+} from "../webcam-transitions/helpers";
 
 export const getBoxedExit = ({
   nextScene,
@@ -28,48 +27,41 @@ export const getBoxedExit = ({
     return translate(0, 0);
   }
 
-  if (
-    nextScene &&
-    isGrowingOrShrinkingToMiniature({
-      currentScene: scene,
-      otherScene: nextScene,
-    })
-  ) {
-    if (isGrowingFromMiniature({ firstScene: scene, secondScene: nextScene })) {
-      const isLeft = !isWebCamRight(scene.finalWebcamPosition);
-      const webcamTranslation =
-        nextScene.layout.webcamLayout.top - scene.layout.webcamLayout.top;
+  if (isGrowingFromMiniature({ firstScene: scene, secondScene: nextScene })) {
+    const isLeft = !isWebCamRight(scene.finalWebcamPosition);
+    const webcamTranslation =
+      nextScene.layout.webcamLayout.top - scene.layout.webcamLayout.top;
 
+    return translate(
+      isLeft
+        ? currentLayout.width + getSafeSpace("square")
+        : -currentLayout.width - getSafeSpace("square"),
+      webcamTranslation,
+    );
+  }
+
+  if (isShrinkingToMiniature({ firstScene: scene, secondScene: nextScene })) {
+    const isAtBottomBefore = isWebCamAtBottom(scene.finalWebcamPosition);
+    const isAtBottomAfter = isWebCamAtBottom(nextScene.finalWebcamPosition);
+    if (isAtBottomBefore === isAtBottomAfter) {
       return translate(
-        isLeft
-          ? currentLayout.width + getSafeSpace("square")
-          : -currentLayout.width - getSafeSpace("square"),
-        webcamTranslation,
-      );
-    }
-
-    if (isShrinkingToMiniature({ firstScene: scene, secondScene: nextScene })) {
-      const isAtBottomBefore = isWebCamAtBottom(scene.finalWebcamPosition);
-      const isAtBottomAfter = isWebCamAtBottom(nextScene.finalWebcamPosition);
-      if (isAtBottomBefore === isAtBottomAfter) {
-        // Display can cover the subtitles
-        return translate(0, 0);
-      }
-
-      return translate(
+        -currentLayout.width - currentLayout.left - getSafeSpace("square"),
         0,
-        isAtBottomBefore
-          ? -currentLayout.height - getSafeSpace("square")
-          : currentLayout.height + getSafeSpace("square"),
       );
     }
 
-    return translate(0, 0);
+    return translate(
+      0,
+      isAtBottomBefore
+        ? -currentLayout.height - getSafeSpace("square")
+        : currentLayout.height + getSafeSpace("square"),
+    );
   }
 
   const isSamePositionVertical =
     isWebCamRight(nextScene.finalWebcamPosition) ===
     isWebCamRight(scene.finalWebcamPosition);
+
   const isSamePositionHorizontal =
     isWebCamAtBottom(nextScene.finalWebcamPosition) ===
     isWebCamAtBottom(scene.finalWebcamPosition);
@@ -115,9 +107,11 @@ export const getBoxedEnter = ({
   height: number;
   currentLayout: Layout;
 }): string => {
+  if (previousScene === null || previousScene.type !== "video-scene") {
+    return translate(0, 0);
+  }
+
   if (
-    previousScene &&
-    previousScene.type === "video-scene" &&
     isShrinkingToMiniature({
       firstScene: previousScene,
       secondScene: scene,
@@ -139,8 +133,6 @@ export const getBoxedEnter = ({
   }
 
   if (
-    previousScene &&
-    previousScene.type === "video-scene" &&
     isGrowingFromMiniature({
       firstScene: previousScene,
       secondScene: scene,
@@ -169,10 +161,6 @@ export const getBoxedEnter = ({
       isWebCamRight(previousScene.finalWebcamPosition) ? width : -width,
       currentlyAtBottom ? heightDifference : -heightDifference,
     );
-  }
-
-  if (previousScene === null || previousScene.type !== "video-scene") {
-    return translate(0, 0);
   }
 
   const isSamePositionVertical =

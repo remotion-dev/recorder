@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useState } from "react";
 import {
   convertFilesInServer,
   downloadVideo,
@@ -37,21 +37,69 @@ export const currentBlobsInitialState: CurrentBlobs = {
 };
 
 export const UseThisTake: React.FC<{
+  readonly selectedFolder: string | null;
   readonly currentBlobs: CurrentBlobs;
-  readonly selectedProject: string | null;
-  readonly projects: string[] | null;
   readonly setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
   readonly setShowHandleVideos: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   currentBlobs,
-  selectedProject,
-  projects,
+  selectedFolder,
   setCurrentBlobs,
   setShowHandleVideos,
 }) => {
-  const actualSelectedProject = useMemo(() => {
-    return selectedProject ?? projects?.[0] ?? null;
-  }, [projects, selectedProject]);
+  const [uploading, setUploading] = useState(false);
+
+  const keepVideoOnServer = useCallback(async () => {
+    if (currentBlobs.endDate === null) {
+      return Promise.resolve();
+    }
+
+    if (selectedFolder === null) {
+      // eslint-disable-next-line no-alert
+      alert("Please select a folder first.");
+      return Promise.resolve();
+    }
+
+    for (const [prefix, blob] of Object.entries(currentBlobs.blobs)) {
+      if (blob === null) {
+        continue;
+      }
+
+      await handleUploadFileToServer({
+        blob,
+        endDate: currentBlobs.endDate,
+        prefix,
+        selectedFolder,
+      });
+    }
+
+    await convertFilesInServer({
+      endDate: currentBlobs.endDate,
+      selectedFolder,
+    });
+
+    setCurrentBlobs(currentBlobsInitialState);
+    return Promise.resolve();
+  }, [
+    selectedFolder,
+    currentBlobs.blobs,
+    currentBlobs.endDate,
+    setCurrentBlobs,
+  ]);
+
+  const keepVideoOnClient = useCallback(() => {
+    if (currentBlobs.endDate === null) {
+      return Promise.resolve();
+    }
+
+    for (const [prefix, blob] of Object.entries(currentBlobs.blobs)) {
+      if (blob !== null) {
+        downloadVideo(blob, currentBlobs.endDate, prefix);
+      }
+    }
+
+    setCurrentBlobs(currentBlobsInitialState);
+  }, [currentBlobs.blobs, currentBlobs.endDate, setCurrentBlobs]);
 
   const keepVideos = useCallback(async () => {
     const runsOnServer = Boolean(window.remotionServerEnabled);
@@ -59,53 +107,24 @@ export const UseThisTake: React.FC<{
       return Promise.resolve();
     }
 
-    for (const [prefix, blob] of Object.entries(currentBlobs.blobs)) {
-      if (blob !== null) {
-        if (runsOnServer) {
-          if (actualSelectedProject === null) {
-            // eslint-disable-next-line no-alert
-            alert("Please select a folder first.");
-            return Promise.resolve();
-          }
-
-          await handleUploadFileToServer(
-            blob,
-            currentBlobs.endDate,
-            prefix,
-            actualSelectedProject,
-          );
-        } else {
-          downloadVideo(blob, currentBlobs.endDate, prefix);
-        }
-      }
-    }
-
     if (runsOnServer) {
-      if (!actualSelectedProject) {
-        throw new Error("No project selected");
-      }
-
-      await convertFilesInServer(currentBlobs.endDate, actualSelectedProject);
+      await keepVideoOnServer();
+    } else {
+      keepVideoOnClient();
     }
-
-    setCurrentBlobs(currentBlobsInitialState);
-    return Promise.resolve();
-  }, [
-    actualSelectedProject,
-    currentBlobs.blobs,
-    currentBlobs.endDate,
-    setCurrentBlobs,
-  ]);
+  }, [currentBlobs.endDate, keepVideoOnClient, keepVideoOnServer]);
 
   const handleUseTake = useCallback(async () => {
+    setUploading(true);
     try {
       await keepVideos();
-
       setShowHandleVideos(false);
     } catch (err) {
       console.log(err);
       // eslint-disable-next-line no-alert
       alert((err as Error).stack);
+    } finally {
+      setUploading(false);
     }
   }, [keepVideos, setShowHandleVideos]);
 
@@ -115,8 +134,9 @@ export const UseThisTake: React.FC<{
       type="button"
       onClick={handleUseTake}
       title="Copy this take"
+      disabled={uploading}
     >
-      Use this take
+      {uploading ? "Copying..." : `Copy to public/${selectedFolder}`}
     </Button>
   );
 };

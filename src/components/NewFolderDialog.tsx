@@ -19,14 +19,14 @@ import {
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
-export const createProjectRef = createRef<{
+export const createNewFolderRef = createRef<{
   openDialog: () => void;
 }>();
 
-export const ProjectDialog: React.FC<{
-  readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
-  readonly refreshProjectList: () => Promise<void>;
-}> = ({ refreshProjectList, setSelectedProject }) => {
+export const NewFolderDialog: React.FC<{
+  readonly setSelectedFolder: React.Dispatch<SetStateAction<string | null>>;
+  readonly refreshFoldersList: () => Promise<void>;
+}> = ({ refreshFoldersList, setSelectedFolder }) => {
   const [newProject, setNewProject] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
 
@@ -60,18 +60,18 @@ export const ProjectDialog: React.FC<{
         throw new Error(res.message);
       }
 
-      setSelectedProject(newProject);
+      setSelectedFolder(newProject);
       setNewProject("");
-      refreshProjectList();
+      refreshFoldersList();
       setOpen(false);
     } catch (e) {
       // eslint-disable-next-line no-alert
       alert((e as Error).stack);
     }
-  }, [newProject, refreshProjectList, setSelectedProject]);
+  }, [newProject, refreshFoldersList, setSelectedFolder]);
 
   useImperativeHandle(
-    createProjectRef,
+    createNewFolderRef,
     () => {
       return {
         openDialog: () => {

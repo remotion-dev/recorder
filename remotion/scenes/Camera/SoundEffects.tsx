@@ -3,7 +3,7 @@ import type { SceneAndMetadata } from "../../../config/scenes";
 import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,
-} from "../../animations/webcam-transitions";
+} from "../../animations/webcam-transitions/helpers";
 
 export const SoundEffects: React.FC<{
   previousScene: SceneAndMetadata | null;

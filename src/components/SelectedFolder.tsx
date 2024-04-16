@@ -1,6 +1,6 @@
 import type { SetStateAction } from "react";
 import React, { useCallback } from "react";
-import { createProjectRef } from "./ProjectDialog";
+import { createNewFolderRef } from "./NewFolderDialog";
 import {
   Select,
   SelectContent,
@@ -12,15 +12,19 @@ import {
 
 const NEW_FOLDER_TOKEN = "__remotion_new_folder";
 
-export const SelectedProject: React.FC<{
-  readonly projects: string[];
-  readonly selectedProject: string | null;
-  readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
-}> = ({ projects, selectedProject, setSelectedProject }) => {
+export const SelectedFolder: React.FC<{
+  readonly folders: string[];
+  readonly selectedFolder: string | null;
+  readonly setSelectedFolder: React.Dispatch<SetStateAction<string | null>>;
+}> = ({
+  folders,
+  selectedFolder: selectedProject,
+  setSelectedFolder: setSelectedProject,
+}) => {
   const onValueChange = useCallback(
     (value: string) => {
       if (value === NEW_FOLDER_TOKEN) {
-        createProjectRef.current?.openDialog();
+        createNewFolderRef.current?.openDialog();
       } else {
         setSelectedProject(value);
       }
@@ -70,8 +74,8 @@ export const SelectedProject: React.FC<{
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={NEW_FOLDER_TOKEN}>New folder</SelectItem>
-          {projects.length !== 0 && <SelectSeparator />}
-          {projects.map((project, i) => {
+          {folders.length !== 0 && <SelectSeparator />}
+          {folders.map((project, i) => {
             const key = i + project;
             return (
               <SelectItem key={key} value={project}>

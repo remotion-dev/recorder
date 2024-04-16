@@ -24,7 +24,8 @@ export const captionFile = async ({
 
   // extracting audio from mp4 and save it as 16khz wav file
   execSync(
-    `npx remotion ffmpeg -hide_banner -i ${fileToTranscribe} -ar 16000 -y ${wavFile}`,
+    `bunx remotion ffmpeg -hide_banner -i ${fileToTranscribe} -ar 16000 -y ${wavFile}`,
+    { stdio: "ignore" },
   );
 
   const output = await transcribe({
@@ -33,7 +34,7 @@ export const captionFile = async ({
     tokenLevelTimestamps: true,
     whisperPath: WHISPER_PATH,
     translateToEnglish: false,
-    printOutput: false,
+    printOutput: true,
   });
 
   rmSync(wavFile);
