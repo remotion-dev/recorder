@@ -225,6 +225,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
       pairs,
       scenesAndMetadata,
       theme: props.theme,
+      platform: props.platform,
     },
   };
 };

@@ -59,7 +59,6 @@ export const configuration = z.discriminatedUnion("type", [
     durationInFrames: z.number().int().default(200),
     music,
     channel: brand,
-    platform,
     links: z.array(linkType).default([]),
     transitionToNextScene: z.boolean().default(true),
   }),
@@ -83,6 +82,7 @@ export type SceneType = z.infer<typeof configuration>;
 export const videoConf = z.object({
   theme,
   canvasLayout,
+  platform,
   scenes,
 });
 

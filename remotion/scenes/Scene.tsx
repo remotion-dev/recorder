@@ -7,6 +7,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import type { Platform } from "../../config/endcard";
 import type { CanvasLayout } from "../../config/layout";
 import type {
   SceneAndMetadata,
@@ -36,6 +37,7 @@ type Props = {
   canvasLayout: CanvasLayout;
   chapters: ChapterType[];
   theme: Theme;
+  platform: Platform;
 };
 
 const InnerScene: React.FC<
@@ -52,6 +54,7 @@ const InnerScene: React.FC<
   theme,
   enter,
   exit,
+  platform,
 }) => {
   if (sceneAndMetadata.scene.type === "title") {
     return (
@@ -81,7 +84,7 @@ const InnerScene: React.FC<
     return (
       <EndCard
         theme={theme}
-        platform={sceneAndMetadata.scene.platform}
+        platform={platform}
         canvasLayout={canvasLayout}
         channel={sceneAndMetadata.scene.channel}
         links={sceneAndMetadata.scene.links}
@@ -185,6 +188,7 @@ export const Scene: React.FC<Props> = ({
   canvasLayout,
   chapters,
   theme,
+  platform,
 }) => {
   const chapter =
     sceneAndMetadata.scene.type === "videoscene"
@@ -204,6 +208,7 @@ export const Scene: React.FC<Props> = ({
         previousScene={previousScene}
         sceneAndMetadata={sceneAndMetadata}
         theme={theme}
+        platform={platform}
       />
     </Sequence>
   );
