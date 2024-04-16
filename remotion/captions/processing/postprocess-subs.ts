@@ -164,7 +164,7 @@ export const getHorizontalPaddingForSubtitles = (
   subtitleType: SubtitleType,
   canvasLayout: CanvasLayout,
 ) => {
-  if (subtitleType === "boxed") {
+  if (subtitleType === "square") {
     return getSafeSpace(canvasLayout);
   }
 

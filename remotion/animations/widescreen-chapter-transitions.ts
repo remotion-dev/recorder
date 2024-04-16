@@ -122,14 +122,14 @@ export const getChapterInTransition = ({
 };
 
 export const makeOutTransition = ({
-  height,
+  canvasHeight,
   outTransition,
   progress,
-  width,
+  canvasWidth,
 }: {
   outTransition: OutTransition;
-  width: number;
-  height: number;
+  canvasWidth: number;
+  canvasHeight: number;
   progress: number;
 }): { x: number; y: number } => {
   if (outTransition === "none") {
@@ -137,19 +137,19 @@ export const makeOutTransition = ({
   }
 
   if (outTransition === "down") {
-    return { x: 0, y: interpolate(progress, [0, 1], [0, height]) };
+    return { x: 0, y: interpolate(progress, [0, 1], [0, canvasHeight]) };
   }
 
   if (outTransition === "up") {
-    return { x: 0, y: interpolate(progress, [0, 1], [0, -height]) };
+    return { x: 0, y: interpolate(progress, [0, 1], [0, -canvasHeight]) };
   }
 
   if (outTransition === "left") {
-    return { y: 0, x: interpolate(progress, [0, 1], [0, -width]) };
+    return { y: 0, x: interpolate(progress, [0, 1], [0, -canvasWidth]) };
   }
 
   if (outTransition === "right") {
-    return { y: 0, x: interpolate(progress, [0, 1], [0, width]) };
+    return { y: 0, x: interpolate(progress, [0, 1], [0, canvasWidth]) };
   }
 
   throw new Error('weird outTransition "' + outTransition + '"');
@@ -157,13 +157,13 @@ export const makeOutTransition = ({
 
 export const makeInTransition = ({
   inTransition,
-  width,
-  height,
+  canvasWidth,
+  canvasHeight,
   progress,
 }: {
   inTransition: InTransition;
-  width: number;
-  height: number;
+  canvasWidth: number;
+  canvasHeight: number;
   progress: number;
 }): { x: number; y: number } => {
   if (inTransition === "none") {
@@ -173,23 +173,23 @@ export const makeInTransition = ({
   if (inTransition === "from-top") {
     return {
       x: 0,
-      y: interpolate(progress, [0, 1], [-height / 2, 0]),
+      y: interpolate(progress, [0, 1], [-canvasHeight / 2, 0]),
     };
   }
 
   if (inTransition === "from-bottom") {
     return {
       x: 0,
-      y: interpolate(progress, [0, 1], [height / 2, 0]),
+      y: interpolate(progress, [0, 1], [canvasHeight / 2, 0]),
     };
   }
 
   if (inTransition === "from-left") {
-    return { y: 0, x: interpolate(progress, [0, 1], [-width / 2, 0]) };
+    return { y: 0, x: interpolate(progress, [0, 1], [-canvasWidth / 2, 0]) };
   }
 
   if (inTransition === "from-right") {
-    return { y: 0, x: interpolate(progress, [0, 1], [width / 2, 0]) };
+    return { y: 0, x: interpolate(progress, [0, 1], [canvasWidth / 2, 0]) };
   }
 
   throw new Error('weird inTransition "' + inTransition + '"');

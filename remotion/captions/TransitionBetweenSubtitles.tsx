@@ -24,7 +24,7 @@ export const TransitionFromPreviousSubtitles: React.FC<{
     );
   }
 
-  if (subtitleType === "boxed") {
+  if (subtitleType === "square") {
     return (
       <div
         style={{
@@ -75,7 +75,7 @@ export const TransitionToNextSubtitles: React.FC<{
     );
   }
 
-  if (subtitleType === "boxed") {
+  if (subtitleType === "square") {
     return (
       <div
         style={{

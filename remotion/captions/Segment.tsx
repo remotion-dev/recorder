@@ -6,8 +6,8 @@ import type { Theme } from "../../config/themes";
 import { FadeSentence } from "./FadeSentence";
 import type { Segment } from "./types";
 import { BelowVideoSubtitles } from "./Variants/BelowVideoSubtitles";
-import { BoxedSubtitles, LINE_HEIGHT } from "./Variants/BoxedSubtitles";
 import { OverlayedCenterSubtitles } from "./Variants/OverlayedCenterSubtitles";
+import { LINE_HEIGHT, SquareSubtitles } from "./Variants/SquareSubtitles";
 
 const getStartOfSegment = (segment: Segment) => {
   if (segment.words.length === 0) {
@@ -25,7 +25,7 @@ const getEndOfSegment = (segment: Segment) => {
   return (segment.words[segment.words.length - 1] as Word).lastTimestamp;
 };
 
-export type SubtitleType = "below-video" | "overlayed-center" | "boxed";
+export type SubtitleType = "below-video" | "overlayed-center" | "square";
 
 export const getSubtitlesType = ({
   canvasLayout,
@@ -36,14 +36,14 @@ export const getSubtitlesType = ({
 }): SubtitleType => {
   if (displayLayout === null) {
     if (canvasLayout === "square") {
-      return "boxed";
+      return "square";
     }
 
     return "overlayed-center";
   }
 
   if (canvasLayout === "square") {
-    return "boxed";
+    return "square";
   }
 
   return "below-video";
@@ -53,7 +53,7 @@ export const getSubtitlesFontSize = (
   subtitleType: SubtitleType,
   displayLayout: Dimensions | null,
 ) => {
-  if (subtitleType === "boxed") {
+  if (subtitleType === "square") {
     if (displayLayout === null) {
       return 64;
     }
@@ -77,7 +77,7 @@ export const getSubtitlesLines = ({
   boxHeight: number;
   fontSize: number;
 }) => {
-  if (subtitleType === "boxed") {
+  if (subtitleType === "square") {
     const boxPadding = 50;
 
     const nrOfLines = Math.floor(
@@ -119,7 +119,7 @@ export const getSubsAlign = ({
 };
 
 export const getBorderWidthForSubtitles = (subtitleType: SubtitleType) => {
-  if (subtitleType === "boxed") {
+  if (subtitleType === "square") {
     return 3;
   }
 
@@ -171,8 +171,8 @@ export const CaptionSentence: React.FC<{
       layout="none"
     >
       <FadeSentence>
-        {subtitleType === "boxed" ? (
-          <BoxedSubtitles
+        {subtitleType === "square" ? (
+          <SquareSubtitles
             canvasLayout={canvasLayout}
             onOpenSubEditor={onOpenSubEditor}
             segment={segment}
