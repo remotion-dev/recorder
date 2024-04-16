@@ -10,13 +10,13 @@ import {
 } from "../config/cameras";
 import { waitForFonts } from "../config/fonts";
 import { FPS } from "../config/fps";
-import type {
-  FinalWebcamPosition,
-  Pair,
-  SceneAndMetadata,
-  SceneType,
-  SceneVideos,
-  WebcamPosition,
+import {
+  type FinalWebcamPosition,
+  type Pair,
+  type SceneAndMetadata,
+  type SceneType,
+  type SceneVideos,
+  type WebcamPosition,
 } from "../config/scenes";
 import { TRANSITION_DURATION } from "../config/transitions";
 import {
@@ -88,10 +88,22 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         }
 
         videoIndex += 1;
-
+        const PLACE_HOLDER_DURATION_IN_FRAMES = 60;
         const p = pairs[videoIndex];
         if (!p) {
-          return null;
+          return {
+            type: "other-scene",
+            scene: {
+              ...scene,
+              type: "title",
+              title: "No clip",
+              subtitle: `No more clips in public/${compositionId}`,
+              durationInFrames: PLACE_HOLDER_DURATION_IN_FRAMES,
+            },
+            durationInFrames: PLACE_HOLDER_DURATION_IN_FRAMES,
+            from: 0,
+            chapter: null,
+          };
         }
 
         const {
@@ -101,7 +113,10 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         } = await getVideoMetadata(p.webcam.src);
 
         const dim = p.display ? await getVideoMetadata(p.display.src) : null;
-        const durationInFrames = Math.round(durationInSeconds * FPS);
+        const durationInFrames =
+          durationInSeconds === Infinity
+            ? PLACE_HOLDER_DURATION_IN_FRAMES
+            : Math.round(durationInSeconds * FPS);
 
         const trimStart = scene?.trimStart ?? 0;
 
