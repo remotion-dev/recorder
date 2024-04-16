@@ -6,7 +6,7 @@ import {
 import {
   fontFamily as monospaceFont,
   loadFont as loadMonospace,
-} from "@remotion/google-fonts/RobotoCondensed";
+} from "@remotion/google-fonts/RobotoMono";
 
 const regular = loadRegular();
 const monospace = loadMonospace();
