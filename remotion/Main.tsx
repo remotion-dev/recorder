@@ -38,11 +38,11 @@ export const Main: React.FC<MainProps> = ({
   }, [scenes.length, scenesAndMetadata.length]);
 
   if (displayNoVideosIndicator) {
-    return <NoDataScene theme={theme} type="no-videos" />;
+    return <NoDataScene theme={theme} />;
   }
 
   if (displayNoSceneDefinedIndicator) {
-    return <NoDataScene type="no-scene" theme={theme} />;
+    return <NoDataScene theme={theme} />;
   }
 
   const lastSceneIndex = scenesAndMetadata[
@@ -79,7 +79,7 @@ export const Main: React.FC<MainProps> = ({
           from={lastSceneFrame}
           durationInFrames={120}
         >
-          <NoDataScene theme={theme} type="no-more-videos" />
+          <NoDataScene theme={theme} />
         </Sequence>
       ) : null}
       <AudioTrack scenesAndMetadata={scenesAndMetadata} />

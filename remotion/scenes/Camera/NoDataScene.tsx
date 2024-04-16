@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { AbsoluteFill, useVideoConfig } from "remotion";
+import { AbsoluteFill } from "remotion";
 import {
   MONOSPACE_FONT_FAMILY,
   REGULAR_FONT_FAMILY,
@@ -19,11 +19,8 @@ const textWrapper = {
 };
 
 export const NoDataScene: React.FC<{
-  type: "no-videos" | "no-more-videos" | "no-scene";
   theme: "light" | "dark";
-}> = ({ type, theme }) => {
-  const { id } = useVideoConfig();
-
+}> = ({ theme }) => {
   const spanStyle: React.CSSProperties = useMemo(() => {
     return {
       color: COLORS[theme].ACCENT_COLOR,
@@ -31,49 +28,12 @@ export const NoDataScene: React.FC<{
     };
   }, [theme]);
 
-  if (type === "no-scene") {
-    return (
-      <AbsoluteFill style={{ backgroundColor: COLORS[theme].BACKGROUND }}>
-        <div style={textWrapper}>
-          <div style={{ padding: 100 }}>
-            No <span style={spanStyle}>scene</span> defined yet?
-            <br /> Add a new one in the right side bar.
-          </div>
-        </div>
-      </AbsoluteFill>
-    );
-  }
-
-  if (type === "no-videos") {
-    return (
-      <AbsoluteFill style={{ backgroundColor: COLORS[theme].BACKGROUND }}>
-        <div style={textWrapper}>
-          <div style={{ padding: 100 }}>
-            No video clips found in the <span style={spanStyle}>{id}</span>{" "}
-            folder. <br />
-            Record more video clips in the{" "}
-            <a href="http://localhost:4000" target="_blank" style={spanStyle}>
-              recorder
-            </a>{" "}
-            to add them as a <span style={spanStyle}>videoscene</span>.
-          </div>
-        </div>
-      </AbsoluteFill>
-    );
-  }
-
   return (
     <AbsoluteFill style={{ backgroundColor: COLORS[theme].BACKGROUND }}>
       <div style={textWrapper}>
         <div style={{ padding: 100 }}>
-          No more videos clips in the <span style={spanStyle}>{id}</span>{" "}
-          folder.
-          <br /> Record a new clip in the{" "}
-          <a href="http://localhost:4000" target="_blank" style={spanStyle}>
-            recorder
-          </a>{" "}
-          to use it as a <span style={spanStyle}>videoscene</span>, or select
-          another scene type for this scene.
+          No <span style={spanStyle}>scene</span> defined yet?
+          <br /> Add a new one in the right side bar.
         </div>
       </div>
     </AbsoluteFill>
