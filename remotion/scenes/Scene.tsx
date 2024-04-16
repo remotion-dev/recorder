@@ -7,6 +7,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import type { Platform } from "../../config/endcard";
 import type { CanvasLayout } from "../../config/layout";
 import type {
   SceneAndMetadata,
@@ -26,7 +27,6 @@ import { EndCard } from "./EndCard";
 import { RecorderScene } from "./Recorder";
 import { TableOfContents } from "./TableOfContents";
 import { Title } from "./Title/Title";
-import { TitleCard } from "./TitleCard/TitleCard";
 
 type Props = {
   sceneAndMetadata: SceneAndMetadata;
@@ -36,6 +36,7 @@ type Props = {
   canvasLayout: CanvasLayout;
   chapters: ChapterType[];
   theme: Theme;
+  platform: Platform;
 };
 
 const InnerScene: React.FC<
@@ -52,6 +53,7 @@ const InnerScene: React.FC<
   theme,
   enter,
   exit,
+  platform,
 }) => {
   if (sceneAndMetadata.scene.type === "title") {
     return (
@@ -59,16 +61,6 @@ const InnerScene: React.FC<
         subtitle={sceneAndMetadata.scene.subtitle}
         title={sceneAndMetadata.scene.title}
         theme={theme}
-      />
-    );
-  }
-
-  if (sceneAndMetadata.scene.type === "titlecard") {
-    return (
-      <TitleCard
-        title={sceneAndMetadata.scene.title}
-        image={sceneAndMetadata.scene.image}
-        youTubePlug={sceneAndMetadata.scene.youTubePlug}
       />
     );
   }
@@ -81,7 +73,7 @@ const InnerScene: React.FC<
     return (
       <EndCard
         theme={theme}
-        platform={sceneAndMetadata.scene.platform}
+        platform={platform}
         canvasLayout={canvasLayout}
         channel={sceneAndMetadata.scene.channel}
         links={sceneAndMetadata.scene.links}
@@ -185,6 +177,7 @@ export const Scene: React.FC<Props> = ({
   canvasLayout,
   chapters,
   theme,
+  platform,
 }) => {
   const chapter =
     sceneAndMetadata.scene.type === "videoscene"
@@ -204,6 +197,7 @@ export const Scene: React.FC<Props> = ({
         previousScene={previousScene}
         sceneAndMetadata={sceneAndMetadata}
         theme={theme}
+        platform={platform}
       />
     </Sequence>
   );
