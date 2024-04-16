@@ -27,7 +27,17 @@ export const Main: React.FC<MainProps> = ({
     return makeChapters({ scenes: scenesAndMetadata });
   }, [scenesAndMetadata]);
 
-  if (scenesAndMetadata.length === 0) {
+  const displayNoSceneDefinedIndicator = useMemo(() => {
+    return scenesAndMetadata.length === 0 && scenes.length === 0;
+  }, [scenes.length, scenesAndMetadata.length]);
+
+  const displayNoVideosIndicator = useMemo(() => {
+    return (
+      scenesAndMetadata.length === 0 && scenes.length > scenesAndMetadata.length
+    );
+  }, [scenes.length, scenesAndMetadata.length]);
+
+  if (displayNoVideosIndicator) {
     return (
       <AbsoluteFill
         style={{
@@ -39,11 +49,16 @@ export const Main: React.FC<MainProps> = ({
     );
   }
 
-  const lastRealScene = scenesAndMetadata[
+  if (displayNoSceneDefinedIndicator) {
+    return <NoDataScene type="no-scene" theme={theme} />;
+  }
+
+  const lastSceneIndex = scenesAndMetadata[
     scenesAndMetadata.length - 1
   ] as SceneAndMetadata;
   const lastSceneFrame =
-    lastRealScene.from + lastRealScene.durationInFrames - 1;
+    lastSceneIndex.from + lastSceneIndex.durationInFrames - 1;
+
   return (
     <AbsoluteFill
       style={{

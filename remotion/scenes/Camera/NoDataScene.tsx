@@ -19,7 +19,7 @@ const textWrapper = {
 };
 
 export const NoDataScene: React.FC<{
-  type: "no-videos" | "no-more-videos";
+  type: "no-videos" | "no-more-videos" | "no-scene";
   theme: "light" | "dark";
 }> = ({ type, theme }) => {
   const { id } = useVideoConfig();
@@ -30,6 +30,19 @@ export const NoDataScene: React.FC<{
       fontFamily: MONOSPACE_FONT_FAMILY,
     };
   }, [theme]);
+
+  if (type === "no-scene") {
+    return (
+      <AbsoluteFill style={{ backgroundColor: "white" }}>
+        <div style={textWrapper}>
+          <div style={{ padding: 100 }}>
+            No <span style={spanStyle}>scene</span> defined yet?
+            <br /> Add a new one in the right side bar.
+          </div>
+        </div>
+      </AbsoluteFill>
+    );
+  }
 
   if (type === "no-videos") {
     return (
@@ -42,7 +55,7 @@ export const NoDataScene: React.FC<{
             <a href="http://localhost:4000" target="_blank" style={spanStyle}>
               recorder
             </a>{" "}
-            to access them here.
+            to add them as a <span style={spanStyle}>videoscene</span>.
           </div>
         </div>
       </AbsoluteFill>
@@ -55,10 +68,12 @@ export const NoDataScene: React.FC<{
         <div style={{ padding: 100 }}>
           No more videos clips in the <span style={spanStyle}>{id}</span>{" "}
           folder.
-          <br /> Record more in the{" "}
+          <br /> Record a new clip in the{" "}
           <a href="http://localhost:4000" target="_blank" style={spanStyle}>
-            recorder.
-          </a>
+            recorder
+          </a>{" "}
+          to use it as a <span style={spanStyle}>videoscene</span>, or select
+          another scene type for this scene.
         </div>
       </div>
     </AbsoluteFill>
