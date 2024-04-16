@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import type { Platform } from "../config/endcard";
 import { AbsoluteFill, Sequence } from "remotion";
 import type { CanvasLayout } from "../config/layout";
 import type { SceneAndMetadata, SceneType } from "../config/scenes";
@@ -15,12 +16,14 @@ export type MainProps = {
   scenes: SceneType[];
   scenesAndMetadata: SceneAndMetadata[];
   theme: Theme;
+  platform: Platform;
 };
 
 export const Main: React.FC<MainProps> = ({
   scenesAndMetadata,
   canvasLayout,
   theme,
+  platform,
   scenes,
 }) => {
   const chapters = useMemo(() => {
@@ -69,6 +72,7 @@ export const Main: React.FC<MainProps> = ({
             canvasLayout={canvasLayout}
             sceneAndMetadata={sceneAndMetadata}
             theme={theme}
+            platform={platform}
           />
         );
       })}
