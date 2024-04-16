@@ -20,7 +20,7 @@ export const getShouldTransitionOut = ({
     sceneAndMetadata.type === "video-scene" && nextScene.type === "video-scene";
 
   if (!areBothVideoScenes) {
-    return false;
+    return true;
   }
 
   const hasSameWebcamPosition =
