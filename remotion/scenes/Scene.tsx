@@ -27,7 +27,6 @@ import { EndCard } from "./EndCard";
 import { RecorderScene } from "./Recorder";
 import { TableOfContents } from "./TableOfContents";
 import { Title } from "./Title/Title";
-import { TitleCard } from "./TitleCard/TitleCard";
 
 type Props = {
   sceneAndMetadata: SceneAndMetadata;
@@ -62,16 +61,6 @@ const InnerScene: React.FC<
         subtitle={sceneAndMetadata.scene.subtitle}
         title={sceneAndMetadata.scene.title}
         theme={theme}
-      />
-    );
-  }
-
-  if (sceneAndMetadata.scene.type === "titlecard") {
-    return (
-      <TitleCard
-        title={sceneAndMetadata.scene.title}
-        image={sceneAndMetadata.scene.image}
-        youTubePlug={sceneAndMetadata.scene.youTubePlug}
       />
     );
   }
