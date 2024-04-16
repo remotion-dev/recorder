@@ -6,3 +6,8 @@ export type Layout = {
   borderRadius: number;
   opacity: number;
 };
+
+export type LayoutAndFade = {
+  layout: Layout;
+  shouldFadeRecording: boolean;
+};

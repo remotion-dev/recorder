@@ -7,7 +7,7 @@ import { Words } from "../Words";
 
 export const LINE_HEIGHT = 1.2;
 
-export const BoxedSubtitles: React.FC<{
+export const SquareSubtitles: React.FC<{
   segment: Segment;
   startFrame: number;
   theme: Theme;
@@ -24,7 +24,7 @@ export const BoxedSubtitles: React.FC<{
   fontSize,
   lines,
 }) => {
-  const padding = getHorizontalPaddingForSubtitles("boxed", canvasLayout);
+  const padding = getHorizontalPaddingForSubtitles("square", canvasLayout);
 
   return (
     <div

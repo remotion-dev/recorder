@@ -41,8 +41,8 @@ type Props = {
 
 const InnerScene: React.FC<
   Props & {
-    enter: number;
-    exit: number;
+    enterProgress: number;
+    exitProgress: number;
   }
 > = ({
   canvasLayout,
@@ -51,8 +51,8 @@ const InnerScene: React.FC<
   previousScene,
   sceneAndMetadata,
   theme,
-  enter,
-  exit,
+  enterProgress,
+  exitProgress,
   platform,
 }) => {
   if (sceneAndMetadata.scene.type === "title") {
@@ -87,9 +87,9 @@ const InnerScene: React.FC<
 
   return (
     <CameraScene
-      enter={enter}
+      enterProgress={enterProgress}
       canvasLayout={canvasLayout}
-      exit={exit}
+      exitProgress={exitProgress}
       nextScene={nextScene}
       previousScene={previousScene}
       sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
@@ -137,12 +137,12 @@ const SceneWithTransition: React.FC<Props> = (props) => {
   const startStyle = getSceneEnter({
     currentScene: props.sceneAndMetadata,
     previousScene: props.previousScene,
-    width,
+    canvasWidth: width,
   });
   const endStyle = getSceneExit({
     currentScene: props.sceneAndMetadata,
     nextScene: props.nextScene,
-    width,
+    canvasWidth: width,
   });
 
   const style = interpolateStyles(
@@ -159,7 +159,7 @@ const SceneWithTransition: React.FC<Props> = (props) => {
 
   return (
     <AbsoluteFill style={style}>
-      <InnerScene {...props} enter={enter} exit={exit} />
+      <InnerScene {...props} enterProgress={enter} exitProgress={exit} />
       <SoundEffects
         previousScene={props.previousScene}
         sceneAndMetadata={props.sceneAndMetadata}
