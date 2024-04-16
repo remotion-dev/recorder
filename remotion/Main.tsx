@@ -38,15 +38,7 @@ export const Main: React.FC<MainProps> = ({
   }, [scenes.length, scenesAndMetadata.length]);
 
   if (displayNoVideosIndicator) {
-    return (
-      <AbsoluteFill
-        style={{
-          background: COLORS[theme].BACKGROUND,
-        }}
-      >
-        <NoDataScene theme={theme} type="no-videos" />
-      </AbsoluteFill>
-    );
+    return <NoDataScene theme={theme} type="no-videos" />;
   }
 
   if (displayNoSceneDefinedIndicator) {
