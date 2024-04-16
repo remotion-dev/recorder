@@ -11,7 +11,10 @@ import {
 } from "remotion";
 import type { Brand, LinkType, Platform } from "../../../config/endcard";
 import { avatars, channels } from "../../../config/endcard";
-import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
+import {
+  ENDCARD_FONT_FAMILY,
+  ENDCARD_FONT_WEIGHT,
+} from "../../../config/fonts";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
 import { TRANSITION_DURATION } from "../../../config/transitions";
@@ -91,8 +94,8 @@ const IconRow: React.FC<{
 }> = ({ type, label, opacity, theme }) => {
   const labelStyle: React.CSSProperties = {
     fontSize: 50,
-    fontFamily: TITLE_FONT_FAMILY,
-    fontWeight: TITLE_FONT_WEIGHT,
+    fontFamily: ENDCARD_FONT_FAMILY,
+    fontWeight: ENDCARD_FONT_WEIGHT,
     marginLeft: 20,
     color: COLORS[theme].ENDCARD_TEXT_COLOR,
   };
