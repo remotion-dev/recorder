@@ -24,8 +24,8 @@ export const createNewFolderRef = createRef<{
 }>();
 
 export const NewFolderDialog: React.FC<{
-  readonly setSelectedFolder: React.Dispatch<SetStateAction<string | null>>;
-  readonly refreshFoldersList: () => Promise<void>;
+  setSelectedFolder: React.Dispatch<SetStateAction<string | null>>;
+  refreshFoldersList: () => Promise<void>;
 }> = ({ refreshFoldersList, setSelectedFolder }) => {
   const [newProject, setNewProject] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);

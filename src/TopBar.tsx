@@ -64,6 +64,10 @@ export const TopBar: React.FC<{
       return;
     }
 
+    if (document.getElementById("remotion_video_name")) {
+      return;
+    }
+
     if (recording) {
       onStop();
     } else {
