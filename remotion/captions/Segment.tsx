@@ -2,7 +2,6 @@ import React from "react";
 import { Sequence, useVideoConfig } from "remotion";
 import type { Word } from "../../config/autocorrect";
 import type { CanvasLayout, Dimensions } from "../../config/layout";
-import type {} from "../../config/scenes";
 import type { Theme } from "../../config/themes";
 import { FadeSentence } from "./FadeSentence";
 import type { Segment } from "./types";
