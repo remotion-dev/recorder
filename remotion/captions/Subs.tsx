@@ -33,9 +33,6 @@ import {
   CaptionSentence,
   getBorderWidthForSubtitles,
   getSubsAlign,
-  getSubtitlesFontSize,
-  getSubtitlesLines,
-  getSubtitlesType,
 } from "./Segment";
 import {
   TransitionFromPreviousSubtitles,
@@ -109,21 +106,17 @@ export const Subs: React.FC<{
     }
   }, [changeStatus, file.src, handle]);
 
-  const subtitleType = getSubtitlesType({
-    canvasLayout,
-    displayLayout: scene.layout.displayLayout,
-  });
+  const { subtitleType, subtitleFontSize } = scene.layout;
 
   const shouldTransitionToNext = shouldInlineTransitionSubtitles({
-    canvasLayout,
     currentScene: scene,
     nextScene,
   });
   const shouldTransitionFromPrevious = shouldInlineTransitionSubtitles({
-    canvasLayout,
     currentScene: scene,
     nextScene: previousScene,
   });
+
   const animatedSubLayout = getAnimatedSubtitleLayout({
     enterProgress: enter,
     exitProgress: exit,
@@ -137,36 +130,26 @@ export const Subs: React.FC<{
     shouldTransitionToNext,
   });
 
-  const boxHeight = scene.layout.subLayout.height;
-
   const postprocessed = useMemo(() => {
     if (!whisperOutput) {
       return null;
     }
 
-    const fontSize = getSubtitlesFontSize(
-      subtitleType,
-      scene.layout.displayLayout,
-    );
     return postprocessSubtitles({
       subTypes: whisperOutput,
-      boxWidth: animatedSubLayout.width,
-      maxLines: getSubtitlesLines({
-        subtitleType,
-        boxHeight,
-        fontSize,
-      }),
-      fontSize,
+      boxWidth: scene.layout.subLayout.width,
+      maxLines: scene.layout.subtitleLines,
+      fontSize: scene.layout.subtitleFontSize,
       canvasLayout,
       subtitleType,
     });
   }, [
     whisperOutput,
-    subtitleType,
-    scene.layout.displayLayout,
-    animatedSubLayout.width,
-    boxHeight,
+    scene.layout.subLayout.width,
+    scene.layout.subtitleLines,
+    scene.layout.subtitleFontSize,
     canvasLayout,
+    subtitleType,
   ]);
 
   const onOpenSubEditor = useCallback((word: Word) => {
@@ -215,7 +198,7 @@ export const Subs: React.FC<{
   }
 
   const outer: React.CSSProperties = {
-    fontSize: getSubtitlesFontSize(subtitleType, scene.layout.displayLayout),
+    fontSize: subtitleFontSize,
     display: "flex",
     lineHeight: LINE_HEIGHT,
     border: `${getBorderWidthForSubtitles(subtitleType)}px solid ${
@@ -264,15 +247,14 @@ export const Subs: React.FC<{
                 canvasLayout={canvasLayout}
                 subtitleType={subtitleType}
                 theme={theme}
-                displayLayout={scene.layout.displayLayout}
+                fontSize={scene.layout.subtitleFontSize}
+                lines={scene.layout.subtitleLines}
                 onOpenSubEditor={onOpenSubEditor}
-                captionBoxHeight={boxHeight}
               />
             );
           })}
         </TransitionToNextSubtitles>
       </TransitionFromPreviousSubtitles>
-
       {whisperOutput && subEditorOpen ? (
         <SubsEditor
           initialWord={subEditorOpen}

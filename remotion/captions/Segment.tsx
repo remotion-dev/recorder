@@ -2,9 +2,7 @@ import React from "react";
 import { Sequence, useVideoConfig } from "remotion";
 import type { Word } from "../../config/autocorrect";
 import type { CanvasLayout, Dimensions } from "../../config/layout";
-import type {} from "../../config/scenes";
 import type { Theme } from "../../config/themes";
-import type { Layout } from "../layout/layout-types";
 import { FadeSentence } from "./FadeSentence";
 import type { Segment } from "./types";
 import { BelowVideoSubtitles } from "./Variants/BelowVideoSubtitles";
@@ -80,7 +78,11 @@ export const getSubtitlesLines = ({
   fontSize: number;
 }) => {
   if (subtitleType === "boxed") {
-    const nrOfLines = Math.floor(boxHeight / (fontSize * LINE_HEIGHT));
+    const boxPadding = 50;
+
+    const nrOfLines = Math.floor(
+      (boxHeight - boxPadding) / (fontSize * LINE_HEIGHT),
+    );
     return nrOfLines;
   }
 
@@ -104,7 +106,7 @@ export const getSubsAlign = ({
 
   if (canvasLayout === "landscape") {
     return {
-      maxLines: 2,
+      maxLines: 1,
       textAlign: "center",
       justifyContent: "center",
       alignItems: "center",
@@ -131,21 +133,21 @@ export const CaptionSentence: React.FC<{
   trimStart: number;
   canvasLayout: CanvasLayout;
   subtitleType: SubtitleType;
-  displayLayout: Layout | null;
   theme: Theme;
-  captionBoxHeight: number;
   onOpenSubEditor: (word: Word) => void;
+  fontSize: number;
+  lines: number;
 }> = ({
   segment,
   trimStart,
   canvasLayout,
   subtitleType,
-  displayLayout,
   isFirst,
   isLast,
   theme,
-  captionBoxHeight,
   onOpenSubEditor,
+  fontSize,
+  lines,
 }) => {
   const { fps } = useVideoConfig();
   const normalStartFrame = (getStartOfSegment(segment) / 1000) * fps;
@@ -172,22 +174,22 @@ export const CaptionSentence: React.FC<{
         {subtitleType === "boxed" ? (
           <BoxedSubtitles
             canvasLayout={canvasLayout}
-            displayLayout={displayLayout}
             onOpenSubEditor={onOpenSubEditor}
             segment={segment}
             startFrame={startFrame}
             theme={theme}
-            captionBoxHeight={captionBoxHeight}
+            fontSize={fontSize}
+            lines={lines}
           />
         ) : subtitleType === "below-video" ? (
           <BelowVideoSubtitles
             canvasLayout={canvasLayout}
-            displayLayout={displayLayout}
             onOpenSubEditor={onOpenSubEditor}
             segment={segment}
             startFrame={startFrame}
             theme={theme}
-            captionBoxHeight={captionBoxHeight}
+            fontSize={fontSize}
+            lines={lines}
           />
         ) : (
           <OverlayedCenterSubtitles

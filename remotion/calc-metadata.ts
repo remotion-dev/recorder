@@ -11,6 +11,7 @@ import {
 import { waitForFonts } from "../config/fonts";
 import { FPS } from "../config/fps";
 import type {
+  FinalWebcamPosition,
   Pair,
   SceneAndMetadata,
   SceneType,
@@ -115,8 +116,11 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           },
         };
 
-        let { webcamPosition } = scene;
+        // eslint-disable-next-line prefer-destructuring
+        let webcamPosition: FinalWebcamPosition | "previous" =
+          scene.webcamPosition;
         let idx = i;
+
         while (webcamPosition === "previous" && idx >= 0) {
           const prevScene = props.scenes[idx] as SceneType;
           if (prevScene.type === "videoscene") {
@@ -128,6 +132,10 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           }
 
           idx -= 1;
+        }
+
+        if (props.canvasLayout === "landscape" && !p.display) {
+          webcamPosition = "center";
         }
 
         return {

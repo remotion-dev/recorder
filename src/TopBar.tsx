@@ -1,10 +1,15 @@
-import type { SetStateAction } from "react";
-import React, { useCallback, useEffect, useState } from "react";
-import { ProjectDialog } from "./components/ProjectDialog";
-import { SelectedProject } from "./components/SelectProject";
-import { Button } from "./components/ui/button";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { NewFolderDialog } from "./components/NewFolderDialog";
+import { SelectedFolder } from "./components/SelectedFolder";
 import type { CurrentBlobs } from "./components/UseThisTake";
 import { UseThisTake } from "./components/UseThisTake";
+import {
+  fetchProjectFolders,
+  loadSelectedFolder,
+  persistSelectedFolder,
+} from "./get-projects";
+import type { MediaSources } from "./RecordButton";
+import { RecordButton } from "./RecordButton";
 
 const topBarContainer: React.CSSProperties = {
   display: "flex",
@@ -13,60 +18,56 @@ const topBarContainer: React.CSSProperties = {
   alignItems: "center",
 };
 
-const formatTime = (ms: number) => {
-  const seconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-
-  const formattedSeconds = seconds % 60;
-  const formattedMinutes = minutes % 60;
-
-  const timeArray = [];
-
-  if (hours > 0) {
-    timeArray.push(hours.toString().padStart(2, "0"));
-  }
-
-  timeArray.push(formattedMinutes.toString().padStart(2, "0"));
-  timeArray.push(formattedSeconds.toString().padStart(2, "0"));
-
-  return timeArray.join(":");
-};
-
 export const TopBar: React.FC<{
   readonly start: () => void;
   readonly stop: () => void;
   readonly discardVideos: () => void;
   readonly recording: false | number;
-  readonly projects: string[] | null;
-  readonly disabledByParent: boolean;
-  readonly selectedProject: string | null;
-  readonly setSelectedProject: React.Dispatch<SetStateAction<string | null>>;
   readonly setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
-  readonly refreshProjectList: () => Promise<void>;
-  currentBlobs: CurrentBlobs;
+  readonly mediaSources: MediaSources;
+  readonly currentBlobs: CurrentBlobs;
 }> = ({
   start,
   stop,
   discardVideos,
-  projects,
   recording,
-  disabledByParent,
-  selectedProject,
-  setSelectedProject,
-  refreshProjectList,
   currentBlobs,
   setCurrentBlobs,
+  mediaSources,
 }) => {
+  const [folders, setFolders] = useState<string[] | null>(null);
+
   const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const disabled = disabledByParent || recording !== false || showHandleVideos;
+  const [preferredSelectedFolder, setSelectedFolder] = useState<string | null>(
+    loadSelectedFolder(),
+  );
+  const selectedFolder = useMemo(() => {
+    return preferredSelectedFolder ?? folders?.[0] ?? null;
+  }, [folders, preferredSelectedFolder]);
+
+  const refreshFoldersList = useCallback(async () => {
+    const json = await fetchProjectFolders();
+    setFolders(json.folders);
+    if (selectedFolder && !json.folders.includes(selectedFolder)) {
+      setSelectedFolder(json.folders[0] ?? "");
+    }
+  }, [selectedFolder]);
+
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setIsVisible((prev) => !prev);
-    }, 800);
-    return () => clearInterval(intervalId);
-  }, []);
+    if (!window.remotionServerEnabled) {
+      return;
+    }
+
+    refreshFoldersList();
+  }, [refreshFoldersList]);
+
+  useEffect(() => {
+    if (!window.remotionServerEnabled) {
+      return;
+    }
+
+    persistSelectedFolder(selectedFolder ?? "");
+  }, [selectedFolder]);
 
   const handleDiscardTake = useCallback(() => {
     discardVideos();
@@ -74,99 +75,43 @@ export const TopBar: React.FC<{
     start();
   }, [discardVideos, start]);
 
-  const recordCircle = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="10px"
-      viewBox="0 0 512 512"
-      style={{ opacity: disabledByParent ? 0.4 : 1 }}
-    >
-      <path fill="red" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" />
-    </svg>
-  );
-
-  const blinkingCircle = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="10px"
-      viewBox="0 0 512 512"
-      style={{ visibility: isVisible ? "visible" : "hidden" }}
-    >
-      <path fill="red" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" />
-    </svg>
-  );
+  const recordingDisabled = useMemo(() => {
+    return (
+      mediaSources.webcam === null ||
+      mediaSources.webcam.getAudioTracks().length === 0
+    );
+  }, [mediaSources.webcam]);
 
   return (
     <div style={topBarContainer}>
-      {recording ? (
-        <>
-          <Button
-            variant={"outline"}
-            type="button"
-            disabled={!recording}
-            onClick={() => {
-              stop();
-              setShowHandleVideos(true);
-            }}
-            style={{ display: "flex", alignItems: "center", gap: 10 }}
-            title="Press R to stop recording"
-          >
-            Stop recording
-          </Button>
-          {blinkingCircle}
-          {formatTime(Date.now() - recording)}
-        </>
-      ) : showHandleVideos ? null : (
-        <div
-          title={
-            disabled
-              ? "A webcam has to be selected to start the recording"
-              : undefined
-          }
-        >
-          <Button
-            variant={"outline"}
-            type="button"
-            disabled={disabled}
-            onClick={start}
-            style={{ display: "flex", alignItems: "center", gap: 10 }}
-            title="Press R to start recording"
-          >
-            {recordCircle}
-            Start recording
-          </Button>
-        </div>
-      )}
+      <RecordButton
+        stop={stop}
+        recording={recording}
+        setShowHandleVideos={setShowHandleVideos}
+        showHandleVideos={showHandleVideos}
+        start={start}
+        recordingDisabled={recordingDisabled}
+        onDiscard={handleDiscardTake}
+      />
       {showHandleVideos ? (
-        <>
-          <Button
-            variant={"destructive"}
-            type="button"
-            onClick={handleDiscardTake}
-            title="Press R to start recording"
-          >
-            Retake
-          </Button>
-          <UseThisTake
-            selectedProject={selectedProject}
-            projects={projects}
-            currentBlobs={currentBlobs}
-            setCurrentBlobs={setCurrentBlobs}
-            setShowHandleVideos={setShowHandleVideos}
-          />
-        </>
+        <UseThisTake
+          selectedFolder={selectedFolder}
+          currentBlobs={currentBlobs}
+          setCurrentBlobs={setCurrentBlobs}
+          setShowHandleVideos={setShowHandleVideos}
+        />
       ) : null}
       <div style={{ flex: 1 }} />
-      {projects ? (
+      {folders ? (
         <>
-          <SelectedProject
-            projects={projects}
-            selectedProject={selectedProject}
-            setSelectedProject={setSelectedProject}
+          <SelectedFolder
+            folders={folders}
+            selectedFolder={selectedFolder}
+            setSelectedFolder={setSelectedFolder}
           />
-          <ProjectDialog
-            refreshProjectList={refreshProjectList}
-            setSelectedProject={setSelectedProject}
+          <NewFolderDialog
+            refreshFoldersList={refreshFoldersList}
+            setSelectedFolder={setSelectedFolder}
           />
         </>
       ) : null}

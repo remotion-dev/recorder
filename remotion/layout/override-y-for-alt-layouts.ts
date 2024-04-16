@@ -1,6 +1,6 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { getSafeSpace } from "../../config/layout";
-import type { WebcamPosition } from "../../config/scenes";
+import type { FinalWebcamPosition } from "../../config/scenes";
 
 export const overrideYForAltLayouts = ({
   y,
@@ -10,7 +10,7 @@ export const overrideYForAltLayouts = ({
   newHeight,
 }: {
   y: number;
-  webcamPosition: WebcamPosition;
+  webcamPosition: FinalWebcamPosition;
   canvasLayout: CanvasLayout;
   canvasSize: Dimensions;
   newHeight: number;
