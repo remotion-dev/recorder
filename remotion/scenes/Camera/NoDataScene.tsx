@@ -33,7 +33,7 @@ export const NoDataScene: React.FC<{
 
   if (type === "no-scene") {
     return (
-      <AbsoluteFill style={{ backgroundColor: "white" }}>
+      <AbsoluteFill style={{ backgroundColor: COLORS[theme].BACKGROUND }}>
         <div style={textWrapper}>
           <div style={{ padding: 100 }}>
             No <span style={spanStyle}>scene</span> defined yet?
@@ -46,7 +46,7 @@ export const NoDataScene: React.FC<{
 
   if (type === "no-videos") {
     return (
-      <AbsoluteFill style={{ backgroundColor: "white" }}>
+      <AbsoluteFill style={{ backgroundColor: COLORS[theme].BACKGROUND }}>
         <div style={textWrapper}>
           <div style={{ padding: 100 }}>
             No video clips found in the <span style={spanStyle}>{id}</span>{" "}
@@ -63,7 +63,7 @@ export const NoDataScene: React.FC<{
   }
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "white" }}>
+    <AbsoluteFill style={{ backgroundColor: COLORS[theme].BACKGROUND }}>
       <div style={textWrapper}>
         <div style={{ padding: 100 }}>
           No more videos clips in the <span style={spanStyle}>{id}</span>{" "}
