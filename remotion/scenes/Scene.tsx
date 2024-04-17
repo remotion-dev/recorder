@@ -14,7 +14,7 @@ import type {
   VideoSceneAndMetadata,
 } from "../../config/scenes";
 import type { Theme } from "../../config/themes";
-import { TRANSITION_DURATION } from "../../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 import { getSceneEnter, getSceneExit } from "../animations/scene-transitions";
 import {
   getShouldTransitionIn,
@@ -95,6 +95,10 @@ const InnerScene: React.FC<
       sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
       theme={theme}
       chapters={chapters}
+      willTransitionToNextScene={getShouldTransitionOut({
+        nextScene,
+        sceneAndMetadata,
+      })}
     />
   );
 };
@@ -118,7 +122,7 @@ const SceneWithTransition: React.FC<Props> = (props) => {
         config: {
           damping: 200,
         },
-        durationInFrames: TRANSITION_DURATION,
+        durationInFrames: SCENE_TRANSITION_DURATION,
       })
     : 1;
 
@@ -129,8 +133,8 @@ const SceneWithTransition: React.FC<Props> = (props) => {
         config: {
           damping: 200,
         },
-        durationInFrames: TRANSITION_DURATION,
-        delay: durationInFrames - TRANSITION_DURATION,
+        durationInFrames: SCENE_TRANSITION_DURATION,
+        delay: durationInFrames - SCENE_TRANSITION_DURATION,
       })
     : 0;
 

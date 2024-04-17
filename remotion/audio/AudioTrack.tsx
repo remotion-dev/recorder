@@ -7,7 +7,7 @@ import {
   getAudioSource,
   REGULAR_VOLUME,
 } from "../../config/sounds";
-import { TRANSITION_DURATION } from "../../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 import { getShouldTransitionOut } from "../animations/transitions";
 
 type LoudPart = [number, number];
@@ -100,7 +100,7 @@ export const AudioTrack: React.FC<{
       nextScene: scenesAndMetadata[i + 1] ?? null,
     });
     if (isTransitioningOut) {
-      addedUpDurations -= TRANSITION_DURATION;
+      addedUpDurations -= SCENE_TRANSITION_DURATION;
     }
 
     const isLoud = scene.type !== "video-scene";
@@ -113,7 +113,7 @@ export const AudioTrack: React.FC<{
       lastAudioClip.duration += metadataForScene.durationInFrames;
 
       if (isTransitioningOut) {
-        lastAudioClip.duration -= TRANSITION_DURATION;
+        lastAudioClip.duration -= SCENE_TRANSITION_DURATION;
       }
 
       if (isLoud) {

@@ -92,6 +92,8 @@ const cutWords = ({
       fontFamily: word.monospace ? MONOSPACE_FONT_FAMILY : REGULAR_FONT_FAMILY,
       fontWeight: word.monospace ? MONOSPACE_FONT_WEIGHT : REGULAR_FONT_WEIGHT,
       fontSize,
+      // TODO: Fixed in Remotion 4.0.142, it can be set to true
+      validateFontIsLoaded: word.text.trim() !== "",
     });
 
     if (exceedsBox) {

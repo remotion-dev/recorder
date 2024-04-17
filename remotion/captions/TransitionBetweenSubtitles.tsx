@@ -1,6 +1,6 @@
 import React from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import { TRANSITION_DURATION } from "../../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 import type { SubtitleType } from "./Segment";
 
 export const TransitionFromPreviousSubtitles: React.FC<{
@@ -18,7 +18,7 @@ export const TransitionFromPreviousSubtitles: React.FC<{
 
   if (subtitleType === "below-video") {
     return (
-      <div style={{ opacity: frame >= TRANSITION_DURATION / 2 ? 1 : 0 }}>
+      <div style={{ opacity: frame >= SCENE_TRANSITION_DURATION / 2 ? 1 : 0 }}>
         {children}
       </div>
     );
@@ -31,7 +31,7 @@ export const TransitionFromPreviousSubtitles: React.FC<{
           // TODO: Differentiate between layout change and not
           opacity: interpolate(
             frame,
-            [TRANSITION_DURATION, TRANSITION_DURATION + 5],
+            [SCENE_TRANSITION_DURATION, SCENE_TRANSITION_DURATION + 5],
             [0, 1],
             {
               extrapolateLeft: "clamp",
@@ -67,7 +67,8 @@ export const TransitionToNextSubtitles: React.FC<{
     return (
       <div
         style={{
-          opacity: frame < durationInFrames - TRANSITION_DURATION / 2 ? 1 : 0,
+          opacity:
+            frame < durationInFrames - SCENE_TRANSITION_DURATION / 2 ? 1 : 0,
         }}
       >
         {children}
@@ -82,8 +83,8 @@ export const TransitionToNextSubtitles: React.FC<{
           opacity: interpolate(
             frame,
             [
-              durationInFrames - TRANSITION_DURATION - 5,
-              durationInFrames - TRANSITION_DURATION,
+              durationInFrames - SCENE_TRANSITION_DURATION - 5,
+              durationInFrames - SCENE_TRANSITION_DURATION,
             ],
             [1, 0],
             {
