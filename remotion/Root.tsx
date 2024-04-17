@@ -15,6 +15,7 @@ export const Root = () => {
           canvasLayout: "square" as const,
           scenes: [],
           scenesAndMetadata: [],
+          platform: "youtube",
         }}
         calculateMetadata={calcMetadata}
       />
@@ -25,8 +26,31 @@ export const Root = () => {
         defaultProps={{
           theme: "light" as const,
           canvasLayout: "square" as const,
+          platform: "youtube",
           scenes: [],
           scenesAndMetadata: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
+      <Composition
+        component={Main}
+        id="test-folder"
+        schema={videoConf}
+        defaultProps={{
+          theme: "light" as const,
+          canvasLayout: "square" as const,
+          scenes: [
+            {
+              type: "title" as const,
+              title: "",
+              subtitle: "",
+              durationInFrames: 50,
+              transitionToNextScene: true,
+              music: "previous" as const,
+            },
+          ],
+          scenesAndMetadata: [],
+          platform: "youtube",
         }}
         calculateMetadata={calcMetadata}
       />

@@ -14,8 +14,8 @@ import { Screen } from "./Screen";
 import { Webcam } from "./Webcam";
 
 export const CameraScene: React.FC<{
-  enter: number;
-  exit: number;
+  enterProgress: number;
+  exitProgress: number;
   canvasLayout: CanvasLayout;
   sceneAndMetadata: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
@@ -23,8 +23,8 @@ export const CameraScene: React.FC<{
   theme: Theme;
   chapters: ChapterType[];
 }> = ({
-  enter,
-  exit,
+  enterProgress,
+  exitProgress,
   sceneAndMetadata,
   canvasLayout,
   nextScene,
@@ -47,8 +47,8 @@ export const CameraScene: React.FC<{
         {sceneAndMetadata.pair.display ? (
           <Screen
             scene={sceneAndMetadata}
-            enter={enter}
-            exit={exit}
+            enterProgress={enterProgress}
+            exitProgress={exitProgress}
             nextScene={nextScene}
             previousScene={previousScene}
             startFrom={startFrom}
@@ -66,8 +66,8 @@ export const CameraScene: React.FC<{
             previousVideoScene={
               previousScene?.type === "video-scene" ? previousScene : null
             }
-            enterProgress={enter}
-            exitProgress={exit}
+            enterProgress={enterProgress}
+            exitProgress={exitProgress}
             theme={theme}
             chapters={chapters}
           />
@@ -75,8 +75,8 @@ export const CameraScene: React.FC<{
         <Webcam
           currentScene={sceneAndMetadata}
           endAt={endAt}
-          enterProgress={enter}
-          exitProgress={exit}
+          enterProgress={enterProgress}
+          exitProgress={exitProgress}
           startFrom={startFrom}
           webcamLayout={sceneAndMetadata.layout.webcamLayout}
           canvasLayout={canvasLayout}
@@ -89,8 +89,8 @@ export const CameraScene: React.FC<{
           canvasLayout={canvasLayout}
           trimStart={startFrom}
           file={sceneAndMetadata.pair.subs}
-          enter={enter}
-          exit={exit}
+          enterProgress={enterProgress}
+          exitProgress={exitProgress}
           scene={sceneAndMetadata}
           nextScene={nextScene}
           previousScene={previousScene}

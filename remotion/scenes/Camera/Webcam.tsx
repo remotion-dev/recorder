@@ -34,8 +34,8 @@ export const Webcam: React.FC<{
   const webcamStyle = getWebcamLayout({
     enterProgress,
     exitProgress,
-    height,
-    width,
+    canvasHeight: height,
+    canvasWidth: width,
     currentScene,
     nextScene,
     previousScene,

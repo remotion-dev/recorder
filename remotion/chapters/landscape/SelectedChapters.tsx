@@ -56,17 +56,17 @@ export const LandscapeChapters: React.FC<{
   const { width, height } = useVideoConfig();
 
   const { x: xIn, y: yIn } = makeInTransition({
-    height,
+    canvasHeight: height,
     inTransition,
     progress: enterProgress,
-    width,
+    canvasWidth: width,
   });
 
   const { x: xOut, y: yOut } = makeOutTransition({
-    height,
+    canvasHeight: height,
     outTransition,
     progress: exitProgress,
-    width,
+    canvasWidth: width,
   });
 
   const translateX = xIn + xOut;

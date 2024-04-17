@@ -45,21 +45,12 @@ export const configuration = z.discriminatedUnion("type", [
     transitionToNextScene: z.boolean().default(true),
     music,
   }),
-  z.object({
-    type: z.literal("titlecard"),
-    durationInFrames: z.number().int().default(100),
-    title: z.string(),
-    image: z.string(),
-    music,
-    transitionToNextScene: z.boolean().default(true),
-    youTubePlug: z.boolean().default(false),
-  }),
+
   z.object({
     type: z.literal("endcard"),
     durationInFrames: z.number().int().default(200),
     music,
     channel: brand,
-    platform,
     links: z.array(linkType).default([]),
     transitionToNextScene: z.boolean().default(true),
   }),
@@ -83,6 +74,7 @@ export type SceneType = z.infer<typeof configuration>;
 export const videoConf = z.object({
   theme,
   canvasLayout,
+  platform,
   scenes,
 });
 
