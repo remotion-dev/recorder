@@ -34,7 +34,7 @@ export const CameraScene: React.FC<{
 }) => {
   const { scene } = sceneAndMetadata;
 
-  const startFrom = sceneAndMetadata.startFrame;
+  const startFrom = sceneAndMetadata.startFrame + scene.startOffset;
   // const endAt = sceneAndMetadata.endFrame;
   const endAt = scene.duration ? startFrom + scene.duration : undefined;
 

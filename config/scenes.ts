@@ -25,12 +25,12 @@ const availablePositionsAndPrevious = [
 export const videoScene = z.object({
   type: z.literal("videoscene"),
   webcamPosition: z.enum(availablePositionsAndPrevious),
-  trimStart: z.number(),
   duration: z.number().nullable().default(null),
   transitionToNextScene: z.boolean().default(true),
   newChapter: z.string().optional(),
   stopChapteringAfterThis: z.boolean().optional(),
   music,
+  startOffset: z.number(),
 });
 
 export type VideoScene = z.infer<typeof videoScene>;
