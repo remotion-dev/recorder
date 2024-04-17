@@ -45,7 +45,6 @@ const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
   const startFromInFrames =
     Math.floor((startFromInHundrethsOfSec / 100) * FPS) -
     TIMESTAMP_PADDING_IN_FRAMES;
-  console.log("startFromInFrames: ", startFromInFrames);
   return startFromInFrames;
 };
 
@@ -70,7 +69,6 @@ const deriveEndFrameFromSubs = (
     Math.floor((endAtInHunrethsOfSec / 100) * FPS) +
     TIMESTAMP_PADDING_IN_FRAMES;
 
-  console.log("endAtInFrames: ", endAtInFrames);
   return endAtInFrames;
 };
 
@@ -177,13 +175,13 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
 
         const subsJson = await fetchSubsJson(p.subs);
 
-        const derivedStartFrame = deriveStartFrameFromSubs(subsJson); // TODO: include startOffset
+        const derivedStartFrame = deriveStartFrameFromSubs(subsJson);
 
         const derivedEndFrame =
           deriveEndFrameFromSubs(subsJson) ??
-          Math.round(durationInSeconds * FPS); // TODO: include startOffset
-        console.log("start: ", derivedStartFrame, "end: ", derivedEndFrame);
-        const durationInFrames = derivedEndFrame - derivedStartFrame;
+          Math.round(durationInSeconds * FPS);
+        const durationInFrames =
+          derivedEndFrame - derivedStartFrame - scene.startOffset;
         const duration = scene?.duration ?? durationInFrames;
 
         const videos: SceneVideos = {
