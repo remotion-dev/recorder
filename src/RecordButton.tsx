@@ -1,5 +1,4 @@
-import type { SetStateAction } from "react";
-import React, { useCallback } from "react";
+import React from "react";
 import { BlinkingCircle, RecordCircle } from "./BlinkingCircle";
 import { Button } from "./components/ui/button";
 import { Timer } from "./Timer";
@@ -10,28 +9,21 @@ export type MediaSources = {
 };
 
 export const RecordButton: React.FC<{
-  readonly recording: false | number;
-  readonly start: () => void;
-  readonly stop: () => void;
-  readonly setShowHandleVideos: React.Dispatch<SetStateAction<boolean>>;
-  readonly showHandleVideos: boolean;
-  readonly recordingDisabled: boolean;
-  readonly onDiscard: () => void;
+  recording: false | number;
+  start: () => void;
+  showHandleVideos: boolean;
+  recordingDisabled: boolean;
+  onDiscard: () => void;
+  onStop: () => void;
 }> = ({
   recording,
-  stop,
-  setShowHandleVideos,
   showHandleVideos,
   start,
   recordingDisabled,
   onDiscard,
+  onStop,
 }) => {
   const disabled = recordingDisabled || recording !== false || showHandleVideos;
-
-  const onStop = useCallback(() => {
-    stop();
-    setShowHandleVideos(true);
-  }, [setShowHandleVideos, stop]);
 
   if (recording) {
     return (

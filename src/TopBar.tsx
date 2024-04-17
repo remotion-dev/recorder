@@ -10,6 +10,7 @@ import {
 } from "./get-projects";
 import type { MediaSources } from "./RecordButton";
 import { RecordButton } from "./RecordButton";
+import { useKeyPress } from "./use-key-press";
 
 const topBarContainer: React.CSSProperties = {
   display: "flex",
@@ -19,13 +20,13 @@ const topBarContainer: React.CSSProperties = {
 };
 
 export const TopBar: React.FC<{
-  readonly start: () => void;
-  readonly stop: () => void;
-  readonly discardVideos: () => void;
-  readonly recording: false | number;
-  readonly setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
-  readonly mediaSources: MediaSources;
-  readonly currentBlobs: CurrentBlobs;
+  start: () => void;
+  stop: () => void;
+  discardVideos: () => void;
+  recording: false | number;
+  setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
+  mediaSources: MediaSources;
+  currentBlobs: CurrentBlobs;
 }> = ({
   start,
   stop,
@@ -52,6 +53,34 @@ export const TopBar: React.FC<{
       setSelectedFolder(json.folders[0] ?? "");
     }
   }, [selectedFolder]);
+
+  const onStop = useCallback(() => {
+    stop();
+    setShowHandleVideos(true);
+  }, [setShowHandleVideos, stop]);
+
+  const onPressR = useCallback(() => {
+    if (mediaSources.webcam === null || !mediaSources.webcam.active) {
+      return;
+    }
+
+    const dialog = document.querySelector('[role="dialog"]');
+
+    if (
+      (document.activeElement && document.activeElement.tagName === "input") ||
+      dialog
+    ) {
+      return;
+    }
+
+    if (recording) {
+      onStop();
+    } else {
+      start();
+    }
+  }, [mediaSources.webcam, onStop, recording, start]);
+
+  useKeyPress(["r"], onPressR);
 
   useEffect(() => {
     if (!window.remotionServerEnabled) {
@@ -85,9 +114,8 @@ export const TopBar: React.FC<{
   return (
     <div style={topBarContainer}>
       <RecordButton
-        stop={stop}
+        onStop={onStop}
         recording={recording}
-        setShowHandleVideos={setShowHandleVideos}
         showHandleVideos={showHandleVideos}
         start={start}
         recordingDisabled={recordingDisabled}
