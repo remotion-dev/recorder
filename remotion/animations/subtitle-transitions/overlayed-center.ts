@@ -13,22 +13,22 @@ export const getOverlayedCenterSubtitleEnterOrExit = ({
   scene: VideoSceneAndMetadata;
 }): Layout => {
   if (otherScene === null) {
-    return scene.layout.subLayout;
+    return scene.layout.subtitleLayout;
   }
 
   if (otherScene.type !== "video-scene") {
     return {
-      ...scene.layout.subLayout,
-      top: scene.layout.subLayout.top + 500,
+      ...scene.layout.subtitleLayout,
+      top: scene.layout.subtitleLayout.top + 500,
     };
   }
 
   if (isGrowingFromMiniature({ firstScene: otherScene, secondScene: scene })) {
     return {
-      ...scene.layout.subLayout,
-      top: scene.layout.subLayout.top + 500,
+      ...scene.layout.subtitleLayout,
+      top: scene.layout.subtitleLayout.top + 500,
     };
   }
 
-  return scene.layout.subLayout;
+  return scene.layout.subtitleLayout;
 };

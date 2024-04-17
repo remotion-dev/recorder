@@ -8,12 +8,14 @@ import React, {
 import type { StaticFile } from "remotion";
 import {
   AbsoluteFill,
+  cancelRender,
   continueRender,
   delayRender,
   useVideoConfig,
   watchStaticFile,
 } from "remotion";
 import type { Word } from "../../config/autocorrect";
+import { waitForFonts } from "../../config/fonts";
 import type { CanvasLayout } from "../../config/layout";
 import type {
   SceneAndMetadata,
@@ -73,6 +75,21 @@ export const Subs: React.FC<{
   const [subEditorOpen, setSubEditorOpen] = useState<Word | false>(false);
   const preventReload = useRef(false);
 
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    const delay = delayRender("Waiting for fonts to be loaded");
+
+    waitForFonts()
+      .then(() => {
+        continueRender(delay);
+        setFontsLoaded(true);
+      })
+      .catch((err) => {
+        cancelRender(err);
+      });
+  }, [fontsLoaded, handle]);
+
   useEffect(() => {
     if (!subEditorOpen) {
       return;
@@ -121,9 +138,13 @@ export const Subs: React.FC<{
       return null;
     }
 
+    if (!fontsLoaded) {
+      return null;
+    }
+
     return postprocessSubtitles({
       subTypes: whisperOutput,
-      boxWidth: scene.layout.subLayout.width,
+      boxWidth: scene.layout.subtitleLayout.width,
       maxLines: scene.layout.subtitleLines,
       fontSize: scene.layout.subtitleFontSize,
       canvasLayout,
@@ -131,7 +152,8 @@ export const Subs: React.FC<{
     });
   }, [
     whisperOutput,
-    scene.layout.subLayout.width,
+    fontsLoaded,
+    scene.layout.subtitleLayout.width,
     scene.layout.subtitleLines,
     scene.layout.subtitleFontSize,
     canvasLayout,
@@ -199,7 +221,6 @@ export const Subs: React.FC<{
       subtitleType,
     }),
     ...getSubtitleTransform({
-      currentLayout: scene.layout.subLayout,
       enterProgress,
       exitProgress,
       canvasHeight: height,

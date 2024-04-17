@@ -17,7 +17,7 @@ import {
 } from "../../../config/fonts";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
-import { TRANSITION_DURATION } from "../../../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../../../config/transitions";
 import { FollowButton, followButtonHeight } from "./FollowButton";
 import {
   InstagramIcon,
@@ -132,7 +132,7 @@ export const LeftSide: React.FC<{
   const { fps, width } = useVideoConfig();
   const frame = useCurrentFrame();
 
-  const slideDelay = TRANSITION_DURATION + 20;
+  const slideDelay = SCENE_TRANSITION_DURATION + 20;
   const slideDuration = 30;
 
   const slideUp = spring({

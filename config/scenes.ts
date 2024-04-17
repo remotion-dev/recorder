@@ -1,4 +1,5 @@
 import type { StaticFile } from "remotion";
+import { staticFile } from "remotion";
 import { z } from "zod";
 import type { CameraSceneLayout } from "../remotion/layout/get-layout";
 import { brand, linkType, platform } from "./endcard";
@@ -22,6 +23,14 @@ const availablePositionsAndPrevious = [
   ...availablePositions,
 ] as const;
 
+const bRoll = z.object({
+  source: z.string().default(staticFile("sample-broll.jpg")),
+  durationInFrames: z.number().int().default(90),
+  from: z.number().int().default(30),
+});
+
+export type BRoll = z.infer<typeof bRoll>;
+
 export const videoScene = z.object({
   type: z.literal("videoscene"),
   webcamPosition: z.enum(availablePositionsAndPrevious),
@@ -31,6 +40,7 @@ export const videoScene = z.object({
   newChapter: z.string().optional(),
   stopChapteringAfterThis: z.boolean().optional(),
   music,
+  bRolls: z.array(bRoll).default([]),
 });
 
 export type VideoScene = z.infer<typeof videoScene>;
@@ -91,6 +101,12 @@ export type SceneVideos = {
   display: Dimensions | null;
 };
 
+export type BRollWithDimensions = BRoll & {
+  assetWidth: number;
+  assetHeight: number;
+  type: "image" | "video";
+};
+
 export type VideoSceneAndMetadata = {
   type: "video-scene";
   scene: VideoScene;
@@ -101,6 +117,7 @@ export type VideoSceneAndMetadata = {
   pair: Pair;
   finalWebcamPosition: FinalWebcamPosition;
   chapter: string | null;
+  bRolls: BRollWithDimensions[];
 };
 
 export type SceneAndMetadata =
