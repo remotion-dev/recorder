@@ -8,8 +8,8 @@ import { getDisplayPosition } from "../../animations/display-transitions";
 
 export const Screen: React.FC<{
   scene: VideoSceneAndMetadata;
-  enter: number;
-  exit: number;
+  enterProgress: number;
+  exitProgress: number;
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
   startFrom: number;
@@ -17,8 +17,8 @@ export const Screen: React.FC<{
   canvasLayout: CanvasLayout;
 }> = ({
   scene,
-  enter,
-  exit,
+  enterProgress,
+  exitProgress,
   nextScene,
   canvasLayout,
   previousScene,
@@ -36,13 +36,13 @@ export const Screen: React.FC<{
   const { width, height } = useVideoConfig();
 
   const displayStyle = getDisplayPosition({
-    enterProgress: enter,
-    exitProgress: exit,
-    width,
+    enterProgress,
+    exitProgress,
+    canvasWidth: width,
     nextScene,
     previousScene,
     currentScene: scene,
-    height,
+    canvasHeight: height,
     canvasLayout,
   });
 

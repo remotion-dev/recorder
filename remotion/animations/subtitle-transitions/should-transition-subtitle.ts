@@ -25,8 +25,8 @@ export const shouldInlineTransitionSubtitles = ({
 
   const nextSubtitleType = nextScene.layout.subtitleType;
 
-  if (currentSubtitleType === "boxed" && nextSubtitleType === "boxed") {
-    // In boxed layout, we resize the box if the aspect ratio of the videos has changed.
+  if (currentSubtitleType === "square" && nextSubtitleType === "square") {
+    // In square layout, we resize the box if the aspect ratio of the videos has changed.
     // While resizing the box, the subtitles fade out.
 
     const nextSubLayout = nextScene.layout.subLayout;

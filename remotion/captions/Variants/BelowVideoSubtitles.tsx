@@ -4,7 +4,7 @@ import type { Theme } from "../../../config/themes";
 import { getHorizontalPaddingForSubtitles } from "../processing/postprocess-subs";
 import type { Segment } from "../types";
 import { Words } from "../Words";
-import { LINE_HEIGHT } from "./BoxedSubtitles";
+import { LINE_HEIGHT } from "./SquareSubtitles";
 
 export const BelowVideoSubtitles: React.FC<{
   segment: Segment;

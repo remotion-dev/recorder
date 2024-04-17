@@ -64,7 +64,12 @@ export const TopBar: React.FC<{
       return;
     }
 
-    if (document.getElementById("remotion_video_name")) {
+    const dialog = document.querySelector('[role="dialog"]');
+
+    if (
+      (document.activeElement && document.activeElement.tagName === "input") ||
+      dialog
+    ) {
       return;
     }
 
