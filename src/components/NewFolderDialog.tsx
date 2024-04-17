@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import { createProject } from "../create-project";
+import { useKeyPress } from "../use-key-press";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -81,6 +82,14 @@ export const NewFolderDialog: React.FC<{
     },
     [],
   );
+
+  const handlePressEnter = useCallback(() => {
+    if (!disabled) {
+      handleSubmit();
+    }
+  }, [disabled, handleSubmit]);
+
+  useKeyPress(["Enter"], handlePressEnter);
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
