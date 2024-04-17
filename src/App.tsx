@@ -14,7 +14,6 @@ import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
 import type { MediaSources } from "./RecordButton";
 import { TopBar } from "./TopBar";
-import { useKeyPress } from "./use-key-press";
 import type { Prefix } from "./Views";
 import { View } from "./Views";
 
@@ -183,20 +182,6 @@ const App = () => {
     endDate = Date.now();
     setRecording(false);
   }, [recorders]);
-
-  const onPressR = useCallback(() => {
-    if (mediaSources.webcam === null || !mediaSources.webcam.active) {
-      return;
-    }
-
-    if (recording) {
-      stop();
-    } else {
-      start();
-    }
-  }, [mediaSources.webcam, recording, start, stop]);
-
-  useKeyPress(["r"], onPressR);
 
   useEffect(() => {
     const checkDeviceLabels = async () => {
