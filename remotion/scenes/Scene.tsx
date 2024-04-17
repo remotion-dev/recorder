@@ -110,7 +110,6 @@ const SceneWithTransition: React.FC<Props> = (props) => {
     sceneAndMetadata: props.sceneAndMetadata,
     nextScene: props.nextScene,
   });
-
   const enter = shouldEnter
     ? spring({
         fps,
@@ -183,6 +182,7 @@ export const Scene: React.FC<Props> = ({
     sceneAndMetadata.scene.type === "videoscene"
       ? sceneAndMetadata.scene.newChapter
       : undefined;
+
   return (
     <Sequence
       name={`Scene ${index} ${chapter ? `(${chapter})` : ""}`}

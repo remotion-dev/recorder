@@ -101,6 +101,8 @@ export type VideoSceneAndMetadata = {
   pair: Pair;
   finalWebcamPosition: FinalWebcamPosition;
   chapter: string | null;
+  startFrame: number;
+  endFrame: number;
 };
 
 export type SceneAndMetadata =
