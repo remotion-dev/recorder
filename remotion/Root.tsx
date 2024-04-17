@@ -41,16 +41,18 @@ export const Root = () => {
           canvasLayout: "square" as const,
           scenes: [
             {
-              type: "title" as const,
-              title: "",
-              subtitle: "",
-              durationInFrames: 50,
+              type: "videoscene" as const,
+              webcamPosition: "previous" as const,
+              duration: null,
               transitionToNextScene: true,
+              newChapter: "",
+              startOffset: 0,
+              stopChapteringAfterThis: false,
               music: "previous" as const,
             },
           ],
           scenesAndMetadata: [],
-          platform: "youtube",
+          platform: "youtube" as const,
         }}
         calculateMetadata={calcMetadata}
       />
