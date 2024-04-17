@@ -35,8 +35,8 @@ export const CameraScene: React.FC<{
   const { scene } = sceneAndMetadata;
 
   const startFrom = sceneAndMetadata.startFrame + scene.startOffset;
-  // const endAt = sceneAndMetadata.endFrame;
-  const endAt = scene.duration ? startFrom + scene.duration : undefined;
+  const endAt = sceneAndMetadata.endFrame + scene.startOffset;
+  // const endAt = scene.duration ? startFrom + scene.duration : undefined;
 
   if (sceneAndMetadata.type !== "video-scene") {
     throw new Error("Not a camera scene");
@@ -96,6 +96,7 @@ export const CameraScene: React.FC<{
           nextScene={nextScene}
           previousScene={previousScene}
           theme={theme}
+          endAt={endAt}
         />
       ) : null}
       {sceneAndMetadata.scene.newChapter && canvasLayout === "square" ? (
