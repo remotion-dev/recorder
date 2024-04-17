@@ -63,7 +63,7 @@ export const RecordButton: React.FC<{
     <div
       title={
         disabled
-          ? "A webcam has to be selected to start the recording"
+          ? "A webcam and an audio source have to be selected to start the recording"
           : undefined
       }
     >
