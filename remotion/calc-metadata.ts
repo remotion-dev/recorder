@@ -29,7 +29,7 @@ import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
 import type { MainProps } from "./Main";
 
-const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 3); // floor in case FPS % 3 != 0
+const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2); // floor in case FPS % 3 != 0
 
 const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
   if (!subsJSON) {
@@ -174,20 +174,17 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         } = await getVideoMetadata(p.webcam.src);
 
         const dim = p.display ? await getVideoMetadata(p.display.src) : null;
-        const durationInFrames =
-          durationInSeconds === Infinity
-            ? PLACE_HOLDER_DURATION_IN_FRAMES
-            : Math.round(durationInSeconds * FPS);
 
         const subsJson = await fetchSubsJson(p.subs);
 
         const derivedStartFrame = deriveStartFrameFromSubs(subsJson); // TODO: include startOffset
 
         const derivedEndFrame =
-          deriveEndFrameFromSubs(subsJson) ?? durationInFrames; // TODO: include startOffset
-
-        const duration =
-          scene?.duration ?? Math.round(durationInFrames - derivedStartFrame);
+          deriveEndFrameFromSubs(subsJson) ??
+          Math.round(durationInSeconds * FPS); // TODO: include startOffset
+        console.log("start: ", derivedStartFrame, "end: ", derivedEndFrame);
+        const durationInFrames = derivedEndFrame - derivedStartFrame;
+        const duration = scene?.duration ?? durationInFrames;
 
         const videos: SceneVideos = {
           display: dim,
