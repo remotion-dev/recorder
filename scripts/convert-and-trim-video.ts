@@ -1,4 +1,3 @@
-import { getSilentParts } from "@remotion/renderer";
 import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, unlinkSync } from "node:fs";
 import path from "path";
@@ -8,28 +7,19 @@ import {
   DISPLAY_PREFIX,
   WEBCAM_PREFIX,
 } from "../config/cameras";
-import {
-  MIN_DURATION_IN_SECONDS,
-  PADDING_IN_SECONDS,
-} from "../config/silence-removal";
 import { getDownloadsFolder } from "./get-downloads-folder";
 import { checkVideoIntegrity } from "./server/check-video-integrity";
 
 const convertAndRemoveSilence = ({
   input,
   output,
-  ffmpegTrim,
 }: {
   input: string;
   output: string;
-  ffmpegTrim: string[];
 }) => {
-  const ffmpegTrimOrEmpty = ffmpegTrim.length === 0 ? "" : ffmpegTrim;
-
   execSync(
     [
       "bunx remotion ffmpeg",
-      ...ffmpegTrimOrEmpty,
       "-hide_banner",
       "-i",
       input,
@@ -81,41 +71,21 @@ export const convertAndTrimVideo = async (props: ScriptProps | ServerProps) => {
   const alt1Src = path.join(fileLocation, alt1Latest);
   const alt2Src = path.join(fileLocation, alt2Latest);
 
-  const { audibleParts } = await getSilentParts({
-    src: webcamSrc,
-    minDurationInSeconds: MIN_DURATION_IN_SECONDS,
-  });
-
   const folder =
     caller === "server"
       ? props.customFileLocation
       : path.join("public", props.prefix);
   mkdirSync(folder, { recursive: true });
 
-  const ffmpegTrim =
-    audibleParts.length > 0
-      ? [
-          "-ss",
-          String(audibleParts[0]!.startInSeconds - PADDING_IN_SECONDS),
-          "-to",
-          String(
-            audibleParts[audibleParts.length - 1]!.endInSeconds +
-              PADDING_IN_SECONDS * 2,
-          ),
-        ]
-      : [];
-
   convertAndRemoveSilence({
     input: webcamSrc,
     output: path.join(folder, webcamLatest.replace(".webm", ".mp4")),
-    ffmpegTrim,
   });
 
   if (existsSync(displaySrc)) {
     convertAndRemoveSilence({
       input: displaySrc,
       output: path.join(folder, displayLatest.replace(".webm", ".mp4")),
-      ffmpegTrim,
     });
   }
 
@@ -123,7 +93,6 @@ export const convertAndTrimVideo = async (props: ScriptProps | ServerProps) => {
     convertAndRemoveSilence({
       input: alt1Src,
       output: path.join(folder, alt1Latest.replace(".webm", ".mp4")),
-      ffmpegTrim,
     });
   }
 
@@ -131,7 +100,6 @@ export const convertAndTrimVideo = async (props: ScriptProps | ServerProps) => {
     convertAndRemoveSilence({
       input: alt2Src,
       output: path.join(folder, alt2Latest.replace(".webm", ".mp4")),
-      ffmpegTrim,
     });
   }
 };
