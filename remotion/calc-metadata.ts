@@ -120,10 +120,12 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             ? PLACE_HOLDER_DURATION_IN_FRAMES
             : Math.round(durationInSeconds * FPS);
 
-        const trimStart = scene?.trimStart ?? 0;
+        const trimStart = scene.trimStart ?? 0;
 
+        // Intentionally using ||
+        // By default, Zod will give it a value of 0, which shifts the timeline
         const duration =
-          scene?.duration ?? Math.round(durationInFrames - trimStart);
+          scene.duration || Math.round(durationInFrames - trimStart);
 
         const videos: SceneVideos = {
           display: dim,

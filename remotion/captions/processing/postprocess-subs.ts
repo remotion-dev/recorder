@@ -92,8 +92,7 @@ const cutWords = ({
       fontFamily: word.monospace ? MONOSPACE_FONT_FAMILY : REGULAR_FONT_FAMILY,
       fontWeight: word.monospace ? MONOSPACE_FONT_WEIGHT : REGULAR_FONT_WEIGHT,
       fontSize,
-      // TODO: Fixed in Remotion 4.0.142, it can be set to true
-      validateFontIsLoaded: word.text.trim() !== "",
+      validateFontIsLoaded: true,
     });
 
     if (exceedsBox) {
@@ -196,15 +195,14 @@ export const postprocessSubtitles = ({
     return whisperWordToWord(w, subTypes.transcription[i + 1] ?? null);
   });
   const correctedWords = autocorrectWords(words);
+  const movedBackTickToWord = correctedWords.map((word) => {
+    return {
+      ...word,
+      text: word.text.replaceAll(/`\s/g, " `"),
+    };
+  });
 
-  const allWords = wordsTogether(
-    correctedWords.map((word) => {
-      return {
-        ...word,
-        word: word.text.replaceAll(/`\s/g, " `"),
-      };
-    }),
-  );
+  const allWords = wordsTogether(movedBackTickToWord);
 
   const preFilteredWords = removeWhisperBlankWords(allWords);
   const segments = cutWords({

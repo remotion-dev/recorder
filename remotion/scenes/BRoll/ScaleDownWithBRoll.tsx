@@ -30,6 +30,7 @@ export const ScaleDownWithBRoll: React.FC<Props> = ({
   bRollLayout,
   bRollEnterDirection,
   style: passedStyle,
+  bRollType,
   ...props
 }) => {
   const { fps } = useVideoConfig();

@@ -6,6 +6,7 @@ import type {
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
+import { getShouldTransitionIn } from "../../animations/transitions";
 import { Subs } from "../../captions/Subs";
 import { LandscapeChapters } from "../../chapters/landscape/SelectedChapters";
 import type { ChapterType } from "../../chapters/make-chapters";
@@ -117,9 +118,13 @@ export const CameraScene: React.FC<{
       ) : null}
       {sceneAndMetadata.scene.newChapter && canvasLayout === "square" ? (
         <SquareChapter
-          webcamPosition={sceneAndMetadata.finalWebcamPosition}
           title={sceneAndMetadata.scene.newChapter}
-          theme={theme}
+          displayLayout={sceneAndMetadata.layout.displayLayout}
+          webcamLayout={sceneAndMetadata.layout.webcamLayout}
+          didTransitionIn={getShouldTransitionIn({
+            previousScene,
+            scene: sceneAndMetadata,
+          })}
         />
       ) : null}
     </>

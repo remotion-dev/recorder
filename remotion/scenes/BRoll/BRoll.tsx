@@ -9,7 +9,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { CanvasLayout } from "../../../config/layout";
+import type { CanvasLayout, Dimensions } from "../../../config/layout";
 import type { BRollWithDimensions } from "../../../config/scenes";
 import { B_ROLL_TRANSITION_DURATION } from "../../../config/transitions";
 import type {
@@ -40,6 +40,39 @@ const FadeBRoll: React.FC<{
     </AbsoluteFill>
   );
 };
+
+function getMaxImageSize({
+  containerWidth,
+  containerHeight,
+  imageHeight,
+  imageWidth,
+}: {
+  containerWidth: number;
+  containerHeight: number;
+  imageWidth: number;
+  imageHeight: number;
+}): Dimensions {
+  const containerRatio = containerWidth / containerHeight;
+  const imageRatio = imageWidth / imageHeight;
+
+  let maxWidth: number;
+  let maxHeight: number;
+
+  if (imageRatio > containerRatio) {
+    // Image is more landscape than the container
+    maxWidth = containerWidth;
+    maxHeight = maxWidth / imageRatio;
+  } else {
+    // Image is more portrait than the container or the same aspect ratio
+    maxHeight = containerHeight;
+    maxWidth = maxHeight * imageRatio;
+  }
+
+  return {
+    width: Math.floor(maxWidth),
+    height: Math.floor(maxHeight),
+  };
+}
 
 const InnerBRoll: React.FC<{
   bRoll: BRollWithDimensions;
@@ -100,15 +133,36 @@ const InnerBRoll: React.FC<{
     };
   }, [bRollContainer, topOffset]);
 
+  const biggestLayout = useMemo(() => {
+    return getMaxImageSize({
+      containerHeight: bRollLayout.height,
+      containerWidth: bRollLayout.width,
+      imageHeight: bRoll.assetHeight,
+      imageWidth: bRoll.assetWidth,
+    });
+  }, [
+    bRoll.assetHeight,
+    bRoll.assetWidth,
+    bRollLayout.height,
+    bRollLayout.width,
+  ]);
+
   const style = useMemo(() => {
     return {
       borderRadius: bRollLayout.borderRadius,
       overflow: "hidden",
       boxShadow: "0 0 50px rgba(0, 0, 0, 0.2)",
-      maxWidth: "100%",
-      maxHeight: "100%",
+      height: biggestLayout.height,
+      width: biggestLayout.width,
+      aspectRatio: bRoll.assetWidth / bRoll.assetHeight,
     };
-  }, [bRollLayout.borderRadius]);
+  }, [
+    bRoll.assetHeight,
+    bRoll.assetWidth,
+    bRollLayout.borderRadius,
+    biggestLayout.height,
+    biggestLayout.width,
+  ]);
 
   if (bRollType === "fade") {
     return (
