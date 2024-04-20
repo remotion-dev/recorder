@@ -95,6 +95,11 @@ const getEnterAndExitLayoutOfWebcamPositionChange = ({
         top: canvasHeight,
       };
     }
+
+    return {
+      ...scene.layout.subtitleLayout,
+      top: -scene.layout.subtitleLayout.height,
+    };
   }
 
   // Vertical position change
