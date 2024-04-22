@@ -27,7 +27,7 @@ const Indent: React.FC<{ value: number; digits: number }> = ({
 
 export const EditWord: React.FC<{
   word: Word;
-  longestWordLength: number;
+  longestNumberLength: number;
   index: number;
   onUpdateText: (index: number, newText: string) => void;
   onCloseEditor: () => void;
@@ -36,7 +36,7 @@ export const EditWord: React.FC<{
   theme: Theme;
 }> = ({
   word,
-  longestWordLength,
+  longestNumberLength: longestWordLength,
   index,
   onUpdateText,
   isInitialWord,

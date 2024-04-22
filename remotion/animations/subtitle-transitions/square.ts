@@ -43,7 +43,7 @@ const getEnterAndExitOfFullscreenBox = ({
   // If the vertical position has not changed, and the next scene also
   // has no display video, then nothing changes in the layout
   if (otherScene.layout.displayLayout === null) {
-    return scene.layout.subtitleLayout;
+    return otherScene.layout.subtitleLayout;
   }
 
   // Now we expect that the other scene has a display video, and the webcam will shrink
@@ -180,7 +180,7 @@ const getEnterAndExitOfBentoLayout = ({
       getSafeSpace("square");
 
   return {
-    ...scene.layout.subtitleLayout,
+    ...otherScene.layout.subtitleLayout,
     left,
     top,
   };
