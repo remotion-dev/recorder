@@ -7,6 +7,10 @@ import {
   SIDE_PADDING,
 } from "./layout";
 
+const cmdOrCtrlCharacter = window.navigator.platform.startsWith("Mac")
+  ? "⌘"
+  : "Ctrl";
+
 export const SubsEditorHeader: React.FC = () => {
   const { width } = useVideoConfig();
   const usableWidth = width - SIDE_PADDING * 2;
@@ -56,7 +60,7 @@ export const SubsEditorHeader: React.FC = () => {
           color: "gray",
         }}
       >
-        MONOSPACE
+        MONOSPACE <kbd>({cmdOrCtrlCharacter}+I)</kbd>
       </div>
     </div>
   );

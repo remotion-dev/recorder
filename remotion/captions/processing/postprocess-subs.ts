@@ -43,7 +43,7 @@ const balanceWords = ({
 
   for (let i = 1; i < 4; i++) {
     const index = bestCut - i;
-    const word = (words[index] as Word).word.trim();
+    const word = (words[index] as Word).text.trim();
     if (word.endsWith(",") || word.endsWith(".")) {
       bestCut = index + 1;
       break;
@@ -52,7 +52,7 @@ const balanceWords = ({
 
   while (
     hasMonoSpaceInIt(words[bestCut - 1] as Word) ||
-    (words[bestCut - 1] as Word).word.trim() === ""
+    (words[bestCut - 1] as Word).text.trim() === ""
   ) {
     bestCut--;
   }
@@ -88,10 +88,11 @@ const cutWords = ({
 
   for (const word of words) {
     const { exceedsBox } = add({
-      text: word.word,
+      text: word.text,
       fontFamily: word.monospace ? MONOSPACE_FONT_FAMILY : REGULAR_FONT_FAMILY,
       fontWeight: word.monospace ? MONOSPACE_FONT_WEIGHT : REGULAR_FONT_WEIGHT,
       fontSize,
+      validateFontIsLoaded: true,
     });
 
     if (exceedsBox) {
@@ -125,31 +126,31 @@ export const removeWhisperBlankWords = (original: Word[]): Word[] => {
 
   words.forEach((word, index) => {
     const wordCopy = { ...word };
-    wordCopy.word = wordCopy.word.trim();
-    if (wordCopy.word.includes("[")) {
+    wordCopy.text = wordCopy.text.trim();
+    if (wordCopy.text.includes("[")) {
       inBlank = true;
       firstIdx = index;
     }
 
     if (
       inBlank &&
-      (blankAudio.includes(wordCopy.word) || pause.includes(wordCopy.word))
+      (blankAudio.includes(wordCopy.text) || pause.includes(wordCopy.text))
     ) {
-      concatentatedWord += wordCopy.word;
+      concatentatedWord += wordCopy.text;
     }
 
-    if (inBlank && wordCopy.word.includes("]")) {
-      concatentatedWord += wordCopy.word;
+    if (inBlank && wordCopy.text.includes("]")) {
+      concatentatedWord += wordCopy.text;
       if (
         concatentatedWord.includes(blankAudio) ||
         concatentatedWord.includes(pause)
       ) {
         for (let i = firstIdx; i <= index; i++) {
           const currentWord = words[i];
-          if (currentWord?.word !== undefined) {
+          if (currentWord?.text !== undefined) {
             words[i] = {
               ...currentWord,
-              word: "",
+              text: "",
             };
           }
         }
@@ -164,7 +165,7 @@ export const getHorizontalPaddingForSubtitles = (
   subtitleType: SubtitleType,
   canvasLayout: CanvasLayout,
 ) => {
-  if (subtitleType === "boxed") {
+  if (subtitleType === "square") {
     return getSafeSpace(canvasLayout);
   }
 
@@ -190,17 +191,18 @@ export const postprocessSubtitles = ({
   canvasLayout: CanvasLayout;
   subtitleType: SubtitleType;
 }): SubTypes => {
-  const words = subTypes.transcription.map(whisperWordToWord);
+  const words = subTypes.transcription.map((w, i) => {
+    return whisperWordToWord(w, subTypes.transcription[i + 1] ?? null);
+  });
   const correctedWords = autocorrectWords(words);
+  const movedBackTickToWord = correctedWords.map((word) => {
+    return {
+      ...word,
+      text: word.text.replaceAll(/`\s/g, " `"),
+    };
+  });
 
-  const allWords = wordsTogether(
-    correctedWords.map((word) => {
-      return {
-        ...word,
-        word: word.word.replaceAll(/`\s/g, " `"),
-      };
-    }),
-  );
+  const allWords = wordsTogether(movedBackTickToWord);
 
   const preFilteredWords = removeWhisperBlankWords(allWords);
   const segments = cutWords({

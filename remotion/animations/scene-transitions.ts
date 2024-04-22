@@ -1,11 +1,11 @@
 import type { SceneAndMetadata } from "../../config/scenes";
 
 export const getSceneEnter = ({
-  width,
+  canvasWidth,
   previousScene,
   currentScene,
 }: {
-  width: number;
+  canvasWidth: number;
   previousScene: SceneAndMetadata | null;
   currentScene: SceneAndMetadata;
 }): {
@@ -27,16 +27,16 @@ export const getSceneEnter = ({
   }
 
   return {
-    left: width,
+    left: canvasWidth,
   };
 };
 
 export const getSceneExit = ({
-  width,
+  canvasWidth,
   nextScene,
   currentScene,
 }: {
-  width: number;
+  canvasWidth: number;
   nextScene: SceneAndMetadata | null;
   currentScene: SceneAndMetadata;
 }) => {
@@ -53,6 +53,6 @@ export const getSceneExit = ({
   }
 
   return {
-    left: -width,
+    left: -canvasWidth,
   };
 };

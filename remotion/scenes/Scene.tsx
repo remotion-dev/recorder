@@ -7,13 +7,14 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import type { Platform } from "../../config/endcard";
 import type { CanvasLayout } from "../../config/layout";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../config/scenes";
 import type { Theme } from "../../config/themes";
-import { TRANSITION_DURATION } from "../../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 import { getSceneEnter, getSceneExit } from "../animations/scene-transitions";
 import {
   getShouldTransitionIn,
@@ -21,11 +22,11 @@ import {
 } from "../animations/transitions";
 import type { ChapterType } from "../chapters/make-chapters";
 import { CameraScene } from "./Camera/CameraScene";
+import { SoundEffects } from "./Camera/SoundEffects";
 import { EndCard } from "./EndCard";
+import { RecorderScene } from "./Recorder";
 import { TableOfContents } from "./TableOfContents";
 import { Title } from "./Title/Title";
-import { TitleCard } from "./TitleCard/TitleCard";
-import { UpdateScene } from "./Update/UpdateScene";
 
 type Props = {
   sceneAndMetadata: SceneAndMetadata;
@@ -35,44 +36,44 @@ type Props = {
   canvasLayout: CanvasLayout;
   chapters: ChapterType[];
   theme: Theme;
+  platform: Platform;
 };
 
-const InnerScene: React.FC<Props> = ({
+const InnerScene: React.FC<
+  Props & {
+    enterProgress: number;
+    exitProgress: number;
+  }
+> = ({
   canvasLayout,
   chapters,
   nextScene,
   previousScene,
   sceneAndMetadata,
   theme,
+  enterProgress,
+  exitProgress,
+  platform,
 }) => {
   if (sceneAndMetadata.scene.type === "title") {
     return (
       <Title
         subtitle={sceneAndMetadata.scene.subtitle}
         title={sceneAndMetadata.scene.title}
+        theme={theme}
       />
     );
   }
 
-  if (sceneAndMetadata.scene.type === "remotionupdate") {
-    return <UpdateScene />;
-  }
-
-  if (sceneAndMetadata.scene.type === "titlecard") {
-    return (
-      <TitleCard
-        title={sceneAndMetadata.scene.title}
-        image={sceneAndMetadata.scene.image}
-        youTubePlug={sceneAndMetadata.scene.youTubePlug}
-      />
-    );
+  if (sceneAndMetadata.scene.type === "recorder") {
+    return <RecorderScene theme={theme} />;
   }
 
   if (sceneAndMetadata.scene.type === "endcard") {
     return (
       <EndCard
         theme={theme}
-        platform={sceneAndMetadata.scene.platform}
+        platform={platform}
         canvasLayout={canvasLayout}
         channel={sceneAndMetadata.scene.channel}
         links={sceneAndMetadata.scene.links}
@@ -86,20 +87,18 @@ const InnerScene: React.FC<Props> = ({
 
   return (
     <CameraScene
-      shouldEnter={getShouldTransitionIn({
-        scene: sceneAndMetadata,
-        previousScene,
-      })}
+      enterProgress={enterProgress}
       canvasLayout={canvasLayout}
-      shouldExit={getShouldTransitionOut({
-        sceneAndMetadata,
-        nextScene,
-      })}
+      exitProgress={exitProgress}
       nextScene={nextScene}
       previousScene={previousScene}
       sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
       theme={theme}
       chapters={chapters}
+      willTransitionToNextScene={getShouldTransitionOut({
+        nextScene,
+        sceneAndMetadata,
+      })}
     />
   );
 };
@@ -123,7 +122,7 @@ const SceneWithTransition: React.FC<Props> = (props) => {
         config: {
           damping: 200,
         },
-        durationInFrames: TRANSITION_DURATION,
+        durationInFrames: SCENE_TRANSITION_DURATION,
       })
     : 1;
 
@@ -134,20 +133,20 @@ const SceneWithTransition: React.FC<Props> = (props) => {
         config: {
           damping: 200,
         },
-        durationInFrames: TRANSITION_DURATION,
-        delay: durationInFrames - TRANSITION_DURATION,
+        durationInFrames: SCENE_TRANSITION_DURATION,
+        delay: durationInFrames - SCENE_TRANSITION_DURATION,
       })
     : 0;
 
   const startStyle = getSceneEnter({
     currentScene: props.sceneAndMetadata,
     previousScene: props.previousScene,
-    width,
+    canvasWidth: width,
   });
   const endStyle = getSceneExit({
     currentScene: props.sceneAndMetadata,
     nextScene: props.nextScene,
-    width,
+    canvasWidth: width,
   });
 
   const style = interpolateStyles(
@@ -164,7 +163,12 @@ const SceneWithTransition: React.FC<Props> = (props) => {
 
   return (
     <AbsoluteFill style={style}>
-      <InnerScene {...props} />
+      <InnerScene {...props} enterProgress={enter} exitProgress={exit} />
+      <SoundEffects
+        previousScene={props.previousScene}
+        sceneAndMetadata={props.sceneAndMetadata}
+        shouldEnter={shouldEnter}
+      />
     </AbsoluteFill>
   );
 };
@@ -177,12 +181,12 @@ export const Scene: React.FC<Props> = ({
   canvasLayout,
   chapters,
   theme,
+  platform,
 }) => {
   const chapter =
     sceneAndMetadata.scene.type === "videoscene"
       ? sceneAndMetadata.scene.newChapter
-      : "";
-
+      : undefined;
   return (
     <Sequence
       name={`Scene ${index} ${chapter ? `(${chapter})` : ""}`}
@@ -197,6 +201,7 @@ export const Scene: React.FC<Props> = ({
         previousScene={previousScene}
         sceneAndMetadata={sceneAndMetadata}
         theme={theme}
+        platform={platform}
       />
     </Sequence>
   );

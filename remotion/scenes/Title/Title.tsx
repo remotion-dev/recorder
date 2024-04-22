@@ -1,57 +1,55 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
-import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
+import {
+  REGULAR_FONT_WEIGHT,
+  TITLE_FONT_FAMILY,
+  TITLE_FONT_WEIGHT,
+} from "../../../config/fonts";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 
 export const Title: React.FC<{
   title: string;
   subtitle: string | null;
-}> = ({ subtitle, title }) => {
+  theme: Theme;
+}> = ({ subtitle, title, theme }) => {
   return (
     <AbsoluteFill
       style={{
         justifyContent: "center",
         alignItems: "center",
+        paddingLeft: 30,
+        paddingRight: 30,
       }}
     >
       <div
         style={{
           fontFamily: TITLE_FONT_FAMILY,
-          fontSize: 130,
-          color: subtitle ? "#000" : "#fff",
-          lineHeight: 1.1,
+          fontSize: 60,
+          color: COLORS[theme].WORD_COLOR_ON_BG_APPEARED,
           fontWeight: TITLE_FONT_WEIGHT,
-          border: "10px solid black",
-          borderRadius: 20,
-          padding: "15px 40px",
-          display: "inline",
-          background: subtitle ? "white" : "#0B84F3",
-          marginLeft: subtitle ? 30 : 0,
-          position: "absolute",
-          marginTop: subtitle ? 100 : 0,
+          textAlign: "center",
+          textWrap: "balance",
         }}
       >
         {title}
       </div>
-      {subtitle ? (
+      {subtitle?.trim() === "" ? null : (
         <div
           style={{
             fontFamily: TITLE_FONT_FAMILY,
-            fontSize: 60,
-            background: "#0B84F3",
-            lineHeight: 1.1,
-            fontWeight: TITLE_FONT_WEIGHT,
-            display: "inline",
-            color: "white",
-            border: "10px solid black",
-            borderRadius: 20,
-            padding: "15px 30px",
-            position: "absolute",
-            marginTop: -140,
+            fontSize: 40,
+            // TODO: Introduce a subtitle color in the theme
+            color: COLORS[theme].ENDCARD_TEXT_COLOR,
+            fontWeight: REGULAR_FONT_WEIGHT,
+            marginTop: 10,
+            textAlign: "center",
+            textWrap: "balance",
           }}
         >
           {subtitle}
         </div>
-      ) : null}
+      )}
     </AbsoluteFill>
   );
 };

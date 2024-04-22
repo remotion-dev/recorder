@@ -1,18 +1,13 @@
-import type { WhisperModel } from "@remotion/install-whisper-cpp";
 import {
   downloadWhisperModel,
   installWhisperCpp,
 } from "@remotion/install-whisper-cpp";
-import path from "path";
-
-// TODO: Put this in config
-export const WHISPER_PATH = path.join(process.cwd(), "whisper.cpp");
-export const WHISPER_MODEL: WhisperModel = "medium.en";
+import { WHISPER_MODEL, WHISPER_PATH, WHISPER_REF } from "../../config/whisper";
 
 export const ensureWhisper = async () => {
   await installWhisperCpp({
     to: WHISPER_PATH,
-    version: "48a145",
+    version: WHISPER_REF,
     printOutput: true,
   });
   await downloadWhisperModel({

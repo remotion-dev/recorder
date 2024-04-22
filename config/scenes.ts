@@ -1,4 +1,5 @@
 import type { StaticFile } from "remotion";
+import { staticFile } from "remotion";
 import { z } from "zod";
 import type { CameraSceneLayout } from "../remotion/layout/get-layout";
 import { brand, linkType, platform } from "./endcard";
@@ -15,11 +16,20 @@ const availablePositions = [
 ] as const;
 
 export type WebcamPosition = (typeof availablePositions)[number];
+export type FinalWebcamPosition = WebcamPosition | "center";
 
 const availablePositionsAndPrevious = [
   "previous",
   ...availablePositions,
 ] as const;
+
+const bRoll = z.object({
+  source: z.string().default(staticFile("sample-broll.jpg")),
+  durationInFrames: z.number().int().default(90),
+  from: z.number().int().default(30),
+});
+
+export type BRoll = z.infer<typeof bRoll>;
 
 export const videoScene = z.object({
   type: z.literal("videoscene"),
@@ -30,6 +40,7 @@ export const videoScene = z.object({
   newChapter: z.string().optional(),
   stopChapteringAfterThis: z.boolean().optional(),
   music,
+  bRolls: z.array(bRoll).default([]),
 });
 
 export type VideoScene = z.infer<typeof videoScene>;
@@ -41,33 +52,29 @@ export const configuration = z.discriminatedUnion("type", [
     title: z.string(),
     subtitle: z.string().nullable(),
     durationInFrames: z.number().int().default(50),
+    transitionToNextScene: z.boolean().default(true),
     music,
   }),
-  z.object({
-    type: z.literal("titlecard"),
-    durationInFrames: z.number().int().default(100),
-    title: z.string(),
-    image: z.string(),
-    music,
-    youTubePlug: z.boolean().default(false),
-  }),
-  z.object({
-    type: z.literal("remotionupdate"),
-    durationInFrames: z.number().int().default(100),
-    music,
-  }),
+
   z.object({
     type: z.literal("endcard"),
     durationInFrames: z.number().int().default(200),
     music,
     channel: brand,
-    platform,
-    links: z.array(linkType),
+    links: z.array(linkType).default([]),
+    transitionToNextScene: z.boolean().default(true),
   }),
   z.object({
     type: z.literal("tableofcontents"),
     durationInFrames: z.number().int().default(200),
     music,
+    transitionToNextScene: z.boolean().default(true),
+  }),
+  z.object({
+    type: z.literal("recorder"),
+    durationInFrames: z.number().int().default(90),
+    music,
+    transitionToNextScene: z.boolean().default(true),
   }),
 ]);
 
@@ -77,18 +84,27 @@ export type SceneType = z.infer<typeof configuration>;
 export const videoConf = z.object({
   theme,
   canvasLayout,
+  platform,
   scenes,
 });
 
 export type Pair = {
-  display: StaticFile | null;
   webcam: StaticFile;
-  sub: StaticFile | null;
+  display: StaticFile | null;
+  subs: StaticFile | null;
+  alternative1: StaticFile | null;
+  alternative2: StaticFile | null;
 };
 
 export type SceneVideos = {
   webcam: Dimensions;
   display: Dimensions | null;
+};
+
+export type BRollWithDimensions = BRoll & {
+  assetWidth: number;
+  assetHeight: number;
+  type: "image" | "video";
 };
 
 export type VideoSceneAndMetadata = {
@@ -99,8 +115,9 @@ export type VideoSceneAndMetadata = {
   videos: SceneVideos;
   layout: CameraSceneLayout;
   pair: Pair;
-  finalWebcamPosition: WebcamPosition;
+  finalWebcamPosition: FinalWebcamPosition;
   chapter: string | null;
+  bRolls: BRollWithDimensions[];
 };
 
 export type SceneAndMetadata =

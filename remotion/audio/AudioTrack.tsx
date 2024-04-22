@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Audio, interpolate, Sequence, useVideoConfig } from "remotion";
 import type { SceneAndMetadata } from "../../config/scenes";
 import {
@@ -7,65 +7,86 @@ import {
   getAudioSource,
   REGULAR_VOLUME,
 } from "../../config/sounds";
-import { TRANSITION_DURATION } from "../../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 import { getShouldTransitionOut } from "../animations/transitions";
+
+type LoudPart = [number, number];
 
 type TAudioTrack = {
   from: number;
   src: string;
   duration: number;
-  loudParts: [number, number][];
+  loudParts: LoudPart[];
 };
+
+const calculateVolume =
+  ({
+    durationInFrames,
+    loudParts,
+  }: {
+    durationInFrames: number;
+    loudParts: LoudPart[];
+  }) =>
+  (f: number) => {
+    let isLoudPart: null | [number, number] = null;
+    for (const loudPart of loudParts) {
+      const [from, to] = loudPart;
+      if (f >= from && f <= to) {
+        isLoudPart = [from, to];
+        break;
+      }
+    }
+
+    const regularVolume = interpolate(
+      f,
+      [
+        0,
+        AUDIO_FADE_IN_FRAMES,
+        durationInFrames - AUDIO_FADE_IN_FRAMES,
+        durationInFrames - 1,
+      ],
+      [0, BACKGROUND_VOLUME, BACKGROUND_VOLUME, 0],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      },
+    );
+
+    if (isLoudPart) {
+      const loudPartDuration = isLoudPart[1] - isLoudPart[0];
+      const isTooShort = loudPartDuration <= AUDIO_FADE_IN_FRAMES * 2;
+      const firstKeyFrame = isTooShort
+        ? loudPartDuration / 2 + isLoudPart[0]
+        : isLoudPart[0] + AUDIO_FADE_IN_FRAMES;
+      const secondKeyFrame = isTooShort
+        ? loudPartDuration / 2 + isLoudPart[0] + 1
+        : isLoudPart[1] - AUDIO_FADE_IN_FRAMES;
+      return interpolate(
+        f,
+        [isLoudPart[0], firstKeyFrame, secondKeyFrame, isLoudPart[1]],
+        [regularVolume, REGULAR_VOLUME, REGULAR_VOLUME, regularVolume],
+      );
+    }
+
+    return regularVolume;
+  };
 
 const AudioClip: React.FC<{
   src: string;
-  loudParts: [number, number][];
+  loudParts: LoudPart[];
 }> = ({ src, loudParts }) => {
   const { durationInFrames } = useVideoConfig();
 
+  const volumeFunction = useMemo(() => {
+    return calculateVolume({ durationInFrames, loudParts });
+  }, [durationInFrames, loudParts]);
+
   return (
     <Audio
-      volume={(f) => {
-        let isLoudPart: null | [number, number] = null;
-        for (const loudPart of loudParts) {
-          const [from, to] = loudPart;
-          if (f >= from && f <= to) {
-            isLoudPart = [from, to];
-            break;
-          }
-        }
-
-        const regularVolume = interpolate(
-          f,
-          [
-            0,
-            AUDIO_FADE_IN_FRAMES,
-            durationInFrames - AUDIO_FADE_IN_FRAMES,
-            durationInFrames - 1,
-          ],
-          [0, BACKGROUND_VOLUME, BACKGROUND_VOLUME, 0],
-          {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-          },
-        );
-
-        if (isLoudPart) {
-          return interpolate(
-            f,
-            [
-              isLoudPart[0],
-              isLoudPart[0] + AUDIO_FADE_IN_FRAMES,
-              isLoudPart[1] - AUDIO_FADE_IN_FRAMES,
-              isLoudPart[1],
-            ],
-            [regularVolume, REGULAR_VOLUME, REGULAR_VOLUME, regularVolume],
-          );
-        }
-
-        return regularVolume;
-      }}
+      volume={volumeFunction}
+      loopVolumeCurveBehavior="extend"
       src={src}
+      loop
     />
   );
 };
@@ -89,30 +110,39 @@ export const AudioTrack: React.FC<{
       nextScene: scenesAndMetadata[i + 1] ?? null,
     });
     if (isTransitioningOut) {
-      addedUpDurations -= TRANSITION_DURATION;
+      addedUpDurations -= SCENE_TRANSITION_DURATION;
     }
 
     const isLoud = scene.type !== "video-scene";
 
     const { music } = scene.scene;
 
-    if (music === "previous") {
-      if (audioClips.length > 0) {
-        (audioClips[audioClips.length - 1] as TAudioTrack).duration +=
-          metadataForScene.durationInFrames;
-        if (isTransitioningOut) {
-          (audioClips[audioClips.length - 1] as TAudioTrack).duration -=
-            TRANSITION_DURATION;
-        }
+    if (music === "previous" && audioClips.length > 0) {
+      const lastAudioClip = audioClips[audioClips.length - 1] as TAudioTrack;
 
-        if (isLoud) {
-          (audioClips[audioClips.length - 1] as TAudioTrack).loudParts.push([
-            from,
-            from + metadataForScene.durationInFrames,
-          ]);
+      lastAudioClip.duration += metadataForScene.durationInFrames;
+
+      if (isTransitioningOut) {
+        lastAudioClip.duration -= SCENE_TRANSITION_DURATION;
+      }
+
+      if (isLoud) {
+        const lastLoudPart =
+          lastAudioClip.loudParts[lastAudioClip.loudParts.length - 1];
+
+        const end = from + metadataForScene.durationInFrames;
+
+        if (lastLoudPart && lastLoudPart[1] > from) {
+          lastLoudPart[1] = end;
+        } else {
+          lastAudioClip.loudParts.push([from, end]);
         }
       }
     } else {
+      if (music === "previous") {
+        return;
+      }
+
       audioClips.push({
         src: getAudioSource(music),
         duration: metadataForScene.durationInFrames,
@@ -126,15 +156,14 @@ export const AudioTrack: React.FC<{
 
   return (
     <>
-      {audioClips.map((clip, i) => {
+      {audioClips.map((clip) => {
         if (clip.src === "none") {
           return null;
         }
 
         return (
           <Sequence
-            // eslint-disable-next-line react/no-array-index-key
-            key={i}
+            key={clip.from}
             from={clip.from}
             layout="none"
             durationInFrames={clip.duration}
@@ -142,7 +171,7 @@ export const AudioTrack: React.FC<{
             <AudioClip
               src={clip.src}
               loudParts={clip.loudParts.map((l) => {
-                return [l[0] - clip.from, l[1] - clip.from] as [number, number];
+                return [l[0] - clip.from, l[1] - clip.from] as LoudPart;
               })}
             />
           </Sequence>

@@ -1,12 +1,20 @@
 /* eslint-disable no-alert */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ALTERNATIVE1_PREFIX,
+  ALTERNATIVE2_PREFIX,
+  DISPLAY_PREFIX,
+  WEBCAM_PREFIX,
+} from "../config/cameras";
 import "./App.css";
+import { Button } from "./components/ui/button";
+import type { CurrentBlobs } from "./components/UseThisTake";
+import { currentBlobsInitialState } from "./components/UseThisTake";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
-import { onVideo } from "./on-video";
+import type { MediaSources } from "./RecordButton";
 import { TopBar } from "./TopBar";
-import { useKeyPress } from "./use-key-press";
-import type { Prefix, prefixes } from "./Views";
+import type { Prefix } from "./Views";
 import { View } from "./Views";
 
 export const getDeviceLabel = (device: MediaDeviceInfo): string => {
@@ -54,7 +62,6 @@ const outer: React.CSSProperties = {
 const gridContainer: React.CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(2, 1fr)",
-  gridTemplateRows: "repeat(2, 1fr)",
   alignItems: "center",
   justifyItems: "center",
   flex: 1,
@@ -70,12 +77,45 @@ const mediaRecorderOptions: MediaRecorderOptions = {
 };
 
 const App = () => {
+  const [showAlternativeViews, setShowAlternativeViews] = useState<boolean>(
+    localStorage.getItem("showAlternativeViews") === "true",
+  );
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
   const [recording, setRecording] = useState<false | number>(false);
-  const [mediaSources, setMediaSources] = useState<{
-    [key in (typeof prefixes)[number]]: MediaStream | null;
-  }>({ webcam: null, display: null, alternative1: null, alternative2: null });
+
+  const [mediaSources, setMediaSources] = useState<MediaSources>({
+    webcam: null,
+    display: null,
+    alternative1: null,
+    alternative2: null,
+  });
+
+  const [currentBlobs, setCurrentBlobs] = useState<CurrentBlobs>(
+    currentBlobsInitialState,
+  );
+
+  const dynamicGridContainer = useMemo(() => {
+    if (showAlternativeViews) {
+      return { ...gridContainer, gridTemplateRows: "repeat(2, 1fr)" };
+    }
+
+    return { ...gridContainer, maxHeight: "50%" };
+  }, [showAlternativeViews]);
+
+  const handleShowMore = useCallback(() => {
+    setShowAlternativeViews(true);
+    localStorage.setItem("showAlternativeViews", "true");
+  }, []);
+
+  const handleShowLess = useCallback(() => {
+    setShowAlternativeViews(false);
+    localStorage.setItem("showAlternativeViews", "false");
+  }, []);
+
+  const discardVideos = useCallback(() => {
+    setCurrentBlobs(currentBlobsInitialState);
+  }, []);
 
   const setMediaStream = useCallback(
     (prefix: Prefix, source: MediaStream | null) => {
@@ -86,7 +126,7 @@ const App = () => {
     },
     [],
   );
-  const start = () => {
+  const start = useCallback(() => {
     setRecording(() => Date.now());
     const toStart = [];
     const newRecorders: MediaRecorder[] = [];
@@ -96,7 +136,7 @@ const App = () => {
       }
 
       const mimeType =
-        prefix === "webcam"
+        prefix === WEBCAM_PREFIX
           ? "video/webm;codecs=vp8,opus"
           : "video/webm;codecs=vp8";
 
@@ -109,7 +149,14 @@ const App = () => {
       newRecorders.push(recorder);
 
       recorder.addEventListener("dataavailable", ({ data }) => {
-        onVideo(data, endDate, prefix);
+        setCurrentBlobs((prev) => ({
+          ...prev,
+          endDate,
+          blobs: {
+            ...prev.blobs,
+            [prefix]: data,
+          },
+        }));
       });
 
       recorder.addEventListener("error", (event) => {
@@ -123,9 +170,9 @@ const App = () => {
 
     setRecorders(newRecorders);
     toStart.forEach((f) => f());
-  };
+  }, [mediaSources]);
 
-  const stop = () => {
+  const stop = useCallback(() => {
     if (recorders) {
       for (const recorder of recorders) {
         recorder.stop();
@@ -134,21 +181,7 @@ const App = () => {
 
     endDate = Date.now();
     setRecording(false);
-  };
-
-  const onPressR = () => {
-    if (mediaSources.webcam === null || !mediaSources.webcam.active) {
-      return;
-    }
-
-    if (recording) {
-      stop();
-    } else {
-      start();
-    }
-  };
-
-  useKeyPress(["r"], onPressR);
+  }, [recorders]);
 
   useEffect(() => {
     const checkDeviceLabels = async () => {
@@ -176,49 +209,66 @@ const App = () => {
     checkDeviceLabels();
   }, []);
 
-  const recordingDisabled = useMemo(() => {
-    if (
-      mediaSources.webcam === null ||
-      mediaSources.webcam.getAudioTracks().length === 0
-    ) {
-      return true;
-    }
-
-    return false;
-  }, [mediaSources.webcam]);
   return (
     <div style={outer}>
       <TopBar
         start={start}
         stop={stop}
+        discardVideos={discardVideos}
         recording={recording}
-        disabledByParent={recordingDisabled}
+        currentBlobs={currentBlobs}
+        setCurrentBlobs={setCurrentBlobs}
+        mediaSources={mediaSources}
       />
-      <div style={gridContainer}>
+      <div style={dynamicGridContainer}>
         <View
-          prefix={"webcam"}
+          prefix={WEBCAM_PREFIX}
           devices={devices}
           setMediaStream={setMediaStream}
           mediaStream={mediaSources.webcam}
         />
         <View
-          prefix={"display"}
+          prefix={DISPLAY_PREFIX}
           devices={devices}
           setMediaStream={setMediaStream}
           mediaStream={mediaSources.display}
         />
-        <View
-          prefix={"alternative1"}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative1}
-        />
-        <View
-          prefix={"alternative2"}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.alternative2}
-        />
+        {showAlternativeViews ? (
+          <>
+            <View
+              prefix={ALTERNATIVE1_PREFIX}
+              devices={devices}
+              setMediaStream={setMediaStream}
+              mediaStream={mediaSources.alternative1}
+            />
+            <View
+              prefix={ALTERNATIVE2_PREFIX}
+              devices={devices}
+              setMediaStream={setMediaStream}
+              mediaStream={mediaSources.alternative2}
+            />
+          </>
+        ) : null}
+      </div>
+      <div style={{ marginBottom: 10 }}>
+        {/* eslint-disable-next-line no-negated-condition */}
+        {!showAlternativeViews ? (
+          <Button
+            variant={"ghost"}
+            onClick={handleShowMore}
+            style={{ margin: "0px 10px" }}
+          >
+            Show more views
+          </Button>
+        ) : (
+          <Button
+            variant={"ghost"}
+            onClick={handleShowLess}
+            style={{ margin: "0px 10px", width: 100 }}
+          >
+            Show Less
+          </Button>
+        )}
       </div>
     </div>
   );

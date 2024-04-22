@@ -24,3 +24,6 @@ dist-ssr
 
 whisper.cpp
 out
+
+lambda.ts
+.env

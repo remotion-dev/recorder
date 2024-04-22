@@ -1,12 +1,24 @@
-import React from "react";
-import { OffthreadVideo, useVideoConfig } from "remotion";
+import React, { useMemo } from "react";
+import { OffthreadVideo, useCurrentFrame, useVideoConfig } from "remotion";
 import type { CanvasLayout } from "../../../config/layout";
 import type {
+  BRollWithDimensions,
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
 import { getWebcamLayout } from "../../animations/webcam-transitions";
-import type { Layout } from "../../layout/layout-types";
+import type {
+  BRollEnterDirection,
+  BRollType,
+  Layout,
+} from "../../layout/layout-types";
+import { BRollStack } from "../BRoll/BRollStack";
+import { ScaleDownIfBRollRequiresIt } from "../BRoll/ScaleDownWithBRoll";
+
+const outer: React.CSSProperties = {
+  position: "absolute",
+  display: "flex",
+};
 
 export const Webcam: React.FC<{
   webcamLayout: Layout;
@@ -18,6 +30,10 @@ export const Webcam: React.FC<{
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
+  bRolls: BRollWithDimensions[];
+  bRollLayout: Layout;
+  bRollEnterDirection: BRollEnterDirection;
+  bRollType: BRollType;
 }> = ({
   webcamLayout,
   enterProgress,
@@ -28,49 +44,80 @@ export const Webcam: React.FC<{
   previousScene,
   canvasLayout,
   currentScene,
+  bRolls,
+  bRollLayout,
+  bRollEnterDirection,
+  bRollType,
 }) => {
+  const frame = useCurrentFrame();
   const { height, width } = useVideoConfig();
 
-  const webcamLayoutWithTransitions = getWebcamLayout({
+  const webcamStyle = useMemo(() => {
+    return getWebcamLayout({
+      enterProgress,
+      exitProgress,
+      canvasHeight: height,
+      canvasWidth: width,
+      currentScene,
+      nextScene,
+      previousScene,
+      canvasLayout,
+    });
+  }, [
+    canvasLayout,
+    currentScene,
     enterProgress,
     exitProgress,
     height,
-    width,
-    currentScene,
     nextScene,
     previousScene,
-    canvasLayout,
-  });
+    width,
+  ]);
+
+  const container: React.CSSProperties = useMemo(() => {
+    return {
+      overflow: "hidden",
+      position: "relative",
+      ...webcamStyle,
+    };
+  }, [webcamStyle]);
+
+  const style: React.CSSProperties = useMemo(() => {
+    return {
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      display: "block",
+      borderRadius: webcamLayout.borderRadius,
+      overflow: "hidden",
+      transformOrigin: "50% 0%",
+    };
+  }, [webcamLayout.borderRadius]);
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        display: "flex",
-      }}
-    >
-      <div
-        style={{
-          overflow: "hidden",
-          position: "relative",
-          ...webcamLayoutWithTransitions,
-        }}
+    <div style={outer}>
+      <ScaleDownIfBRollRequiresIt
+        canvasLayout={canvasLayout}
+        bRollEnterDirection={bRollEnterDirection}
+        bRolls={bRolls}
+        bRollLayout={bRollLayout}
+        frame={frame}
+        style={container}
+        bRollType={bRollType}
       >
         <OffthreadVideo
           startFrom={startFrom}
           endAt={endAt}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            display: "block",
-            borderRadius: webcamLayout.borderRadius,
-            overflow: "hidden",
-            transformOrigin: "50% 0%",
-          }}
+          style={style}
           src={currentScene.pair.webcam.src}
         />
-      </div>
+      </ScaleDownIfBRollRequiresIt>
+      <BRollStack
+        canvasLayout={canvasLayout}
+        bRollEnterDirection={bRollEnterDirection}
+        bRolls={bRolls}
+        bRollLayout={bRollLayout}
+      />
     </div>
   );
 };

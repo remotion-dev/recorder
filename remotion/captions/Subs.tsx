@@ -8,12 +8,14 @@ import React, {
 import type { StaticFile } from "remotion";
 import {
   AbsoluteFill,
+  cancelRender,
   continueRender,
   delayRender,
   useVideoConfig,
   watchStaticFile,
 } from "remotion";
 import type { Word } from "../../config/autocorrect";
+import { waitForFonts } from "../../config/fonts";
 import type { CanvasLayout } from "../../config/layout";
 import type {
   SceneAndMetadata,
@@ -24,18 +26,14 @@ import type { Theme } from "../../config/themes";
 import { COLORS } from "../../config/themes";
 import type { SaveSubtitlesPayload } from "../../scripts/server/constants";
 import { SAVE_SUBTITLES } from "../../scripts/server/constants";
-import { getSubtitleTransform } from "../animations/subtitle-transitions";
-import { getAnimatedSubtitleLayout } from "../animations/subtitle-transitions/box-transition";
 import { shouldInlineTransitionSubtitles } from "../animations/subtitle-transitions/should-transition-subtitle";
+import { getSubtitleTransform } from "../animations/subtitle-transitions/subtitle-transitions";
 import { SubsEditor } from "./Editor/SubsEditor";
 import { postprocessSubtitles } from "./processing/postprocess-subs";
 import {
   CaptionSentence,
   getBorderWidthForSubtitles,
   getSubsAlign,
-  getSubtitlesFontSize,
-  getSubtitlesLines,
-  getSubtitlesType,
 } from "./Segment";
 import {
   TransitionFromPreviousSubtitles,
@@ -50,8 +48,8 @@ export const Subs: React.FC<{
   trimStart: number;
   canvasLayout: CanvasLayout;
   scene: VideoSceneAndMetadata;
-  enter: number;
-  exit: number;
+  enterProgress: number;
+  exitProgress: number;
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
   theme: Theme;
@@ -60,8 +58,8 @@ export const Subs: React.FC<{
   trimStart,
   canvasLayout,
   scene,
-  enter,
-  exit,
+  enterProgress,
+  exitProgress,
   nextScene,
   previousScene,
   theme,
@@ -76,6 +74,21 @@ export const Subs: React.FC<{
   >("initial");
   const [subEditorOpen, setSubEditorOpen] = useState<Word | false>(false);
   const preventReload = useRef(false);
+
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    const delay = delayRender("Waiting for fonts to be loaded");
+
+    waitForFonts()
+      .then(() => {
+        continueRender(delay);
+        setFontsLoaded(true);
+      })
+      .catch((err) => {
+        cancelRender(err);
+      });
+  }, [fontsLoaded, handle]);
 
   useEffect(() => {
     if (!subEditorOpen) {
@@ -109,33 +122,15 @@ export const Subs: React.FC<{
     }
   }, [changeStatus, file.src, handle]);
 
-  const subtitleType = getSubtitlesType({
-    canvasLayout,
-    displayLayout: scene.layout.displayLayout,
-  });
+  const { subtitleType, subtitleFontSize } = scene.layout;
 
   const shouldTransitionToNext = shouldInlineTransitionSubtitles({
-    canvasLayout,
     currentScene: scene,
     nextScene,
   });
   const shouldTransitionFromPrevious = shouldInlineTransitionSubtitles({
-    canvasLayout,
     currentScene: scene,
     nextScene: previousScene,
-  });
-
-  const animatedSubLayout = getAnimatedSubtitleLayout({
-    enterProgress: enter,
-    exitProgress: exit,
-    nextScene: nextScene && nextScene.type === "video-scene" ? nextScene : null,
-    previousScene:
-      previousScene && previousScene.type === "video-scene"
-        ? previousScene
-        : null,
-    scene,
-    shouldTransitionFromPrevious,
-    shouldTransitionToNext,
   });
 
   const postprocessed = useMemo(() => {
@@ -143,20 +138,26 @@ export const Subs: React.FC<{
       return null;
     }
 
+    if (!fontsLoaded) {
+      return null;
+    }
+
     return postprocessSubtitles({
       subTypes: whisperOutput,
-      boxWidth: animatedSubLayout.width,
-      maxLines: getSubtitlesLines(subtitleType),
-      fontSize: getSubtitlesFontSize(subtitleType, scene.layout.displayLayout),
+      boxWidth: scene.layout.subtitleLayout.width,
+      maxLines: scene.layout.subtitleLines,
+      fontSize: scene.layout.subtitleFontSize,
       canvasLayout,
       subtitleType,
     });
   }, [
     whisperOutput,
-    animatedSubLayout.width,
-    subtitleType,
-    scene.layout.displayLayout,
+    fontsLoaded,
+    scene.layout.subtitleLayout.width,
+    scene.layout.subtitleLines,
+    scene.layout.subtitleFontSize,
     canvasLayout,
+    subtitleType,
   ]);
 
   const onOpenSubEditor = useCallback((word: Word) => {
@@ -205,34 +206,31 @@ export const Subs: React.FC<{
   }
 
   const outer: React.CSSProperties = {
-    fontSize: getSubtitlesFontSize(subtitleType, scene.layout.displayLayout),
+    fontSize: subtitleFontSize,
     display: "flex",
     lineHeight: LINE_HEIGHT,
     border: `${getBorderWidthForSubtitles(subtitleType)}px solid ${
       COLORS[theme].BORDER_COLOR
     }`,
     backgroundColor:
-      subtitleType === "boxed" || subtitleType === "overlayed-center"
+      subtitleType === "square" || subtitleType === "overlayed-center"
         ? COLORS[theme].SUBTITLES_BACKGROUND
         : undefined,
     ...getSubsAlign({
       canvasLayout,
       subtitleType,
     }),
-    ...animatedSubLayout,
-    transform: getSubtitleTransform({
-      currentLayout: animatedSubLayout,
-      enter,
-      exit,
-      height,
+    ...getSubtitleTransform({
+      enterProgress,
+      exitProgress,
+      canvasHeight: height,
       nextScene,
       previousScene,
       scene,
-      width,
+      canvasWidth: width,
       subtitleType,
     }),
   };
-
   return (
     <AbsoluteFill style={outer}>
       <TransitionFromPreviousSubtitles
@@ -255,22 +253,23 @@ export const Subs: React.FC<{
                 canvasLayout={canvasLayout}
                 subtitleType={subtitleType}
                 theme={theme}
-                displayLayout={scene.layout.displayLayout}
+                fontSize={scene.layout.subtitleFontSize}
+                lines={scene.layout.subtitleLines}
                 onOpenSubEditor={onOpenSubEditor}
               />
             );
           })}
         </TransitionToNextSubtitles>
       </TransitionFromPreviousSubtitles>
-
       {whisperOutput && subEditorOpen ? (
         <SubsEditor
           initialWord={subEditorOpen}
           setWhisperOutput={setAndSaveWhisperOutput}
           whisperOutput={whisperOutput}
           fileName={file.name}
-          onCloseSubEditor={onCloseSubEditor}
           trimStart={trimStart}
+          theme={theme}
+          onCloseSubEditor={onCloseSubEditor}
         />
       ) : null}
     </AbsoluteFill>

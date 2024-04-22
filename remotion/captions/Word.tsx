@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   interpolateColors,
   spring,
@@ -10,13 +10,10 @@ import {
   MONOSPACE_FONT_FAMILY,
   MONOSPACE_FONT_WEIGHT,
   REGULAR_FONT_FAMILY,
+  REGULAR_FONT_WEIGHT,
 } from "../../config/fonts";
 import type { Theme } from "../../config/themes";
 import { COLORS } from "../../config/themes";
-
-const style: React.CSSProperties = {
-  display: "inline",
-};
 
 export const useSequenceDuration = (trimStart: number) => {
   const { durationInFrames, fps } = useVideoConfig();
@@ -56,7 +53,7 @@ const getShownWordColor = ({
 
   return interpolateColors(
     time,
-    [word.start, word.start + 100],
+    [word.firstTimestamp, word.firstTimestamp + 100],
     [wordColor.greyed, wordColor.appeared],
   );
 };
@@ -77,7 +74,7 @@ const getWordColor = ({
 
   return monospace && appeared
     ? {
-        appeared: COLORS[theme].WORD_HIGHLIGHT_COLOR,
+        appeared: COLORS[theme].ACCENT_COLOR,
         greyed: COLORS[theme].WORD_COLOR_ON_BG_GREYED,
       }
     : normalWordColor;
@@ -99,12 +96,12 @@ export const WordComp: React.FC<{
   const [hovered, setHovered] = useState(false);
 
   const scale = word.monospace
-    ? word.start > time
+    ? word.firstTimestamp > time
       ? 1
       : spring({
           fps,
           frame,
-          delay: word.start * fps,
+          delay: word.firstTimestamp * fps,
           config: {
             damping: 200,
           },
@@ -114,9 +111,11 @@ export const WordComp: React.FC<{
         0.95
     : 1;
 
-  const appeared = word.start <= time;
+  const appeared = word.firstTimestamp <= time;
 
-  const active = word.start <= time && (word.end > time || isLast);
+  const active =
+    word.firstTimestamp <= time &&
+    (word.lastTimestamp === null || word.lastTimestamp > time || isLast);
 
   const wordColor = getWordColor({
     appeared,
@@ -134,46 +133,52 @@ export const WordComp: React.FC<{
 
   const backgroundColor = active
     ? word.monospace
-      ? COLORS[theme].WORD_HIGHLIGHT_COLOR
+      ? COLORS[theme].ACCENT_COLOR
       : "transparent"
     : "transparent";
 
-  const startsWithSpace = word.word.startsWith(" ");
+  const style: React.CSSProperties = useMemo(() => {
+    return {
+      display: "inline",
+      fontFamily: word.monospace ? MONOSPACE_FONT_FAMILY : REGULAR_FONT_FAMILY,
+      color: shownWordColor,
+      fontWeight: word.monospace ? MONOSPACE_FONT_WEIGHT : REGULAR_FONT_WEIGHT,
+      backgroundColor,
+      outline: hovered
+        ? "2px solid black"
+        : active
+          ? "5px solid " + backgroundColor
+          : "none",
+      whiteSpace: word.monospace ? "nowrap" : undefined,
+      // Fix gap inbetween background and outline
+      boxShadow:
+        active && word.monospace ? `0 0 0 1px ${backgroundColor}` : "none",
+      borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS,
+      scale: String(scale),
+      cursor: "pointer",
+    };
+  }, [active, backgroundColor, hovered, scale, shownWordColor, word.monospace]);
+
+  const onPointerEnter = useCallback(() => {
+    setHovered(true);
+  }, []);
+
+  const onPointerLeave = useCallback(() => {
+    setHovered(false);
+  }, []);
+
+  const onClick = useCallback(() => {
+    onOpenSubEditor(word);
+  }, [onOpenSubEditor, word]);
 
   return (
-    <>
-      <span>{startsWithSpace && " "}</span>
-      <span
-        onPointerEnter={() => setHovered(true)}
-        onPointerLeave={() => setHovered(false)}
-        onClick={() => onOpenSubEditor(word)}
-        style={{
-          ...style,
-          fontFamily: word.monospace
-            ? MONOSPACE_FONT_FAMILY
-            : REGULAR_FONT_FAMILY,
-          color: shownWordColor,
-          fontWeight: word.monospace
-            ? MONOSPACE_FONT_WEIGHT
-            : MONOSPACE_FONT_FAMILY,
-          backgroundColor,
-          outline: hovered
-            ? "2px solid black"
-            : active
-              ? "5px solid " + backgroundColor
-              : "none",
-          whiteSpace: word.monospace ? "nowrap" : undefined,
-          // Fix gap inbetween background and outline
-          boxShadow:
-            active && word.monospace ? `0 0 0 1px ${backgroundColor}` : "none",
-          borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS,
-          scale: String(scale),
-          display: "inline",
-          cursor: "pointer",
-        }}
-      >
-        {word.word.trim()}
-      </span>
-    </>
+    <span
+      style={style}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+      onClick={onClick}
+    >
+      {word.text}
+    </span>
   );
 };

@@ -1,16 +1,13 @@
 import { Audio, staticFile } from "remotion";
-import type {
-  SceneAndMetadata,
-  VideoSceneAndMetadata,
-} from "../../../config/scenes";
+import type { SceneAndMetadata } from "../../../config/scenes";
 import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,
-} from "../../animations/webcam-transitions";
+} from "../../animations/webcam-transitions/helpers";
 
 export const SoundEffects: React.FC<{
   previousScene: SceneAndMetadata | null;
-  sceneAndMetadata: VideoSceneAndMetadata;
+  sceneAndMetadata: SceneAndMetadata;
   shouldEnter: boolean;
 }> = ({ previousScene, sceneAndMetadata, shouldEnter }) => {
   if (!shouldEnter) {
@@ -37,5 +34,5 @@ export const SoundEffects: React.FC<{
     return <Audio src={staticFile("sounds/grow.m4a")} volume={0.2} />;
   }
 
-  return <Audio src={staticFile("sounds/whipwhoosh.mp3")} volume={0.1} />;
+  return <Audio src={staticFile("sounds/whip.wav")} volume={0.1} />;
 };

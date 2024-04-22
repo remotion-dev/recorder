@@ -5,7 +5,7 @@ import { getHorizontalPaddingForSubtitles } from "../processing/postprocess-subs
 import type { Segment } from "../types";
 import { WORD_HIGHLIGHT_BORDER_RADIUS } from "../Word";
 import { Words } from "../Words";
-import { LINE_HEIGHT } from "./BoxedSubtitles";
+import { LINE_HEIGHT } from "./SquareSubtitles";
 
 export const OverlayedCenterSubtitles: React.FC<{
   segment: Segment;

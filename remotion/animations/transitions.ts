@@ -1,5 +1,5 @@
 import type { SceneAndMetadata } from "../../config/scenes";
-import { TRANSITION_DURATION } from "../../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 
 export const getShouldTransitionOut = ({
   sceneAndMetadata,
@@ -12,10 +12,7 @@ export const getShouldTransitionOut = ({
     return false;
   }
 
-  if (
-    sceneAndMetadata.type === "video-scene" &&
-    !sceneAndMetadata.scene.transitionToNextScene
-  ) {
+  if (!sceneAndMetadata.scene.transitionToNextScene) {
     return false;
   }
 
@@ -23,14 +20,16 @@ export const getShouldTransitionOut = ({
     sceneAndMetadata.type === "video-scene" && nextScene.type === "video-scene";
 
   if (!areBothVideoScenes) {
-    return false;
+    return true;
   }
 
   const hasSameWebcamPosition =
     sceneAndMetadata.finalWebcamPosition === nextScene.finalWebcamPosition;
   const hasSameWebcamSize =
-    sceneAndMetadata.videos.webcam.height === nextScene.videos.webcam.height &&
-    sceneAndMetadata.videos.webcam.width === nextScene.videos.webcam.width;
+    sceneAndMetadata.layout.webcamLayout.height ===
+      nextScene.layout.webcamLayout.height &&
+    sceneAndMetadata.layout.webcamLayout.width ===
+      nextScene.layout.webcamLayout.width;
   const hasBothDisplays =
     Boolean(sceneAndMetadata.videos.display) ===
     Boolean(nextScene.videos.display);
@@ -82,6 +81,6 @@ export const getSumUpDuration = ({
     scene,
     previousScene,
   })
-    ? scene.durationInFrames - TRANSITION_DURATION
+    ? scene.durationInFrames - SCENE_TRANSITION_DURATION
     : scene.durationInFrames;
 };

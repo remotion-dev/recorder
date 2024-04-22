@@ -1,8 +1,10 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import ReactDOM from "react-dom";
 import { AbsoluteFill } from "remotion";
 import type { Word } from "../../../config/autocorrect";
+import type { Theme } from "../../../config/themes";
 import type { WhisperOutput } from "../types";
+import { whisperWordToWord } from "../types";
 import { EditWord } from "./EditWord";
 import { SubsEditorFooter } from "./Footer";
 import { SubsEditorHeader } from "./Header";
@@ -15,6 +17,7 @@ export const SubsEditor: React.FC<{
   initialWord: Word;
   onCloseSubEditor: () => void;
   trimStart: number;
+  theme: Theme;
 }> = ({
   whisperOutput,
   setWhisperOutput,
@@ -22,9 +25,22 @@ export const SubsEditor: React.FC<{
   onCloseSubEditor,
   initialWord,
   trimStart,
+  theme,
 }) => {
+  const words = useMemo(() => {
+    return whisperOutput.transcription.map((whisperWord, i) => {
+      const nextWhisperWord = whisperOutput.transcription[i + 1];
+      return whisperWordToWord(whisperWord, nextWhisperWord ?? null);
+    });
+  }, [whisperOutput.transcription]);
+
   const longestNumberLength = String(
-    Math.max(...whisperOutput.transcription.map((t) => t.offsets.to)),
+    Math.max(
+      ...words.map((t) => t.firstTimestamp),
+      ...(words
+        .map((t) => t.lastTimestamp)
+        .filter((t) => t !== null) as number[]),
+    ),
   ).length;
 
   const onChangeText = useCallback(
@@ -49,6 +65,20 @@ export const SubsEditor: React.FC<{
     [setWhisperOutput],
   );
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onCloseSubEditor();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onCloseSubEditor]);
+
   if (!captionEditorPortal.current) {
     return null;
   }
@@ -66,25 +96,26 @@ export const SubsEditor: React.FC<{
           paddingBottom: FOOTER_HEIGHT,
         }}
       >
-        {whisperOutput.transcription.map((word, i) => {
+        {words.map((word, i) => {
           return (
             <EditWord
-              key={word.offsets.from + word.offsets.to}
-              onUpdateText={onChangeText}
+              key={[word.firstTimestamp, word.lastTimestamp, i].join("-")}
+              theme={theme}
               index={i}
-              longestWordLength={longestNumberLength}
+              longestNumberLength={longestNumberLength}
               word={word}
-              isInitialWord={word.offsets.from === initialWord.start}
-              onCloseEditor={onCloseSubEditor}
+              isInitialWord={word.firstTimestamp === initialWord.firstTimestamp}
               trimStart={trimStart}
+              onUpdateText={onChangeText}
+              onCloseEditor={onCloseSubEditor}
             />
           );
         })}
       </AbsoluteFill>
       <SubsEditorHeader />
       <SubsEditorFooter
-        onCloseSubEditor={onCloseSubEditor}
         fileName={fileName}
+        onCloseSubEditor={onCloseSubEditor}
       />
     </AbsoluteFill>,
     captionEditorPortal.current as HTMLDivElement,

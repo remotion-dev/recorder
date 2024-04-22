@@ -7,16 +7,16 @@ export const wordsTogether = (words: Word[]): Word[] => {
     const word = words[i] as Word;
     const previousWord = words[i - 1] ?? null;
 
-    if (word.word.startsWith(". ")) {
+    if (word.text.startsWith(". ")) {
       const lastAddedWord = newWords[newWords.length - 1] as Word;
-      lastAddedWord.word += ".";
-      word.word = word.word.slice(1);
+      lastAddedWord.text += ".";
+      word.text = word.text.slice(1);
     }
 
-    if (!word.word.startsWith(" ") && previousWord) {
+    if (!word.text.startsWith(" ") && previousWord) {
       const lastAddedWord = newWords[newWords.length - 1] as Word;
-      lastAddedWord.word += word.word;
-      lastAddedWord.end = word.end;
+      lastAddedWord.text += word.text;
+      lastAddedWord.lastTimestamp = word.lastTimestamp;
     } else {
       newWords.push(word);
     }
@@ -25,9 +25,9 @@ export const wordsTogether = (words: Word[]): Word[] => {
   return newWords.map((w) => {
     return {
       ...w,
-      word:
+      text:
         // Remove double backticks: ` n``px`` rem``otion`` render`
-        w.word.replaceAll(/``/g, ""),
+        w.text.replaceAll(/``/g, ""),
     };
   });
 };

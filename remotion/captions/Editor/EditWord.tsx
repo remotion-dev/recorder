@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import type { WhisperWord } from "../types";
+import type { Word } from "../../../config/autocorrect";
+import type { Theme } from "../../../config/themes";
+import { COLORS } from "../../../config/themes";
 import {
   FIRST_COLUMN_WIDTH,
   SECOND_COLUMN_WIDTH,
@@ -12,6 +14,7 @@ const Indent: React.FC<{ value: number; digits: number }> = ({
   value,
 }) => {
   const indentTo = digits - String(value).length;
+
   return (
     <span style={{ opacity: 0 }}>
       {new Array(indentTo)
@@ -23,27 +26,30 @@ const Indent: React.FC<{ value: number; digits: number }> = ({
 };
 
 export const EditWord: React.FC<{
-  word: WhisperWord;
-  longestWordLength: number;
+  word: Word;
+  longestNumberLength: number;
   index: number;
   onUpdateText: (index: number, newText: string) => void;
   onCloseEditor: () => void;
   isInitialWord: boolean;
   trimStart: number;
+  theme: Theme;
 }> = ({
   word,
-  longestWordLength,
+  longestNumberLength: longestWordLength,
   index,
   onUpdateText,
   isInitialWord,
   onCloseEditor,
   trimStart,
+  theme,
 }) => {
   const { width, fps } = useVideoConfig();
   const frame = useCurrentFrame();
   const milliSeconds = ((frame + trimStart) / fps) * 1000;
   const active =
-    word.offsets.from <= milliSeconds && word.offsets.to >= milliSeconds;
+    word.firstTimestamp <= milliSeconds &&
+    (word.lastTimestamp === null || word.lastTimestamp >= milliSeconds);
   const usableWidth = width - SIDE_PADDING * 2;
   const ref = useRef<HTMLDivElement>(null);
 
@@ -111,8 +117,13 @@ export const EditWord: React.FC<{
         e.preventDefault();
         onCloseEditor();
       }
+
+      if (e.key === "i" && e.metaKey) {
+        e.preventDefault();
+        toggleMonospace();
+      }
     },
-    [onCloseEditor],
+    [onCloseEditor, toggleMonospace],
   );
 
   return (
@@ -139,10 +150,13 @@ export const EditWord: React.FC<{
           paddingRight: 30,
         }}
       >
-        <Indent value={word.offsets.from} digits={longestWordLength} />
-        {word.offsets.from} :{" "}
-        <Indent value={word.offsets.to} digits={longestWordLength} />
-        {word.offsets.to}
+        <Indent value={word.firstTimestamp} digits={longestWordLength} />
+        {String(word.firstTimestamp)} :{" "}
+        <Indent
+          value={word.lastTimestamp ? word.lastTimestamp : word.firstTimestamp}
+          digits={longestWordLength}
+        />
+        {word.lastTimestamp ? word.lastTimestamp : word.firstTimestamp}
       </div>
       <div
         style={{
@@ -151,31 +165,35 @@ export const EditWord: React.FC<{
         }}
       >
         <input
-          type={"text"}
+          type="text"
           autoFocus={isInitialWord}
           style={{
             fontSize: 30,
             fontFamily: isMonospaced ? "monospace" : "Helvetica",
             backgroundColor: "transparent",
             border: "none",
-            color: isMonospaced ? "#3B82EB" : "black",
+            color: isMonospaced ? COLORS[theme].ACCENT_COLOR : "black",
           }}
+          value={word.text}
           onKeyDown={onInputKeyDown}
           onChange={onChange}
-          value={word.text}
         />
       </div>
       <div>
         <div
-          onClick={toggleMonospace}
           style={{
             width: 30,
             height: 30,
-            border: isMonospaced ? "2px solid #3B82EB" : "2px solid gray",
+            border: isMonospaced
+              ? "2px solid " + COLORS[theme].ACCENT_COLOR
+              : "2px solid gray",
             borderRadius: 3,
             cursor: "pointer",
-            background: isMonospaced ? "#3B82EB" : "transparent",
+            background: isMonospaced
+              ? COLORS[theme].ACCENT_COLOR
+              : "transparent",
           }}
+          onClick={toggleMonospace}
         />
       </div>
     </div>

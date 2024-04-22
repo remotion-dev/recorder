@@ -1,9 +1,7 @@
-import type { CanvasLayout } from "../../../config/layout";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
-import { getSubtitlesType } from "../../captions/Segment";
 
 // An inline subtitle transition:
 // - The subtitle stays at the same position and is the same subtitle type
@@ -12,16 +10,11 @@ import { getSubtitlesType } from "../../captions/Segment";
 export const shouldInlineTransitionSubtitles = ({
   currentScene,
   nextScene,
-  canvasLayout,
 }: {
   currentScene: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
-  canvasLayout: CanvasLayout;
 }) => {
-  const currentSubtitleType = getSubtitlesType({
-    canvasLayout,
-    displayLayout: currentScene.layout.displayLayout,
-  });
+  const currentSubtitleType = currentScene.layout.subtitleType;
   if (nextScene === null) {
     return false;
   }
@@ -30,23 +23,20 @@ export const shouldInlineTransitionSubtitles = ({
     return false;
   }
 
-  const nextSubtitleType = getSubtitlesType({
-    canvasLayout,
-    displayLayout: nextScene.layout.displayLayout,
-  });
+  const nextSubtitleType = nextScene.layout.subtitleType;
 
-  if (currentSubtitleType === "boxed" && nextSubtitleType === "boxed") {
-    // In boxed layout, we resize the box if the aspect ratio of the videos has changed.
+  if (currentSubtitleType === "square" && nextSubtitleType === "square") {
+    // In square layout, we resize the box if the aspect ratio of the videos has changed.
     // While resizing the box, the subtitles fade out.
 
-    const nextSubLayout = nextScene.layout.subLayout;
-    const currentSubLayout = currentScene.layout.subLayout;
+    const nextSubtitleLayout = nextScene.layout.subtitleLayout;
+    const currentSubtitleLayout = currentScene.layout.subtitleLayout;
 
     const layoutsAreTheSameBox =
-      nextSubLayout.width === currentSubLayout.width &&
-      nextSubLayout.height === currentSubLayout.height &&
-      nextSubLayout.left === currentSubLayout.left &&
-      nextSubLayout.top === currentSubLayout.top;
+      nextSubtitleLayout.width === currentSubtitleLayout.width &&
+      nextSubtitleLayout.height === currentSubtitleLayout.height &&
+      nextSubtitleLayout.left === currentSubtitleLayout.left &&
+      nextSubtitleLayout.top === currentSubtitleLayout.top;
 
     return (
       nextScene.finalWebcamPosition === currentScene.finalWebcamPosition &&

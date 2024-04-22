@@ -1,111 +1,148 @@
-import React, { useEffect, useState } from "react";
-import { Button } from "./components/ui/button";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { NewFolderDialog } from "./components/NewFolderDialog";
+import { SelectedFolder } from "./components/SelectedFolder";
+import type { CurrentBlobs } from "./components/UseThisTake";
+import { UseThisTake } from "./components/UseThisTake";
+import {
+  fetchProjectFolders,
+  loadSelectedFolder,
+  persistSelectedFolder,
+} from "./get-projects";
+import type { MediaSources } from "./RecordButton";
+import { RecordButton } from "./RecordButton";
+import { useKeyPress } from "./use-key-press";
 
 const topBarContainer: React.CSSProperties = {
   display: "flex",
   gap: 10,
-  marginTop: 10,
-  marginLeft: 10,
+  margin: 10,
   alignItems: "center",
-};
-
-const formatTime = (ms: number) => {
-  const seconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-
-  const formattedSeconds = seconds % 60;
-  const formattedMinutes = minutes % 60;
-
-  const timeArray = [];
-
-  if (hours > 0) {
-    timeArray.push(hours.toString().padStart(2, "0"));
-  }
-
-  timeArray.push(formattedMinutes.toString().padStart(2, "0"));
-  timeArray.push(formattedSeconds.toString().padStart(2, "0"));
-
-  return timeArray.join(":");
 };
 
 export const TopBar: React.FC<{
   start: () => void;
   stop: () => void;
+  discardVideos: () => void;
   recording: false | number;
-  disabledByParent: boolean;
-}> = ({ start, stop, recording, disabledByParent }) => {
-  const disabled = disabledByParent || recording !== false;
+  setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
+  mediaSources: MediaSources;
+  currentBlobs: CurrentBlobs;
+}> = ({
+  start,
+  stop,
+  discardVideos,
+  recording,
+  currentBlobs,
+  setCurrentBlobs,
+  mediaSources,
+}) => {
+  const [folders, setFolders] = useState<string[] | null>(null);
 
-  const [isVisible, setIsVisible] = useState(true);
+  const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
+  const [preferredSelectedFolder, setSelectedFolder] = useState<string | null>(
+    loadSelectedFolder(),
+  );
+  const selectedFolder = useMemo(() => {
+    return preferredSelectedFolder ?? folders?.[0] ?? null;
+  }, [folders, preferredSelectedFolder]);
+
+  const refreshFoldersList = useCallback(async () => {
+    const json = await fetchProjectFolders();
+    setFolders(json.folders);
+    if (selectedFolder && !json.folders.includes(selectedFolder)) {
+      setSelectedFolder(json.folders[0] ?? "");
+    }
+  }, [selectedFolder]);
+
+  const onStop = useCallback(() => {
+    stop();
+    setShowHandleVideos(true);
+  }, [setShowHandleVideos, stop]);
+
+  const onPressR = useCallback(() => {
+    if (mediaSources.webcam === null || !mediaSources.webcam.active) {
+      return;
+    }
+
+    const dialog = document.querySelector('[role="dialog"]');
+
+    if (
+      (document.activeElement && document.activeElement.tagName === "input") ||
+      dialog
+    ) {
+      return;
+    }
+
+    if (recording) {
+      onStop();
+    } else {
+      start();
+    }
+  }, [mediaSources.webcam, onStop, recording, start]);
+
+  useKeyPress(["r"], onPressR);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setIsVisible((prev) => !prev);
-    }, 800);
-    return () => clearInterval(intervalId);
-  }, []);
+    if (!window.remotionServerEnabled) {
+      return;
+    }
 
-  const recordCircle = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="10px"
-      viewBox="0 0 512 512"
-      style={{ opacity: disabledByParent ? 0.4 : 1 }}
-    >
-      <path fill="red" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" />
-    </svg>
-  );
+    refreshFoldersList();
+  }, [refreshFoldersList]);
 
-  const blinkingCircle = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="10px"
-      viewBox="0 0 512 512"
-      style={{ visibility: isVisible ? "visible" : "hidden" }}
-    >
-      <path fill="red" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" />
-    </svg>
-  );
+  useEffect(() => {
+    if (!window.remotionServerEnabled) {
+      return;
+    }
+
+    persistSelectedFolder(selectedFolder ?? "");
+  }, [selectedFolder]);
+
+  const handleDiscardTake = useCallback(() => {
+    discardVideos();
+    setShowHandleVideos(false);
+    start();
+  }, [discardVideos, start]);
+
+  const recordingDisabled = useMemo(() => {
+    return (
+      mediaSources.webcam === null ||
+      mediaSources.webcam.getAudioTracks().length === 0
+    );
+  }, [mediaSources.webcam]);
 
   return (
     <div style={topBarContainer}>
-      {recording ? (
+      <RecordButton
+        onStop={onStop}
+        recording={recording}
+        showHandleVideos={showHandleVideos}
+        start={start}
+        recordingDisabled={recordingDisabled}
+        onDiscard={handleDiscardTake}
+      />
+      {showHandleVideos ? (
+        <UseThisTake
+          selectedFolder={selectedFolder}
+          currentBlobs={currentBlobs}
+          setCurrentBlobs={setCurrentBlobs}
+          setShowHandleVideos={setShowHandleVideos}
+        />
+      ) : null}
+      <div style={{ flex: 1 }} />
+      {folders ? (
         <>
-          <Button
-            variant={"outline"}
-            type="button"
-            disabled={!recording}
-            onClick={stop}
-            style={{ display: "flex", alignItems: "center", gap: 10 }}
-            title="Press R to stop recording"
-          >
-            Stop recording
-          </Button>
-          {blinkingCircle}
-          {formatTime(Date.now() - recording)}
+          <SelectedFolder
+            folders={folders}
+            selectedFolder={selectedFolder}
+            setSelectedFolder={setSelectedFolder}
+          />
+          <NewFolderDialog
+            refreshFoldersList={refreshFoldersList}
+            setSelectedFolder={setSelectedFolder}
+          />
         </>
-      ) : (
-        <div
-          title={
-            disabled
-              ? "A webcam has to be selected to start the recording"
-              : undefined
-          }
-        >
-          <Button
-            variant={"outline"}
-            type="button"
-            disabled={disabled}
-            onClick={start}
-            style={{ display: "flex", alignItems: "center", gap: 10 }}
-            title="Press R to start recording"
-          >
-            {recordCircle}
-            Start recording
-          </Button>
-        </div>
-      )}
+      ) : null}
     </div>
   );
 };

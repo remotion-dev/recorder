@@ -7,7 +7,8 @@ import {
   isGrowingFromMiniature,
   isShrinkingToMiniature,
   isWebCamAtBottom,
-} from "./webcam-transitions";
+  isWebCamRight,
+} from "./webcam-transitions/helpers";
 
 export type OutTransition = "none" | "up" | "down" | "left" | "right";
 export type InTransition =
@@ -24,9 +25,7 @@ export const getChapterOutTransition = ({
   currentScene: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
 }): OutTransition => {
-  const isCurrentlyLeft =
-    currentScene.finalWebcamPosition === "bottom-left" ||
-    currentScene.finalWebcamPosition === "top-left";
+  const isCurrentlyLeft = !isWebCamRight(currentScene.finalWebcamPosition);
 
   if (nextScene === null || nextScene.type !== "video-scene") {
     return "left";
@@ -36,17 +35,9 @@ export const getChapterOutTransition = ({
     return "none";
   }
 
-  const isCurrentlyTop =
-    currentScene.finalWebcamPosition === "top-left" ||
-    currentScene.finalWebcamPosition === "top-right";
-
-  const isNextLeft =
-    nextScene.finalWebcamPosition === "bottom-left" ||
-    nextScene.finalWebcamPosition === "top-left";
-
-  const isNextTop =
-    nextScene.finalWebcamPosition === "top-left" ||
-    nextScene.finalWebcamPosition === "top-right";
+  const isCurrentlyTop = !isWebCamAtBottom(currentScene.finalWebcamPosition);
+  const isNextLeft = !isWebCamRight(nextScene.finalWebcamPosition);
+  const isNextTop = !isWebCamAtBottom(nextScene.finalWebcamPosition);
 
   if (isCurrentlyLeft && !isNextLeft) {
     return "left";
@@ -131,14 +122,14 @@ export const getChapterInTransition = ({
 };
 
 export const makeOutTransition = ({
-  height,
+  canvasHeight,
   outTransition,
   progress,
-  width,
+  canvasWidth,
 }: {
   outTransition: OutTransition;
-  width: number;
-  height: number;
+  canvasWidth: number;
+  canvasHeight: number;
   progress: number;
 }): { x: number; y: number } => {
   if (outTransition === "none") {
@@ -146,19 +137,19 @@ export const makeOutTransition = ({
   }
 
   if (outTransition === "down") {
-    return { x: 0, y: interpolate(progress, [0, 1], [0, height]) };
+    return { x: 0, y: interpolate(progress, [0, 1], [0, canvasHeight]) };
   }
 
   if (outTransition === "up") {
-    return { x: 0, y: interpolate(progress, [0, 1], [0, -height]) };
+    return { x: 0, y: interpolate(progress, [0, 1], [0, -canvasHeight]) };
   }
 
   if (outTransition === "left") {
-    return { y: 0, x: interpolate(progress, [0, 1], [0, -width]) };
+    return { y: 0, x: interpolate(progress, [0, 1], [0, -canvasWidth]) };
   }
 
   if (outTransition === "right") {
-    return { y: 0, x: interpolate(progress, [0, 1], [0, width]) };
+    return { y: 0, x: interpolate(progress, [0, 1], [0, canvasWidth]) };
   }
 
   throw new Error('weird outTransition "' + outTransition + '"');
@@ -166,13 +157,13 @@ export const makeOutTransition = ({
 
 export const makeInTransition = ({
   inTransition,
-  width,
-  height,
+  canvasWidth,
+  canvasHeight,
   progress,
 }: {
   inTransition: InTransition;
-  width: number;
-  height: number;
+  canvasWidth: number;
+  canvasHeight: number;
   progress: number;
 }): { x: number; y: number } => {
   if (inTransition === "none") {
@@ -182,23 +173,23 @@ export const makeInTransition = ({
   if (inTransition === "from-top") {
     return {
       x: 0,
-      y: interpolate(progress, [0, 1], [-height / 2, 0]),
+      y: interpolate(progress, [0, 1], [-canvasHeight / 2, 0]),
     };
   }
 
   if (inTransition === "from-bottom") {
     return {
       x: 0,
-      y: interpolate(progress, [0, 1], [height / 2, 0]),
+      y: interpolate(progress, [0, 1], [canvasHeight / 2, 0]),
     };
   }
 
   if (inTransition === "from-left") {
-    return { y: 0, x: interpolate(progress, [0, 1], [-width / 2, 0]) };
+    return { y: 0, x: interpolate(progress, [0, 1], [-canvasWidth / 2, 0]) };
   }
 
   if (inTransition === "from-right") {
-    return { y: 0, x: interpolate(progress, [0, 1], [width / 2, 0]) };
+    return { y: 0, x: interpolate(progress, [0, 1], [canvasWidth / 2, 0]) };
   }
 
   throw new Error('weird inTransition "' + inTransition + '"');

@@ -1,60 +1,34 @@
-import { translate } from "@remotion/animation-utils";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
-import {
-  isGrowingFromMiniature,
-  isShrinkingToMiniature,
-} from "../webcam-transitions";
+import type { Layout } from "../../layout/layout-types";
+import { isGrowingFromMiniature } from "../webcam-transitions/helpers";
 
-export const getOverlayedCenterSubtitleEnter = ({
-  previousScene,
+export const getOverlayedCenterSubtitleEnterOrExit = ({
+  otherScene,
   scene,
 }: {
-  previousScene: SceneAndMetadata | null;
+  otherScene: SceneAndMetadata | null;
   scene: VideoSceneAndMetadata;
-}): string => {
-  if (previousScene === null) {
-    return translate(0, 0);
+}): Layout => {
+  if (otherScene === null) {
+    return scene.layout.subtitleLayout;
   }
 
-  if (previousScene.type !== "video-scene") {
-    return translate(0, 500);
+  if (otherScene.type !== "video-scene") {
+    return {
+      ...scene.layout.subtitleLayout,
+      top: scene.layout.subtitleLayout.top + 500,
+    };
   }
 
-  if (
-    isGrowingFromMiniature({ firstScene: previousScene, secondScene: scene })
-  ) {
-    return translate(0, 500);
+  if (isGrowingFromMiniature({ firstScene: otherScene, secondScene: scene })) {
+    return {
+      ...scene.layout.subtitleLayout,
+      top: scene.layout.subtitleLayout.top + 500,
+    };
   }
 
-  return translate(0, 0);
-};
-
-export const getOverlayedCenterSubtitleExit = ({
-  nextScene,
-  currentScene,
-}: {
-  nextScene: SceneAndMetadata | null;
-  currentScene: VideoSceneAndMetadata;
-}): string => {
-  if (!nextScene) {
-    return translate(0, 0);
-  }
-
-  if (nextScene.type !== "video-scene") {
-    return translate(0, 500);
-  }
-
-  if (
-    isShrinkingToMiniature({
-      firstScene: currentScene,
-      secondScene: nextScene,
-    })
-  ) {
-    return translate(0, 500);
-  }
-
-  return translate(0, 0);
+  return scene.layout.subtitleLayout;
 };
