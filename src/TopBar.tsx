@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { NewFolderDialog } from "./components/NewFolderDialog";
 import { SelectedFolder } from "./components/SelectedFolder";
+import { SmallSpinner } from "./components/SmallSpinner";
 import type { CurrentBlobs } from "./components/UseThisTake";
 import { UseThisTake } from "./components/UseThisTake";
 import {
@@ -16,7 +17,26 @@ const topBarContainer: React.CSSProperties = {
   display: "flex",
   gap: 10,
   margin: 10,
+  marginBottom: 0,
   alignItems: "center",
+};
+
+const recordWrapper: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: 10,
+};
+
+const transcribeIndicator: React.CSSProperties = {
+  fontSize: 10,
+  display: "flex",
+  paddingLeft: 2,
+  alignItems: "center",
+  marginTop: 2,
+  gap: 4,
+  color: "grey",
 };
 
 export const TopBar: React.FC<{
@@ -38,10 +58,19 @@ export const TopBar: React.FC<{
 }) => {
   const [folders, setFolders] = useState<string[] | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
   const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
   const [preferredSelectedFolder, setSelectedFolder] = useState<string | null>(
     loadSelectedFolder(),
   );
+
+  const dynamicTranscribeIndicator: React.CSSProperties = useMemo(() => {
+    return {
+      ...transcribeIndicator,
+      visibility: transcribing ? "visible" : "hidden",
+    };
+  }, [transcribing]);
+
   const selectedFolder = useMemo(() => {
     return preferredSelectedFolder ?? folders?.[0] ?? null;
   }, [folders, preferredSelectedFolder]);
@@ -113,28 +142,39 @@ export const TopBar: React.FC<{
 
   return (
     <div style={topBarContainer}>
-      {uploading ? null : (
-        <RecordButton
-          onStop={onStop}
-          recording={recording}
-          showHandleVideos={showHandleVideos}
-          start={start}
-          recordingDisabled={recordingDisabled}
-          onDiscard={handleDiscardTake}
-        />
-      )}
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={recordWrapper}>
+          {uploading ? null : (
+            <RecordButton
+              onStop={onStop}
+              recording={recording}
+              showHandleVideos={showHandleVideos}
+              start={start}
+              recordingDisabled={recordingDisabled}
+              onDiscard={handleDiscardTake}
+            />
+          )}
 
-      {showHandleVideos ? (
-        <UseThisTake
-          selectedFolder={selectedFolder}
-          currentBlobs={currentBlobs}
-          setCurrentBlobs={setCurrentBlobs}
-          setShowHandleVideos={setShowHandleVideos}
-          uploading={uploading}
-          setUploading={setUploading}
-        />
-      ) : null}
+          {showHandleVideos ? (
+            <UseThisTake
+              selectedFolder={selectedFolder}
+              currentBlobs={currentBlobs}
+              setCurrentBlobs={setCurrentBlobs}
+              setShowHandleVideos={setShowHandleVideos}
+              uploading={uploading}
+              setUploading={setUploading}
+              setTranscribing={setTranscribing}
+            />
+          ) : null}
+        </div>
+
+        <div style={dynamicTranscribeIndicator}>
+          Transcribing last recording <SmallSpinner />
+        </div>
+      </div>
+
       <div style={{ flex: 1 }} />
+
       {folders ? (
         <>
           <SelectedFolder
