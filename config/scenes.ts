@@ -94,6 +94,7 @@ export type Pair = {
   subs: StaticFile | null;
   alternative1: StaticFile | null;
   alternative2: StaticFile | null;
+  timestamp: number;
 };
 
 export type SceneVideos = {
