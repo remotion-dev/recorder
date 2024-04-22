@@ -33,39 +33,44 @@ import { getBRollDimensions } from "./scenes/BRoll/get-broll-dimensions";
 const getPairs = (prefix: string) => {
   const files = getStaticFiles().filter((f) => f.name.startsWith(prefix));
 
-  return files
-    .map((file): Pair | null => {
-      if (!file.name.startsWith(`${prefix}/${WEBCAM_PREFIX}`)) {
-        return null;
-      }
+  return (
+    files
+      .map((file): Pair | null => {
+        if (!file.name.startsWith(`${prefix}/${WEBCAM_PREFIX}`)) {
+          return null;
+        }
 
-      const timestamp = file.name
-        .replace(`${prefix}/${WEBCAM_PREFIX}`, "")
-        .replace(".webm", "")
-        .replace(".mp4", "");
+        const timestamp = file.name
+          .toLowerCase()
+          .replace(`${prefix}/${WEBCAM_PREFIX}`, "")
+          .replace(".webm", "")
+          .replace(".mov", "")
+          .replace(".mp4", "");
 
-      const display = files.find((_f) =>
-        _f.name.startsWith(`${prefix}/${DISPLAY_PREFIX}${timestamp}`),
-      );
-      const sub = files.find((_f) =>
-        _f.name.startsWith(`${prefix}/${SUBS_PREFIX}${timestamp}`),
-      );
-      const alternative1 = files.find((_f) =>
-        _f.name.startsWith(`${prefix}/${ALTERNATIVE1_PREFIX}${timestamp}`),
-      );
-      const alternative2 = files.find((_f) =>
-        _f.name.startsWith(`${prefix}/${ALTERNATIVE2_PREFIX}${timestamp}`),
-      );
+        const display = files.find((_f) =>
+          _f.name.startsWith(`${prefix}/${DISPLAY_PREFIX}${timestamp}.`),
+        );
+        const sub = files.find((_f) =>
+          _f.name.startsWith(`${prefix}/${SUBS_PREFIX}${timestamp}.`),
+        );
+        const alternative1 = files.find((_f) =>
+          _f.name.startsWith(`${prefix}/${ALTERNATIVE1_PREFIX}${timestamp}.`),
+        );
+        const alternative2 = files.find((_f) =>
+          _f.name.startsWith(`${prefix}/${ALTERNATIVE2_PREFIX}${timestamp}.`),
+        );
 
-      return {
-        webcam: file,
-        display: display ?? null,
-        subs: sub ?? null,
-        alternative1: alternative1 ?? null,
-        alternative2: alternative2 ?? null,
-      };
-    })
-    .filter(Boolean) as Pair[];
+        return {
+          webcam: file,
+          display: display ?? null,
+          subs: sub ?? null,
+          alternative1: alternative1 ?? null,
+          alternative2: alternative2 ?? null,
+          timestamp: parseInt(timestamp, 10),
+        };
+      })
+      .filter(Boolean) as Pair[]
+  ).sort((a, b) => a.timestamp - b.timestamp);
 };
 
 export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
