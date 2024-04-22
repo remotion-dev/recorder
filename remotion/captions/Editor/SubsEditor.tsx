@@ -35,7 +35,12 @@ export const SubsEditor: React.FC<{
   }, [whisperOutput.transcription]);
 
   const longestNumberLength = String(
-    Math.max(...words.map((t) => t.firstTimestamp)),
+    Math.max(
+      ...words.map((t) => t.firstTimestamp),
+      ...(words
+        .map((t) => t.lastTimestamp)
+        .filter((t) => t !== null) as number[]),
+    ),
   ).length;
 
   const onChangeText = useCallback(
@@ -97,7 +102,7 @@ export const SubsEditor: React.FC<{
               key={[word.firstTimestamp, word.lastTimestamp, i].join("-")}
               theme={theme}
               index={i}
-              longestWordLength={longestNumberLength}
+              longestNumberLength={longestNumberLength}
               word={word}
               isInitialWord={word.firstTimestamp === initialWord.firstTimestamp}
               trimStart={trimStart}

@@ -87,6 +87,7 @@ export const Display: React.FC<{
         }}
       >
         <OffthreadVideo
+          muted
           startFrom={startFrom}
           endAt={endAt}
           src={scene.pair.display.src}

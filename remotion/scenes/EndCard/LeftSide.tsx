@@ -11,21 +11,12 @@ import {
 } from "remotion";
 import type { Brand, LinkType, Platform } from "../../../config/endcard";
 import { avatars, channels } from "../../../config/endcard";
-import {
-  ENDCARD_FONT_FAMILY,
-  ENDCARD_FONT_WEIGHT,
-} from "../../../config/fonts";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
 import { SCENE_TRANSITION_DURATION } from "../../../config/transitions";
 import { FollowButton, followButtonHeight } from "./FollowButton";
-import {
-  InstagramIcon,
-  LinkedInIcon,
-  LinkIcon,
-  XIcon,
-  YouTubeIcon,
-} from "./icons";
+import { IconRow, spaceBetweenImgAndText } from "./IconRow";
+import { Links } from "./Links";
 
 const Avatar: React.FC<{
   avatar: string;
@@ -49,8 +40,6 @@ const style: React.CSSProperties = {
   alignItems: "center",
 };
 
-const spaceBetweenAvatarAndCta = 30;
-
 const FollowCTA: React.FC<{
   platform: Platform;
   avatar: string;
@@ -60,60 +49,12 @@ const FollowCTA: React.FC<{
   return (
     <div style={style}>
       <Avatar theme={theme} avatar={avatar} />
-      <div style={{ width: spaceBetweenAvatarAndCta }} />
+      <div style={{ width: spaceBetweenImgAndText }} />
       <FollowButton
         theme={theme}
         platform={platform}
         isLinkedInBusinessPage={isLinkedInBusinessPage}
       />
-    </div>
-  );
-};
-
-const iconContainer: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  height: 60,
-  width: followButtonHeight,
-};
-
-const iconRow: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-  paddingTop: 20,
-  paddingBottom: 20,
-};
-
-const IconRow: React.FC<{
-  type: Platform | "link";
-  label: string;
-  opacity: number;
-  theme: Theme;
-}> = ({ type, label, opacity, theme }) => {
-  const labelStyle: React.CSSProperties = {
-    fontSize: 50,
-    fontFamily: ENDCARD_FONT_FAMILY,
-    fontWeight: ENDCARD_FONT_WEIGHT,
-    marginLeft: 20,
-    color: COLORS[theme].ENDCARD_TEXT_COLOR,
-  };
-  return (
-    <div style={{ ...iconRow, opacity }}>
-      <div style={iconContainer}>
-        {type === "link" ? <LinkIcon theme={theme} height={60} /> : null}
-        {type === "youtube" ? <YouTubeIcon theme={theme} height={60} /> : null}
-        {type === "x" ? <XIcon theme={theme} height={60} /> : null}
-        {type === "instagram" ? (
-          <InstagramIcon theme={theme} height={70} />
-        ) : null}
-        {type === "linkedin" ? (
-          <LinkedInIcon theme={theme} height={60} />
-        ) : null}
-      </div>
-      <div style={{ width: spaceBetweenAvatarAndCta }} />
-      <div style={labelStyle}>{label}</div>
     </div>
   );
 };
@@ -250,31 +191,13 @@ export const LeftSide: React.FC<{
             />
           );
         })}
-        {links.length > 0 ? <div style={{ height: 80 }} /> : null}
-        {links.map((l, i) => {
-          const indexFromLast = links.length - i;
-          const opacity = spring({
-            fps,
-            frame,
-            config: {
-              damping: 200,
-            },
-            delay:
-              slideDelay +
-              ((indexFromLast - 1) / totalLinks) * (slideDuration - 15),
-            durationInFrames: 15,
-          });
-
-          return (
-            <IconRow
-              key={l.link}
-              opacity={opacity}
-              type="link"
-              label={l.link}
-              theme={theme}
-            />
-          );
-        })}
+        <Links
+          links={links}
+          slideDelay={slideDelay}
+          slideDuration={slideDuration}
+          theme={theme}
+          totalLinks={totalLinks}
+        />
       </div>
     </AbsoluteFill>
   );
