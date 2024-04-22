@@ -46,8 +46,9 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@jonny/eslint-config": "^3.0.275",
+    "@jonny/eslint-config": "^3.0.281",
     "@remotion/cli": "4.0.143",
+    "@remotion/eslint-config": "^4.0.143",
     "@remotion/google-fonts": "4.0.143",
     "@remotion/install-whisper-cpp": "4.0.143",
     "@remotion/media-utils": "4.0.143",
