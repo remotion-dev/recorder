@@ -18,7 +18,7 @@ import {
   type SceneVideos,
   type WebcamPosition,
 } from "../config/scenes";
-import { TRANSITION_DURATION } from "../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../config/transitions";
 import {
   getShouldTransitionOut,
   getSumUpDuration,
@@ -28,6 +28,8 @@ import { truthy } from "./helpers/truthy";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
 import type { MainProps } from "./Main";
+import { applyBRollRules } from "./scenes/BRoll/apply-b-roll-rules";
+import { getBRollDimensions } from "./scenes/BRoll/get-broll-dimensions";
 
 const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2);
 
@@ -181,8 +183,13 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           deriveEndFrameFromSubs(subsJson) ??
           Math.round(durationInSeconds * FPS);
         const durationInFrames =
-          derivedEndFrame - derivedStartFrame - scene.startOffset;
-        const duration = scene?.duration ?? durationInFrames;
+          durationInSeconds === Infinity
+            ? PLACE_HOLDER_DURATION_IN_FRAMES
+            : derivedEndFrame - derivedStartFrame - scene.startOffset;
+
+        // Intentionally using ||
+        // By default, Zod will give it a value of 0, which shifts the timeline
+        const duration = scene.duration || Math.round(durationInFrames);
 
         const videos: SceneVideos = {
           display: dim,
@@ -214,6 +221,12 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           webcamPosition = "center";
         }
 
+        const bRollWithDimensions = await Promise.all(
+          scene.bRolls.map((bRoll) => {
+            return getBRollDimensions(bRoll);
+          }),
+        );
+
         return {
           type: "video-scene",
           scene,
@@ -230,6 +243,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           chapter: scene.newChapter ?? null,
           startFrame: derivedStartFrame,
           endFrame: derivedEndFrame,
+          bRolls: bRollWithDimensions,
         };
       }),
     )
@@ -257,11 +271,24 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
         })
       ) {
-        addedUpDurations -= TRANSITION_DURATION;
+        addedUpDurations -= SCENE_TRANSITION_DURATION;
       }
 
-      const retValue = {
+      const retValue: SceneAndMetadata = {
         ...sceneAndMetadata,
+        ...(sceneAndMetadata.type === "video-scene"
+          ? {
+              bRolls: applyBRollRules({
+                bRolls: sceneAndMetadata.bRolls,
+                sceneDurationInFrames: sceneAndMetadata.durationInFrames,
+                willTransitionToNextScene: getShouldTransitionOut({
+                  sceneAndMetadata,
+                  nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
+                }),
+              }),
+            }
+          : {}),
+
         from,
         chapter: currentChapter,
       };

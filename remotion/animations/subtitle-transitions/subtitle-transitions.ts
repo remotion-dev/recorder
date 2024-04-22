@@ -88,8 +88,8 @@ export const getSubtitleTransform = ({
   });
 
   if (exitProgress > 0) {
-    return interpolateLayout(scene.layout.subLayout, exit, exitProgress);
+    return interpolateLayout(scene.layout.subtitleLayout, exit, exitProgress);
   }
 
-  return interpolateLayout(enter, scene.layout.subLayout, enterProgress);
+  return interpolateLayout(enter, scene.layout.subtitleLayout, enterProgress);
 };
