@@ -47,7 +47,7 @@ const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
   const startFromInFrames =
     Math.floor((startFromInHundrethsOfSec / 100) * FPS) -
     TIMESTAMP_PADDING_IN_FRAMES;
-  return startFromInFrames;
+  return startFromInFrames > 0 ? startFromInFrames : 0;
 };
 
 const deriveEndFrameFromSubs = (
