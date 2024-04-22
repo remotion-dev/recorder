@@ -25,7 +25,7 @@ export const transcribeVideo = async (
 
     const folderPath = path.join(publicDir, folder);
 
-    // get files with correct date
+    // get webcam file of provided end date
     const webcamFiles = readdirSync(folderPath).filter((f) => {
       return (
         f !== ".DS_Store" &&
@@ -41,7 +41,7 @@ export const transcribeVideo = async (
     }
 
     if (webcamFiles.length > 1) {
-      throw new Error("Dupliate file found.");
+      throw new Error("Dublicate files found.");
     }
 
     const fileName = webcamFiles[0] as string;
@@ -53,9 +53,11 @@ export const transcribeVideo = async (
     );
 
     if (existsSync(outPath)) {
-      console.log("Already transcribed", outPath);
       res.status(200);
-      return res.send({ success: true, message: "Already transcribed" });
+      return res.send({
+        success: true,
+        message: `Already transcribed at ${outPath}`,
+      });
     }
 
     await captionFile({
@@ -67,7 +69,7 @@ export const transcribeVideo = async (
     res.status(200);
     return res.send({
       success: true,
-      message: "Successfully transcribed the file.",
+      message: "Successfully transcribed.",
     });
   } catch (e) {
     res.status(500);
