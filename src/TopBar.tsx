@@ -37,7 +37,7 @@ export const TopBar: React.FC<{
   mediaSources,
 }) => {
   const [folders, setFolders] = useState<string[] | null>(null);
-
+  const [uploading, setUploading] = useState(false);
   const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
   const [preferredSelectedFolder, setSelectedFolder] = useState<string | null>(
     loadSelectedFolder(),
@@ -113,20 +113,25 @@ export const TopBar: React.FC<{
 
   return (
     <div style={topBarContainer}>
-      <RecordButton
-        onStop={onStop}
-        recording={recording}
-        showHandleVideos={showHandleVideos}
-        start={start}
-        recordingDisabled={recordingDisabled}
-        onDiscard={handleDiscardTake}
-      />
+      {uploading ? null : (
+        <RecordButton
+          onStop={onStop}
+          recording={recording}
+          showHandleVideos={showHandleVideos}
+          start={start}
+          recordingDisabled={recordingDisabled}
+          onDiscard={handleDiscardTake}
+        />
+      )}
+
       {showHandleVideos ? (
         <UseThisTake
           selectedFolder={selectedFolder}
           currentBlobs={currentBlobs}
           setCurrentBlobs={setCurrentBlobs}
           setShowHandleVideos={setShowHandleVideos}
+          uploading={uploading}
+          setUploading={setUploading}
         />
       ) : null}
       <div style={{ flex: 1 }} />
