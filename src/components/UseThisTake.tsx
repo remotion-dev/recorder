@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import {
   convertFilesInServer,
   downloadVideo,
@@ -41,14 +41,16 @@ export const UseThisTake: React.FC<{
   readonly currentBlobs: CurrentBlobs;
   readonly setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
   readonly setShowHandleVideos: React.Dispatch<React.SetStateAction<boolean>>;
+  readonly uploading: boolean;
+  readonly setUploading: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   currentBlobs,
   selectedFolder,
   setCurrentBlobs,
   setShowHandleVideos,
+  uploading,
+  setUploading,
 }) => {
-  const [uploading, setUploading] = useState(false);
-
   const keepVideoOnServer = useCallback(async () => {
     if (currentBlobs.endDate === null) {
       return Promise.resolve();
