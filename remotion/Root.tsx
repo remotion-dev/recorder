@@ -49,6 +49,7 @@ export const Root = () => {
               startOffset: 0,
               stopChapteringAfterThis: false,
               music: "previous" as const,
+              bRolls: [],
             },
           ],
           scenesAndMetadata: [],

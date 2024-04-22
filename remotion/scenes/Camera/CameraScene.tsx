@@ -114,7 +114,6 @@ export const CameraScene: React.FC<{
           nextScene={nextScene}
           previousScene={previousScene}
           theme={theme}
-          endAt={endAt}
         />
       ) : null}
       {sceneAndMetadata.scene.newChapter && canvasLayout === "square" ? (

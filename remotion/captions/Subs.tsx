@@ -53,7 +53,6 @@ export const Subs: React.FC<{
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
   theme: Theme;
-  endAt: number;
 }> = ({
   file,
   trimStart,
@@ -64,7 +63,6 @@ export const Subs: React.FC<{
   nextScene,
   previousScene,
   theme,
-  endAt,
 }) => {
   const [whisperOutput, setWhisperOutput] = useState<WhisperOutput | null>(
     null,
