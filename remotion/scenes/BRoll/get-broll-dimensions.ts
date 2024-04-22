@@ -33,7 +33,9 @@ const getImageDimensions = (src: string): Promise<Dimensions> => {
 export const getBRollDimensions = async (
   bRoll: BRoll,
 ): Promise<BRollWithDimensions> => {
-  if (imageFileExtensions.some((ext) => bRoll.source.endsWith(ext))) {
+  if (
+    imageFileExtensions.some((ext) => bRoll.source.toLowerCase().endsWith(ext))
+  ) {
     const { width, height } = await getImageDimensions(bRoll.source);
     return {
       ...bRoll,
@@ -43,7 +45,9 @@ export const getBRollDimensions = async (
     };
   }
 
-  if (videoFileExtensions.some((ext) => bRoll.source.endsWith(ext))) {
+  if (
+    videoFileExtensions.some((ext) => bRoll.source.toLowerCase().endsWith(ext))
+  ) {
     const metadata = await getVideoMetadata(bRoll.source);
     return {
       ...bRoll,
