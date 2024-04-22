@@ -36,7 +36,6 @@ export const CameraScene: React.FC<{
 
   const startFrom = sceneAndMetadata.startFrame + scene.startOffset;
   const endAt = sceneAndMetadata.endFrame;
-  // const endAt = scene.duration ? startFrom + scene.duration : undefined;
 
   if (sceneAndMetadata.type !== "video-scene") {
     throw new Error("Not a camera scene");
