@@ -29,7 +29,7 @@ import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
 import type { MainProps } from "./Main";
 
-const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2); // floor in case FPS % 3 != 0
+const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2);
 
 const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
   if (!subsJSON) {
