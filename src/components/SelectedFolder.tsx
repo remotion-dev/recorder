@@ -55,6 +55,7 @@ export const SelectedFolder: React.FC<{
       <Select
         value={selectedProject ?? undefined}
         onValueChange={onValueChange}
+        open={true}
       >
         <SelectTrigger>
           <SelectValue placeholder={placeholder}>
@@ -72,7 +73,7 @@ export const SelectedFolder: React.FC<{
             </span>
           </SelectValue>
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="max-h-[var(--radix-select-content-available-height)]">
           <SelectItem value={NEW_FOLDER_TOKEN}>New folder</SelectItem>
           {folders.length !== 0 && <SelectSeparator />}
           {folders.map((project, i) => {
