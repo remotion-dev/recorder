@@ -55,7 +55,6 @@ export const SelectedFolder: React.FC<{
       <Select
         value={selectedProject ?? undefined}
         onValueChange={onValueChange}
-        open={true}
       >
         <SelectTrigger>
           <SelectValue placeholder={placeholder}>
