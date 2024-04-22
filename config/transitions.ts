@@ -1,1 +1,2 @@
-export const TRANSITION_DURATION = 15;
+export const SCENE_TRANSITION_DURATION = 15;
+export const B_ROLL_TRANSITION_DURATION = 10;

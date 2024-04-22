@@ -2,7 +2,7 @@ import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../config/scenes";
-import { TRANSITION_DURATION } from "../../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 import {
   getShouldTransitionIn,
   getSumUpDuration,
@@ -52,7 +52,7 @@ export const makeChapters = ({ scenes }: { scenes: SceneAndMetadata[] }) => {
 
       const end = start + sumUpDuration;
       if (isTransitioningIn) {
-        start -= TRANSITION_DURATION;
+        start -= SCENE_TRANSITION_DURATION;
       }
 
       const chapter: ChapterType = {
@@ -78,7 +78,7 @@ export const makeChapters = ({ scenes }: { scenes: SceneAndMetadata[] }) => {
       if (scene.type === "video-scene") {
         lastChapter.webcamPositions.push({
           start: isTransitioningIn
-            ? lastChapter.end - TRANSITION_DURATION
+            ? lastChapter.end - SCENE_TRANSITION_DURATION
             : lastChapter.end,
           end: lastChapter.end + sumUpDuration,
           scene,
