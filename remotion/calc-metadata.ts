@@ -193,8 +193,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             ? PLACE_HOLDER_DURATION_IN_FRAMES
             : derivedEndFrame - startFrame;
 
-        console.log("durationInFrame", durationInFrames);
-
         const videos: SceneVideos = {
           display: dim,
           webcam: {
@@ -278,6 +276,10 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         nextScene: nextSceneAndMetaData,
       });
 
+      if (isTransitioningIn) {
+        addedUpDurations -= SCENE_TRANSITION_DURATION;
+      }
+
       const from = addedUpDurations;
       addedUpDurations += sceneAndMetadata.durationInFrames;
 
@@ -288,14 +290,22 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         };
       }
 
-      const transitionAdjustedStartFrame = isTransitioningIn
-        ? Math.max(0, sceneAndMetadata.startFrame - SCENE_TRANSITION_DURATION)
-        : sceneAndMetadata.startFrame;
+      let adjustedDuration = sceneAndMetadata.durationInFrames;
 
-      const additionalTransitionFrames =
-        sceneAndMetadata.startFrame - transitionAdjustedStartFrame;
-      const delta = SCENE_TRANSITION_DURATION - additionalTransitionFrames;
-      addedUpDurations -= delta;
+      let transitionAdjustedStartFrame = sceneAndMetadata.startFrame;
+
+      if (isTransitioningIn) {
+        transitionAdjustedStartFrame = Math.max(
+          0,
+          sceneAndMetadata.startFrame - SCENE_TRANSITION_DURATION,
+        );
+
+        const additionalTransitionFrames =
+          sceneAndMetadata.startFrame - transitionAdjustedStartFrame;
+
+        addedUpDurations += additionalTransitionFrames;
+        adjustedDuration += additionalTransitionFrames;
+      }
 
       if (sceneAndMetadata.scene.newChapter) {
         currentChapter = sceneAndMetadata.scene.newChapter;
@@ -309,11 +319,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
       // ) {
       //   addedUpDurations -= SCENE_TRANSITION_DURATION;
       // }
-
-      console.log(i, additionalTransitionFrames);
-
-      const adjustedDuration =
-        sceneAndMetadata.durationInFrames + additionalTransitionFrames;
 
       const retValue: SceneAndMetadata = {
         ...sceneAndMetadata,
