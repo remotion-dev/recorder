@@ -20,6 +20,7 @@ import {
 } from "../config/scenes";
 import { SCENE_TRANSITION_DURATION } from "../config/transitions";
 import {
+  getShouldTransitionIn,
   getShouldTransitionOut,
   getSumUpDuration,
 } from "./animations/transitions";
@@ -32,25 +33,6 @@ import { applyBRollRules } from "./scenes/BRoll/apply-b-roll-rules";
 import { getBRollDimensions } from "./scenes/BRoll/get-broll-dimensions";
 
 const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2);
-
-const getTransitionAdjustedStartframe = (
-  sceneAndMetadata: SceneAndMetadata,
-  comesFromTransition: boolean,
-): number => {
-  if (sceneAndMetadata.type === "other-scene") {
-    return 0;
-  }
-
-  const { startFrame } = sceneAndMetadata;
-
-  if (comesFromTransition) {
-    // add startOffset to calculation
-    const subtracted = startFrame - SCENE_TRANSITION_DURATION;
-    return subtracted > 0 ? subtracted : 0;
-  }
-
-  return sceneAndMetadata.startFrame;
-};
 
 const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
   if (!subsJSON) {
@@ -168,7 +150,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             scene,
             durationInFrames: scene.durationInFrames,
             from: 0,
-            chapter: null,
           };
         }
 
@@ -187,7 +168,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             },
             durationInFrames: PLACE_HOLDER_DURATION_IN_FRAMES,
             from: 0,
-            chapter: null,
           };
         }
 
@@ -214,9 +194,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             : derivedEndFrame - startFrame;
 
         console.log("durationInFrame", durationInFrames);
-        // Intentionally using ||
-        // By default, Zod will give it a value of 0, which shifts the timeline
-        const duration = scene.duration || Math.round(durationInFrames);
 
         const videos: SceneVideos = {
           display: dim,
@@ -258,7 +235,9 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           type: "video-scene",
           scene,
           videos,
-          durationInFrames: duration,
+          // Intentionally using ||
+          // By default, Zod will give it a value of 0, which shifts the timeline
+          durationInFrames: scene.duration || Math.round(durationInFrames),
           layout: getLayout({
             webcamPosition: webcamPosition as WebcamPosition,
             videos,
@@ -285,34 +264,40 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
     (sceneAndMetadata, i) => {
       const previousSceneAndMetaData =
         scenesAndMetadataWithoutDuration[i - 1] ?? null;
-      const currentSceneAndMetadata =
-        scenesAndMetadataWithoutDuration[i] ?? null;
+      const nextSceneAndMetaData =
+        scenesAndMetadataWithoutDuration[i + 1] ?? null;
 
-      const comesFromTransition = previousSceneAndMetaData
-        ? getShouldTransitionOut({
-            sceneAndMetadata: previousSceneAndMetaData,
-            nextScene: currentSceneAndMetadata,
+      const isTransitioningIn = previousSceneAndMetaData
+        ? getShouldTransitionIn({
+            previousScene: previousSceneAndMetaData,
+            scene: sceneAndMetadata,
           })
         : false;
-
-      const transitionAdjustedStartFrame = getTransitionAdjustedStartframe(
+      const isTransitioningOut = getShouldTransitionOut({
         sceneAndMetadata,
-        comesFromTransition,
-      );
-
-      const additionalTransitionFrames =
-        sceneAndMetadata.type === "other-scene"
-          ? 0
-          : sceneAndMetadata.startFrame - transitionAdjustedStartFrame;
-
-      const delta = SCENE_TRANSITION_DURATION - additionalTransitionFrames;
+        nextScene: nextSceneAndMetaData,
+      });
 
       const from = addedUpDurations;
-      addedUpDurations += sceneAndMetadata.durationInFrames - delta;
-      if (
-        sceneAndMetadata.type === "video-scene" &&
-        sceneAndMetadata.scene.newChapter
-      ) {
+      addedUpDurations += sceneAndMetadata.durationInFrames;
+
+      if (sceneAndMetadata.type === "other-scene") {
+        return {
+          ...sceneAndMetadata,
+          from,
+        };
+      }
+
+      const transitionAdjustedStartFrame = isTransitioningIn
+        ? Math.max(0, sceneAndMetadata.startFrame - SCENE_TRANSITION_DURATION)
+        : sceneAndMetadata.startFrame;
+
+      const additionalTransitionFrames =
+        sceneAndMetadata.startFrame - transitionAdjustedStartFrame;
+      const delta = SCENE_TRANSITION_DURATION - additionalTransitionFrames;
+      addedUpDurations -= delta;
+
+      if (sceneAndMetadata.scene.newChapter) {
         currentChapter = sceneAndMetadata.scene.newChapter;
       }
 
@@ -327,33 +312,22 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
 
       console.log(i, additionalTransitionFrames);
 
+      const adjustedDuration =
+        sceneAndMetadata.durationInFrames + additionalTransitionFrames;
+
       const retValue: SceneAndMetadata = {
         ...sceneAndMetadata,
-        ...(sceneAndMetadata.type === "video-scene"
-          ? {
-              bRolls: applyBRollRules({
-                bRolls: sceneAndMetadata.bRolls,
-                sceneDurationInFrames:
-                  sceneAndMetadata.durationInFrames +
-                  additionalTransitionFrames,
-                willTransitionToNextScene: getShouldTransitionOut({
-                  sceneAndMetadata,
-                  nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
-                }),
-              }),
-              startFrame: transitionAdjustedStartFrame,
-            }
-          : {}),
-
-        durationInFrames:
-          sceneAndMetadata.durationInFrames + additionalTransitionFrames,
+        bRolls: applyBRollRules({
+          bRolls: sceneAndMetadata.bRolls,
+          sceneDurationInFrames: adjustedDuration,
+          willTransitionToNextScene: isTransitioningOut,
+        }),
+        startFrame: transitionAdjustedStartFrame,
+        durationInFrames: adjustedDuration,
         from,
         chapter: currentChapter,
       };
-      if (
-        sceneAndMetadata.type === "video-scene" &&
-        sceneAndMetadata.scene.stopChapteringAfterThis
-      ) {
+      if (sceneAndMetadata.scene.stopChapteringAfterThis) {
         currentChapter = null;
       }
 
