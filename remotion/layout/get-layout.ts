@@ -1,11 +1,7 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { getSafeSpace } from "../../config/layout";
 import type { FinalWebcamPosition, SceneVideos } from "../../config/scenes";
-import {} from "../animations/webcam-transitions";
-import {
-  isWebCamAtBottom,
-  isWebCamRight,
-} from "../animations/webcam-transitions/helpers";
+import { isWebCamAtBottom } from "../animations/webcam-transitions/helpers";
 import type { SubtitleType } from "../captions/Segment";
 import {
   getSubtitlesFontSize,
@@ -14,11 +10,20 @@ import {
 } from "../captions/Segment";
 import { getSubsLayout } from "../captions/subs-layout";
 import { getDimensionsForLayout } from "./dimensions";
-import { getDisplayLayout } from "./get-display-layout";
+import {
+  getLandscapeDisplayAndWebcamLayout,
+  getSquareBRollLayout,
+  getSquareDisplayLayout,
+} from "./get-display-layout";
 import { getDisplaySize } from "./get-display-size";
 import { getBottomSafeSpace } from "./get-safe-space";
 import { getWebcamSize } from "./get-webcam-size";
-import type { Layout } from "./layout-types";
+import type {
+  BRollEnterDirection,
+  BRollType,
+  Layout,
+  RecordingsLayout,
+} from "./layout-types";
 
 export const borderRadius = 20;
 
@@ -30,7 +35,11 @@ const squareFullscreenWebcamLayout = ({
   canvasSize: Dimensions;
   webcamSize: Dimensions;
   webcamPosition: FinalWebcamPosition;
-}) => {
+}): {
+  webcamLayout: Layout;
+  bRollLayout: Layout;
+  bRollEnterDirection: BRollEnterDirection;
+} => {
   const aspectRatio = webcamSize.width / webcamSize.height;
 
   const maxWidth = canvasSize.width - getSafeSpace("square") * 2;
@@ -43,16 +52,32 @@ const squareFullscreenWebcamLayout = ({
   const height = width / aspectRatio;
 
   const left = (canvasSize.width - width) / 2;
+  const top = isWebCamAtBottom(webcamPosition)
+    ? canvasSize.height - height - getSafeSpace("square")
+    : getSafeSpace("square");
 
-  return {
+  const webcamLayout: Layout = {
     left,
-    top: isWebCamAtBottom(webcamPosition)
-      ? canvasSize.height - height - getSafeSpace("square")
-      : getSafeSpace("square"),
+    top,
     width,
     height,
     borderRadius,
     opacity: 1,
+  };
+
+  const bRollLayout: Layout = {
+    left: getSafeSpace("square"),
+    top,
+    width: canvasSize.width - getSafeSpace("square") * 2,
+    height,
+    borderRadius,
+    opacity: 1,
+  };
+
+  return {
+    webcamLayout,
+    bRollLayout,
+    bRollEnterDirection: isWebCamAtBottom(webcamPosition) ? "bottom" : "top",
   };
 };
 
@@ -71,25 +96,20 @@ const widescreenFullscreenLayout = ({
   };
 };
 
-const makeWebcamLayoutBasedOnWebcamPosition = ({
+const getSquareBentoBoxWebcamLayout = ({
   webcamSize,
   webcamPosition,
-  canvasLayout,
   canvasSize,
 }: {
   webcamSize: Dimensions;
   webcamPosition: FinalWebcamPosition;
-  canvasLayout: CanvasLayout;
   canvasSize: Dimensions;
 }): Layout => {
   if (webcamPosition === "bottom-right") {
     return {
       ...webcamSize,
-      left: canvasSize.width - webcamSize.width - getSafeSpace(canvasLayout),
-      top:
-        canvasSize.height -
-        webcamSize.height -
-        getBottomSafeSpace(canvasLayout),
+      left: canvasSize.width - webcamSize.width - getSafeSpace("square"),
+      top: canvasSize.height - webcamSize.height - getBottomSafeSpace("square"),
       borderRadius,
       opacity: 1,
     };
@@ -98,11 +118,8 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
   if (webcamPosition === "bottom-left") {
     return {
       ...webcamSize,
-      left: getSafeSpace(canvasLayout),
-      top:
-        canvasSize.height -
-        webcamSize.height -
-        getBottomSafeSpace(canvasLayout),
+      left: getSafeSpace("square"),
+      top: canvasSize.height - webcamSize.height - getBottomSafeSpace("square"),
       borderRadius,
       opacity: 1,
     };
@@ -111,8 +128,8 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
   if (webcamPosition === "top-left") {
     return {
       ...webcamSize,
-      left: getSafeSpace(canvasLayout),
-      top: getSafeSpace(canvasLayout),
+      left: getSafeSpace("square"),
+      top: getSafeSpace("square"),
       borderRadius,
       opacity: 1,
     };
@@ -121,8 +138,8 @@ const makeWebcamLayoutBasedOnWebcamPosition = ({
   if (webcamPosition === "top-right") {
     return {
       ...webcamSize,
-      left: canvasSize.width - webcamSize.width - getSafeSpace(canvasLayout),
-      top: getSafeSpace(canvasLayout),
+      left: canvasSize.width - webcamSize.width - getSafeSpace("square"),
+      top: getSafeSpace("square"),
       borderRadius,
       opacity: 1,
     };
@@ -163,70 +180,63 @@ const getFullScreenWebcamSize = ({
 export type CameraSceneLayout = {
   webcamLayout: Layout;
   displayLayout: Layout | null;
-  subLayout: Layout;
+  bRollLayout: Layout;
+  bRollType: BRollType;
+  subtitleLayout: Layout;
   subtitleType: SubtitleType;
   subtitleFontSize: number;
   subtitleLines: number;
+  bRollEnterDirection: BRollEnterDirection;
 };
 
-export const getLayout = ({
+const getDisplayAndWebcamLayout = ({
+  canvasSize,
+  webcamPosition,
   canvasLayout,
   videos,
-  webcamPosition,
 }: {
-  videos: SceneVideos;
-  canvasLayout: CanvasLayout;
+  canvasSize: Dimensions;
   webcamPosition: FinalWebcamPosition;
-}): CameraSceneLayout => {
-  const canvasSize = getDimensionsForLayout(canvasLayout);
-
+  canvasLayout: CanvasLayout;
+  videos: SceneVideos;
+}): RecordingsLayout => {
   if (!videos.display) {
-    const webcamLayout =
-      canvasLayout === "square"
-        ? squareFullscreenWebcamLayout({
-            canvasSize,
-            webcamPosition,
-            webcamSize: getFullScreenWebcamSize({
-              canvasSize,
-              canvasLayout,
-              webcamVideoResolution: videos.webcam,
-            }),
-          })
-        : widescreenFullscreenLayout({
-            canvasSize,
-          });
+    if (canvasLayout === "square") {
+      const fullscreenWebcamSize = getFullScreenWebcamSize({
+        canvasSize,
+        canvasLayout,
+        webcamVideoResolution: videos.webcam,
+      });
 
-    const subtitleType = getSubtitlesType({
-      canvasLayout,
-      displayLayout: null,
-    });
+      const { webcamLayout, bRollLayout, bRollEnterDirection } =
+        squareFullscreenWebcamLayout({
+          canvasSize,
+          webcamPosition,
+          webcamSize: fullscreenWebcamSize,
+        });
 
-    const subtitleFontSize = getSubtitlesFontSize(subtitleType, null);
+      return {
+        displayLayout: null,
+        webcamLayout,
+        bRollLayout,
+        bRollEnterDirection,
+      };
+    }
 
-    const subLayout = getSubsLayout({
-      canvasLayout,
-      canvasSize,
-      displayLayout: null,
-      subtitleType,
-      webcamLayout,
-      webcamPosition,
-      fontSize: subtitleFontSize,
-    });
+    if (canvasLayout === "landscape") {
+      const webcamLayout = widescreenFullscreenLayout({
+        canvasSize,
+      });
 
-    const subtitleLines = getSubtitlesLines({
-      boxHeight: subLayout.height,
-      fontSize: subtitleFontSize,
-      subtitleType,
-    });
+      return {
+        displayLayout: null,
+        bRollLayout: webcamLayout,
+        webcamLayout,
+        bRollEnterDirection: "top",
+      };
+    }
 
-    return {
-      displayLayout: null,
-      webcamLayout,
-      subLayout,
-      subtitleType,
-      subtitleFontSize,
-      subtitleLines,
-    };
+    throw new Error(`Unknown canvas layout: ${canvasLayout}`);
   }
 
   const displaySize = getDisplaySize({
@@ -243,119 +253,98 @@ export const getLayout = ({
   });
 
   if (canvasLayout === "square") {
-    const displayLayout = getDisplayLayout({
+    const displayLayout = getSquareDisplayLayout({
       canvasSize,
-      canvasLayout,
       webcamPosition,
       displaySize,
     });
 
-    const webcamLayout = makeWebcamLayoutBasedOnWebcamPosition({
+    const { bRollLayout, bRollEnterDirection } = getSquareBRollLayout({
+      canvasSize,
+      displaySize,
+      webcamPosition,
+    });
+
+    const webcamLayout = getSquareBentoBoxWebcamLayout({
       webcamPosition,
       canvasSize,
-      canvasLayout,
       webcamSize,
-    });
-
-    const subtitleType = getSubtitlesType({
-      canvasLayout,
-      displayLayout,
-    });
-
-    const subtitleFontSize = getSubtitlesFontSize(subtitleType, displayLayout);
-    const subLayout = getSubsLayout({
-      canvasLayout,
-      canvasSize,
-      displayLayout,
-      subtitleType,
-      webcamLayout,
-      webcamPosition,
-      fontSize: subtitleFontSize,
-    });
-
-    const subtitleLines = getSubtitlesLines({
-      boxHeight: subLayout.height,
-      fontSize: subtitleFontSize,
-      subtitleType,
     });
 
     return {
       displayLayout,
       webcamLayout,
-      subLayout,
-      subtitleType,
-      subtitleFontSize,
-      subtitleLines,
+      bRollLayout,
+      bRollEnterDirection,
     };
   }
 
   if (canvasLayout === "landscape") {
-    const totalWidth =
-      displaySize.width + webcamSize.width + getSafeSpace(canvasLayout);
-
-    const totalHeight = Math.max(displaySize.height, webcamSize.height);
-
-    const left = (canvasSize.width - totalWidth) / 2;
-    const top =
-      (canvasSize.height - totalHeight) / 2 -
-      (getBottomSafeSpace(canvasLayout) - getSafeSpace(canvasLayout)) / 2;
-
-    const displayLayout: Layout = {
-      borderRadius,
-      height: displaySize.height,
-      width: displaySize.width,
-      opacity: 1,
-      left: isWebCamRight(webcamPosition)
-        ? left
-        : left + getSafeSpace("landscape") + webcamSize.width,
-      top,
-    };
-
-    const webcamLayout: Layout = {
-      borderRadius,
-      height: webcamSize.height,
-      width: webcamSize.width,
-      opacity: 1,
-      left: isWebCamRight(webcamPosition)
-        ? left + displaySize.width + getSafeSpace("landscape")
-        : left,
-      top: isWebCamAtBottom(webcamPosition)
-        ? top + displaySize.height - webcamSize.height
-        : top,
-    };
-
-    const subtitleType = getSubtitlesType({
-      canvasLayout,
-      displayLayout,
-    });
-
-    const subtitleFontSize = getSubtitlesFontSize(subtitleType, displayLayout);
-
-    const subLayout = getSubsLayout({
+    return getLandscapeDisplayAndWebcamLayout({
+      displaySize,
+      webcamSize,
       canvasLayout,
       canvasSize,
-      displayLayout,
-      subtitleType,
-      webcamLayout,
       webcamPosition,
-      fontSize: subtitleFontSize,
     });
-
-    const subtitleLines = getSubtitlesLines({
-      boxHeight: subLayout.height,
-      fontSize: subtitleFontSize,
-      subtitleType,
-    });
-
-    return {
-      displayLayout,
-      webcamLayout,
-      subLayout,
-      subtitleType,
-      subtitleFontSize,
-      subtitleLines,
-    };
   }
 
-  throw new Error("Unknown canvas layout: " + canvasLayout);
+  throw new Error(`Unknown canvas layout: ${canvasLayout}`);
+};
+
+export const getLayout = ({
+  canvasLayout,
+  videos,
+  webcamPosition,
+}: {
+  videos: SceneVideos;
+  canvasLayout: CanvasLayout;
+  webcamPosition: FinalWebcamPosition;
+}): CameraSceneLayout => {
+  const canvasSize = getDimensionsForLayout(canvasLayout);
+
+  const { displayLayout, webcamLayout, bRollLayout, bRollEnterDirection } =
+    getDisplayAndWebcamLayout({
+      canvasSize,
+      webcamPosition,
+      canvasLayout,
+      videos,
+    });
+
+  const subtitleType = getSubtitlesType({
+    canvasLayout,
+    displayLayout,
+  });
+
+  const subtitleFontSize = getSubtitlesFontSize(subtitleType, displayLayout);
+  const subtitleLayout = getSubsLayout({
+    canvasLayout,
+    canvasSize,
+    displayLayout,
+    subtitleType,
+    webcamLayout,
+    webcamPosition,
+    fontSize: subtitleFontSize,
+  });
+
+  const subtitleLines = getSubtitlesLines({
+    boxHeight: subtitleLayout.height,
+    fontSize: subtitleFontSize,
+    subtitleType,
+  });
+
+  const bRollType =
+    canvasLayout === "landscape" && videos.display === null ? "fade" : "scale";
+
+  return {
+    displayLayout,
+    webcamLayout,
+    bRollLayout,
+    subtitleLayout,
+    subtitleType,
+    subtitleFontSize,
+    subtitleLines,
+    bRollEnterDirection,
+    bRollType,
+  };
 };

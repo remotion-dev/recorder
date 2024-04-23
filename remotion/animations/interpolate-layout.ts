@@ -6,22 +6,22 @@ export const interpolateLayout = (
   secondLayout: Layout,
   progress: number,
 ) => {
-  const enterX = interpolate(
+  const left = interpolate(
     progress,
     [0, 1],
     [firstLayout.left, secondLayout.left],
   );
-  const enterY = interpolate(
+  const top = interpolate(
     progress,
     [0, 1],
     [firstLayout.top, secondLayout.top],
   );
-  const enterWidth = interpolate(
+  const width = interpolate(
     progress,
     [0, 1],
     [firstLayout.width, secondLayout.width],
   );
-  const enterHeight = interpolate(
+  const height = interpolate(
     progress,
     [0, 1],
     [firstLayout.height, secondLayout.height],
@@ -38,10 +38,10 @@ export const interpolateLayout = (
   );
 
   return {
-    left: enterX,
-    top: enterY,
-    width: enterWidth,
-    height: enterHeight,
+    left,
+    top,
+    width,
+    height,
     borderRadius,
     opacity,
   };

@@ -12,6 +12,7 @@ import {
   fontFamily as endcardFont,
   loadFont as loadEndcard,
 } from "@remotion/google-fonts/Inter";
+import { cancelRender, continueRender, delayRender } from "remotion";
 
 const regular = loadRegular();
 const monospace = loadMonospace();
@@ -34,3 +35,9 @@ export const TITLE_FONT_WEIGHT = 500;
 
 export const ENDCARD_FONT_FAMILY = endcardFont;
 export const ENDCARD_FONT_WEIGHT = 500;
+
+const delay = delayRender("Loading fonts");
+
+waitForFonts()
+  .then(() => continueRender(delay))
+  .catch((err) => cancelRender(err));

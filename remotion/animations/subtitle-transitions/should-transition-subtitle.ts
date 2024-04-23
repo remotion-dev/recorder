@@ -29,14 +29,14 @@ export const shouldInlineTransitionSubtitles = ({
     // In square layout, we resize the box if the aspect ratio of the videos has changed.
     // While resizing the box, the subtitles fade out.
 
-    const nextSubLayout = nextScene.layout.subLayout;
-    const currentSubLayout = currentScene.layout.subLayout;
+    const nextSubtitleLayout = nextScene.layout.subtitleLayout;
+    const currentSubtitleLayout = currentScene.layout.subtitleLayout;
 
     const layoutsAreTheSameBox =
-      nextSubLayout.width === currentSubLayout.width &&
-      nextSubLayout.height === currentSubLayout.height &&
-      nextSubLayout.left === currentSubLayout.left &&
-      nextSubLayout.top === currentSubLayout.top;
+      nextSubtitleLayout.width === currentSubtitleLayout.width &&
+      nextSubtitleLayout.height === currentSubtitleLayout.height &&
+      nextSubtitleLayout.left === currentSubtitleLayout.left &&
+      nextSubtitleLayout.top === currentSubtitleLayout.top;
 
     return (
       nextScene.finalWebcamPosition === currentScene.finalWebcamPosition &&

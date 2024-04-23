@@ -12,12 +12,14 @@ import {
   GET_FOLDERS,
   PROCESS_VIDEOS,
   SAVE_SUBTITLES,
+  TRANSCRIBE_VIDEO,
   UPLOAD_VIDEO,
 } from "./constants";
 import { createProject } from "./create-project";
 import { convertVideos, handleVideoUpload } from "./handle-video";
 import { getProjectFolder } from "./projects";
 import { getOptions, saveSubtitles } from "./subtitles";
+import { transcribeVideo } from "./transcribe-video";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -56,6 +58,9 @@ export const startExpressServer = async () => {
 
   app.post(UPLOAD_VIDEO, handleVideoUpload);
   app.post(PROCESS_VIDEOS, convertVideos);
+  app.post(TRANSCRIBE_VIDEO, (req: Request, res: Response) => {
+    transcribeVideo(req, res, publicDir);
+  });
 
   app.post(SAVE_SUBTITLES, saveSubtitles);
   app.options(SAVE_SUBTITLES, getOptions);

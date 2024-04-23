@@ -1,5 +1,5 @@
 import type { SceneAndMetadata } from "../../config/scenes";
-import { TRANSITION_DURATION } from "../../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 
 export const getShouldTransitionOut = ({
   sceneAndMetadata,
@@ -81,6 +81,6 @@ export const getSumUpDuration = ({
     scene,
     previousScene,
   })
-    ? scene.durationInFrames - TRANSITION_DURATION
+    ? scene.durationInFrames - SCENE_TRANSITION_DURATION
     : scene.durationInFrames;
 };

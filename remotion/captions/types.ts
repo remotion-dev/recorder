@@ -4,7 +4,7 @@ type Token = {
   t_dtw: number;
   offsets: {
     from: number;
-    end: number;
+    to: number;
   };
 };
 

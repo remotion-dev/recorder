@@ -6,11 +6,12 @@ import type {
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
+import { getShouldTransitionIn } from "../../animations/transitions";
 import { Subs } from "../../captions/Subs";
 import { LandscapeChapters } from "../../chapters/landscape/SelectedChapters";
 import type { ChapterType } from "../../chapters/make-chapters";
 import { SquareChapter } from "../../chapters/square/SquareChapter";
-import { Screen } from "./Screen";
+import { Display } from "./Display";
 import { Webcam } from "./Webcam";
 
 export const CameraScene: React.FC<{
@@ -22,6 +23,7 @@ export const CameraScene: React.FC<{
   previousScene: SceneAndMetadata | null;
   theme: Theme;
   chapters: ChapterType[];
+  willTransitionToNextScene: boolean;
 }> = ({
   enterProgress,
   exitProgress,
@@ -34,8 +36,8 @@ export const CameraScene: React.FC<{
 }) => {
   const { scene } = sceneAndMetadata;
 
-  const startFrom = scene.trimStart ?? 0;
-  const endAt = scene.duration ? startFrom + scene.duration : undefined;
+  const startFrom = sceneAndMetadata.startFrame + scene.startOffset;
+  const endAt = sceneAndMetadata.endFrame;
 
   if (sceneAndMetadata.type !== "video-scene") {
     throw new Error("Not a camera scene");
@@ -45,7 +47,7 @@ export const CameraScene: React.FC<{
     <>
       <AbsoluteFill>
         {sceneAndMetadata.pair.display ? (
-          <Screen
+          <Display
             scene={sceneAndMetadata}
             enterProgress={enterProgress}
             exitProgress={exitProgress}
@@ -54,25 +56,39 @@ export const CameraScene: React.FC<{
             startFrom={startFrom}
             endAt={endAt}
             canvasLayout={canvasLayout}
+            bRollLayout={sceneAndMetadata.layout.bRollLayout}
+            bRollEnterDirection={sceneAndMetadata.layout.bRollEnterDirection}
           />
         ) : null}
-        {canvasLayout === "landscape" &&
-        sceneAndMetadata.finalWebcamPosition !== "center" ? (
-          <LandscapeChapters
-            scene={sceneAndMetadata}
-            nextVideoScene={
-              nextScene?.type === "video-scene" ? nextScene : null
-            }
-            previousVideoScene={
-              previousScene?.type === "video-scene" ? previousScene : null
-            }
-            enterProgress={enterProgress}
-            exitProgress={exitProgress}
-            theme={theme}
-            chapters={chapters}
-          />
-        ) : null}
+        {
+          // TODO: Chapters are disabled if a webcam position is center
+          canvasLayout === "landscape" &&
+          sceneAndMetadata.finalWebcamPosition !== "center" &&
+          !(
+            nextScene?.type === "video-scene" &&
+            nextScene.finalWebcamPosition === "center"
+          ) &&
+          !(
+            previousScene?.type === "video-scene" &&
+            previousScene.finalWebcamPosition === "center"
+          ) ? (
+            <LandscapeChapters
+              scene={sceneAndMetadata}
+              nextVideoScene={
+                nextScene?.type === "video-scene" ? nextScene : null
+              }
+              previousVideoScene={
+                previousScene?.type === "video-scene" ? previousScene : null
+              }
+              enterProgress={enterProgress}
+              exitProgress={exitProgress}
+              theme={theme}
+              chapters={chapters}
+            />
+          ) : null
+        }
         <Webcam
+          bRolls={sceneAndMetadata.pair.display ? [] : sceneAndMetadata.bRolls}
           currentScene={sceneAndMetadata}
           endAt={endAt}
           enterProgress={enterProgress}
@@ -82,6 +98,9 @@ export const CameraScene: React.FC<{
           canvasLayout={canvasLayout}
           nextScene={nextScene}
           previousScene={previousScene}
+          bRollLayout={sceneAndMetadata.layout.bRollLayout}
+          bRollEnterDirection={sceneAndMetadata.layout.bRollEnterDirection}
+          bRollType={sceneAndMetadata.layout.bRollType}
         />
       </AbsoluteFill>
       {sceneAndMetadata.pair.subs ? (
@@ -99,9 +118,13 @@ export const CameraScene: React.FC<{
       ) : null}
       {sceneAndMetadata.scene.newChapter && canvasLayout === "square" ? (
         <SquareChapter
-          webcamPosition={sceneAndMetadata.finalWebcamPosition}
           title={sceneAndMetadata.scene.newChapter}
-          theme={theme}
+          displayLayout={sceneAndMetadata.layout.displayLayout}
+          webcamLayout={sceneAndMetadata.layout.webcamLayout}
+          didTransitionIn={getShouldTransitionIn({
+            previousScene,
+            scene: sceneAndMetadata,
+          })}
         />
       ) : null}
     </>

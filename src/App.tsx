@@ -69,6 +69,7 @@ const gridContainer: React.CSSProperties = {
   minHeight: 0,
   gap: 10,
   margin: 10,
+  marginTop: 2,
 };
 
 const mediaRecorderOptions: MediaRecorderOptions = {
