@@ -34,6 +34,7 @@ import { applyBRollRules } from "./scenes/BRoll/apply-b-roll-rules";
 import { getBRollDimensions } from "./scenes/BRoll/get-broll-dimensions";
 
 const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2);
+const END_FRAME_PADDING = 30;
 
 const deriveStartFrameFromSubsJSON = (
   subsJSON: WhisperOutput | null,
@@ -74,6 +75,26 @@ const getClampedStartFrame = ({
   }
 
   return combinedStartFrame;
+};
+
+const getClampedEndFrame = ({
+  durationInSeconds,
+  derivedEndFrame,
+}: {
+  durationInSeconds: number;
+  derivedEndFrame: number | null;
+}): number => {
+  const videoDurationInFrames = Math.floor(durationInSeconds * FPS);
+  if (!derivedEndFrame) {
+    return videoDurationInFrames;
+  }
+
+  const paddedEndFrame = derivedEndFrame + END_FRAME_PADDING;
+  if (paddedEndFrame > videoDurationInFrames) {
+    return videoDurationInFrames;
+  }
+
+  return paddedEndFrame;
 };
 
 const deriveEndFrameFromSubs = (subs: SubTypes) => {
@@ -208,8 +229,10 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           endFrameFromSubs = deriveEndFrameFromSubs(subsForTimestamps);
         }
 
-        const derivedEndFrame =
-          endFrameFromSubs ?? Math.round(durationInSeconds * FPS);
+        const derivedEndFrame = getClampedEndFrame({
+          durationInSeconds,
+          derivedEndFrame: endFrameFromSubs,
+        });
 
         const startFrameFromSubs = deriveStartFrameFromSubsJSON(subsJson);
 
@@ -223,7 +246,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           durationInSeconds === Infinity
             ? PLACE_HOLDER_DURATION_IN_FRAMES
             : derivedEndFrame - actualStartFrame;
-
         const videos: SceneVideos = {
           display: dim,
           webcam: {
