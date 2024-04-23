@@ -24,7 +24,8 @@ import {
   getShouldTransitionOut,
   getSumUpDuration,
 } from "./animations/transitions";
-import type { WhisperOutput } from "./captions/types";
+import { postprocessSubtitles } from "./captions/processing/postprocess-subs";
+import type { SubTypes, WhisperOutput } from "./captions/types";
 import { truthy } from "./helpers/truthy";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
@@ -34,7 +35,9 @@ import { getBRollDimensions } from "./scenes/BRoll/get-broll-dimensions";
 
 const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2);
 
-const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
+const deriveStartFrameFromSubsJSON = (
+  subsJSON: WhisperOutput | null,
+): number => {
   if (!subsJSON) {
     return 0;
   }
@@ -51,28 +54,15 @@ const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
   return startFromInFrames > 0 ? startFromInFrames : 0;
 };
 
-const deriveEndFrameFromSubs = (
-  subsJSON: WhisperOutput | null,
-): number | null => {
-  if (!subsJSON) {
-    return null;
+const deriveEndFrameFromSubs2 = (subs: SubTypes) => {
+  const lastSegment = subs.segments[subs.segments.length - 1];
+  const lastWord = lastSegment?.words[lastSegment.words.length - 1];
+  if (!lastWord || !lastWord.firstTimestamp) {
+    throw new Error("Last word or its timestampe is undefined");
   }
 
-  // taking the first real word and take its start timestamp in ms.
-  const indexOfLastTranscriptionElem = subsJSON.transcription.length - 1;
-
-  const endAtInHunrethsOfSec =
-    subsJSON.transcription[indexOfLastTranscriptionElem]?.tokens[0]?.t_dtw;
-
-  if (endAtInHunrethsOfSec === undefined) {
-    return null;
-  }
-
-  const endAtInFrames =
-    Math.floor((endAtInHunrethsOfSec / 100) * FPS) +
-    TIMESTAMP_PADDING_IN_FRAMES;
-
-  return endAtInFrames;
+  const lastFrame = Math.floor((lastWord.firstTimestamp / 1000) * FPS);
+  return lastFrame + 30;
 };
 
 const fetchSubsJson = async (
@@ -181,13 +171,26 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
 
         const subsJson = await fetchSubsJson(p.subs);
 
-        const startFromSubs = deriveStartFrameFromSubs(subsJson);
+        let endFrameFromSubs = null;
+        if (subsJson) {
+          // only interested in postprocessing of the words to get rid of "BLANK_WORDS"
+          const subsForTimestamps = postprocessSubtitles({
+            subTypes: subsJson,
+            boxWidth: 200,
+            canvasLayout: "landscape",
+            fontSize: 10,
+            maxLines: 3,
+            subtitleType: "square",
+          });
+
+          endFrameFromSubs = deriveEndFrameFromSubs2(subsForTimestamps);
+        }
+
+        const startFromSubs = deriveStartFrameFromSubsJSON(subsJson);
 
         const startFrame = startFromSubs + scene.startOffset;
-
         const derivedEndFrame =
-          deriveEndFrameFromSubs(subsJson) ??
-          Math.round(durationInSeconds * FPS);
+          endFrameFromSubs ?? Math.round(durationInSeconds * FPS);
         const durationInFrames =
           durationInSeconds === Infinity
             ? PLACE_HOLDER_DURATION_IN_FRAMES
@@ -310,15 +313,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
       if (sceneAndMetadata.scene.newChapter) {
         currentChapter = sceneAndMetadata.scene.newChapter;
       }
-
-      // if (
-      //   getShouldTransitionOut({
-      //     sceneAndMetadata,
-      //     nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
-      //   })
-      // ) {
-      //   addedUpDurations -= SCENE_TRANSITION_DURATION;
-      // }
 
       const retValue: SceneAndMetadata = {
         ...sceneAndMetadata,
