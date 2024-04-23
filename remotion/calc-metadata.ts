@@ -32,6 +32,22 @@ import { applyBRollRules } from "./scenes/BRoll/apply-b-roll-rules";
 import { getBRollDimensions } from "./scenes/BRoll/get-broll-dimensions";
 
 const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2);
+const TRANSITION_OVERLAP_IN_FRAMES = Math.floor(FPS / 2);
+
+const deriveActualStartFrame = (
+  startFromSubs: number,
+  startOffset: number,
+  startsFromTransition: boolean,
+): number => {
+  if (startsFromTransition) {
+    const actualStartWTransition =
+      startFromSubs + startOffset - TRANSITION_OVERLAP_IN_FRAMES;
+    return actualStartWTransition > 0 ? actualStartWTransition : 0;
+  }
+
+  const actualStart = startFromSubs + startOffset;
+  return actualStart > 0 ? actualStart : 0;
+};
 
 const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
   if (!subsJSON) {
@@ -182,15 +198,21 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
 
         const subsJson = await fetchSubsJson(p.subs);
 
-        const derivedStartFrame = deriveStartFrameFromSubs(subsJson);
-
+        const startFromSubs = deriveStartFrameFromSubs(subsJson);
+        const comesFromTransition =
+          i > 0 ? props.scenes[i - 1]?.transitionToNextScene ?? false : false;
+        const actualStartFrame = deriveActualStartFrame(
+          startFromSubs,
+          scene.startOffset,
+          comesFromTransition,
+        );
         const derivedEndFrame =
           deriveEndFrameFromSubs(subsJson) ??
           Math.round(durationInSeconds * FPS);
         const durationInFrames =
           durationInSeconds === Infinity
             ? PLACE_HOLDER_DURATION_IN_FRAMES
-            : derivedEndFrame - derivedStartFrame - scene.startOffset;
+            : derivedEndFrame - actualStartFrame;
 
         // Intentionally using ||
         // By default, Zod will give it a value of 0, which shifts the timeline
@@ -246,7 +268,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           finalWebcamPosition: webcamPosition as WebcamPosition,
           from: 0,
           chapter: scene.newChapter ?? null,
-          startFrame: derivedStartFrame,
+          startFrame: startFromSubs,
           endFrame: derivedEndFrame,
           bRolls: bRollWithDimensions,
         };
