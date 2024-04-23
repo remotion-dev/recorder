@@ -32,21 +32,24 @@ import { applyBRollRules } from "./scenes/BRoll/apply-b-roll-rules";
 import { getBRollDimensions } from "./scenes/BRoll/get-broll-dimensions";
 
 const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2);
-const TRANSITION_OVERLAP_IN_FRAMES = Math.floor(FPS / 2);
 
-const deriveActualStartFrame = (
-  startFromSubs: number,
-  startOffset: number,
-  startsFromTransition: boolean,
+const getTransitionAdjustedStartframe = (
+  sceneAndMetadata: SceneAndMetadata,
+  comesFromTransition: boolean,
 ): number => {
-  if (startsFromTransition) {
-    const actualStartWTransition =
-      startFromSubs + startOffset - TRANSITION_OVERLAP_IN_FRAMES;
-    return actualStartWTransition > 0 ? actualStartWTransition : 0;
+  if (sceneAndMetadata.type === "other-scene") {
+    return 0;
   }
 
-  const actualStart = startFromSubs + startOffset;
-  return actualStart > 0 ? actualStart : 0;
+  const { startFrame } = sceneAndMetadata;
+
+  if (comesFromTransition) {
+    // add startOffset to calculation
+    const subtracted = startFrame - SCENE_TRANSITION_DURATION;
+    return subtracted > 0 ? subtracted : 0;
+  }
+
+  return sceneAndMetadata.startFrame;
 };
 
 const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
@@ -199,21 +202,18 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         const subsJson = await fetchSubsJson(p.subs);
 
         const startFromSubs = deriveStartFrameFromSubs(subsJson);
-        const comesFromTransition =
-          i > 0 ? props.scenes[i - 1]?.transitionToNextScene ?? false : false;
-        const actualStartFrame = deriveActualStartFrame(
-          startFromSubs,
-          scene.startOffset,
-          comesFromTransition,
-        );
+
+        const startFrame = startFromSubs + scene.startOffset;
+
         const derivedEndFrame =
           deriveEndFrameFromSubs(subsJson) ??
           Math.round(durationInSeconds * FPS);
         const durationInFrames =
           durationInSeconds === Infinity
             ? PLACE_HOLDER_DURATION_IN_FRAMES
-            : derivedEndFrame - actualStartFrame;
+            : derivedEndFrame - startFrame;
 
+        console.log("durationInFrame", durationInFrames);
         // Intentionally using ||
         // By default, Zod will give it a value of 0, which shifts the timeline
         const duration = scene.duration || Math.round(durationInFrames);
@@ -283,8 +283,32 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
 
   const scenesAndMetadata = scenesAndMetadataWithoutDuration.map(
     (sceneAndMetadata, i) => {
+      const previousSceneAndMetaData =
+        scenesAndMetadataWithoutDuration[i - 1] ?? null;
+      const currentSceneAndMetadata =
+        scenesAndMetadataWithoutDuration[i] ?? null;
+
+      const comesFromTransition = previousSceneAndMetaData
+        ? getShouldTransitionOut({
+            sceneAndMetadata: previousSceneAndMetaData,
+            nextScene: currentSceneAndMetadata,
+          })
+        : false;
+
+      const transitionAdjustedStartFrame = getTransitionAdjustedStartframe(
+        sceneAndMetadata,
+        comesFromTransition,
+      );
+
+      const additionalTransitionFrames =
+        sceneAndMetadata.type === "other-scene"
+          ? 0
+          : sceneAndMetadata.startFrame - transitionAdjustedStartFrame;
+
+      const delta = SCENE_TRANSITION_DURATION - additionalTransitionFrames;
+
       const from = addedUpDurations;
-      addedUpDurations += sceneAndMetadata.durationInFrames;
+      addedUpDurations += sceneAndMetadata.durationInFrames - delta;
       if (
         sceneAndMetadata.type === "video-scene" &&
         sceneAndMetadata.scene.newChapter
@@ -292,14 +316,16 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         currentChapter = sceneAndMetadata.scene.newChapter;
       }
 
-      if (
-        getShouldTransitionOut({
-          sceneAndMetadata,
-          nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
-        })
-      ) {
-        addedUpDurations -= SCENE_TRANSITION_DURATION;
-      }
+      // if (
+      //   getShouldTransitionOut({
+      //     sceneAndMetadata,
+      //     nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
+      //   })
+      // ) {
+      //   addedUpDurations -= SCENE_TRANSITION_DURATION;
+      // }
+
+      console.log(i, additionalTransitionFrames);
 
       const retValue: SceneAndMetadata = {
         ...sceneAndMetadata,
@@ -307,15 +333,20 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           ? {
               bRolls: applyBRollRules({
                 bRolls: sceneAndMetadata.bRolls,
-                sceneDurationInFrames: sceneAndMetadata.durationInFrames,
+                sceneDurationInFrames:
+                  sceneAndMetadata.durationInFrames +
+                  additionalTransitionFrames,
                 willTransitionToNextScene: getShouldTransitionOut({
                   sceneAndMetadata,
                   nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
                 }),
               }),
+              startFrame: transitionAdjustedStartFrame,
             }
           : {}),
 
+        durationInFrames:
+          sceneAndMetadata.durationInFrames + additionalTransitionFrames,
         from,
         chapter: currentChapter,
       };
