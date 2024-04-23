@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import type { Word } from "../../../config/autocorrect";
 import type { Theme } from "../../../config/themes";
@@ -53,6 +53,10 @@ export const EditWord: React.FC<{
   const usableWidth = width - SIDE_PADDING * 2;
   const ref = useRef<HTMLDivElement>(null);
 
+  const initialFrame = useMemo(() => {
+    return frame;
+  }, []);
+
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onUpdateText(index, e.target.value);
@@ -81,7 +85,7 @@ export const EditWord: React.FC<{
   }, [index, isMonospaced, onUpdateText, word.text]);
 
   useEffect(() => {
-    if (active) {
+    if (active && initialFrame !== frame) {
       ref.current?.scrollIntoView({
         behavior: "auto",
         block: "center",
