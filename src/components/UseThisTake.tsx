@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import {
   convertFilesInServer,
   downloadVideo,
   handleUploadFileToServer,
 } from "../download-video";
+import { transcribeVideoInServer } from "../transcribe-video";
 import { Button } from "./ui/button";
 
 export type CurrentBlobs =
@@ -41,14 +42,18 @@ export const UseThisTake: React.FC<{
   readonly currentBlobs: CurrentBlobs;
   readonly setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
   readonly setShowHandleVideos: React.Dispatch<React.SetStateAction<boolean>>;
+  readonly uploading: boolean;
+  readonly setUploading: React.Dispatch<React.SetStateAction<boolean>>;
+  readonly setTranscribing: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   currentBlobs,
   selectedFolder,
   setCurrentBlobs,
   setShowHandleVideos,
+  uploading,
+  setUploading,
+  setTranscribing,
 }) => {
-  const [uploading, setUploading] = useState(false);
-
   const keepVideoOnServer = useCallback(async () => {
     if (currentBlobs.endDate === null) {
       return Promise.resolve();
@@ -116,6 +121,7 @@ export const UseThisTake: React.FC<{
 
   const handleUseTake = useCallback(async () => {
     setUploading(true);
+    const { endDate } = currentBlobs;
     try {
       await keepVideos();
       setShowHandleVideos(false);
@@ -126,7 +132,27 @@ export const UseThisTake: React.FC<{
     } finally {
       setUploading(false);
     }
-  }, [keepVideos, setShowHandleVideos]);
+
+    try {
+      if (endDate && selectedFolder) {
+        setTranscribing(true);
+        await transcribeVideoInServer({ endDate, selectedFolder });
+      }
+    } catch (err) {
+      console.log(err);
+      // eslint-disable-next-line no-alert
+      alert((err as Error).stack);
+    } finally {
+      setTranscribing(false);
+    }
+  }, [
+    currentBlobs,
+    keepVideos,
+    selectedFolder,
+    setShowHandleVideos,
+    setTranscribing,
+    setUploading,
+  ]);
 
   return (
     <Button

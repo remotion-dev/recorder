@@ -1,5 +1,5 @@
 import { getVideoMetadata } from "@remotion/media-utils";
-import type { CalculateMetadataFunction } from "remotion";
+import type { CalculateMetadataFunction, StaticFile } from "remotion";
 import { getStaticFiles } from "remotion";
 import {
   ALTERNATIVE1_PREFIX,
@@ -18,52 +18,120 @@ import {
   type SceneVideos,
   type WebcamPosition,
 } from "../config/scenes";
-import { TRANSITION_DURATION } from "../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../config/transitions";
 import {
   getShouldTransitionOut,
   getSumUpDuration,
 } from "./animations/transitions";
+import type { WhisperOutput } from "./captions/types";
 import { truthy } from "./helpers/truthy";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
 import type { MainProps } from "./Main";
+import { applyBRollRules } from "./scenes/BRoll/apply-b-roll-rules";
+import { getBRollDimensions } from "./scenes/BRoll/get-broll-dimensions";
+
+const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2);
+
+const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
+  if (!subsJSON) {
+    return 0;
+  }
+
+  // taking the first real word and take its start timestamp in ms.
+  const startFromInHundrethsOfSec = subsJSON.transcription[1]?.tokens[0]?.t_dtw;
+  if (startFromInHundrethsOfSec === undefined) {
+    return 0;
+  }
+
+  const startFromInFrames =
+    Math.floor((startFromInHundrethsOfSec / 100) * FPS) -
+    TIMESTAMP_PADDING_IN_FRAMES;
+  return startFromInFrames > 0 ? startFromInFrames : 0;
+};
+
+const deriveEndFrameFromSubs = (
+  subsJSON: WhisperOutput | null,
+): number | null => {
+  if (!subsJSON) {
+    return null;
+  }
+
+  // taking the first real word and take its start timestamp in ms.
+  const indexOfLastTranscriptionElem = subsJSON.transcription.length - 1;
+
+  const endAtInHunrethsOfSec =
+    subsJSON.transcription[indexOfLastTranscriptionElem]?.tokens[0]?.t_dtw;
+
+  if (endAtInHunrethsOfSec === undefined) {
+    return null;
+  }
+
+  const endAtInFrames =
+    Math.floor((endAtInHunrethsOfSec / 100) * FPS) +
+    TIMESTAMP_PADDING_IN_FRAMES;
+
+  return endAtInFrames;
+};
+
+const fetchSubsJson = async (
+  file: StaticFile | null,
+): Promise<WhisperOutput | null> => {
+  if (!file) {
+    return null;
+  }
+
+  try {
+    const res = await fetch(file.src);
+    const data = await res.json();
+    return data as WhisperOutput;
+  } catch (error) {
+    console.error("Error fetching WhisperOutput from JSON:", error);
+    return null;
+  }
+};
 
 const getPairs = (prefix: string) => {
   const files = getStaticFiles().filter((f) => f.name.startsWith(prefix));
 
-  return files
-    .map((file): Pair | null => {
-      if (!file.name.startsWith(`${prefix}/${WEBCAM_PREFIX}`)) {
-        return null;
-      }
+  return (
+    files
+      .map((file): Pair | null => {
+        if (!file.name.startsWith(`${prefix}/${WEBCAM_PREFIX}`)) {
+          return null;
+        }
 
-      const timestamp = file.name
-        .replace(`${prefix}/${WEBCAM_PREFIX}`, "")
-        .replace(".webm", "")
-        .replace(".mp4", "");
+        const timestamp = file.name
+          .toLowerCase()
+          .replace(`${prefix}/${WEBCAM_PREFIX}`, "")
+          .replace(".webm", "")
+          .replace(".mov", "")
+          .replace(".mp4", "");
 
-      const display = files.find((_f) =>
-        _f.name.startsWith(`${prefix}/${DISPLAY_PREFIX}${timestamp}`),
-      );
-      const sub = files.find((_f) =>
-        _f.name.startsWith(`${prefix}/${SUBS_PREFIX}${timestamp}`),
-      );
-      const alternative1 = files.find((_f) =>
-        _f.name.startsWith(`${prefix}/${ALTERNATIVE1_PREFIX}${timestamp}`),
-      );
-      const alternative2 = files.find((_f) =>
-        _f.name.startsWith(`${prefix}/${ALTERNATIVE2_PREFIX}${timestamp}`),
-      );
+        const display = files.find((_f) =>
+          _f.name.startsWith(`${prefix}/${DISPLAY_PREFIX}${timestamp}.`),
+        );
+        const sub = files.find((_f) =>
+          _f.name.startsWith(`${prefix}/${SUBS_PREFIX}${timestamp}.`),
+        );
+        const alternative1 = files.find((_f) =>
+          _f.name.startsWith(`${prefix}/${ALTERNATIVE1_PREFIX}${timestamp}.`),
+        );
+        const alternative2 = files.find((_f) =>
+          _f.name.startsWith(`${prefix}/${ALTERNATIVE2_PREFIX}${timestamp}.`),
+        );
 
-      return {
-        webcam: file,
-        display: display ?? null,
-        subs: sub ?? null,
-        alternative1: alternative1 ?? null,
-        alternative2: alternative2 ?? null,
-      };
-    })
-    .filter(Boolean) as Pair[];
+        return {
+          webcam: file,
+          display: display ?? null,
+          subs: sub ?? null,
+          alternative1: alternative1 ?? null,
+          alternative2: alternative2 ?? null,
+          timestamp: parseInt(timestamp, 10),
+        };
+      })
+      .filter(Boolean) as Pair[]
+  ).sort((a, b) => a.timestamp - b.timestamp);
 };
 
 export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
@@ -71,9 +139,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
   compositionId,
 }) => {
   const pairs = getPairs(compositionId);
-
   let videoIndex = -1;
-
   const scenesAndMetadataWithoutDuration = (
     await Promise.all(
       props.scenes.map(async (scene, i): Promise<SceneAndMetadata | null> => {
@@ -113,15 +179,22 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         } = await getVideoMetadata(p.webcam.src);
 
         const dim = p.display ? await getVideoMetadata(p.display.src) : null;
+
+        const subsJson = await fetchSubsJson(p.subs);
+
+        const derivedStartFrame = deriveStartFrameFromSubs(subsJson);
+
+        const derivedEndFrame =
+          deriveEndFrameFromSubs(subsJson) ??
+          Math.round(durationInSeconds * FPS);
         const durationInFrames =
           durationInSeconds === Infinity
             ? PLACE_HOLDER_DURATION_IN_FRAMES
-            : Math.round(durationInSeconds * FPS);
+            : derivedEndFrame - derivedStartFrame - scene.startOffset;
 
-        const trimStart = scene?.trimStart ?? 0;
-
-        const duration =
-          scene?.duration ?? Math.round(durationInFrames - trimStart);
+        // Intentionally using ||
+        // By default, Zod will give it a value of 0, which shifts the timeline
+        const duration = scene.duration || Math.round(durationInFrames);
 
         const videos: SceneVideos = {
           display: dim,
@@ -153,6 +226,12 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           webcamPosition = "center";
         }
 
+        const bRollWithDimensions = await Promise.all(
+          scene.bRolls.map((bRoll) => {
+            return getBRollDimensions(bRoll);
+          }),
+        );
+
         return {
           type: "video-scene",
           scene,
@@ -167,6 +246,9 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           finalWebcamPosition: webcamPosition as WebcamPosition,
           from: 0,
           chapter: scene.newChapter ?? null,
+          startFrame: derivedStartFrame,
+          endFrame: derivedEndFrame,
+          bRolls: bRollWithDimensions,
         };
       }),
     )
@@ -194,11 +276,24 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
         })
       ) {
-        addedUpDurations -= TRANSITION_DURATION;
+        addedUpDurations -= SCENE_TRANSITION_DURATION;
       }
 
-      const retValue = {
+      const retValue: SceneAndMetadata = {
         ...sceneAndMetadata,
+        ...(sceneAndMetadata.type === "video-scene"
+          ? {
+              bRolls: applyBRollRules({
+                bRolls: sceneAndMetadata.bRolls,
+                sceneDurationInFrames: sceneAndMetadata.durationInFrames,
+                willTransitionToNextScene: getShouldTransitionOut({
+                  sceneAndMetadata,
+                  nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
+                }),
+              }),
+            }
+          : {}),
+
         from,
         chapter: currentChapter,
       };
@@ -209,6 +304,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         currentChapter = null;
       }
 
+      console.log(retValue);
       return retValue;
     },
   );

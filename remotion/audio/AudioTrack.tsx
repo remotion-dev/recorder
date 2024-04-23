@@ -7,7 +7,7 @@ import {
   getAudioSource,
   REGULAR_VOLUME,
 } from "../../config/sounds";
-import { TRANSITION_DURATION } from "../../config/transitions";
+import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 import { getShouldTransitionOut } from "../animations/transitions";
 
 type LoudPart = [number, number];
@@ -53,14 +53,17 @@ const calculateVolume =
     );
 
     if (isLoudPart) {
+      const loudPartDuration = isLoudPart[1] - isLoudPart[0];
+      const isTooShort = loudPartDuration <= AUDIO_FADE_IN_FRAMES * 2;
+      const firstKeyFrame = isTooShort
+        ? loudPartDuration / 2 + isLoudPart[0]
+        : isLoudPart[0] + AUDIO_FADE_IN_FRAMES;
+      const secondKeyFrame = isTooShort
+        ? loudPartDuration / 2 + isLoudPart[0] + 1
+        : isLoudPart[1] - AUDIO_FADE_IN_FRAMES;
       return interpolate(
         f,
-        [
-          isLoudPart[0],
-          isLoudPart[0] + AUDIO_FADE_IN_FRAMES,
-          isLoudPart[1] - AUDIO_FADE_IN_FRAMES,
-          isLoudPart[1],
-        ],
+        [isLoudPart[0], firstKeyFrame, secondKeyFrame, isLoudPart[1]],
         [regularVolume, REGULAR_VOLUME, REGULAR_VOLUME, regularVolume],
       );
     }
@@ -78,7 +81,14 @@ const AudioClip: React.FC<{
     return calculateVolume({ durationInFrames, loudParts });
   }, [durationInFrames, loudParts]);
 
-  return <Audio volume={volumeFunction} src={src} />;
+  return (
+    <Audio
+      volume={volumeFunction}
+      loopVolumeCurveBehavior="extend"
+      src={src}
+      loop
+    />
+  );
 };
 
 export const AudioTrack: React.FC<{
@@ -100,7 +110,7 @@ export const AudioTrack: React.FC<{
       nextScene: scenesAndMetadata[i + 1] ?? null,
     });
     if (isTransitioningOut) {
-      addedUpDurations -= TRANSITION_DURATION;
+      addedUpDurations -= SCENE_TRANSITION_DURATION;
     }
 
     const isLoud = scene.type !== "video-scene";
@@ -113,7 +123,7 @@ export const AudioTrack: React.FC<{
       lastAudioClip.duration += metadataForScene.durationInFrames;
 
       if (isTransitioningOut) {
-        lastAudioClip.duration -= TRANSITION_DURATION;
+        lastAudioClip.duration -= SCENE_TRANSITION_DURATION;
       }
 
       if (isLoud) {

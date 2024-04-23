@@ -370,7 +370,7 @@ export const Recorder: React.FC<{
   return (
     <AbsoluteFill
       style={{
-        maskImage: `linear-gradient(black 58%, transparent 74%)`,
+        WebkitMaskImage: `linear-gradient(black 58%, transparent 74%)`,
       }}
     >
       <AbsoluteFill style={{ overflow: "visible", color: getColor(theme) }}>
