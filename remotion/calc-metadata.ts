@@ -304,7 +304,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         currentChapter = null;
       }
 
-      console.log(retValue);
       return retValue;
     },
   );
