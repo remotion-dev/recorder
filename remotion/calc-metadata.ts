@@ -54,7 +54,29 @@ const deriveStartFrameFromSubsJSON = (
   return startFromInFrames > 0 ? startFromInFrames : 0;
 };
 
-const deriveEndFrameFromSubs2 = (subs: SubTypes) => {
+const getClampedStartFrame = ({
+  startOffset,
+  startFrameFromSubs,
+  derivedEndFrame,
+}: {
+  startOffset: number;
+  startFrameFromSubs: number;
+  derivedEndFrame: number;
+}): number => {
+  const combinedStartFrame = startFrameFromSubs + startOffset;
+
+  if (combinedStartFrame > derivedEndFrame) {
+    return derivedEndFrame;
+  }
+
+  if (combinedStartFrame < 0) {
+    return 0;
+  }
+
+  return combinedStartFrame;
+};
+
+const deriveEndFrameFromSubs = (subs: SubTypes) => {
   const lastSegment = subs.segments[subs.segments.length - 1];
   const lastWord = lastSegment?.words[lastSegment.words.length - 1];
   if (!lastWord || !lastWord.firstTimestamp) {
@@ -62,7 +84,7 @@ const deriveEndFrameFromSubs2 = (subs: SubTypes) => {
   }
 
   const lastFrame = Math.floor((lastWord.firstTimestamp / 1000) * FPS);
-  return lastFrame + 30;
+  return lastFrame + 2 * TIMESTAMP_PADDING_IN_FRAMES;
 };
 
 const fetchSubsJson = async (
@@ -183,18 +205,24 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             subtitleType: "square",
           });
 
-          endFrameFromSubs = deriveEndFrameFromSubs2(subsForTimestamps);
+          endFrameFromSubs = deriveEndFrameFromSubs(subsForTimestamps);
         }
 
-        const startFromSubs = deriveStartFrameFromSubsJSON(subsJson);
-
-        const startFrame = startFromSubs + scene.startOffset;
         const derivedEndFrame =
           endFrameFromSubs ?? Math.round(durationInSeconds * FPS);
+
+        const startFrameFromSubs = deriveStartFrameFromSubsJSON(subsJson);
+
+        const actualStartFrame = getClampedStartFrame({
+          startOffset: scene.startOffset,
+          startFrameFromSubs,
+          derivedEndFrame,
+        });
+
         const durationInFrames =
           durationInSeconds === Infinity
             ? PLACE_HOLDER_DURATION_IN_FRAMES
-            : derivedEndFrame - startFrame;
+            : derivedEndFrame - actualStartFrame;
 
         const videos: SceneVideos = {
           display: dim,
@@ -248,7 +276,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           finalWebcamPosition: webcamPosition as WebcamPosition,
           from: 0,
           chapter: scene.newChapter ?? null,
-          startFrame: startFromSubs,
+          startFrame: actualStartFrame,
           endFrame: derivedEndFrame,
           bRolls: bRollWithDimensions,
         };
