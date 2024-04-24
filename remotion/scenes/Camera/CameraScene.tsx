@@ -122,6 +122,7 @@ export const CameraScene: React.FC<{
           didTransitionIn={getShouldTransitionIn({
             previousScene,
             scene: sceneAndMetadata,
+            canvasLayout,
           })}
         />
       ) : null}

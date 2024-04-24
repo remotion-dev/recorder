@@ -388,6 +388,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
     getSumUpDuration({
       scene: s,
       previousScene: scenesAndMetadata[i - 1] ?? null,
+      canvasLayout: props.canvasLayout,
     }),
   );
 

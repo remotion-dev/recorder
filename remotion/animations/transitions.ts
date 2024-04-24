@@ -1,12 +1,41 @@
-import type { SceneAndMetadata } from "../../config/scenes";
+import type { CanvasLayout } from "../../config/layout";
+import type {
+  ComparableWebcamPosition,
+  SceneAndMetadata,
+  VideoSceneAndMetadata,
+} from "../../config/scenes";
 import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
+
+const getComparableWebcamPosition = (
+  sceneAndMetaData: VideoSceneAndMetadata,
+  canvasLayout: CanvasLayout,
+): ComparableWebcamPosition => {
+  if (canvasLayout !== "square") {
+    return sceneAndMetaData.finalWebcamPosition;
+  }
+
+  if (sceneAndMetaData.videos.display) {
+    return sceneAndMetaData.finalWebcamPosition;
+  }
+
+  if (
+    sceneAndMetaData.finalWebcamPosition === "bottom-left" ||
+    sceneAndMetaData.finalWebcamPosition === "bottom-right"
+  ) {
+    return "bottom";
+  }
+
+  return "top";
+};
 
 export const getShouldTransitionOut = ({
   sceneAndMetadata,
   nextScene,
+  canvasLayout,
 }: {
   sceneAndMetadata: SceneAndMetadata;
   nextScene: SceneAndMetadata | null;
+  canvasLayout: CanvasLayout;
 }) => {
   if (nextScene === null) {
     return false;
@@ -23,8 +52,16 @@ export const getShouldTransitionOut = ({
     return true;
   }
 
-  const hasSameWebcamPosition =
-    sceneAndMetadata.finalWebcamPosition === nextScene.finalWebcamPosition;
+  const sceneWebcamPosition = getComparableWebcamPosition(
+    sceneAndMetadata,
+    canvasLayout,
+  );
+  const nextSceneWebcamPosition = getComparableWebcamPosition(
+    nextScene,
+    canvasLayout,
+  );
+
+  const hasSameWebcamPosition = sceneWebcamPosition === nextSceneWebcamPosition;
   const hasSameWebcamSize =
     sceneAndMetadata.layout.webcamLayout.height ===
       nextScene.layout.webcamLayout.height &&
@@ -56,9 +93,11 @@ export const getShouldTransitionOut = ({
 export const getShouldTransitionIn = ({
   scene,
   previousScene,
+  canvasLayout,
 }: {
   scene: SceneAndMetadata;
   previousScene: SceneAndMetadata | null;
+  canvasLayout: CanvasLayout;
 }) => {
   if (previousScene === null) {
     return false;
@@ -67,19 +106,23 @@ export const getShouldTransitionIn = ({
   return getShouldTransitionOut({
     sceneAndMetadata: previousScene,
     nextScene: scene,
+    canvasLayout,
   });
 };
 
 export const getSumUpDuration = ({
   scene,
   previousScene,
+  canvasLayout,
 }: {
   scene: SceneAndMetadata;
   previousScene: SceneAndMetadata | null;
+  canvasLayout: CanvasLayout;
 }) => {
   return getShouldTransitionIn({
     scene,
     previousScene,
+    canvasLayout,
   })
     ? scene.durationInFrames - SCENE_TRANSITION_DURATION
     : scene.durationInFrames;
