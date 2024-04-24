@@ -1,3 +1,4 @@
+import type { CanvasLayout } from "../../config/layout";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
@@ -30,7 +31,13 @@ export type ChapterType = {
   webcamPositions: WebcamInformation[];
 };
 
-export const makeChapters = ({ scenes }: { scenes: SceneAndMetadata[] }) => {
+export const makeChapters = ({
+  scenes,
+  canvasLayout,
+}: {
+  scenes: SceneAndMetadata[];
+  canvasLayout: CanvasLayout;
+}) => {
   let passedDuration = 0;
   const chapters: ChapterType[] = [];
 
@@ -41,10 +48,13 @@ export const makeChapters = ({ scenes }: { scenes: SceneAndMetadata[] }) => {
     const isTransitioningIn = getShouldTransitionIn({
       scene,
       previousScene,
+      canvasLayout,
     });
+
     const sumUpDuration = getSumUpDuration({
       scene,
       previousScene,
+      canvasLayout,
     });
 
     if (scene.type === "video-scene" && scene.scene.newChapter) {

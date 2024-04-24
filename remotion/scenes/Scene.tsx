@@ -98,6 +98,7 @@ const InnerScene: React.FC<
       willTransitionToNextScene={getShouldTransitionOut({
         nextScene,
         sceneAndMetadata,
+        canvasLayout,
       })}
     />
   );
@@ -109,10 +110,13 @@ const SceneWithTransition: React.FC<Props> = (props) => {
   const shouldEnter = getShouldTransitionIn({
     scene: props.sceneAndMetadata,
     previousScene: props.previousScene,
+    canvasLayout: props.canvasLayout,
   });
+
   const shouldExit = getShouldTransitionOut({
     sceneAndMetadata: props.sceneAndMetadata,
     nextScene: props.nextScene,
+    canvasLayout: props.canvasLayout,
   });
   const enter = shouldEnter
     ? spring({
