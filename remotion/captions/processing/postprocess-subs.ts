@@ -123,7 +123,6 @@ export const removeWhisperBlankWords = (original: Word[]): Word[] => {
   const pause = "[PAUSE]";
 
   const words = [...original];
-
   words.forEach((word, index) => {
     const wordCopy = { ...word };
     wordCopy.text = wordCopy.text.trim();
@@ -157,7 +156,6 @@ export const removeWhisperBlankWords = (original: Word[]): Word[] => {
       }
     }
   });
-
   return words;
 };
 

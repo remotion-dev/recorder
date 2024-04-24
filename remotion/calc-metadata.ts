@@ -20,10 +20,12 @@ import {
 } from "../config/scenes";
 import { SCENE_TRANSITION_DURATION } from "../config/transitions";
 import {
+  getShouldTransitionIn,
   getShouldTransitionOut,
   getSumUpDuration,
 } from "./animations/transitions";
-import type { WhisperOutput } from "./captions/types";
+import { postprocessSubtitles } from "./captions/processing/postprocess-subs";
+import type { SubTypes, WhisperOutput } from "./captions/types";
 import { truthy } from "./helpers/truthy";
 import { getDimensionsForLayout } from "./layout/dimensions";
 import { getLayout } from "./layout/get-layout";
@@ -32,8 +34,11 @@ import { applyBRollRules } from "./scenes/BRoll/apply-b-roll-rules";
 import { getBRollDimensions } from "./scenes/BRoll/get-broll-dimensions";
 
 const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2);
+const END_FRAME_PADDING = 30;
 
-const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
+const deriveStartFrameFromSubsJSON = (
+  subsJSON: WhisperOutput | null,
+): number => {
   if (!subsJSON) {
     return 0;
   }
@@ -50,28 +55,57 @@ const deriveStartFrameFromSubs = (subsJSON: WhisperOutput | null): number => {
   return startFromInFrames > 0 ? startFromInFrames : 0;
 };
 
-const deriveEndFrameFromSubs = (
-  subsJSON: WhisperOutput | null,
-): number | null => {
-  if (!subsJSON) {
-    return null;
+const getClampedStartFrame = ({
+  startOffset,
+  startFrameFromSubs,
+  derivedEndFrame,
+}: {
+  startOffset: number;
+  startFrameFromSubs: number;
+  derivedEndFrame: number;
+}): number => {
+  const combinedStartFrame = startFrameFromSubs + startOffset;
+
+  if (combinedStartFrame > derivedEndFrame) {
+    return derivedEndFrame;
   }
 
-  // taking the first real word and take its start timestamp in ms.
-  const indexOfLastTranscriptionElem = subsJSON.transcription.length - 1;
-
-  const endAtInHunrethsOfSec =
-    subsJSON.transcription[indexOfLastTranscriptionElem]?.tokens[0]?.t_dtw;
-
-  if (endAtInHunrethsOfSec === undefined) {
-    return null;
+  if (combinedStartFrame < 0) {
+    return 0;
   }
 
-  const endAtInFrames =
-    Math.floor((endAtInHunrethsOfSec / 100) * FPS) +
-    TIMESTAMP_PADDING_IN_FRAMES;
+  return combinedStartFrame;
+};
 
-  return endAtInFrames;
+const getClampedEndFrame = ({
+  durationInSeconds,
+  derivedEndFrame,
+}: {
+  durationInSeconds: number;
+  derivedEndFrame: number | null;
+}): number => {
+  const videoDurationInFrames = Math.floor(durationInSeconds * FPS);
+  if (!derivedEndFrame) {
+    return videoDurationInFrames;
+  }
+
+  const paddedEndFrame = derivedEndFrame + END_FRAME_PADDING;
+  if (paddedEndFrame > videoDurationInFrames) {
+    return videoDurationInFrames;
+  }
+
+  return paddedEndFrame;
+};
+
+const deriveEndFrameFromSubs = (subs: SubTypes) => {
+  const lastSegment = subs.segments[subs.segments.length - 1];
+  const lastWord = lastSegment?.words[lastSegment.words.length - 1];
+  if (!lastWord || !lastWord.firstTimestamp) {
+    throw new Error("Last word or its timestampe is undefined");
+  }
+
+  const lastFrame = Math.floor((lastWord.firstTimestamp / 1000) * FPS);
+  return lastFrame + 2 * TIMESTAMP_PADDING_IN_FRAMES;
 };
 
 const fetchSubsJson = async (
@@ -149,7 +183,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             scene,
             durationInFrames: scene.durationInFrames,
             from: 0,
-            chapter: null,
           };
         }
 
@@ -168,7 +201,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             },
             durationInFrames: PLACE_HOLDER_DURATION_IN_FRAMES,
             from: 0,
-            chapter: null,
           };
         }
 
@@ -182,20 +214,38 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
 
         const subsJson = await fetchSubsJson(p.subs);
 
-        const derivedStartFrame = deriveStartFrameFromSubs(subsJson);
+        let endFrameFromSubs = null;
+        if (subsJson) {
+          // only interested in postprocessing of the words to get rid of "BLANK_WORDS"
+          const subsForTimestamps = postprocessSubtitles({
+            subTypes: subsJson,
+            boxWidth: 200,
+            canvasLayout: "landscape",
+            fontSize: 10,
+            maxLines: 3,
+            subtitleType: "square",
+          });
 
-        const derivedEndFrame =
-          deriveEndFrameFromSubs(subsJson) ??
-          Math.round(durationInSeconds * FPS);
+          endFrameFromSubs = deriveEndFrameFromSubs(subsForTimestamps);
+        }
+
+        const derivedEndFrame = getClampedEndFrame({
+          durationInSeconds,
+          derivedEndFrame: endFrameFromSubs,
+        });
+
+        const startFrameFromSubs = deriveStartFrameFromSubsJSON(subsJson);
+
+        const actualStartFrame = getClampedStartFrame({
+          startOffset: scene.startOffset,
+          startFrameFromSubs,
+          derivedEndFrame,
+        });
+
         const durationInFrames =
           durationInSeconds === Infinity
             ? PLACE_HOLDER_DURATION_IN_FRAMES
-            : derivedEndFrame - derivedStartFrame - scene.startOffset;
-
-        // Intentionally using ||
-        // By default, Zod will give it a value of 0, which shifts the timeline
-        const duration = scene.duration || Math.round(durationInFrames);
-
+            : derivedEndFrame - actualStartFrame;
         const videos: SceneVideos = {
           display: dim,
           webcam: {
@@ -236,7 +286,9 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           type: "video-scene",
           scene,
           videos,
-          durationInFrames: duration,
+          // Intentionally using ||
+          // By default, Zod will give it a value of 0, which shifts the timeline
+          durationInFrames: scene.duration || Math.round(durationInFrames),
           layout: getLayout({
             webcamPosition: webcamPosition as WebcamPosition,
             videos,
@@ -246,7 +298,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           finalWebcamPosition: webcamPosition as WebcamPosition,
           from: 0,
           chapter: scene.newChapter ?? null,
-          startFrame: derivedStartFrame,
+          startFrame: actualStartFrame,
           endFrame: derivedEndFrame,
           bRolls: bRollWithDimensions,
         };
@@ -261,48 +313,72 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
 
   const scenesAndMetadata = scenesAndMetadataWithoutDuration.map(
     (sceneAndMetadata, i) => {
-      const from = addedUpDurations;
-      addedUpDurations += sceneAndMetadata.durationInFrames;
-      if (
-        sceneAndMetadata.type === "video-scene" &&
-        sceneAndMetadata.scene.newChapter
-      ) {
-        currentChapter = sceneAndMetadata.scene.newChapter;
+      const previousSceneAndMetaData =
+        scenesAndMetadataWithoutDuration[i - 1] ?? null;
+      const nextSceneAndMetaData =
+        scenesAndMetadataWithoutDuration[i + 1] ?? null;
+
+      const isTransitioningIn = previousSceneAndMetaData
+        ? getShouldTransitionIn({
+            previousScene: previousSceneAndMetaData,
+            scene: sceneAndMetadata,
+            canvasLayout: props.canvasLayout,
+          })
+        : false;
+      const isTransitioningOut = getShouldTransitionOut({
+        sceneAndMetadata,
+        nextScene: nextSceneAndMetaData,
+        canvasLayout: props.canvasLayout,
+      });
+
+      if (isTransitioningIn) {
+        addedUpDurations -= SCENE_TRANSITION_DURATION;
       }
 
-      if (
-        getShouldTransitionOut({
-          sceneAndMetadata,
-          nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
-          canvasLayout: props.canvasLayout,
-        })
-      ) {
-        addedUpDurations -= SCENE_TRANSITION_DURATION;
+      const from = addedUpDurations;
+      addedUpDurations += sceneAndMetadata.durationInFrames;
+
+      if (sceneAndMetadata.type === "other-scene") {
+        return {
+          ...sceneAndMetadata,
+          from,
+        };
+      }
+
+      let adjustedDuration = sceneAndMetadata.durationInFrames;
+
+      let transitionAdjustedStartFrame = sceneAndMetadata.startFrame;
+
+      if (isTransitioningIn) {
+        transitionAdjustedStartFrame = Math.max(
+          0,
+          sceneAndMetadata.startFrame - SCENE_TRANSITION_DURATION,
+        );
+
+        const additionalTransitionFrames =
+          sceneAndMetadata.startFrame - transitionAdjustedStartFrame;
+
+        addedUpDurations += additionalTransitionFrames;
+        adjustedDuration += additionalTransitionFrames;
+      }
+
+      if (sceneAndMetadata.scene.newChapter) {
+        currentChapter = sceneAndMetadata.scene.newChapter;
       }
 
       const retValue: SceneAndMetadata = {
         ...sceneAndMetadata,
-        ...(sceneAndMetadata.type === "video-scene"
-          ? {
-              bRolls: applyBRollRules({
-                bRolls: sceneAndMetadata.bRolls,
-                sceneDurationInFrames: sceneAndMetadata.durationInFrames,
-                willTransitionToNextScene: getShouldTransitionOut({
-                  sceneAndMetadata,
-                  nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
-                  canvasLayout: props.canvasLayout,
-                }),
-              }),
-            }
-          : {}),
-
+        bRolls: applyBRollRules({
+          bRolls: sceneAndMetadata.bRolls,
+          sceneDurationInFrames: adjustedDuration,
+          willTransitionToNextScene: isTransitioningOut,
+        }),
+        startFrame: transitionAdjustedStartFrame,
+        durationInFrames: adjustedDuration,
         from,
         chapter: currentChapter,
       };
-      if (
-        sceneAndMetadata.type === "video-scene" &&
-        sceneAndMetadata.scene.stopChapteringAfterThis
-      ) {
+      if (sceneAndMetadata.scene.stopChapteringAfterThis) {
         currentChapter = null;
       }
 
