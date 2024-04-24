@@ -7,6 +7,7 @@ import type {
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
 import { getShouldTransitionIn } from "../../animations/transitions";
+import { PlaceholderSubs } from "../../captions/PlaceholderSubs";
 import { Subs } from "../../captions/Subs";
 import { LandscapeChapters } from "../../chapters/landscape/SelectedChapters";
 import type { ChapterType } from "../../chapters/make-chapters";
@@ -115,7 +116,17 @@ export const CameraScene: React.FC<{
           previousScene={previousScene}
           theme={theme}
         />
-      ) : null}
+      ) : (
+        <PlaceholderSubs
+          canvasLayout={canvasLayout}
+          enterProgress={enterProgress}
+          exitProgress={exitProgress}
+          scene={sceneAndMetadata}
+          nextScene={nextScene}
+          previousScene={previousScene}
+          theme={theme}
+        />
+      )}
       {sceneAndMetadata.scene.newChapter && canvasLayout === "square" ? (
         <SquareChapter
           title={sceneAndMetadata.scene.newChapter}
