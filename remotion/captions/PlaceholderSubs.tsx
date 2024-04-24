@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AbsoluteFill,
   cancelRender,
@@ -28,6 +28,13 @@ import {
 } from "./TransitionBetweenSubtitles";
 
 const LINE_HEIGHT = 1.2;
+
+const textStyle: React.CSSProperties = {
+  fontFamily: REGULAR_FONT_FAMILY,
+  fontWeight: REGULAR_FONT_WEIGHT,
+  margin: 30,
+  opacity: 0.6,
+};
 
 export const PlaceholderSubs: React.FC<{
   canvasLayout: CanvasLayout;
@@ -74,14 +81,6 @@ export const PlaceholderSubs: React.FC<{
     currentScene: scene,
     nextScene: previousScene,
   });
-  const textStyle: React.CSSProperties = useMemo(() => {
-    return {
-      fontFamily: REGULAR_FONT_FAMILY,
-      fontWeight: REGULAR_FONT_WEIGHT,
-      margin: 30,
-      opacity: 0.6,
-    };
-  }, []);
 
   const outer: React.CSSProperties = {
     fontSize: 20,
