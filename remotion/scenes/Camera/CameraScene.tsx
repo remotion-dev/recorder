@@ -116,7 +116,7 @@ export const CameraScene: React.FC<{
           previousScene={previousScene}
           theme={theme}
         />
-      ) : (
+      ) : window.remotion_isStudio ? (
         <PlaceholderSubs
           canvasLayout={canvasLayout}
           enterProgress={enterProgress}
@@ -126,7 +126,7 @@ export const CameraScene: React.FC<{
           previousScene={previousScene}
           theme={theme}
         />
-      )}
+      ) : null}
       {sceneAndMetadata.scene.newChapter && canvasLayout === "square" ? (
         <SquareChapter
           title={sceneAndMetadata.scene.newChapter}
