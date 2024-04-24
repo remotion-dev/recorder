@@ -64,7 +64,7 @@ export const PlaceholderSubs: React.FC<{
       });
   }, [fontsLoaded, handle]);
 
-  const { subtitleType, subtitleFontSize } = scene.layout;
+  const { subtitleType } = scene.layout;
 
   const shouldTransitionToNext = shouldInlineTransitionSubtitles({
     currentScene: scene,
@@ -79,10 +79,12 @@ export const PlaceholderSubs: React.FC<{
       fontFamily: REGULAR_FONT_FAMILY,
       fontWeight: REGULAR_FONT_WEIGHT,
       margin: 30,
+      opacity: 0.6,
     };
   }, []);
+
   const outer: React.CSSProperties = {
-    fontSize: subtitleFontSize,
+    fontSize: 20,
     display: "flex",
     lineHeight: LINE_HEIGHT,
     border: `${getBorderWidthForSubtitles(subtitleType)}px solid ${
@@ -118,7 +120,7 @@ export const PlaceholderSubs: React.FC<{
           subtitleType={subtitleType}
         >
           <div style={textStyle}>
-            No subtitles found for this scene. Run{" "}
+            No subtitles found for this scene. Run the command{" "}
             <span
               style={{
                 fontFamily: MONOSPACE_FONT_FAMILY,
@@ -127,7 +129,7 @@ export const PlaceholderSubs: React.FC<{
             >
               bun sub.ts
             </span>{" "}
-            to generate subtitles from the webcam clip.
+            in your terminal to generate subtitles for this recording.
           </div>
         </TransitionToNextSubtitles>
       </TransitionFromPreviousSubtitles>
