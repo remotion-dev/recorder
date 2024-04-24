@@ -51,7 +51,7 @@ const balanceWords = ({
   }
 
   while (
-    hasMonoSpaceInIt(words[bestCut - 1] as Word) ||
+    (bestCut > 1 && hasMonoSpaceInIt(words[bestCut - 1] as Word)) ||
     (words[bestCut - 1] as Word).text.trim() === ""
   ) {
     bestCut--;
