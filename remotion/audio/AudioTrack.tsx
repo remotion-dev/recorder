@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Audio, interpolate, Sequence, useVideoConfig } from "remotion";
+import type { CanvasLayout } from "../../config/layout";
 import type { SceneAndMetadata } from "../../config/scenes";
 import {
   AUDIO_FADE_IN_FRAMES,
@@ -93,7 +94,8 @@ const AudioClip: React.FC<{
 
 export const AudioTrack: React.FC<{
   scenesAndMetadata: SceneAndMetadata[];
-}> = ({ scenesAndMetadata }) => {
+  canvasLayout: CanvasLayout;
+}> = ({ scenesAndMetadata, canvasLayout }) => {
   let addedUpDurations = 0;
   const audioClips: TAudioTrack[] = [];
 
@@ -108,6 +110,7 @@ export const AudioTrack: React.FC<{
     const isTransitioningOut = getShouldTransitionOut({
       sceneAndMetadata: scene,
       nextScene: scenesAndMetadata[i + 1] ?? null,
+      canvasLayout,
     });
     if (isTransitioningOut) {
       addedUpDurations -= SCENE_TRANSITION_DURATION;

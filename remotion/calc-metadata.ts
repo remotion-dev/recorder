@@ -274,6 +274,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         getShouldTransitionOut({
           sceneAndMetadata,
           nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
+          canvasLayout: props.canvasLayout,
         })
       ) {
         addedUpDurations -= SCENE_TRANSITION_DURATION;
@@ -289,6 +290,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
                 willTransitionToNextScene: getShouldTransitionOut({
                   sceneAndMetadata,
                   nextScene: scenesAndMetadataWithoutDuration[i + 1] ?? null,
+                  canvasLayout: props.canvasLayout,
                 }),
               }),
             }
@@ -312,6 +314,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
     getSumUpDuration({
       scene: s,
       previousScene: scenesAndMetadata[i - 1] ?? null,
+      canvasLayout: props.canvasLayout,
     }),
   );
 
