@@ -131,5 +131,4 @@ export type SceneAndMetadata =
       scene: SceneType;
       durationInFrames: number;
       from: number;
-      chapter: string | null;
     };
