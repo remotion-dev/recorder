@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import type { Platform } from "../config/endcard";
 import { AbsoluteFill, Sequence } from "remotion";
+import type { Platform } from "../config/endcard";
 import type { CanvasLayout } from "../config/layout";
 import type { SceneAndMetadata, SceneType } from "../config/scenes";
 import type { Theme } from "../config/themes";
@@ -27,8 +27,8 @@ export const Main: React.FC<MainProps> = ({
   scenes,
 }) => {
   const chapters = useMemo(() => {
-    return makeChapters({ scenes: scenesAndMetadata });
-  }, [scenesAndMetadata]);
+    return makeChapters({ scenes: scenesAndMetadata, canvasLayout });
+  }, [canvasLayout, scenesAndMetadata]);
 
   const displayNoSceneDefinedIndicator = useMemo(() => {
     return scenesAndMetadata.length === 0 && scenes.length === 0;
@@ -86,7 +86,10 @@ export const Main: React.FC<MainProps> = ({
           <NoDataScene theme={theme} />
         </Sequence>
       ) : null}
-      <AudioTrack scenesAndMetadata={scenesAndMetadata} />
+      <AudioTrack
+        scenesAndMetadata={scenesAndMetadata}
+        canvasLayout={canvasLayout}
+      />
       <div ref={captionEditorPortal} />
     </AbsoluteFill>
   );
