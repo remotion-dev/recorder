@@ -7,6 +7,7 @@ import type {
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
 import { getShouldTransitionIn } from "../../animations/transitions";
+import { PlaceholderSubs } from "../../captions/PlaceholderSubs";
 import { Subs } from "../../captions/Subs";
 import { LandscapeChapters } from "../../chapters/landscape/SelectedChapters";
 import type { ChapterType } from "../../chapters/make-chapters";
@@ -106,6 +107,16 @@ export const CameraScene: React.FC<{
           canvasLayout={canvasLayout}
           trimStart={startFrom}
           file={sceneAndMetadata.pair.subs}
+          enterProgress={enterProgress}
+          exitProgress={exitProgress}
+          scene={sceneAndMetadata}
+          nextScene={nextScene}
+          previousScene={previousScene}
+          theme={theme}
+        />
+      ) : window.remotion_isStudio ? (
+        <PlaceholderSubs
+          canvasLayout={canvasLayout}
           enterProgress={enterProgress}
           exitProgress={exitProgress}
           scene={sceneAndMetadata}
