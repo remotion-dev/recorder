@@ -322,11 +322,13 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         ? getShouldTransitionIn({
             previousScene: previousSceneAndMetaData,
             scene: sceneAndMetadata,
+            canvasLayout: props.canvasLayout,
           })
         : false;
       const isTransitioningOut = getShouldTransitionOut({
         sceneAndMetadata,
         nextScene: nextSceneAndMetaData,
+        canvasLayout: props.canvasLayout,
       });
 
       if (isTransitioningIn) {
