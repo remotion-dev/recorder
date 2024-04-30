@@ -179,7 +179,7 @@ export const Subs: React.FC<{
 
         const newOutput = updater(old);
         const filePath = `${file.name}`;
-        const contents = JSON.stringify(newOutput);
+        const contents = JSON.stringify(newOutput, null, 2);
 
         preventReload.current = true;
         writeStaticFile({
