@@ -33,25 +33,23 @@ import type { MainProps } from "./Main";
 import { applyBRollRules } from "./scenes/BRoll/apply-b-roll-rules";
 import { getBRollDimensions } from "./scenes/BRoll/get-broll-dimensions";
 
-const TIMESTAMP_PADDING_IN_FRAMES = Math.floor(FPS / 2);
-const END_FRAME_PADDING = 30;
+const START_FRAME_PADDING = Math.ceil(FPS / 4);
+const END_FRAME_PADDING = FPS / 2;
 
-const deriveStartFrameFromSubsJSON = (
-  subsJSON: WhisperOutput | null,
-): number => {
+const deriveStartFrameFromSubsJSON = (subsJSON: SubTypes | null): number => {
   if (!subsJSON) {
     return 0;
   }
 
   // taking the first real word and take its start timestamp in ms.
-  const startFromInHundrethsOfSec = subsJSON.transcription[1]?.tokens[0]?.t_dtw;
+  const startFromInHundrethsOfSec =
+    subsJSON.segments[0]?.words[0]?.firstTimestamp;
   if (startFromInHundrethsOfSec === undefined) {
     return 0;
   }
 
   const startFromInFrames =
-    Math.floor((startFromInHundrethsOfSec / 100) * FPS) -
-    TIMESTAMP_PADDING_IN_FRAMES;
+    Math.floor((startFromInHundrethsOfSec / 1000) * FPS) - START_FRAME_PADDING;
   return startFromInFrames > 0 ? startFromInFrames : 0;
 };
 
@@ -97,7 +95,11 @@ const getClampedEndFrame = ({
   return paddedEndFrame;
 };
 
-const deriveEndFrameFromSubs = (subs: SubTypes) => {
+const deriveEndFrameFromSubs = (subs: SubTypes | null) => {
+  if (!subs) {
+    return null;
+  }
+
   const lastSegment = subs.segments[subs.segments.length - 1];
   const lastWord = lastSegment?.words[lastSegment.words.length - 1];
   if (!lastWord || !lastWord.firstTimestamp) {
@@ -105,7 +107,7 @@ const deriveEndFrameFromSubs = (subs: SubTypes) => {
   }
 
   const lastFrame = Math.floor((lastWord.firstTimestamp / 1000) * FPS);
-  return lastFrame + 2 * TIMESTAMP_PADDING_IN_FRAMES;
+  return lastFrame;
 };
 
 const fetchSubsJson = async (
@@ -214,27 +216,27 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
 
         const subsJson = await fetchSubsJson(p.subs);
 
-        let endFrameFromSubs = null;
-        if (subsJson) {
-          // only interested in postprocessing of the words to get rid of "BLANK_WORDS"
-          const subsForTimestamps = postprocessSubtitles({
-            subTypes: subsJson,
-            boxWidth: 200,
-            canvasLayout: "landscape",
-            fontSize: 10,
-            maxLines: 3,
-            subtitleType: "square",
-          });
+        const subsForTimestamps = subsJson
+          ? postprocessSubtitles({
+              subTypes: subsJson,
+              boxWidth: 200,
+              canvasLayout: "landscape",
+              fontSize: 10,
+              maxLines: 3,
+              subtitleType: "square",
+            })
+          : null;
+        // only interested in postprocessing of the words to get rid of "BLANK_WORDS"
 
-          endFrameFromSubs = deriveEndFrameFromSubs(subsForTimestamps);
-        }
+        const endFrameFromSubs = deriveEndFrameFromSubs(subsForTimestamps);
 
         const derivedEndFrame = getClampedEndFrame({
           durationInSeconds,
           derivedEndFrame: endFrameFromSubs,
         });
 
-        const startFrameFromSubs = deriveStartFrameFromSubsJSON(subsJson);
+        const startFrameFromSubs =
+          deriveStartFrameFromSubsJSON(subsForTimestamps);
 
         const actualStartFrame = getClampedStartFrame({
           startOffset: scene.startOffset,
@@ -246,6 +248,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           durationInSeconds === Infinity
             ? PLACE_HOLDER_DURATION_IN_FRAMES
             : derivedEndFrame - actualStartFrame;
+
         const videos: SceneVideos = {
           display: dim,
           webcam: {
