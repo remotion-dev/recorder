@@ -55,7 +55,7 @@ export const getLandscapeWebCamStartOrEndLayout = ({
   return {
     layout: {
       ...currentLayout,
-      left: -getSafeSpace("landscape"),
+      left: -getSafeSpace("landscape") - currentLayout.width,
     },
     shouldFadeRecording: false,
   };
