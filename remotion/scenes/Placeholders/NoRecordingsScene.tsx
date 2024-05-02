@@ -40,7 +40,7 @@ export const NoRecordingsScene: React.FC<{ type: "none" | "no-more" }> = ({
             alignItems: "center",
           }}
         >
-          No {type === "no-more" ? "more" : null} recordings found in the
+          No {type === "no-more" ? "more" : null} recordings in the
           <span style={accent}>{id}</span>
           folder.
         </div>
