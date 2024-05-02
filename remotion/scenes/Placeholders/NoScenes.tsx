@@ -1,8 +1,10 @@
+import { useMemo } from "react";
 import { AbsoluteFill } from "remotion";
 import {
   REGULAR_FONT_FAMILY,
   REGULAR_FONT_WEIGHT,
 } from "../../../config/fonts";
+import { COLORS } from "../../../config/themes";
 
 const container: React.CSSProperties = {
   display: "flex",
@@ -16,10 +18,17 @@ const container: React.CSSProperties = {
   flexDirection: "column",
 };
 
-export const NoScenes: React.FC<{}> = () => {
+export const NoScenes: React.FC<{ theme: "light" | "dark" }> = ({ theme }) => {
+  const dynamicContainer = useMemo(() => {
+    return {
+      ...container,
+      color: COLORS[theme].WORD_COLOR_ON_BG_APPEARED,
+    };
+  }, [theme]);
+
   return (
     <AbsoluteFill>
-      <div style={container}>
+      <div style={dynamicContainer}>
         {" "}
         <div>No scenes defined for this video.</div>
         <div>Add a scene in the right sidebar -&gt;</div>
