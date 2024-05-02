@@ -85,22 +85,34 @@ const InnerScene: React.FC<
     return <TableOfContents theme={theme} chapters={chapters} />;
   }
 
-  return (
-    <CameraScene
-      enterProgress={enterProgress}
-      canvasLayout={canvasLayout}
-      exitProgress={exitProgress}
-      nextScene={nextScene}
-      previousScene={previousScene}
-      sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
-      theme={theme}
-      chapters={chapters}
-      willTransitionToNextScene={getShouldTransitionOut({
-        nextScene,
-        sceneAndMetadata,
-        canvasLayout,
-      })}
-    />
+  if (sceneAndMetadata.scene.type === "norecordings") {
+    return <div>No recordings</div>;
+  }
+
+  if (sceneAndMetadata.scene.type === "videoscene") {
+    return (
+      <CameraScene
+        enterProgress={enterProgress}
+        canvasLayout={canvasLayout}
+        exitProgress={exitProgress}
+        nextScene={nextScene}
+        previousScene={previousScene}
+        sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
+        theme={theme}
+        chapters={chapters}
+        willTransitionToNextScene={getShouldTransitionOut({
+          nextScene,
+          sceneAndMetadata,
+          canvasLayout,
+        })}
+      />
+    );
+  }
+
+  throw new Error(
+    "Scene type not implemented: " +
+      // @ts-expect-error
+      sceneAndMetadata.scene.type,
   );
 };
 

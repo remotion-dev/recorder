@@ -14,8 +14,8 @@ import {
   type FinalWebcamPosition,
   type Pair,
   type SceneAndMetadata,
-  type SceneType,
   type SceneVideos,
+  type SelectableScene,
   type WebcamPosition,
 } from "../config/scenes";
 import { SCENE_TRANSITION_DURATION } from "../config/transitions";
@@ -194,10 +194,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             type: "other-scene",
             scene: {
               ...scene,
-              type: "title",
-              title: "No clip",
-              subtitle: `No more clips in public/${compositionId}`,
-              durationInFrames: PLACE_HOLDER_DURATION_IN_FRAMES,
+              type: "norecordings",
             },
             durationInFrames: PLACE_HOLDER_DURATION_IN_FRAMES,
             from: 0,
@@ -260,7 +257,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
         let idx = i;
 
         while (webcamPosition === "previous" && idx >= 0) {
-          const prevScene = props.scenes[idx] as SceneType;
+          const prevScene = props.scenes[idx] as SelectableScene;
           if (prevScene.type === "videoscene") {
             webcamPosition = prevScene.webcamPosition;
           }
