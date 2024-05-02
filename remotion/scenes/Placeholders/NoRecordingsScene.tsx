@@ -53,7 +53,7 @@ export const NoRecordingsScene: React.FC<{ type: "none" | "no-more" }> = ({
           >
             Go to the Recorder
           </a>
-          to record {type === "no-more" ? "more clips" : "a clip"}!
+          to create {type === "no-more" ? "more clips" : "a clip"}!
         </div>
       </div>
     </AbsoluteFill>
