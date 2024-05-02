@@ -316,7 +316,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             type: "other-scene" as const,
             scene: {
               // TODO: Add correct placeholder
-              type: "norecordings" as const,
+              type: "noscenes" as const,
               music: "none",
               transitionToNextScene: true,
             },
