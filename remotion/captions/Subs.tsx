@@ -1,3 +1,4 @@
+import { writeStaticFile } from "@remotion/studio";
 import React, {
   useCallback,
   useEffect,
@@ -21,11 +22,8 @@ import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../config/scenes";
-import { SERVER_PORT } from "../../config/server";
 import type { Theme } from "../../config/themes";
 import { COLORS } from "../../config/themes";
-import type { SaveSubtitlesPayload } from "../../scripts/server/constants";
-import { SAVE_SUBTITLES } from "../../scripts/server/constants";
 import { shouldInlineTransitionSubtitles } from "../animations/subtitle-transitions/should-transition-subtitle";
 import { getSubtitleTransform } from "../animations/subtitle-transitions/subtitle-transitions";
 import { SubsEditor } from "./Editor/SubsEditor";
@@ -180,21 +178,17 @@ export const Subs: React.FC<{
         }
 
         const newOutput = updater(old);
-        const payload: SaveSubtitlesPayload = {
-          filename: `${window.remotion_publicFolderExists}/${file.name}`,
-          data: newOutput,
-        };
+        const filePath = `${file.name}`;
+        const contents = JSON.stringify(newOutput, null, 2);
 
         preventReload.current = true;
-        fetch(`http://localhost:${SERVER_PORT}${SAVE_SUBTITLES}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
+        writeStaticFile({
+          filePath,
+          contents,
         }).finally(() => {
           preventReload.current = false;
         });
+
         return newOutput;
       });
     },
