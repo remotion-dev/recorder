@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { AbsoluteFill, Sequence } from "remotion";
 import type { Platform } from "../config/endcard";
 import type { CanvasLayout } from "../config/layout";
-import type { SceneAndMetadata, SceneType } from "../config/scenes";
+import type { SceneAndMetadata, SelectableScene } from "../config/scenes";
 import type { Theme } from "../config/themes";
 import { COLORS } from "../config/themes";
 import { AudioTrack } from "./audio/AudioTrack";
@@ -13,7 +13,7 @@ import { Scene } from "./scenes/Scene";
 
 export type MainProps = {
   canvasLayout: CanvasLayout;
-  scenes: SceneType[];
+  scenes: SelectableScene[];
   scenesAndMetadata: SceneAndMetadata[];
   theme: Theme;
   platform: Platform;

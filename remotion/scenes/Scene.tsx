@@ -24,6 +24,8 @@ import type { ChapterType } from "../chapters/make-chapters";
 import { CameraScene } from "./Camera/CameraScene";
 import { SoundEffects } from "./Camera/SoundEffects";
 import { EndCard } from "./EndCard";
+import { NoRecordingsScene } from "./Placeholders/NoRecordingsScene";
+import { NoScenes } from "./Placeholders/NoScenes";
 import { RecorderScene } from "./Recorder";
 import { TableOfContents } from "./TableOfContents";
 import { Title } from "./Title/Title";
@@ -85,22 +87,44 @@ const InnerScene: React.FC<
     return <TableOfContents theme={theme} chapters={chapters} />;
   }
 
-  return (
-    <CameraScene
-      enterProgress={enterProgress}
-      canvasLayout={canvasLayout}
-      exitProgress={exitProgress}
-      nextScene={nextScene}
-      previousScene={previousScene}
-      sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
-      theme={theme}
-      chapters={chapters}
-      willTransitionToNextScene={getShouldTransitionOut({
-        nextScene,
-        sceneAndMetadata,
-        canvasLayout,
-      })}
-    />
+  if (sceneAndMetadata.scene.type === "norecordings") {
+    return <NoRecordingsScene type="none" />;
+  }
+
+  if (sceneAndMetadata.scene.type === "nomorerecordings") {
+    return <NoRecordingsScene type="no-more" />;
+  }
+
+  if (sceneAndMetadata.scene.type === "noscenes") {
+    return <NoScenes />;
+  }
+
+  // TODO: Implement no scenes
+
+  if (sceneAndMetadata.scene.type === "videoscene") {
+    return (
+      <CameraScene
+        enterProgress={enterProgress}
+        canvasLayout={canvasLayout}
+        exitProgress={exitProgress}
+        nextScene={nextScene}
+        previousScene={previousScene}
+        sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
+        theme={theme}
+        chapters={chapters}
+        willTransitionToNextScene={getShouldTransitionOut({
+          nextScene,
+          sceneAndMetadata,
+          canvasLayout,
+        })}
+      />
+    );
+  }
+
+  throw new Error(
+    "Scene type not implemented in Scene.tsx: " +
+      // @ts-expect-error If this gives a TS error, then you need to implement a new scene type
+      sceneAndMetadata.scene.type,
   );
 };
 
