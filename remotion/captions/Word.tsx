@@ -26,6 +26,8 @@ type WordColor = {
   greyed: string;
 };
 
+export const WORD_FADE_IN_DURATION_IN_MS = 100;
+
 const getShownWordColor = ({
   appeared,
   word,
@@ -53,7 +55,7 @@ const getShownWordColor = ({
 
   return interpolateColors(
     time,
-    [word.firstTimestamp, word.firstTimestamp + 100],
+    [word.firstTimestamp - WORD_FADE_IN_DURATION_IN_MS, word.firstTimestamp],
     [wordColor.greyed, wordColor.appeared],
   );
 };
@@ -95,13 +97,15 @@ export const WordComp: React.FC<{
 
   const [hovered, setHovered] = useState(false);
 
-  const scale = word.monospace
+  const progress = word.monospace
     ? word.firstTimestamp > time
       ? 1
       : spring({
           fps,
           frame,
-          delay: word.firstTimestamp * fps,
+          delay:
+            word.firstTimestamp * fps -
+            (WORD_FADE_IN_DURATION_IN_MS / 1000) * fps,
           config: {
             damping: 200,
           },
@@ -111,10 +115,10 @@ export const WordComp: React.FC<{
         0.95
     : 1;
 
-  const appeared = word.firstTimestamp <= time;
+  const appeared = word.firstTimestamp - 100 <= time;
 
   const active =
-    word.firstTimestamp <= time &&
+    appeared &&
     (word.lastTimestamp === null || word.lastTimestamp > time || isLast);
 
   const wordColor = getWordColor({
@@ -154,10 +158,17 @@ export const WordComp: React.FC<{
       boxShadow:
         active && word.monospace ? `0 0 0 1px ${backgroundColor}` : "none",
       borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS,
-      scale: String(scale),
+      scale: String(progress),
       cursor: "pointer",
     };
-  }, [active, backgroundColor, hovered, scale, shownWordColor, word.monospace]);
+  }, [
+    active,
+    backgroundColor,
+    hovered,
+    progress,
+    shownWordColor,
+    word.monospace,
+  ]);
 
   const onPointerEnter = useCallback(() => {
     setHovered(true);
