@@ -14,16 +14,22 @@ export const fetchProjectFolders = async () => {
 
 const KEY = "remotionrecorder.selectedFolder";
 
-export const loadSelectedFolder = () => {
-  if (!window.remotionServerEnabled) {
+const params = new URLSearchParams(window.location.search);
+const folderFromUrl = params.get("folder");
+
+export const loadFolderFromUrl = () => {
+  if (!folderFromUrl) {
     return null;
   }
 
-  const params = new URLSearchParams(window.location.search);
-  const folder = params.get("folder");
+  const newUrl = window.location.origin + window.location.pathname;
+  window.history.replaceState({}, "", newUrl);
+  return folderFromUrl;
+};
 
-  if (folder) {
-    return folder;
+export const loadSelectedFolder = () => {
+  if (!window.remotionServerEnabled) {
+    return null;
   }
 
   const projectFromLS = window.localStorage.getItem(KEY);
