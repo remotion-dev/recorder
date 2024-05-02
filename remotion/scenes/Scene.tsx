@@ -86,8 +86,11 @@ const InnerScene: React.FC<
   }
 
   if (sceneAndMetadata.scene.type === "norecordings") {
+    // TODO: Implement no more recordings
     return <div>No recordings</div>;
   }
+
+  // TODO: Implement no scenes
 
   if (sceneAndMetadata.scene.type === "videoscene") {
     return (

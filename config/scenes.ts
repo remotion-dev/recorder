@@ -134,11 +134,11 @@ export type VideoSceneAndMetadata = {
   bRolls: BRollWithDimensions[];
 };
 
-export type SceneAndMetadata =
-  | VideoSceneAndMetadata
-  | {
-      type: "other-scene";
-      scene: ComputedScene | SelectableScene;
-      durationInFrames: number;
-      from: number;
-    };
+export type OtherScene = {
+  type: "other-scene";
+  scene: ComputedScene | SelectableScene;
+  durationInFrames: number;
+  from: number;
+};
+
+export type SceneAndMetadata = VideoSceneAndMetadata | OtherScene;
