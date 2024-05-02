@@ -174,6 +174,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
 }) => {
   const pairs = getPairs(compositionId);
   let videoIndex = -1;
+
   const scenesAndMetadataWithoutDuration = (
     await Promise.all(
       props.scenes.map(async (scene, i): Promise<SceneAndMetadata | null> => {
@@ -308,80 +309,93 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
 
   await waitForFonts();
 
-  const scenesAndMetadata = scenesAndMetadataWithoutDuration.map(
-    (sceneAndMetadata, i) => {
-      const previousSceneAndMetaData =
-        scenesAndMetadataWithoutDuration[i - 1] ?? null;
-      const nextSceneAndMetaData =
-        scenesAndMetadataWithoutDuration[i + 1] ?? null;
+  const scenesAndMetadata: SceneAndMetadata[] =
+    props.scenes.length === 0
+      ? [
+          {
+            type: "other-scene" as const,
+            scene: {
+              // TODO: Add correct placeholder
+              type: "norecordings" as const,
+              music: "none",
+              transitionToNextScene: true,
+            },
+            durationInFrames: 90,
+            from: 0,
+          },
+        ]
+      : scenesAndMetadataWithoutDuration.map((sceneAndMetadata, i) => {
+          const previousSceneAndMetaData =
+            scenesAndMetadataWithoutDuration[i - 1] ?? null;
+          const nextSceneAndMetaData =
+            scenesAndMetadataWithoutDuration[i + 1] ?? null;
 
-      const isTransitioningIn = previousSceneAndMetaData
-        ? getShouldTransitionIn({
-            previousScene: previousSceneAndMetaData,
-            scene: sceneAndMetadata,
+          const isTransitioningIn = previousSceneAndMetaData
+            ? getShouldTransitionIn({
+                previousScene: previousSceneAndMetaData,
+                scene: sceneAndMetadata,
+                canvasLayout: props.canvasLayout,
+              })
+            : false;
+          const isTransitioningOut = getShouldTransitionOut({
+            sceneAndMetadata,
+            nextScene: nextSceneAndMetaData,
             canvasLayout: props.canvasLayout,
-          })
-        : false;
-      const isTransitioningOut = getShouldTransitionOut({
-        sceneAndMetadata,
-        nextScene: nextSceneAndMetaData,
-        canvasLayout: props.canvasLayout,
-      });
+          });
 
-      if (isTransitioningIn) {
-        addedUpDurations -= SCENE_TRANSITION_DURATION;
-      }
+          if (isTransitioningIn) {
+            addedUpDurations -= SCENE_TRANSITION_DURATION;
+          }
 
-      const from = addedUpDurations;
-      addedUpDurations += sceneAndMetadata.durationInFrames;
+          const from = addedUpDurations;
+          addedUpDurations += sceneAndMetadata.durationInFrames;
 
-      if (sceneAndMetadata.type === "other-scene") {
-        return {
-          ...sceneAndMetadata,
-          from,
-        };
-      }
+          if (sceneAndMetadata.type === "other-scene") {
+            return {
+              ...sceneAndMetadata,
+              from,
+            };
+          }
 
-      let adjustedDuration = sceneAndMetadata.durationInFrames;
+          let adjustedDuration = sceneAndMetadata.durationInFrames;
 
-      let transitionAdjustedStartFrame = sceneAndMetadata.startFrame;
+          let transitionAdjustedStartFrame = sceneAndMetadata.startFrame;
 
-      if (isTransitioningIn) {
-        transitionAdjustedStartFrame = Math.max(
-          0,
-          sceneAndMetadata.startFrame - SCENE_TRANSITION_DURATION,
-        );
+          if (isTransitioningIn) {
+            transitionAdjustedStartFrame = Math.max(
+              0,
+              sceneAndMetadata.startFrame - SCENE_TRANSITION_DURATION,
+            );
 
-        const additionalTransitionFrames =
-          sceneAndMetadata.startFrame - transitionAdjustedStartFrame;
+            const additionalTransitionFrames =
+              sceneAndMetadata.startFrame - transitionAdjustedStartFrame;
 
-        addedUpDurations += additionalTransitionFrames;
-        adjustedDuration += additionalTransitionFrames;
-      }
+            addedUpDurations += additionalTransitionFrames;
+            adjustedDuration += additionalTransitionFrames;
+          }
 
-      if (sceneAndMetadata.scene.newChapter) {
-        currentChapter = sceneAndMetadata.scene.newChapter;
-      }
+          if (sceneAndMetadata.scene.newChapter) {
+            currentChapter = sceneAndMetadata.scene.newChapter;
+          }
 
-      const retValue: SceneAndMetadata = {
-        ...sceneAndMetadata,
-        bRolls: applyBRollRules({
-          bRolls: sceneAndMetadata.bRolls,
-          sceneDurationInFrames: adjustedDuration,
-          willTransitionToNextScene: isTransitioningOut,
-        }),
-        startFrame: transitionAdjustedStartFrame,
-        durationInFrames: adjustedDuration,
-        from,
-        chapter: currentChapter,
-      };
-      if (sceneAndMetadata.scene.stopChapteringAfterThis) {
-        currentChapter = null;
-      }
+          const retValue: SceneAndMetadata = {
+            ...sceneAndMetadata,
+            bRolls: applyBRollRules({
+              bRolls: sceneAndMetadata.bRolls,
+              sceneDurationInFrames: adjustedDuration,
+              willTransitionToNextScene: isTransitioningOut,
+            }),
+            startFrame: transitionAdjustedStartFrame,
+            durationInFrames: adjustedDuration,
+            from,
+            chapter: currentChapter,
+          };
+          if (sceneAndMetadata.scene.stopChapteringAfterThis) {
+            currentChapter = null;
+          }
 
-      return retValue;
-    },
-  );
+          return retValue;
+        });
 
   const durations = scenesAndMetadata.map((s, i) =>
     getSumUpDuration({
