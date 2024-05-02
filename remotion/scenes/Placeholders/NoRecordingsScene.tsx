@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { AbsoluteFill, useVideoConfig } from "remotion";
 import {
   MONOSPACE_FONT_FAMILY,
@@ -23,15 +24,23 @@ const accent: React.CSSProperties = {
   color: COLORS.light.ACCENT_COLOR,
 };
 
-export const NoRecordingsScene: React.FC<{ type: "none" | "no-more" }> = ({
-  type,
-}) => {
+export const NoRecordingsScene: React.FC<{
+  theme: "light" | "dark";
+  type: "none" | "no-more";
+}> = ({ type, theme }) => {
   const { id } = useVideoConfig();
   const url = `http://localhost:4000?folder=${id}`;
 
+  const dynamicContainer = useMemo(() => {
+    return {
+      ...container,
+      color: COLORS[theme].WORD_COLOR_ON_BG_APPEARED,
+    };
+  }, [theme]);
+
   return (
     <AbsoluteFill>
-      <div style={container}>
+      <div style={dynamicContainer}>
         <div
           style={{
             display: "flex",
