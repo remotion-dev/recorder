@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { NewFolderDialog } from "./components/NewFolderDialog";
 import { SelectedFolder } from "./components/SelectedFolder";
 import { SmallSpinner } from "./components/SmallSpinner";
+import { Button } from "./components/ui/button";
 import type { CurrentBlobs } from "./components/UseThisTake";
 import { UseThisTake } from "./components/UseThisTake";
 import {
@@ -174,7 +175,6 @@ export const TopBar: React.FC<{
       </div>
 
       <div style={{ flex: 1 }} />
-
       {folders ? (
         <>
           <SelectedFolder
@@ -188,6 +188,11 @@ export const TopBar: React.FC<{
           />
         </>
       ) : null}
+      <Button asChild variant="outline">
+        <a href={`http://localhost:3000/${selectedFolder}`} target="_blank">
+          Go to Studio
+        </a>
+      </Button>
     </div>
   );
 };
