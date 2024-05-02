@@ -195,7 +195,7 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             type: "other-scene",
             scene: {
               ...scene,
-              type: "norecordings",
+              type: videoIndex > 0 ? "nomorerecordings" : "norecordings",
             },
             durationInFrames: PLACE_HOLDER_DURATION_IN_FRAMES,
             from: 0,
