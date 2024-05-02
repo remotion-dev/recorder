@@ -90,7 +90,7 @@ const noRecordingsScene = baseScene.extend({
 const computedScenes = z.discriminatedUnion("type", [noRecordingsScene]);
 
 export type SelectableScene = z.infer<typeof selectableScenes>;
-type ComputedScene = z.infer<typeof computedScenes> | SelectableScene;
+type ComputedScene = z.infer<typeof computedScenes>;
 
 export const videoConf = z.object({
   theme,
@@ -138,7 +138,7 @@ export type SceneAndMetadata =
   | VideoSceneAndMetadata
   | {
       type: "other-scene";
-      scene: ComputedScene;
+      scene: ComputedScene | SelectableScene;
       durationInFrames: number;
       from: number;
     };
