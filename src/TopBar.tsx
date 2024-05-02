@@ -6,6 +6,7 @@ import type { CurrentBlobs } from "./components/UseThisTake";
 import { UseThisTake } from "./components/UseThisTake";
 import {
   fetchProjectFolders,
+  loadFolderFromUrl,
   loadSelectedFolder,
   persistSelectedFolder,
 } from "./get-projects";
@@ -60,8 +61,13 @@ export const TopBar: React.FC<{
   const [uploading, setUploading] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
+
+  const folderFromUrl: string | null = useMemo(() => {
+    return loadFolderFromUrl();
+  }, []);
+
   const [preferredSelectedFolder, setSelectedFolder] = useState<string | null>(
-    loadSelectedFolder(),
+    folderFromUrl ?? loadSelectedFolder(),
   );
 
   const dynamicTranscribeIndicator: React.CSSProperties = useMemo(() => {
@@ -74,7 +80,6 @@ export const TopBar: React.FC<{
   const selectedFolder = useMemo(() => {
     return preferredSelectedFolder ?? folders?.[0] ?? null;
   }, [folders, preferredSelectedFolder]);
-
   const refreshFoldersList = useCallback(async () => {
     const json = await fetchProjectFolders();
     setFolders(json.folders);
