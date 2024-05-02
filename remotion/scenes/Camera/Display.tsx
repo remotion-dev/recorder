@@ -82,7 +82,6 @@ export const Display: React.FC<{
         frame={frame}
         style={{
           position: "absolute",
-          background: "black",
           ...displayLayout,
         }}
       >
