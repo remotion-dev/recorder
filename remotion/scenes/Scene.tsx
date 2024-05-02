@@ -110,8 +110,8 @@ const InnerScene: React.FC<
   }
 
   throw new Error(
-    "Scene type not implemented: " +
-      // @ts-expect-error
+    "Scene type not implemented in Scene.tsx: " +
+      // @ts-expect-error If this gives a TS error, then you need to implement a new scene type
       sceneAndMetadata.scene.type,
   );
 };
