@@ -1,5 +1,4 @@
-import type { Dimensions } from "@remotion/layout-utils";
-import { getVideoMetadata } from "@remotion/media-utils";
+import { getImageDimensions, getVideoMetadata } from "@remotion/media-utils";
 import type { BRoll, BRollWithDimensions } from "../../../config/scenes";
 
 const imageFileExtensions = [
@@ -14,21 +13,6 @@ const imageFileExtensions = [
 ];
 
 const videoFileExtensions = ["mp4", "webm", "mov", "mkv"];
-
-const getImageDimensions = (src: string): Promise<Dimensions> => {
-  const img = new Image();
-  img.src = src;
-  return new Promise((resolve, reject) => {
-    img.onload = () => {
-      resolve({
-        width: img.width,
-        height: img.height,
-      });
-    };
-
-    img.onerror = reject;
-  });
-};
 
 export const getBRollDimensions = async (
   bRoll: BRoll,
