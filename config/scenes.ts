@@ -87,7 +87,14 @@ const noRecordingsScene = baseScene.extend({
   type: z.literal("norecordings"),
 });
 
-const computedScenes = z.discriminatedUnion("type", [noRecordingsScene]);
+const noMoreRecordingsScene = baseScene.extend({
+  type: z.literal("nomorerecordings"),
+});
+
+const computedScenes = z.discriminatedUnion("type", [
+  noRecordingsScene,
+  noMoreRecordingsScene,
+]);
 
 export type SelectableScene = z.infer<typeof selectableScenes>;
 type ComputedScene = z.infer<typeof computedScenes>;

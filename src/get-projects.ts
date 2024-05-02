@@ -19,6 +19,13 @@ export const loadSelectedFolder = () => {
     return null;
   }
 
+  const params = new URLSearchParams(window.location.search);
+  const folder = params.get("folder");
+
+  if (folder) {
+    return folder;
+  }
+
   const projectFromLS = window.localStorage.getItem(KEY);
   if (projectFromLS === "") {
     return null;

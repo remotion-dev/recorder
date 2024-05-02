@@ -24,6 +24,7 @@ import type { ChapterType } from "../chapters/make-chapters";
 import { CameraScene } from "./Camera/CameraScene";
 import { SoundEffects } from "./Camera/SoundEffects";
 import { EndCard } from "./EndCard";
+import { NoRecordingsScene } from "./Placeholders/NoRecordingsScene";
 import { RecorderScene } from "./Recorder";
 import { TableOfContents } from "./TableOfContents";
 import { Title } from "./Title/Title";
@@ -87,7 +88,11 @@ const InnerScene: React.FC<
 
   if (sceneAndMetadata.scene.type === "norecordings") {
     // TODO: Implement no more recordings
-    return <div>No recordings</div>;
+    return <NoRecordingsScene type="none" />;
+  }
+
+  if (sceneAndMetadata.scene.type === "nomorerecordings") {
+    return <NoRecordingsScene type="no-more" />;
   }
 
   // TODO: Implement no scenes
