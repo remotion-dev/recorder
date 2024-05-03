@@ -88,18 +88,16 @@ const InnerScene: React.FC<
   }
 
   if (sceneAndMetadata.scene.type === "norecordings") {
-    return <NoRecordingsScene type="none" />;
+    return <NoRecordingsScene theme={theme} type="none" />;
   }
 
   if (sceneAndMetadata.scene.type === "nomorerecordings") {
-    return <NoRecordingsScene type="no-more" />;
+    return <NoRecordingsScene theme={theme} type="no-more" />;
   }
 
   if (sceneAndMetadata.scene.type === "noscenes") {
-    return <NoScenes />;
+    return <NoScenes theme={theme} />;
   }
-
-  // TODO: Implement no scenes
 
   if (sceneAndMetadata.scene.type === "videoscene") {
     return (
