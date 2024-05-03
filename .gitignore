@@ -4,7 +4,7 @@ node_modules
 # Comment this to add videos to source control.
 # Enabling Git LFS is recommended.
 # https://remotion.dev/docs/recorder/source-control
-public
+public/**/*.{mp4,webm,mov}
 
 # Vite's output directory
 dist
