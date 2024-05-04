@@ -20,6 +20,7 @@ import {
 } from "./components/ui/select";
 import { VolumeMeter } from "./components/VolumeMeter";
 import { PrefixAndResolution } from "./PrefixAndResolution";
+import { ToggleRotate } from "./Rotate";
 import { Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
 import type { SelectedSource } from "./video-source";
@@ -81,10 +82,17 @@ export const View: React.FC<{
     useState<SelectedSource | null>(null);
   const recordAudio = prefix === WEBCAM_PREFIX;
   const [resolution, setResolution] = useState<Dimensions | null>(null);
+  const [preferPortrait, setPreferPortrait] = useState(false);
 
-  const handleChange = useCallback(() => {
+  const onToggleCrop = useCallback(() => {
     setShowCropIndicator((prev) => {
       window.localStorage.setItem(localStorageKey, String(!prev));
+      return !prev;
+    });
+  }, []);
+
+  const onToggleRotate = useCallback(() => {
+    setPreferPortrait((prev) => {
       return !prev;
     });
   }, []);
@@ -117,9 +125,17 @@ export const View: React.FC<{
         {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop
             pressed={showCropIndicator}
-            onPressedChange={handleChange}
+            onPressedChange={onToggleCrop}
           />
         ) : null}
+        {/**
+         *
+         * // TODO: Only if is possible to rotate
+         */}
+        <ToggleRotate
+          pressed={preferPortrait}
+          onPressedChange={onToggleRotate}
+        />
         <Select onValueChange={onValueChange}>
           <SelectTrigger>
             <SelectValue placeholder="Select video" />
@@ -165,6 +181,7 @@ export const View: React.FC<{
         setMediaStream={setMediaStream}
         prefix={prefix}
         showCropIndicator={showCropIndicator}
+        preferPortrait={preferPortrait}
       />
     </div>
   );

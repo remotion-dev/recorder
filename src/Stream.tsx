@@ -33,6 +33,7 @@ export const Stream: React.FC<{
   showCropIndicator: boolean;
   selectedVideoSource: SelectedSource | null;
   selectedAudioSource: ConstrainDOMString | null;
+  preferPortrait: boolean;
 }> = ({
   prefix,
   mediaStream,
@@ -43,6 +44,7 @@ export const Stream: React.FC<{
   showCropIndicator,
   selectedVideoSource,
   selectedAudioSource,
+  preferPortrait,
 }) => {
   const [streamState, setStreamState] = useState<StreamState>("initial");
 
@@ -90,8 +92,15 @@ export const Stream: React.FC<{
     setStreamState("loading");
     const video: MediaTrackConstraints = {
       deviceId: selectedVideoSource.deviceId,
-      width: selectedVideoSource.maxWidth
-        ? { min: selectedVideoSource.maxWidth }
+      width: preferPortrait
+        ? undefined
+        : selectedVideoSource.maxWidth
+          ? { min: selectedVideoSource.maxWidth }
+          : undefined,
+      height: preferPortrait
+        ? selectedVideoSource.maxHeight
+          ? { min: selectedVideoSource.maxHeight }
+          : undefined
         : undefined,
     };
 
@@ -128,6 +137,7 @@ export const Stream: React.FC<{
         setStreamState("initial");
       });
   }, [
+    preferPortrait,
     prefix,
     recordAudio,
     selectedAudioSource,
