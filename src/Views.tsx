@@ -1,6 +1,5 @@
 /* eslint-disable no-negated-condition */
 /* eslint-disable no-alert */
-import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ALTERNATIVE1_PREFIX,
@@ -8,6 +7,7 @@ import {
   DISPLAY_PREFIX,
   WEBCAM_PREFIX,
 } from "../config/cameras";
+import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
 import { Spinner } from "./components/Spinner";
@@ -20,11 +20,10 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import { VolumeMeter } from "./components/VolumeMeter";
+import { CropIndicator } from "./CropIndicator";
 import { PrefixAndResolution } from "./PrefixAndResolution";
 import { ToggleCrop } from "./ToggleCrop";
 import { getSelectedVideoSource } from "./video-source";
-
-const BORDERWIDTH = 2;
 
 const viewContainer: React.CSSProperties = {
   display: "flex",
@@ -37,13 +36,6 @@ const viewContainer: React.CSSProperties = {
   height: "100%",
   maxHeight: "100%",
   maxWidth: "100%",
-};
-
-const cropIndicator: React.CSSProperties = {
-  border: `${BORDERWIDTH}px solid #F7D449`,
-  height: "100%",
-  borderRadius: 10,
-  aspectRatio: 350 / 400,
 };
 
 const videoWrapper: React.CSSProperties = {
@@ -103,40 +95,15 @@ export const View: React.FC<{
     maxHeight: number | null;
   } | null>(null);
   const recordAudio = prefix === WEBCAM_PREFIX;
-  const [resolutionString, setResolutionString] = useState<string>("");
+  const [resolution, setResolution] = useState<Dimensions | null>(null);
   const [streamState, setStreamState] = useState<StreamState>("initial");
 
-  const videoWidth = document.querySelector("video")?.videoWidth;
-  const videoHeight = document.querySelector("video")?.videoHeight;
-  const dynamicCropIndicator: CSSProperties = useMemo(() => {
-    return {
-      flex: 1,
-      display: "flex",
-      justifyContent: "center",
-      alignContent: "center",
-      aspectRatio:
-        videoWidth && videoHeight ? videoWidth / videoHeight : 16 / 9,
-      maxHeight: "100%",
-    };
-  }, [videoHeight, videoWidth]);
-
   const onLoadedMetadata = useCallback(() => {
-    if (mediaStream) {
-      setResolutionString(
-        `${sourceRef.current?.videoWidth}x${sourceRef.current?.videoHeight}`,
-      );
-    } else {
-      setResolutionString("");
-    }
-  }, [mediaStream]);
-
-  const derivedResolutionString = useMemo(() => {
-    if (!mediaStream) {
-      return "";
-    }
-
-    return resolutionString;
-  }, [mediaStream, resolutionString]);
+    setResolution({
+      width: sourceRef.current?.videoWidth as number,
+      height: sourceRef.current?.videoHeight as number,
+    });
+  }, []);
 
   const handleChange = useCallback(() => {
     setShowCropIndicator((prev) => {
@@ -192,15 +159,13 @@ export const View: React.FC<{
         : undefined,
     };
 
-    const mediaStreamConstraints: MediaStreamConstraints =
-      recordAudio && selectedAudioSource
-        ? {
-            video,
-            audio: { deviceId: selectedAudioSource },
-          }
-        : {
-            video,
-          };
+    const mediaStreamConstraints: MediaStreamConstraints = {
+      video,
+      audio:
+        recordAudio && selectedAudioSource
+          ? { deviceId: selectedAudioSource }
+          : undefined,
+    };
 
     window.navigator.mediaDevices
       .getUserMedia(mediaStreamConstraints)
@@ -257,10 +222,7 @@ export const View: React.FC<{
   return (
     <div style={viewContainer}>
       <div style={viewName}>
-        <PrefixAndResolution
-          prefix={prefix}
-          derivedResolutionString={derivedResolutionString}
-        />
+        <PrefixAndResolution prefix={prefix} resolution={resolution} />
         {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop
             pressed={showCropIndicator}
@@ -311,21 +273,8 @@ export const View: React.FC<{
         />
 
         {streamState === "loading" ? <Spinner /> : null}
-        {showCropIndicator ? (
-          <div
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              justifyContent: "center",
-              alignItems: "center",
-              display: "flex",
-            }}
-          >
-            <div style={dynamicCropIndicator}>
-              <div style={cropIndicator} />
-            </div>
-          </div>
+        {showCropIndicator && resolution ? (
+          <CropIndicator resolution={resolution} />
         ) : null}
       </div>
     </div>
