@@ -20,7 +20,9 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import { VolumeMeter } from "./components/VolumeMeter";
+import { PrefixAndResolution } from "./PrefixAndResolution";
 import { ToggleCrop } from "./ToggleCrop";
+import { getSelectedVideoSource } from "./video-source";
 
 const BORDERWIDTH = 2;
 
@@ -212,7 +214,6 @@ export const View: React.FC<{
         setStreamState("loaded");
       })
       .catch((e) => {
-        console.log(e);
         if (e.name === "NotReadableError") {
           alert(
             "The selected device is not readable. Is the device already in use by another program?",
@@ -231,71 +232,42 @@ export const View: React.FC<{
     selectedVideoSource,
     setMediaStream,
   ]);
-  const selectScreen = () => {
-    window.navigator.mediaDevices
-      // GetDisplayMedia asks the user for permission to capture the screen
-      .getDisplayMedia({ video: true })
-      .then((stream) => {
-        setMediaStream(prefix, stream);
-        if (!sourceRef.current) {
-          return;
-        }
 
-        sourceRef.current.srcObject = stream;
-        sourceRef.current.play();
-      });
-  };
+  const selectScreen = useCallback(async () => {
+    const stream = await window.navigator.mediaDevices
+      // GetDisplayMedia asks the user for permission to capture the screen
+      .getDisplayMedia({ video: true });
+
+    setMediaStream(prefix, stream);
+    if (!sourceRef.current) {
+      return;
+    }
+
+    sourceRef.current.srcObject = stream;
+    sourceRef.current.play();
+  }, [prefix, setMediaStream]);
+
+  const onValueChange = useCallback(
+    (value: string) => {
+      setSelectedVideoSource(getSelectedVideoSource({ value, devices }));
+    },
+    [devices],
+  );
 
   return (
     <div style={viewContainer}>
       <div style={viewName}>
-        <div
-          style={{
-            fontSize: 13,
-            textAlign: "left",
-            textTransform: "uppercase",
-          }}
-        >
-          {prefix}
-          <br />
-          {derivedResolutionString}
-        </div>
+        <PrefixAndResolution
+          prefix={prefix}
+          derivedResolutionString={derivedResolutionString}
+        />
         {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop
             pressed={showCropIndicator}
             onPressedChange={handleChange}
           />
         ) : null}
-        <Select
-          onValueChange={(value) => {
-            if (value === "undefined") {
-              setSelectedVideoSource(null);
-              return;
-            }
-
-            const device = devices.find((d) => d.deviceId === value);
-            console.log({ value, device });
-
-            if (
-              typeof InputDeviceInfo !== "undefined" &&
-              device instanceof InputDeviceInfo
-            ) {
-              const capabilities = device.getCapabilities();
-              setSelectedVideoSource({
-                deviceId: device.deviceId,
-                maxWidth: capabilities.width?.max ?? null,
-                maxHeight: capabilities.height?.max ?? null,
-              });
-              return;
-            }
-
-            setSelectedVideoSource({
-              deviceId: value,
-              maxWidth: null,
-              maxHeight: null,
-            });
-          }}
-        >
+        <Select onValueChange={onValueChange}>
           <SelectTrigger>
             <SelectValue placeholder="Select video" />
           </SelectTrigger>
