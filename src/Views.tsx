@@ -1,6 +1,6 @@
 /* eslint-disable no-negated-condition */
 /* eslint-disable no-alert */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   ALTERNATIVE1_PREFIX,
   ALTERNATIVE2_PREFIX,
@@ -10,7 +10,6 @@ import {
 import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
-import { Spinner } from "./components/Spinner";
 import { Button } from "./components/ui/button";
 import {
   Select,
@@ -20,9 +19,10 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import { VolumeMeter } from "./components/VolumeMeter";
-import { CropIndicator } from "./CropIndicator";
 import { PrefixAndResolution } from "./PrefixAndResolution";
+import { Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
+import type { SelectedSource } from "./video-source";
 import { getSelectedVideoSource } from "./video-source";
 
 const viewContainer: React.CSSProperties = {
@@ -36,16 +36,6 @@ const viewContainer: React.CSSProperties = {
   height: "100%",
   maxHeight: "100%",
   maxWidth: "100%",
-};
-
-const videoWrapper: React.CSSProperties = {
-  flex: 1,
-  overflow: "hidden",
-  position: "relative",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  flexDirection: "column",
 };
 
 const viewName: React.CSSProperties = {
@@ -63,8 +53,6 @@ export const prefixes = [
   ALTERNATIVE2_PREFIX,
 ] as const;
 export type Prefix = (typeof prefixes)[number];
-
-type StreamState = "initial" | "loading" | "loaded";
 
 const localStorageKey = "showCropIndicator";
 
@@ -89,21 +77,10 @@ export const View: React.FC<{
 
   const [selectedAudioSource, setSelectedAudioSource] =
     useState<ConstrainDOMString | null>(null);
-  const [selectedVideoSource, setSelectedVideoSource] = useState<{
-    deviceId: ConstrainDOMString;
-    maxWidth: number | null;
-    maxHeight: number | null;
-  } | null>(null);
+  const [selectedVideoSource, setSelectedVideoSource] =
+    useState<SelectedSource | null>(null);
   const recordAudio = prefix === WEBCAM_PREFIX;
   const [resolution, setResolution] = useState<Dimensions | null>(null);
-  const [streamState, setStreamState] = useState<StreamState>("initial");
-
-  const onLoadedMetadata = useCallback(() => {
-    setResolution({
-      width: sourceRef.current?.videoWidth as number,
-      height: sourceRef.current?.videoHeight as number,
-    });
-  }, []);
 
   const handleChange = useCallback(() => {
     setShowCropIndicator((prev) => {
@@ -111,92 +88,6 @@ export const View: React.FC<{
       return !prev;
     });
   }, []);
-
-  useEffect(() => {
-    if (mediaStream) {
-      const track = mediaStream.getVideoTracks()[0];
-      if (!track) {
-        return;
-      }
-
-      track.onended = () => {
-        setMediaStream(prefix, null);
-      };
-    }
-  }, [mediaStream, prefix, setMediaStream]);
-
-  const dynamicVideoStyle: React.CSSProperties = useMemo(() => {
-    return {
-      opacity: mediaStream ? 1 : 0,
-      height: "100%",
-    };
-  }, [mediaStream]);
-
-  useEffect(() => {
-    if (recordAudio) {
-      return () => {
-        mediaStream?.getVideoTracks().forEach((track) => track.stop());
-        mediaStream?.getAudioTracks().forEach((track) => track.stop());
-      };
-    }
-
-    return () => {
-      mediaStream?.getVideoTracks().forEach((track) => track.stop());
-    };
-  }, [mediaStream, recordAudio]);
-
-  useEffect(() => {
-    if (selectedVideoSource === null) {
-      setMediaStream(prefix, null);
-      return;
-    }
-
-    setStreamState("loading");
-    const video: MediaTrackConstraints = {
-      deviceId: selectedVideoSource.deviceId,
-      width: selectedVideoSource.maxWidth
-        ? { min: selectedVideoSource.maxWidth }
-        : undefined,
-    };
-
-    const mediaStreamConstraints: MediaStreamConstraints = {
-      video,
-      audio:
-        recordAudio && selectedAudioSource
-          ? { deviceId: selectedAudioSource }
-          : undefined,
-    };
-
-    window.navigator.mediaDevices
-      .getUserMedia(mediaStreamConstraints)
-      .then((stream) => {
-        if (sourceRef.current) {
-          sourceRef.current.srcObject = stream;
-          sourceRef.current.play();
-        }
-
-        setMediaStream(prefix, stream);
-        setStreamState("loaded");
-      })
-      .catch((e) => {
-        if (e.name === "NotReadableError") {
-          alert(
-            "The selected device is not readable. Is the device already in use by another program?",
-          );
-        } else if (e.name === "NotAllowedError") {
-          console.log(e);
-        }
-
-        setMediaStream(prefix, null);
-        setStreamState("initial");
-      });
-  }, [
-    selectedAudioSource,
-    prefix,
-    recordAudio,
-    selectedVideoSource,
-    setMediaStream,
-  ]);
 
   const selectScreen = useCallback(async () => {
     const stream = await window.navigator.mediaDevices
@@ -264,19 +155,17 @@ export const View: React.FC<{
       {prefix === WEBCAM_PREFIX ? (
         <VolumeMeter mediaStream={mediaStream} />
       ) : null}
-      <div style={videoWrapper} id={prefix + "-video-container"}>
-        <video
-          ref={sourceRef}
-          muted
-          style={dynamicVideoStyle}
-          onLoadedMetadata={onLoadedMetadata}
-        />
-
-        {streamState === "loading" ? <Spinner /> : null}
-        {showCropIndicator && resolution ? (
-          <CropIndicator resolution={resolution} />
-        ) : null}
-      </div>
+      <Stream
+        selectedAudioSource={selectedAudioSource}
+        selectedVideoSource={selectedVideoSource}
+        recordAudio={recordAudio}
+        resolution={resolution}
+        setResolution={setResolution}
+        mediaStream={mediaStream}
+        setMediaStream={setMediaStream}
+        prefix={prefix}
+        showCropIndicator={showCropIndicator}
+      />
     </div>
   );
 };
