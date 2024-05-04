@@ -1,9 +1,10 @@
 import React from "react";
+import type { Dimensions } from "../config/layout";
 
 export const PrefixAndResolution: React.FC<{
   prefix: string;
-  derivedResolutionString: string;
-}> = ({ derivedResolutionString, prefix }) => {
+  resolution: Dimensions | null;
+}> = ({ prefix, resolution }) => {
   return (
     <div
       style={{
@@ -14,7 +15,11 @@ export const PrefixAndResolution: React.FC<{
     >
       {prefix}
       <br />
-      {derivedResolutionString}
+      {resolution ? (
+        <>
+          {resolution.width}x{resolution.height}
+        </>
+      ) : null}
     </div>
   );
 };
