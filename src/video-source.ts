@@ -1,4 +1,4 @@
-type SelectedSource = {
+export type SelectedSource = {
   deviceId: string;
   maxWidth: number | null;
   maxHeight: number | null;
