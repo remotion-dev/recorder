@@ -95,8 +95,11 @@ export const View: React.FC<{
 
   const [selectedAudioSource, setSelectedAudioSource] =
     useState<ConstrainDOMString | null>(null);
-  const [selectedVideoSource, setSelectedVideoSource] =
-    useState<ConstrainDOMString | null>(null);
+  const [selectedVideoSource, setSelectedVideoSource] = useState<{
+    deviceId: ConstrainDOMString;
+    maxWidth: number | null;
+    maxHeight: number | null;
+  } | null>(null);
   const recordAudio = prefix === WEBCAM_PREFIX;
   const [resolutionString, setResolutionString] = useState<string>("");
   const [streamState, setStreamState] = useState<StreamState>("initial");
@@ -160,13 +163,6 @@ export const View: React.FC<{
     };
   }, [mediaStream]);
 
-  const setVideoSource = useCallback(
-    (newVideoSource: ConstrainDOMString | null) => {
-      setVideoSource(newVideoSource);
-    },
-    [],
-  );
-
   useEffect(() => {
     if (recordAudio) {
       return () => {
@@ -187,17 +183,21 @@ export const View: React.FC<{
     }
 
     setStreamState("loading");
+    const video: MediaTrackConstraints = {
+      deviceId: selectedVideoSource.deviceId,
+      width: selectedVideoSource.maxWidth
+        ? { min: selectedVideoSource.maxWidth }
+        : undefined,
+    };
+
     const mediaStreamConstraints: MediaStreamConstraints =
       recordAudio && selectedAudioSource
         ? {
-            video: {
-              deviceId: selectedVideoSource,
-              width: { ideal: 1920 },
-            },
+            video,
             audio: { deviceId: selectedAudioSource },
           }
         : {
-            video: { deviceId: selectedVideoSource },
+            video,
           };
 
     window.navigator.mediaDevices
@@ -212,6 +212,7 @@ export const View: React.FC<{
         setStreamState("loaded");
       })
       .catch((e) => {
+        console.log(e);
         if (e.name === "NotReadableError") {
           alert(
             "The selected device is not readable. Is the device already in use by another program?",
@@ -272,7 +273,27 @@ export const View: React.FC<{
               return;
             }
 
-            setSelectedVideoSource(value as ConstrainDOMString);
+            const device = devices.find((d) => d.deviceId === value);
+            console.log({ value, device });
+
+            if (
+              typeof InputDeviceInfo !== "undefined" &&
+              device instanceof InputDeviceInfo
+            ) {
+              const capabilities = device.getCapabilities();
+              setSelectedVideoSource({
+                deviceId: device.deviceId,
+                maxWidth: capabilities.width?.max ?? null,
+                maxHeight: capabilities.height?.max ?? null,
+              });
+              return;
+            }
+
+            setSelectedVideoSource({
+              deviceId: value,
+              maxWidth: null,
+              maxHeight: null,
+            });
           }}
         >
           <SelectTrigger>
