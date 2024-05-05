@@ -18,7 +18,10 @@ export const fitElementSizeInContainer = ({
   const newWidth = elementSize.width * ratio;
   const newHeight = elementSize.height * ratio;
 
-  if (newWidth > containerSize.width || newHeight > containerSize.height) {
+  if (
+    newWidth > containerSize.width + 0.000001 ||
+    newHeight > containerSize.height + 0.000001
+  ) {
     throw new Error(
       `Element is too big to fit into the container. Max size: ${containerSize.width}x${containerSize.height}, element size: ${newWidth}x${newHeight}`,
     );
