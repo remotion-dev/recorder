@@ -1,42 +1,45 @@
-import type { CSSProperties } from "react";
 import React, { useMemo } from "react";
+import { AbsoluteFill } from "remotion";
 import type { Dimensions } from "../config/layout";
-
-const cropIndicator: React.CSSProperties = {
-  border: "2px solid #F7D449",
-  height: "100%",
-  borderRadius: 10,
-  aspectRatio: 350 / 400,
-};
+import { fitElementSizeInContainer } from "../remotion/layout/fit-element";
+import { useElementSize } from "./lib/use-element-size";
 
 export const CropIndicator: React.FC<{
   resolution: Dimensions;
-}> = ({ resolution: { height, width } }) => {
-  const dynamicCropIndicator: CSSProperties = useMemo(() => {
+}> = ({ resolution }) => {
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  const elementSize = useElementSize(ref);
+  const videoSize = elementSize
+    ? fitElementSizeInContainer({
+        containerSize: elementSize,
+        elementSize: resolution,
+      })
+    : null;
+
+  const cropIndicatorRect = videoSize
+    ? fitElementSizeInContainer({
+        containerSize: videoSize,
+        elementSize: {
+          width: 350,
+          height: 400,
+        },
+      })
+    : null;
+
+  const cropIndicator: React.CSSProperties = useMemo(() => {
     return {
-      flex: 1,
-      display: "flex",
-      justifyContent: "center",
-      alignContent: "center",
-      aspectRatio: width / height,
-      maxHeight: "100%",
+      border: "2px solid #F7D449",
+      borderRadius: 10,
+      ...cropIndicatorRect,
     };
-  }, [height, width]);
+  }, [cropIndicatorRect]);
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        width: "100%",
-        height: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-        display: "flex",
-      }}
-    >
-      <div style={dynamicCropIndicator}>
-        <div style={cropIndicator} />
-      </div>
-    </div>
+    <AbsoluteFill ref={ref}>
+      <AbsoluteFill style={videoSize ?? undefined}>
+        <AbsoluteFill style={cropIndicator} />
+      </AbsoluteFill>
+    </AbsoluteFill>
   );
 };
