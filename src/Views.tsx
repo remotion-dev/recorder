@@ -10,6 +10,7 @@ import {
 import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
+import { canRotateCamera } from "./can-rotate-camera";
 import { Button } from "./components/ui/button";
 import {
   Select,
@@ -128,14 +129,16 @@ export const View: React.FC<{
             onPressedChange={onToggleCrop}
           />
         ) : null}
-        {/**
-         *
-         * // TODO: Only if is possible to rotate
-         */}
-        <ToggleRotate
-          pressed={preferPortrait}
-          onPressedChange={onToggleRotate}
-        />
+        {canRotateCamera({
+          selectedSource: selectedVideoSource,
+          preferPortrait,
+          resolution,
+        }) ? (
+          <ToggleRotate
+            pressed={preferPortrait}
+            onPressedChange={onToggleRotate}
+          />
+        ) : null}
         <Select onValueChange={onValueChange}>
           <SelectTrigger>
             <SelectValue placeholder="Select video" />
