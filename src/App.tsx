@@ -252,22 +252,21 @@ const App = () => {
         ) : null}
       </div>
       <div style={{ marginBottom: 10 }}>
-        {/* eslint-disable-next-line no-negated-condition */}
-        {!showAlternativeViews ? (
-          <Button
-            variant={"ghost"}
-            onClick={handleShowMore}
-            style={{ margin: "0px 10px" }}
-          >
-            Show more views
-          </Button>
-        ) : (
+        {showAlternativeViews ? (
           <Button
             variant={"ghost"}
             onClick={handleShowLess}
             style={{ margin: "0px 10px", width: 100 }}
           >
             Show Less
+          </Button>
+        ) : (
+          <Button
+            variant={"ghost"}
+            onClick={handleShowMore}
+            style={{ margin: "0px 10px" }}
+          >
+            Show more views
           </Button>
         )}
       </div>
