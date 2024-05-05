@@ -193,11 +193,13 @@ export const TopBar: React.FC<{
           />
         </>
       ) : null}
-      <Button asChild variant="outline">
-        <a href={`http://localhost:3000/${selectedFolder}`} target="_blank">
-          Go to Studio
-        </a>
-      </Button>
+      {window.remotionServerEnabled ? (
+        <Button asChild variant="outline">
+          <a href={`http://localhost:3000/${selectedFolder}`} target="_blank">
+            Go to Studio
+          </a>
+        </Button>
+      ) : null}
     </div>
   );
 };
