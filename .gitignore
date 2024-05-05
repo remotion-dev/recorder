@@ -1,20 +1,29 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
 node_modules
-.DS_Store
-
-# Comment this to add videos to source control.
-# Enabling Git LFS is recommended.
-# https://remotion.dev/docs/recorder/source-control
-public/**/*.{mp4,webm,mov}
-
-# Vite's output directory
 dist
+dist-ssr
+*.local
 
-# Location of Whisper.cpp binary and model
+# Editor directories and files
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
 whisper.cpp
-
-# Directory for local renders
 out
 
-# Environment variables, e.g. for cloud rendering
+lambda.ts
 .env
-
