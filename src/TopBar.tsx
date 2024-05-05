@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { WEBCAM_PREFIX } from "../config/cameras";
 import { NewFolderDialog } from "./components/NewFolderDialog";
 import { SelectedFolder } from "./components/SelectedFolder";
 import { SmallSpinner } from "./components/SmallSpinner";
 import { Button } from "./components/ui/button";
 import type { CurrentBlobs } from "./components/UseThisTake";
-import { UseThisTake } from "./components/UseThisTake";
+import {
+  currentBlobsInitialState,
+  UseThisTake,
+} from "./components/UseThisTake";
 import {
   fetchProjectFolders,
   loadFolderFromUrl,
@@ -14,7 +16,6 @@ import {
 } from "./get-projects";
 import type { MediaSources } from "./RecordButton";
 import { RecordButton } from "./RecordButton";
-import { useKeyPress } from "./use-key-press";
 
 const topBarContainer: React.CSSProperties = {
   display: "flex",
@@ -42,21 +43,13 @@ const transcribeIndicator: React.CSSProperties = {
   color: "grey",
 };
 
-const mediaRecorderOptions: MediaRecorderOptions = {
-  audioBitsPerSecond: 128000,
-  videoBitsPerSecond: 8 * 4000000,
-};
-
-let endDate = 0;
-
 export const TopBar: React.FC<{
-  discardVideos: () => void;
-  setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
   mediaSources: MediaSources;
-  currentBlobs: CurrentBlobs;
-}> = ({ discardVideos, currentBlobs, setCurrentBlobs, mediaSources }) => {
-  const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
+}> = ({ mediaSources }) => {
   const [recording, setRecording] = useState<false | number>(false);
+  const [currentBlobs, setCurrentBlobs] = useState<CurrentBlobs>(
+    currentBlobsInitialState,
+  );
 
   const [folders, setFolders] = useState<string[] | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -89,91 +82,6 @@ export const TopBar: React.FC<{
     }
   }, [selectedFolder]);
 
-  const start = useCallback(() => {
-    setRecording(() => Date.now());
-    const toStart = [];
-    const newRecorders: MediaRecorder[] = [];
-    for (const [prefix, source] of Object.entries(mediaSources)) {
-      if (!source) {
-        continue;
-      }
-
-      const mimeType =
-        prefix === WEBCAM_PREFIX
-          ? "video/webm;codecs=vp8,opus"
-          : "video/webm;codecs=vp8";
-
-      const completeMediaRecorderOptions = {
-        ...mediaRecorderOptions,
-        mimeType,
-      };
-
-      const recorder = new MediaRecorder(source, completeMediaRecorderOptions);
-      newRecorders.push(recorder);
-
-      recorder.addEventListener("dataavailable", ({ data }) => {
-        setCurrentBlobs((prev) => ({
-          ...prev,
-          endDate,
-          blobs: {
-            ...prev.blobs,
-            [prefix]: data,
-          },
-        }));
-      });
-
-      recorder.addEventListener("error", (event) => {
-        console.log("error: ", prefix, event);
-      });
-
-      toStart.push(() => {
-        return recorder.start();
-      });
-    }
-
-    setRecorders(newRecorders);
-    toStart.forEach((f) => f());
-  }, [mediaSources, setCurrentBlobs]);
-
-  const stop = useCallback(() => {
-    if (recorders) {
-      for (const recorder of recorders) {
-        recorder.stop();
-      }
-    }
-
-    endDate = Date.now();
-    setRecording(false);
-  }, [recorders]);
-
-  const onStop = useCallback(() => {
-    stop();
-    setShowHandleVideos(true);
-  }, [setShowHandleVideos, stop]);
-
-  const onPressR = useCallback(() => {
-    if (mediaSources.webcam === null || !mediaSources.webcam.active) {
-      return;
-    }
-
-    const dialog = document.querySelector('[role="dialog"]');
-
-    if (
-      (document.activeElement && document.activeElement.tagName === "input") ||
-      dialog
-    ) {
-      return;
-    }
-
-    if (recording) {
-      onStop();
-    } else {
-      start();
-    }
-  }, [mediaSources.webcam, onStop, recording, start]);
-
-  useKeyPress({ keys: ["r"], callback: onPressR, metaKey: false });
-
   useEffect(() => {
     if (!window.remotionServerEnabled) {
       return;
@@ -190,12 +98,6 @@ export const TopBar: React.FC<{
     persistSelectedFolder(selectedFolder ?? "");
   }, [selectedFolder]);
 
-  const handleDiscardTake = useCallback(() => {
-    discardVideos();
-    setShowHandleVideos(false);
-    start();
-  }, [discardVideos, start]);
-
   const recordingDisabled = useMemo(() => {
     return (
       mediaSources.webcam === null ||
@@ -209,12 +111,13 @@ export const TopBar: React.FC<{
         <div style={recordWrapper}>
           {uploading ? null : (
             <RecordButton
-              onStop={onStop}
               recording={recording}
               showHandleVideos={showHandleVideos}
-              start={start}
               recordingDisabled={recordingDisabled}
-              onDiscard={handleDiscardTake}
+              setCurrentBlobs={setCurrentBlobs}
+              mediaSources={mediaSources}
+              setRecording={setRecording}
+              setShowHandleVideos={setShowHandleVideos}
             />
           )}
 

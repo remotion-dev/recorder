@@ -8,8 +8,6 @@ import {
 } from "../config/cameras";
 import "./App.css";
 import { Button } from "./components/ui/button";
-import type { CurrentBlobs } from "./components/UseThisTake";
-import { currentBlobsInitialState } from "./components/UseThisTake";
 import type { Label } from "./helpers";
 import { formatLabel } from "./helpers";
 import type { MediaSources } from "./RecordButton";
@@ -83,10 +81,6 @@ const App = () => {
     alternative2: null,
   });
 
-  const [currentBlobs, setCurrentBlobs] = useState<CurrentBlobs>(
-    currentBlobsInitialState,
-  );
-
   const dynamicGridContainer = useMemo(() => {
     if (showAlternativeViews) {
       return { ...gridContainer, gridTemplateRows: "repeat(2, 1fr)" };
@@ -103,10 +97,6 @@ const App = () => {
   const handleShowLess = useCallback(() => {
     setShowAlternativeViews(false);
     localStorage.setItem("showAlternativeViews", "false");
-  }, []);
-
-  const discardVideos = useCallback(() => {
-    setCurrentBlobs(currentBlobsInitialState);
   }, []);
 
   const setMediaStream = useCallback(
@@ -147,12 +137,7 @@ const App = () => {
 
   return (
     <div style={outer}>
-      <TopBar
-        discardVideos={discardVideos}
-        currentBlobs={currentBlobs}
-        setCurrentBlobs={setCurrentBlobs}
-        mediaSources={mediaSources}
-      />
+      <TopBar mediaSources={mediaSources} />
       <div style={dynamicGridContainer}>
         <View
           prefix={WEBCAM_PREFIX}
