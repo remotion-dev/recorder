@@ -115,7 +115,7 @@ export const TopBar: React.FC<{
     }
   }, [mediaSources.webcam, onStop, recording, start]);
 
-  useKeyPress(["r"], onPressR);
+  useKeyPress({ keys: ["r"], callback: onPressR, metaKey: false });
 
   useEffect(() => {
     if (!window.remotionServerEnabled) {

@@ -89,7 +89,7 @@ export const NewFolderDialog: React.FC<{
     }
   }, [disabled, handleSubmit]);
 
-  useKeyPress(["Enter"], handlePressEnter);
+  useKeyPress({ keys: ["Enter"], callback: handlePressEnter });
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
