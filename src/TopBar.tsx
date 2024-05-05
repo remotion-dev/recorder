@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { WEBCAM_PREFIX } from "../config/cameras";
 import { NewFolderDialog } from "./components/NewFolderDialog";
 import { SelectedFolder } from "./components/SelectedFolder";
 import { SmallSpinner } from "./components/SmallSpinner";
@@ -41,23 +42,22 @@ const transcribeIndicator: React.CSSProperties = {
   color: "grey",
 };
 
+const mediaRecorderOptions: MediaRecorderOptions = {
+  audioBitsPerSecond: 128000,
+  videoBitsPerSecond: 8 * 4000000,
+};
+
+let endDate = 0;
+
 export const TopBar: React.FC<{
-  start: () => void;
-  stop: () => void;
   discardVideos: () => void;
-  recording: false | number;
   setCurrentBlobs: React.Dispatch<React.SetStateAction<CurrentBlobs>>;
   mediaSources: MediaSources;
   currentBlobs: CurrentBlobs;
-}> = ({
-  start,
-  stop,
-  discardVideos,
-  recording,
-  currentBlobs,
-  setCurrentBlobs,
-  mediaSources,
-}) => {
+}> = ({ discardVideos, currentBlobs, setCurrentBlobs, mediaSources }) => {
+  const [recorders, setRecorders] = useState<MediaRecorder[] | null>(null);
+  const [recording, setRecording] = useState<false | number>(false);
+
   const [folders, setFolders] = useState<string[] | null>(null);
   const [uploading, setUploading] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
@@ -88,6 +88,63 @@ export const TopBar: React.FC<{
       setSelectedFolder(json.folders[0] ?? "");
     }
   }, [selectedFolder]);
+
+  const start = useCallback(() => {
+    setRecording(() => Date.now());
+    const toStart = [];
+    const newRecorders: MediaRecorder[] = [];
+    for (const [prefix, source] of Object.entries(mediaSources)) {
+      if (!source) {
+        continue;
+      }
+
+      const mimeType =
+        prefix === WEBCAM_PREFIX
+          ? "video/webm;codecs=vp8,opus"
+          : "video/webm;codecs=vp8";
+
+      const completeMediaRecorderOptions = {
+        ...mediaRecorderOptions,
+        mimeType,
+      };
+
+      const recorder = new MediaRecorder(source, completeMediaRecorderOptions);
+      newRecorders.push(recorder);
+
+      recorder.addEventListener("dataavailable", ({ data }) => {
+        setCurrentBlobs((prev) => ({
+          ...prev,
+          endDate,
+          blobs: {
+            ...prev.blobs,
+            [prefix]: data,
+          },
+        }));
+      });
+
+      recorder.addEventListener("error", (event) => {
+        console.log("error: ", prefix, event);
+      });
+
+      toStart.push(() => {
+        return recorder.start();
+      });
+    }
+
+    setRecorders(newRecorders);
+    toStart.forEach((f) => f());
+  }, [mediaSources, setCurrentBlobs]);
+
+  const stop = useCallback(() => {
+    if (recorders) {
+      for (const recorder of recorders) {
+        recorder.stop();
+      }
+    }
+
+    endDate = Date.now();
+    setRecording(false);
+  }, [recorders]);
 
   const onStop = useCallback(() => {
     stop();
