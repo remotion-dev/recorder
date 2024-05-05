@@ -10,6 +10,7 @@ import {
 import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
+import { canRotateCamera } from "./can-rotate-camera";
 import { Button } from "./components/ui/button";
 import {
   Select,
@@ -20,6 +21,7 @@ import {
 } from "./components/ui/select";
 import { VolumeMeter } from "./components/VolumeMeter";
 import { PrefixAndResolution } from "./PrefixAndResolution";
+import { ToggleRotate } from "./Rotate";
 import { Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
 import type { SelectedSource } from "./video-source";
@@ -81,10 +83,17 @@ export const View: React.FC<{
     useState<SelectedSource | null>(null);
   const recordAudio = prefix === WEBCAM_PREFIX;
   const [resolution, setResolution] = useState<Dimensions | null>(null);
+  const [preferPortrait, setPreferPortrait] = useState(false);
 
-  const handleChange = useCallback(() => {
+  const onToggleCrop = useCallback(() => {
     setShowCropIndicator((prev) => {
       window.localStorage.setItem(localStorageKey, String(!prev));
+      return !prev;
+    });
+  }, []);
+
+  const onToggleRotate = useCallback(() => {
+    setPreferPortrait((prev) => {
       return !prev;
     });
   }, []);
@@ -117,7 +126,17 @@ export const View: React.FC<{
         {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop
             pressed={showCropIndicator}
-            onPressedChange={handleChange}
+            onPressedChange={onToggleCrop}
+          />
+        ) : null}
+        {canRotateCamera({
+          selectedSource: selectedVideoSource,
+          preferPortrait,
+          resolution,
+        }) ? (
+          <ToggleRotate
+            pressed={preferPortrait}
+            onPressedChange={onToggleRotate}
           />
         ) : null}
         <Select onValueChange={onValueChange}>
@@ -165,6 +184,7 @@ export const View: React.FC<{
         setMediaStream={setMediaStream}
         prefix={prefix}
         showCropIndicator={showCropIndicator}
+        preferPortrait={preferPortrait}
       />
     </div>
   );

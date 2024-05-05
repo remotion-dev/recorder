@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
-export const useKeyPress = (
-  keys: string[],
-  callback: (event: KeyboardEvent) => void,
-) => {
+export const useKeyPress = ({
+  keys,
+  callback,
+  metaKey,
+}: {
+  keys: string[];
+  callback: (event: KeyboardEvent) => void;
+  metaKey: boolean;
+}) => {
   const callbackRef = useRef(callback);
   useLayoutEffect(() => {
     callbackRef.current = callback;
@@ -11,7 +16,11 @@ export const useKeyPress = (
 
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
-      if (keys.some((key: string) => event.key === key)) {
+      if (
+        keys.some(
+          (key: string) => event.key === key && event.metaKey === metaKey,
+        )
+      ) {
         callbackRef.current(event);
       }
     },
