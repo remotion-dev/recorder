@@ -209,7 +209,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
           height: webcamHeight,
           width: webcamWidth,
         } = await getVideoMetadata(p.webcam.src);
-
         const dim = p.display ? await getVideoMetadata(p.display.src) : null;
 
         const subsJson = await fetchSubsJson(p.subs);
@@ -282,7 +281,6 @@ export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
             return getBRollDimensions(bRoll);
           }),
         );
-
         return {
           type: "video-scene",
           scene,

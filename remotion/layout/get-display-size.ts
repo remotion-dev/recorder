@@ -3,6 +3,7 @@ import {
   getSafeSpace,
   LANDSCAPE_DISPLAY_MAX_WIDTH_OF_CANVAS,
 } from "../../config/layout";
+import { fitElementSizeInContainer } from "./fit-element";
 import { getBottomSafeSpace } from "./get-safe-space";
 
 const getMaxHeight = ({
@@ -58,16 +59,10 @@ export const getDisplaySize = ({
   const maxHeight = getMaxHeight({ canvasSize, canvasLayout, bottomSafeSpace });
   const maxWidth = getMaxWidth({ canvasSize, canvasLayout });
 
-  const heightRatio = maxHeight / videoHeight;
-  const widthRatio = maxWidth / videoWidth;
+  const { width, height } = fitElementSizeInContainer({
+    containerSize: { width: maxWidth, height: maxHeight },
+    elementSize: { width: videoWidth, height: videoHeight },
+  });
 
-  const ratio = Math.min(heightRatio, widthRatio);
-
-  const newWidth = videoWidth * ratio;
-  const newHeight = videoHeight * ratio;
-
-  return {
-    width: newWidth,
-    height: newHeight,
-  };
+  return { width, height };
 };

@@ -1,8 +1,11 @@
-export type Layout = {
-  left: number;
-  top: number;
+export type Rect = {
   width: number;
   height: number;
+  top: number;
+  left: number;
+};
+
+export type Layout = Rect & {
   borderRadius: number;
   opacity: number;
 };

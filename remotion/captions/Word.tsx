@@ -119,7 +119,7 @@ export const WordComp: React.FC<{
 
   const active =
     appeared &&
-    (word.lastTimestamp === null || word.lastTimestamp > time || isLast);
+    (word.lastTimestamp === null || word.lastTimestamp - 100 > time || isLast);
 
   const wordColor = getWordColor({
     appeared,
