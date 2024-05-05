@@ -107,12 +107,11 @@ export const UseThisTake: React.FC<{
   }, [currentBlobs.blobs, currentBlobs.endDate, setCurrentBlobs]);
 
   const keepVideos = useCallback(async () => {
-    const runsOnServer = Boolean(window.remotionServerEnabled);
     if (currentBlobs.endDate === null) {
       return Promise.resolve();
     }
 
-    if (runsOnServer) {
+    if (window.remotionServerEnabled) {
       await keepVideoOnServer();
     } else {
       keepVideoOnClient();
@@ -162,7 +161,11 @@ export const UseThisTake: React.FC<{
       title="Copy this take"
       disabled={uploading}
     >
-      {uploading ? "Copying..." : `Copy to public/${selectedFolder}`}
+      {uploading
+        ? "Copying..."
+        : window.remotionServerEnabled
+          ? `Copy to public/${selectedFolder}`
+          : "Download this take"}
     </Button>
   );
 };
