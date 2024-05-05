@@ -10,6 +10,7 @@ import {
 } from "../captions/Segment";
 import { getSubsLayout } from "../captions/subs-layout";
 import { getDimensionsForLayout } from "./dimensions";
+import { fitElementSizeInContainer } from "./fit-element";
 import {
   getLandscapeDisplayAndWebcamLayout,
   getSquareBRollLayout,
@@ -82,6 +83,23 @@ const squareFullscreenWebcamLayout = ({
 };
 
 const widescreenFullscreenLayout = ({
+  canvasSize,
+  webcamDimensions,
+}: {
+  canvasSize: Dimensions;
+  webcamDimensions: Dimensions;
+}): Layout => {
+  return {
+    ...fitElementSizeInContainer({
+      containerSize: canvasSize,
+      elementSize: webcamDimensions,
+    }),
+    borderRadius: 0,
+    opacity: 1,
+  };
+};
+
+const widescreenFullscreenBRollLayout = ({
   canvasSize,
 }: {
   canvasSize: Dimensions;
@@ -226,11 +244,14 @@ const getDisplayAndWebcamLayout = ({
     if (canvasLayout === "landscape") {
       const webcamLayout = widescreenFullscreenLayout({
         canvasSize,
+        webcamDimensions: videos.webcam,
       });
-
+      const bRollLayout = widescreenFullscreenBRollLayout({
+        canvasSize,
+      });
       return {
         displayLayout: null,
-        bRollLayout: webcamLayout,
+        bRollLayout,
         webcamLayout,
         bRollEnterDirection: "top",
       };
