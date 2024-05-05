@@ -33,6 +33,7 @@ export const Stream: React.FC<{
   showCropIndicator: boolean;
   selectedVideoSource: SelectedSource | null;
   selectedAudioSource: ConstrainDOMString | null;
+  preferPortrait: boolean;
 }> = ({
   prefix,
   mediaStream,
@@ -43,6 +44,7 @@ export const Stream: React.FC<{
   showCropIndicator,
   selectedVideoSource,
   selectedAudioSource,
+  preferPortrait,
 }) => {
   const [streamState, setStreamState] = useState<StreamState>("initial");
 
@@ -82,6 +84,11 @@ export const Stream: React.FC<{
   }, [mediaStream, recordAudio]);
 
   useEffect(() => {
+    const { current } = sourceRef;
+    if (!current) {
+      return;
+    }
+
     if (selectedVideoSource === null) {
       setMediaStream(prefix, null);
       return;
@@ -90,8 +97,15 @@ export const Stream: React.FC<{
     setStreamState("loading");
     const video: MediaTrackConstraints = {
       deviceId: selectedVideoSource.deviceId,
-      width: selectedVideoSource.maxWidth
-        ? { min: selectedVideoSource.maxWidth }
+      width: preferPortrait
+        ? undefined
+        : selectedVideoSource.maxWidth
+          ? { min: selectedVideoSource.maxWidth }
+          : undefined,
+      height: preferPortrait
+        ? selectedVideoSource.maxHeight
+          ? { min: selectedVideoSource.maxHeight }
+          : undefined
         : undefined,
     };
 
@@ -103,13 +117,22 @@ export const Stream: React.FC<{
           : undefined,
     };
 
+    const cleanup: Function[] = [];
+
+    console.log("getting media stream");
     window.navigator.mediaDevices
       .getUserMedia(mediaStreamConstraints)
       .then((stream) => {
-        if (sourceRef.current) {
-          sourceRef.current.srcObject = stream;
-          sourceRef.current.play();
+        if (current) {
+          current.srcObject = stream;
+          current.play();
         }
+
+        cleanup.push(() => {
+          stream.getVideoTracks().forEach((track) => track.stop());
+          stream.getAudioTracks().forEach((track) => track.stop());
+          current.srcObject = null;
+        });
 
         setMediaStream(prefix, stream);
         setStreamState("loaded");
@@ -120,14 +143,19 @@ export const Stream: React.FC<{
           alert(
             "The selected device is not readable. Is the device already in use by another program?",
           );
-        } else if (e.name === "NotAllowedError") {
+        } else {
           console.log(e);
         }
 
         setMediaStream(prefix, null);
         setStreamState("initial");
       });
+
+    return () => {
+      cleanup.forEach((f) => f());
+    };
   }, [
+    preferPortrait,
     prefix,
     recordAudio,
     selectedAudioSource,

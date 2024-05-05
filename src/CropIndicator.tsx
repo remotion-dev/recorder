@@ -18,7 +18,7 @@ export const CropIndicator: React.FC<{
       display: "flex",
       justifyContent: "center",
       alignContent: "center",
-      aspectRatio: width && height ? width / height : 16 / 9,
+      aspectRatio: width / height,
       maxHeight: "100%",
     };
   }, [height, width]);
