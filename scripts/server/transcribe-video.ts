@@ -72,7 +72,8 @@ export const transcribeVideo = async (
       message: "Successfully transcribed.",
     });
   } catch (e) {
+    console.log(e);
     res.status(500);
-    return res.send({ success: false, message: e });
+    return res.send({ success: false, message: (e as Error).stack });
   }
 };
