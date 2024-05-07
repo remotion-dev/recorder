@@ -119,7 +119,6 @@ export const Stream: React.FC<{
 
     const cleanup: Function[] = [];
 
-    console.log("getting media stream");
     window.navigator.mediaDevices
       .getUserMedia(mediaStreamConstraints)
       .then((stream) => {
