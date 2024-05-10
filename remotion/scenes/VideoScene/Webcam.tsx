@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { OffthreadVideo, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
 import type { CanvasLayout } from "../../../config/layout";
 import type {
   BRollWithDimensions,
@@ -7,6 +7,7 @@ import type {
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
 import { getWebcamLayout } from "../../animations/webcam-transitions";
+import { shouldEnableSceneBackgroundBlur } from "../../layout/blur";
 import type {
   BRollEnterDirection,
   BRollType,
@@ -14,9 +15,9 @@ import type {
 } from "../../layout/layout-types";
 import { BRollStack } from "../BRoll/BRollStack";
 import { ScaleDownIfBRollRequiresIt } from "../BRoll/ScaleDownWithBRoll";
+import { VideoWithBlur } from "./VideoWithBlur";
 
 export const Webcam: React.FC<{
-  webcamLayout: Layout;
   enterProgress: number;
   exitProgress: number;
   startFrom: number;
@@ -30,7 +31,6 @@ export const Webcam: React.FC<{
   bRollEnterDirection: BRollEnterDirection;
   bRollType: BRollType;
 }> = ({
-  webcamLayout,
   enterProgress,
   exitProgress,
   startFrom,
@@ -47,7 +47,7 @@ export const Webcam: React.FC<{
   const frame = useCurrentFrame();
   const { height, width } = useVideoConfig();
 
-  const webcamStyle = useMemo(() => {
+  const webcamLayout = useMemo(() => {
     return getWebcamLayout({
       enterProgress,
       exitProgress,
@@ -73,40 +73,31 @@ export const Webcam: React.FC<{
     return {
       overflow: "hidden",
       position: "relative",
-      ...webcamStyle,
+      ...webcamLayout,
     };
-  }, [webcamStyle]);
-
-  const style: React.CSSProperties = useMemo(() => {
-    return {
-      width: "100%",
-      height: "100%",
-      objectFit: "cover",
-      display: "block",
-      borderRadius: webcamLayout.borderRadius,
-      overflow: "hidden",
-      transformOrigin: "50% 0%",
-    };
-  }, [webcamLayout.borderRadius]);
+  }, [webcamLayout]);
 
   return (
     <>
-      <ScaleDownIfBRollRequiresIt
-        canvasLayout={canvasLayout}
-        bRollEnterDirection={bRollEnterDirection}
-        bRolls={bRolls}
-        bRollLayout={bRollLayout}
-        frame={frame}
-        style={container}
-        bRollType={bRollType}
-      >
-        <OffthreadVideo
-          startFrom={startFrom}
-          endAt={endAt}
-          style={style}
-          src={currentScene.pair.webcam.src}
-        />
-      </ScaleDownIfBRollRequiresIt>
+      <div style={container}>
+        <ScaleDownIfBRollRequiresIt
+          bRolls={bRolls}
+          frame={frame}
+          bRollType={bRollType}
+        >
+          <VideoWithBlur
+            startFrom={startFrom}
+            endAt={endAt}
+            src={currentScene.pair.webcam.src}
+            containerLayout={webcamLayout}
+            videoSize={currentScene.videos.webcam}
+            enableBlur={shouldEnableSceneBackgroundBlur(
+              currentScene,
+              canvasLayout,
+            )}
+          />
+        </ScaleDownIfBRollRequiresIt>
+      </div>
       <BRollStack
         canvasLayout={canvasLayout}
         bRollEnterDirection={bRollEnterDirection}

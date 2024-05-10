@@ -1,4 +1,3 @@
-import type { Word } from "../../../config/autocorrect";
 import type { CanvasLayout } from "../../../config/layout";
 import type { Theme } from "../../../config/themes";
 import { getHorizontalPaddingForSubtitles } from "../processing/postprocess-subs";
@@ -11,19 +10,10 @@ export const SquareSubtitles: React.FC<{
   segment: Segment;
   startFrame: number;
   theme: Theme;
-  onOpenSubEditor: (word: Word) => void;
   canvasLayout: CanvasLayout;
   fontSize: number;
   lines: number;
-}> = ({
-  segment,
-  startFrame,
-  theme,
-  canvasLayout,
-  onOpenSubEditor,
-  fontSize,
-  lines,
-}) => {
+}> = ({ segment, startFrame, theme, canvasLayout, fontSize, lines }) => {
   const padding = getHorizontalPaddingForSubtitles("square", canvasLayout);
 
   return (
@@ -44,12 +34,7 @@ export const SquareSubtitles: React.FC<{
           width: "100%",
         }}
       >
-        <Words
-          onOpenSubEditor={onOpenSubEditor}
-          segment={segment}
-          startFrame={startFrame}
-          theme={theme}
-        />
+        <Words segment={segment} startFrame={startFrame} theme={theme} />
       </span>
     </div>
   );

@@ -7,15 +7,17 @@ import type {
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
 import { getShouldTransitionIn } from "../../animations/transitions";
-import { PlaceholderSubs } from "../../captions/PlaceholderSubs";
+import { CaptionOverlay } from "../../captions/Editor/CaptionOverlay";
+import { NoCaptionsPlaceholder } from "../../captions/NoCaptionsPlaceholder";
 import { Subs } from "../../captions/Subs";
 import { LandscapeChapters } from "../../chapters/landscape/SelectedChapters";
 import type { ChapterType } from "../../chapters/make-chapters";
 import { SquareChapter } from "../../chapters/square/SquareChapter";
+import { WaitForFonts } from "../../helpers/WaitForFonts";
 import { Display } from "./Display";
 import { Webcam } from "./Webcam";
 
-export const CameraScene: React.FC<{
+export const VideoScene: React.FC<{
   enterProgress: number;
   exitProgress: number;
   canvasLayout: CanvasLayout;
@@ -93,7 +95,6 @@ export const CameraScene: React.FC<{
           enterProgress={enterProgress}
           exitProgress={exitProgress}
           startFrom={startFrom}
-          webcamLayout={sceneAndMetadata.layout.webcamLayout}
           canvasLayout={canvasLayout}
           nextScene={nextScene}
           previousScene={previousScene}
@@ -103,28 +104,30 @@ export const CameraScene: React.FC<{
         />
       </AbsoluteFill>
       {sceneAndMetadata.pair.subs ? (
-        <Subs
-          canvasLayout={canvasLayout}
-          trimStart={startFrom}
-          file={sceneAndMetadata.pair.subs}
-          enterProgress={enterProgress}
-          exitProgress={exitProgress}
-          scene={sceneAndMetadata}
-          nextScene={nextScene}
-          previousScene={previousScene}
+        <WaitForFonts>
+          <CaptionOverlay
+            file={sceneAndMetadata.pair.subs}
+            theme={theme}
+            trimStart={startFrom}
+          >
+            <Subs
+              canvasLayout={canvasLayout}
+              trimStart={startFrom}
+              enterProgress={enterProgress}
+              exitProgress={exitProgress}
+              scene={sceneAndMetadata}
+              nextScene={nextScene}
+              previousScene={previousScene}
+              theme={theme}
+            />
+          </CaptionOverlay>
+        </WaitForFonts>
+      ) : (
+        <NoCaptionsPlaceholder
+          layout={sceneAndMetadata.layout.subtitleLayout}
           theme={theme}
         />
-      ) : window.remotion_isStudio ? (
-        <PlaceholderSubs
-          canvasLayout={canvasLayout}
-          enterProgress={enterProgress}
-          exitProgress={exitProgress}
-          scene={sceneAndMetadata}
-          nextScene={nextScene}
-          previousScene={previousScene}
-          theme={theme}
-        />
-      ) : null}
+      )}
       {sceneAndMetadata.scene.newChapter && canvasLayout === "square" ? (
         <SquareChapter
           title={sceneAndMetadata.scene.newChapter}

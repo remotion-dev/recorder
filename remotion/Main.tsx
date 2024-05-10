@@ -8,8 +8,8 @@ import { COLORS } from "../config/themes";
 import { AudioTrack } from "./audio/AudioTrack";
 import { captionEditorPortal } from "./captions/Editor/layout";
 import { makeChapters } from "./chapters/make-chapters";
-import { NoDataScene } from "./scenes/Camera/NoDataScene";
 import { Scene } from "./scenes/Scene";
+import { NoDataScene } from "./scenes/VideoScene/NoDataScene";
 
 export type MainProps = {
   canvasLayout: CanvasLayout;

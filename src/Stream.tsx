@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { Spinner } from "./components/Spinner";
 import { CropIndicator } from "./CropIndicator";
-import type { SelectedSource } from "./video-source";
+import type { SelectedSource } from "./helpers/get-selected-video-source";
 import type { Prefix } from "./Views";
 
 const container: React.CSSProperties = {
@@ -50,7 +50,7 @@ export const Stream: React.FC<{
 
   const sourceRef = useRef<HTMLVideoElement>(null);
 
-  const dynamicVideoStyle: React.CSSProperties = useMemo(() => {
+  const videoStyle: React.CSSProperties = useMemo(() => {
     return {
       opacity: mediaStream ? 1 : 0,
       height: "100%",
@@ -58,28 +58,31 @@ export const Stream: React.FC<{
   }, [mediaStream]);
 
   useEffect(() => {
-    if (mediaStream) {
-      const track = mediaStream.getVideoTracks()[0];
-      if (!track) {
-        return;
-      }
-
-      track.onended = () => {
-        setMediaStream(prefix, null);
-      };
+    if (!mediaStream) {
+      return;
     }
+
+    const track = mediaStream.getVideoTracks()[0];
+    if (!track) {
+      return;
+    }
+
+    track.onended = () => {
+      setMediaStream(prefix, null);
+    };
   }, [mediaStream, prefix, setMediaStream]);
 
   useEffect(() => {
-    if (recordAudio) {
-      return () => {
-        mediaStream?.getVideoTracks().forEach((track) => track.stop());
-        mediaStream?.getAudioTracks().forEach((track) => track.stop());
-      };
+    if (!mediaStream) {
+      return;
     }
 
     return () => {
-      mediaStream?.getVideoTracks().forEach((track) => track.stop());
+      if (recordAudio) {
+        mediaStream.getAudioTracks().forEach((track) => track.stop());
+      }
+
+      mediaStream.getVideoTracks().forEach((track) => track.stop());
     };
   }, [mediaStream, recordAudio]);
 
@@ -174,7 +177,7 @@ export const Stream: React.FC<{
       <video
         ref={sourceRef}
         muted
-        style={dynamicVideoStyle}
+        style={videoStyle}
         onLoadedMetadata={onLoadedMetadata}
       />
       {streamState === "loading" ? <Spinner /> : null}

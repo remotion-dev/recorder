@@ -1,4 +1,4 @@
-import { TRANSCRIBE_VIDEO } from "../scripts/server/constants";
+import { TRANSCRIBE_VIDEO } from "../../scripts/server/constants";
 
 export const transcribeVideoInServer = async ({
   endDate,

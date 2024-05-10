@@ -1,32 +1,58 @@
+import { writeStaticFile } from "@remotion/studio";
 import React, { useCallback, useEffect, useMemo } from "react";
 import ReactDOM from "react-dom";
 import { AbsoluteFill } from "remotion";
 import type { Word } from "../../../config/autocorrect";
 import type { Theme } from "../../../config/themes";
+import { whisperWordToWord } from "../processing/whisper-word-to-word";
 import type { WhisperOutput } from "../types";
-import { whisperWordToWord } from "../types";
 import { EditWord } from "./EditWord";
 import { SubsEditorFooter } from "./Footer";
 import { SubsEditorHeader } from "./Header";
 import { captionEditorPortal, FOOTER_HEIGHT, HEADER_HEIGHT } from "./layout";
+import { useCaptionOverlay } from "./use-caption-overlay";
 
-export const SubsEditor: React.FC<{
+export const CaptionsEditor: React.FC<{
   whisperOutput: WhisperOutput;
-  setWhisperOutput: (updater: (old: WhisperOutput) => WhisperOutput) => void;
-  fileName: string;
+  setWhisperOutput: React.Dispatch<React.SetStateAction<WhisperOutput | null>>;
+  filePath: string;
   initialWord: Word;
-  onCloseSubEditor: () => void;
   trimStart: number;
   theme: Theme;
 }> = ({
   whisperOutput,
-  setWhisperOutput,
-  fileName,
-  onCloseSubEditor,
+  filePath,
   initialWord,
   trimStart,
   theme,
+  setWhisperOutput,
 }) => {
+  const overlay = useCaptionOverlay();
+  const setAndSaveWhisperOutput = useCallback(
+    (updater: (old: WhisperOutput) => WhisperOutput) => {
+      setWhisperOutput((old) => {
+        if (old === null) {
+          return null;
+        }
+
+        if (!window.remotion_publicFolderExists) {
+          throw new Error("window.remotion_publicFolderExists is not set");
+        }
+
+        const newOutput = updater(old);
+        const contents = JSON.stringify(newOutput, null, 2);
+
+        writeStaticFile({
+          filePath,
+          contents,
+        });
+
+        return newOutput;
+      });
+    },
+    [filePath, setWhisperOutput],
+  );
+
   const words = useMemo(() => {
     return whisperOutput.transcription.map((whisperWord, i) => {
       const nextWhisperWord = whisperOutput.transcription[i + 1];
@@ -45,7 +71,7 @@ export const SubsEditor: React.FC<{
 
   const onChangeText = useCallback(
     (index: number, newText: string) => {
-      setWhisperOutput((old) => {
+      setAndSaveWhisperOutput((old) => {
         const newTranscription = old.transcription.map((t, i) => {
           if (i === index) {
             return {
@@ -62,14 +88,14 @@ export const SubsEditor: React.FC<{
         };
       });
     },
-    [setWhisperOutput],
+    [setAndSaveWhisperOutput],
   );
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        onCloseSubEditor();
+        overlay.setOpen(false);
       }
     };
 
@@ -77,7 +103,7 @@ export const SubsEditor: React.FC<{
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [onCloseSubEditor]);
+  }, [overlay, overlay.setOpen]);
 
   if (!captionEditorPortal.current) {
     return null;
@@ -107,16 +133,12 @@ export const SubsEditor: React.FC<{
               isInitialWord={word.firstTimestamp === initialWord.firstTimestamp}
               trimStart={trimStart}
               onUpdateText={onChangeText}
-              onCloseEditor={onCloseSubEditor}
             />
           );
         })}
       </AbsoluteFill>
       <SubsEditorHeader />
-      <SubsEditorFooter
-        fileName={fileName}
-        onCloseSubEditor={onCloseSubEditor}
-      />
+      <SubsEditorFooter fileName={filePath} />
     </AbsoluteFill>,
     captionEditorPortal.current as HTMLDivElement,
   );

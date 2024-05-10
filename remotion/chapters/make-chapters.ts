@@ -9,15 +9,10 @@ import {
   getSumUpDuration,
 } from "../animations/transitions";
 
-export type SimpleWebcamInformation = {
+type WebcamInformation = {
   scene: VideoSceneAndMetadata;
   start: number;
   end: number;
-  previousScene: SceneAndMetadata | null;
-  nextScene: SceneAndMetadata | null;
-};
-
-export type WebcamInformation = SimpleWebcamInformation & {
   previousScene: SceneAndMetadata | null;
   nextScene: SceneAndMetadata | null;
 };

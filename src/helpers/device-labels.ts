@@ -40,13 +40,3 @@ export const formatLabel = (device: Omit<MediaDeviceInfo, "toJSON">) => {
 
   return withoutLeadingNumber;
 };
-
-export const getDeviceLabel = (device: MediaDeviceInfo): string => {
-  const labels: Label[] = JSON.parse(localStorage.getItem("labels") ?? "[]");
-  const found = labels.find((l) => l.id === device.deviceId);
-  if (found) {
-    return found.label;
-  }
-
-  return formatLabel(device);
-};

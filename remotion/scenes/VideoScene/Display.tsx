@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { OffthreadVideo, useCurrentFrame, useVideoConfig } from "remotion";
 import type { CanvasLayout } from "../../../config/layout";
 import type {
@@ -71,33 +71,36 @@ export const Display: React.FC<{
     width,
   ]);
 
+  const container: React.CSSProperties = useMemo(() => {
+    return {
+      position: "absolute",
+      ...displayLayout,
+    };
+  }, [displayLayout]);
+
   return (
     <div style={outer}>
-      <ScaleDownIfBRollRequiresIt
-        canvasLayout={canvasLayout}
-        bRollEnterDirection={bRollEnterDirection}
-        bRolls={scene.bRolls}
-        bRollLayout={bRollLayout}
-        bRollType={scene.layout.bRollType}
-        frame={frame}
-        style={{
-          position: "absolute",
-          ...displayLayout,
-        }}
-      >
-        <OffthreadVideo
-          muted
-          startFrom={startFrom}
-          endAt={endAt}
-          src={scene.pair.display.src}
-          style={{
-            width: displayLayout.width,
-            height: displayLayout.height,
-            borderRadius: displayLayout.borderRadius,
-            objectFit: "cover",
-          }}
-        />
-      </ScaleDownIfBRollRequiresIt>
+      <div style={container}>
+        <ScaleDownIfBRollRequiresIt
+          bRolls={scene.bRolls}
+          bRollType={scene.layout.bRollType}
+          frame={frame}
+        >
+          <OffthreadVideo
+            muted
+            startFrom={startFrom}
+            endAt={endAt}
+            src={scene.pair.display.src}
+            style={{
+              width: displayLayout.width,
+              height: displayLayout.height,
+              borderRadius: displayLayout.borderRadius,
+              objectFit: "cover",
+            }}
+          />
+        </ScaleDownIfBRollRequiresIt>
+      </div>
+
       <BRollStack
         bRollEnterDirection={bRollEnterDirection}
         bRolls={scene.bRolls}

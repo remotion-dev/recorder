@@ -134,7 +134,6 @@ export const CaptionSentence: React.FC<{
   canvasLayout: CanvasLayout;
   subtitleType: SubtitleType;
   theme: Theme;
-  onOpenSubEditor: (word: Word) => void;
   fontSize: number;
   lines: number;
 }> = ({
@@ -145,7 +144,6 @@ export const CaptionSentence: React.FC<{
   isFirst,
   isLast,
   theme,
-  onOpenSubEditor,
   fontSize,
   lines,
 }) => {
@@ -174,7 +172,6 @@ export const CaptionSentence: React.FC<{
         {subtitleType === "square" ? (
           <SquareSubtitles
             canvasLayout={canvasLayout}
-            onOpenSubEditor={onOpenSubEditor}
             segment={segment}
             startFrame={startFrame}
             theme={theme}
@@ -184,7 +181,6 @@ export const CaptionSentence: React.FC<{
         ) : subtitleType === "below-video" ? (
           <BelowVideoSubtitles
             canvasLayout={canvasLayout}
-            onOpenSubEditor={onOpenSubEditor}
             segment={segment}
             startFrame={startFrame}
             theme={theme}
@@ -194,10 +190,8 @@ export const CaptionSentence: React.FC<{
         ) : (
           <OverlayedCenterSubtitles
             canvasLayout={canvasLayout}
-            onOpenSubEditor={onOpenSubEditor}
             segment={segment}
             startFrame={startFrame}
-            theme={theme}
           />
         )}
       </FadeSentence>

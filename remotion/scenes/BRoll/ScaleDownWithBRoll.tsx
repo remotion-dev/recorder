@@ -1,13 +1,8 @@
 import React, { useMemo } from "react";
-import { spring, useVideoConfig } from "remotion";
-import type { CanvasLayout } from "../../../config/layout";
+import { AbsoluteFill, spring, useVideoConfig } from "remotion";
 import type { BRoll } from "../../../config/scenes";
 import { B_ROLL_TRANSITION_DURATION } from "../../../config/transitions";
-import type {
-  BRollEnterDirection,
-  BRollType,
-  Layout,
-} from "../../layout/layout-types";
+import type { BRollType } from "../../layout/layout-types";
 
 // A value of 0.1 means that the original
 // video only has a 90% of its original size
@@ -17,22 +12,10 @@ const SCALE_DOWN = 0.1;
 type Props = {
   bRolls: BRoll[];
   frame: number;
-  canvasLayout: CanvasLayout;
-  bRollLayout: Layout;
-  bRollType: BRollType;
-  bRollEnterDirection: BRollEnterDirection;
-} & React.HTMLAttributes<HTMLDivElement>;
+  children: React.ReactNode;
+};
 
-export const ScaleDownWithBRoll: React.FC<Props> = ({
-  bRolls,
-  frame,
-  canvasLayout,
-  bRollLayout,
-  bRollEnterDirection,
-  style: passedStyle,
-  bRollType,
-  ...props
-}) => {
+const ScaleDownWithBRoll: React.FC<Props> = ({ bRolls, frame, children }) => {
   const { fps } = useVideoConfig();
 
   const springs = bRolls.map((roll) => {
@@ -63,38 +46,30 @@ export const ScaleDownWithBRoll: React.FC<Props> = ({
     }, 1);
   }, [springs]);
 
-  const style = useMemo(() => {
+  const style: React.CSSProperties = useMemo(() => {
     return {
-      ...(passedStyle ?? {}),
       scale: String(scale),
+      justifyContent: "center",
+      alignItems: "center",
     };
-  }, [passedStyle, scale]);
+  }, [scale]);
 
-  return <div {...props} style={style} />;
+  return <AbsoluteFill style={style}>{children}</AbsoluteFill>;
 };
 
-export const ScaleDownIfBRollRequiresIt: React.FC<Props> = ({
-  bRollEnterDirection,
-  bRollLayout,
-  bRollType,
-  bRolls,
-  canvasLayout,
-  frame,
-  ...props
-}) => {
-  if (bRollType === "fade") {
-    return <div {...props} />;
+export const ScaleDownIfBRollRequiresIt: React.FC<
+  Props & {
+    bRollType: BRollType;
+  }
+> = ({ bRollType, bRolls, frame, children }) => {
+  if (bRollType !== "scale") {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{children}</>;
   }
 
   return (
-    <ScaleDownWithBRoll
-      bRolls={bRolls}
-      frame={frame}
-      canvasLayout={canvasLayout}
-      bRollLayout={bRollLayout}
-      bRollType={bRollType}
-      bRollEnterDirection={bRollEnterDirection}
-      {...props}
-    />
+    <ScaleDownWithBRoll bRolls={bRolls} frame={frame}>
+      {children}
+    </ScaleDownWithBRoll>
   );
 };

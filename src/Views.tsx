@@ -10,7 +10,6 @@ import {
 import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
-import { canRotateCamera } from "./can-rotate-camera";
 import { Button } from "./components/ui/button";
 import {
   Select,
@@ -20,12 +19,13 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import { VolumeMeter } from "./components/VolumeMeter";
+import { canRotateCamera } from "./helpers/can-rotate-camera";
+import type { SelectedSource } from "./helpers/get-selected-video-source";
+import { getSelectedVideoSource } from "./helpers/get-selected-video-source";
 import { PrefixAndResolution } from "./PrefixAndResolution";
 import { ToggleRotate } from "./Rotate";
 import { Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
-import type { SelectedSource } from "./video-source";
-import { getSelectedVideoSource } from "./video-source";
 
 const viewContainer: React.CSSProperties = {
   display: "flex",
@@ -119,6 +119,12 @@ export const View: React.FC<{
     [devices],
   );
 
+  const cameraRotateable = canRotateCamera({
+    selectedSource: selectedVideoSource,
+    preferPortrait,
+    resolution,
+  });
+
   return (
     <div style={viewContainer}>
       <div style={viewName}>
@@ -129,11 +135,7 @@ export const View: React.FC<{
             onPressedChange={onToggleCrop}
           />
         ) : null}
-        {canRotateCamera({
-          selectedSource: selectedVideoSource,
-          preferPortrait,
-          resolution,
-        }) ? (
+        {cameraRotateable ? (
           <ToggleRotate
             pressed={preferPortrait}
             onPressedChange={onToggleRotate}

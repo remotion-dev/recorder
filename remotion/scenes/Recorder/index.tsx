@@ -81,33 +81,6 @@ const TriangleToSquare: React.FC<{
   );
 };
 
-export const TriangleDemo: React.FC<{
-  theme: Theme;
-}> = ({ theme }) => {
-  const frame = useCurrentFrame();
-  const progress = interpolate(frame, [0, 100], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
-  return (
-    <AbsoluteFill
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <TriangleToSquare
-        progress={progress}
-        length={300}
-        opacity={1}
-        style={{}}
-        theme={theme}
-      />
-    </AbsoluteFill>
-  );
-};
-
 const O: React.FC = () => {
   return (
     <svg width="1080" height="1080" viewBox="0 0 1080 1080" fill="none">
@@ -364,7 +337,7 @@ const getColor = (theme: Theme) => {
   return theme === "dark" ? "white" : "black";
 };
 
-export const Recorder: React.FC<{
+const Recorder: React.FC<{
   theme: Theme;
 }> = ({ theme }) => {
   return (

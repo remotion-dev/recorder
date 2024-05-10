@@ -8,9 +8,8 @@ import {
   getSubtitlesLines,
   getSubtitlesType,
 } from "../captions/Segment";
-import { getSubsLayout } from "../captions/subs-layout";
 import { getDimensionsForLayout } from "./dimensions";
-import { fitElementSizeInContainer } from "./fit-element";
+import { getCaptionsLayout } from "./get-captions-layout";
 import {
   getLandscapeDisplayAndWebcamLayout,
   getSquareBRollLayout,
@@ -18,7 +17,7 @@ import {
 } from "./get-display-layout";
 import { getDisplaySize } from "./get-display-size";
 import { getBottomSafeSpace } from "./get-safe-space";
-import { getWebcamSize } from "./get-webcam-size";
+import { getNonFullscreenWebcamSize } from "./get-webcam-size";
 import type {
   BRollEnterDirection,
   BRollType,
@@ -82,33 +81,11 @@ const squareFullscreenWebcamLayout = ({
   };
 };
 
-const widescreenFullscreenLayout = ({
-  canvasSize,
-  webcamDimensions,
-}: {
-  canvasSize: Dimensions;
-  webcamDimensions: Dimensions;
-}): Layout => {
+const fullscreenLayout = (canvasSize: Dimensions): Layout => {
   return {
-    ...fitElementSizeInContainer({
-      containerSize: canvasSize,
-      elementSize: webcamDimensions,
-    }),
-    borderRadius: 0,
-    opacity: 1,
-  };
-};
-
-const widescreenFullscreenBRollLayout = ({
-  canvasSize,
-}: {
-  canvasSize: Dimensions;
-}): Layout => {
-  return {
+    ...canvasSize,
     left: 0,
     top: 0,
-    width: canvasSize.width,
-    height: canvasSize.height,
     borderRadius: 0,
     opacity: 1,
   };
@@ -195,7 +172,7 @@ const getFullScreenWebcamSize = ({
   };
 };
 
-export type CameraSceneLayout = {
+export type VideoSceneLayout = {
   webcamLayout: Layout;
   displayLayout: Layout | null;
   bRollLayout: Layout;
@@ -242,13 +219,9 @@ const getDisplayAndWebcamLayout = ({
     }
 
     if (canvasLayout === "landscape") {
-      const webcamLayout = widescreenFullscreenLayout({
-        canvasSize,
-        webcamDimensions: videos.webcam,
-      });
-      const bRollLayout = widescreenFullscreenBRollLayout({
-        canvasSize,
-      });
+      const webcamLayout = fullscreenLayout(canvasSize);
+      const bRollLayout = fullscreenLayout(canvasSize);
+
       return {
         displayLayout: null,
         bRollLayout,
@@ -267,7 +240,7 @@ const getDisplayAndWebcamLayout = ({
     videoWidth: videos.display.width,
   });
 
-  const webcamSize: Dimensions = getWebcamSize({
+  const webcamSize: Dimensions = getNonFullscreenWebcamSize({
     canvasSize,
     canvasLayout,
     displaySize,
@@ -321,7 +294,7 @@ export const getLayout = ({
   videos: SceneVideos;
   canvasLayout: CanvasLayout;
   webcamPosition: FinalWebcamPosition;
-}): CameraSceneLayout => {
+}): VideoSceneLayout => {
   const canvasSize = getDimensionsForLayout(canvasLayout);
 
   const { displayLayout, webcamLayout, bRollLayout, bRollEnterDirection } =
@@ -338,7 +311,7 @@ export const getLayout = ({
   });
 
   const subtitleFontSize = getSubtitlesFontSize(subtitleType, displayLayout);
-  const subtitleLayout = getSubsLayout({
+  const subtitleLayout = getCaptionsLayout({
     canvasLayout,
     canvasSize,
     displayLayout,

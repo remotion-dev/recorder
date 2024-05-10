@@ -4,8 +4,8 @@ import { BlinkingCircle, RecordCircle } from "./BlinkingCircle";
 import { Button } from "./components/ui/button";
 import type { CurrentBlobs } from "./components/UseThisTake";
 import { currentBlobsInitialState } from "./components/UseThisTake";
+import { useKeyPress } from "./helpers/use-key-press";
 import { Timer } from "./Timer";
-import { useKeyPress } from "./use-key-press";
 import type { prefixes } from "./Views";
 
 export type MediaSources = {

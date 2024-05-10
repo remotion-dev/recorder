@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { formatTime } from "./format-time";
+import { formatTime } from "./helpers/format-time";
 
 export const Timer: React.FC<{
   recording: number;

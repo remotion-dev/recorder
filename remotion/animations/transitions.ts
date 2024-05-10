@@ -1,3 +1,4 @@
+import type { Dimensions } from "@remotion/layout-utils";
 import type { CanvasLayout } from "../../config/layout";
 import type {
   ComparableWebcamPosition,
@@ -28,6 +29,25 @@ const getComparableWebcamPosition = (
   return "top";
 };
 
+const getHasSameSize = (
+  first: Dimensions | null,
+  second: Dimensions | null,
+) => {
+  // If both are null, they are the same
+  if (first === null && second === null) {
+    return true;
+  }
+
+  // If only one is null, they are not the same
+  if (first === null || second === null) {
+    return false;
+  }
+
+  return first.height === second.height && second.width === first.width;
+};
+
+// Figure out if we are able to do a transition.
+// We can do a transition if the layout is not the same.
 export const getShouldTransitionOut = ({
   sceneAndMetadata,
   nextScene,
@@ -37,57 +57,54 @@ export const getShouldTransitionOut = ({
   nextScene: SceneAndMetadata | null;
   canvasLayout: CanvasLayout;
 }) => {
+  // Can not transition if this is the last scene
   if (nextScene === null) {
     return false;
   }
 
+  // Can not transition if it was disabled
   if (!sceneAndMetadata.scene.transitionToNextScene) {
     return false;
   }
 
-  const areBothVideoScenes =
-    sceneAndMetadata.type === "video-scene" && nextScene.type === "video-scene";
-
-  if (!areBothVideoScenes) {
+  // If not both are video scenes, we can transition (slide)
+  if (
+    sceneAndMetadata.type !== "video-scene" ||
+    nextScene.type !== "video-scene"
+  ) {
     return true;
   }
 
-  const sceneWebcamPosition = getComparableWebcamPosition(
-    sceneAndMetadata,
-    canvasLayout,
-  );
-  const nextSceneWebcamPosition = getComparableWebcamPosition(
-    nextScene,
-    canvasLayout,
-  );
-
-  const hasSameWebcamPosition = sceneWebcamPosition === nextSceneWebcamPosition;
-  const hasSameWebcamSize =
-    sceneAndMetadata.layout.webcamLayout.height ===
-      nextScene.layout.webcamLayout.height &&
-    sceneAndMetadata.layout.webcamLayout.width ===
-      nextScene.layout.webcamLayout.width;
-  const hasBothDisplays =
-    Boolean(sceneAndMetadata.videos.display) ===
-    Boolean(nextScene.videos.display);
-  const hasSameDisplaySize =
-    !sceneAndMetadata.videos.display || !nextScene.videos.display
-      ? true
-      : sceneAndMetadata.videos.display.height ===
-          nextScene.videos.display.height &&
-        sceneAndMetadata.videos.display.width ===
-          nextScene.videos.display.width;
-
+  // If the webcam position changed, we can transition (move webcam)
   if (
-    hasBothDisplays &&
-    hasSameDisplaySize &&
-    hasSameWebcamSize &&
-    hasSameWebcamPosition
+    getComparableWebcamPosition(sceneAndMetadata, canvasLayout) !==
+    getComparableWebcamPosition(nextScene, canvasLayout)
   ) {
-    return false;
+    return true;
   }
 
-  return true;
+  // We can transition if the webcam size has changed
+  if (
+    !getHasSameSize(
+      sceneAndMetadata.layout.webcamLayout,
+      nextScene.layout.webcamLayout,
+    )
+  ) {
+    return true;
+  }
+
+  // If display is not the same, we can transition
+  if (
+    !getHasSameSize(
+      sceneAndMetadata.layout.displayLayout,
+      nextScene.layout.displayLayout,
+    )
+  ) {
+    return true;
+  }
+
+  // Seems like everything is the same, we can't transition!
+  return false;
 };
 
 export const getShouldTransitionIn = ({

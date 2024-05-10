@@ -1,14 +1,14 @@
-import { SERVER_PORT } from "../config/server";
-import { CREATE_PROJECTS } from "../scripts/server/constants";
+import { SERVER_PORT } from "../../config/server";
+import { CREATE_FOLDER } from "../../scripts/server/constants";
 
 type CreateProjectResBodyType = {
   success: boolean;
   message: string;
 };
 
-export const createProject = async (projectName: string) => {
-  const payload = { projectName };
-  const res = await fetch(`http://localhost:${SERVER_PORT}${CREATE_PROJECTS}`, {
+export const createFolder = async (folderName: string) => {
+  const payload = { projectName: folderName };
+  const res = await fetch(`http://localhost:${SERVER_PORT}${CREATE_FOLDER}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
