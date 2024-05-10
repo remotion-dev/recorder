@@ -8,8 +8,8 @@ export const ToggleCrop: React.FC<{
   return (
     <Toggle
       aria-label="Toggle italic"
-      onPressedChange={onPressedChange}
       pressed={pressed}
+      onPressedChange={onPressedChange}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

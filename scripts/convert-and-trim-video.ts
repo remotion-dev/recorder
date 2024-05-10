@@ -1,12 +1,7 @@
 import { execSync } from "node:child_process";
-import { existsSync, mkdirSync, unlinkSync } from "node:fs";
+import { existsSync, unlinkSync } from "node:fs";
 import path from "path";
-import {
-  ALTERNATIVE1_PREFIX,
-  ALTERNATIVE2_PREFIX,
-  DISPLAY_PREFIX,
-  WEBCAM_PREFIX,
-} from "../config/cameras";
+import { prefixes } from "../src/Views";
 import { getDownloadsFolder } from "./get-downloads-folder";
 import { checkVideoIntegrity } from "./server/check-video-integrity";
 
@@ -51,7 +46,7 @@ type ServerProps = {
   customFileLocation: string;
 };
 
-export const convertAndTrimVideo = async (props: ScriptProps | ServerProps) => {
+export const convertVideosA = async (props: ScriptProps | ServerProps) => {
   const { latestTimestamp, caller } = props;
 
   let fileLocation;
@@ -61,45 +56,19 @@ export const convertAndTrimVideo = async (props: ScriptProps | ServerProps) => {
     fileLocation = getDownloadsFolder();
   }
 
-  const displayLatest = `${DISPLAY_PREFIX}${latestTimestamp}.webm`;
-  const webcamLatest = `${WEBCAM_PREFIX}${latestTimestamp}.webm`;
-  const alt1Latest = `${ALTERNATIVE1_PREFIX}${latestTimestamp}.webm`;
-  const alt2Latest = `${ALTERNATIVE2_PREFIX}${latestTimestamp}.webm`;
+  for (const prefix of prefixes) {
+    const latest = `${prefix}${latestTimestamp}.webm`;
+    const src = path.join(fileLocation, latest);
+    const folder =
+      caller === "server"
+        ? props.customFileLocation
+        : path.join("public", props.prefix);
 
-  const displaySrc = path.join(fileLocation, displayLatest);
-  const webcamSrc = path.join(fileLocation, webcamLatest);
-  const alt1Src = path.join(fileLocation, alt1Latest);
-  const alt2Src = path.join(fileLocation, alt2Latest);
-
-  const folder =
-    caller === "server"
-      ? props.customFileLocation
-      : path.join("public", props.prefix);
-  mkdirSync(folder, { recursive: true });
-
-  convertAndRemoveSilence({
-    input: webcamSrc,
-    output: path.join(folder, webcamLatest.replace(".webm", ".mp4")),
-  });
-
-  if (existsSync(displaySrc)) {
-    convertAndRemoveSilence({
-      input: displaySrc,
-      output: path.join(folder, displayLatest.replace(".webm", ".mp4")),
-    });
-  }
-
-  if (existsSync(alt1Src)) {
-    convertAndRemoveSilence({
-      input: alt1Src,
-      output: path.join(folder, alt1Latest.replace(".webm", ".mp4")),
-    });
-  }
-
-  if (existsSync(alt2Src)) {
-    convertAndRemoveSilence({
-      input: alt2Src,
-      output: path.join(folder, alt2Latest.replace(".webm", ".mp4")),
-    });
+    if (existsSync(src)) {
+      convertAndRemoveSilence({
+        input: src,
+        output: path.join(folder, latest.replace(".webm", ".mp4")),
+      });
+    }
   }
 };

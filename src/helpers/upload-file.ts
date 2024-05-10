@@ -21,7 +21,6 @@ export const uploadFileToServer = async ({
     endDateAsString: endDate.toString(),
   }).toString();
 
-  // might add query params to define name & folder
   const res = await fetch(url, {
     method: "POST",
     body: videoFile,

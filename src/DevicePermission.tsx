@@ -263,7 +263,6 @@ export const DevicePermission: React.FC<{ children: ReactNode }> = ({
   }
 
   if (audioState === "granted" && videoState === "granted") {
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;
   }
 

@@ -63,7 +63,6 @@ export const Main: React.FC<MainProps> = ({
       {scenesAndMetadata.map((sceneAndMetadata, i) => {
         return (
           <Scene
-            // eslint-disable-next-line react/no-array-index-key
             key={i}
             index={i}
             nextScene={scenesAndMetadata[i + 1] ?? null}

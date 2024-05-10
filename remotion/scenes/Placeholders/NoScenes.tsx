@@ -16,7 +16,7 @@ const container: React.CSSProperties = {
   flexDirection: "column",
 };
 
-export const NoScenes: React.FC<{}> = () => {
+export const NoScenes: React.FC = () => {
   return (
     <AbsoluteFill>
       <div style={container}>

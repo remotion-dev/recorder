@@ -6,10 +6,10 @@ import type { CurrentBlobs } from "./components/UseThisTake";
 import { currentBlobsInitialState } from "./components/UseThisTake";
 import { useKeyPress } from "./helpers/use-key-press";
 import { Timer } from "./Timer";
-import type { prefixes } from "./Views";
+import type { Prefix } from "./Views";
 
 export type MediaSources = {
-  [key in (typeof prefixes)[number]]: MediaStream | null;
+  [key in Prefix]: MediaStream | null;
 };
 
 const mediaRecorderOptions: MediaRecorderOptions = {
@@ -135,12 +135,12 @@ export const RecordButton: React.FC<{
     return (
       <>
         <Button
-          variant={"outline"}
+          variant="outline"
           type="button"
           disabled={!recording}
-          onClick={onStop}
           style={{ display: "flex", alignItems: "center", gap: 10 }}
           title="Press R to stop recording"
+          onClick={onStop}
         >
           Stop recording
         </Button>
@@ -153,11 +153,11 @@ export const RecordButton: React.FC<{
   if (showHandleVideos) {
     return (
       <Button
-        variant={"outline"}
+        variant="outline"
         type="button"
-        onClick={onDiscard}
         style={{ display: "flex", alignItems: "center", gap: 10 }}
         title="Press R to start recording"
+        onClick={onDiscard}
       >
         <RecordCircle recordingDisabled={recordingDisabled} />
         Discard and retake
@@ -174,12 +174,12 @@ export const RecordButton: React.FC<{
       }
     >
       <Button
-        variant={"outline"}
+        variant="outline"
         type="button"
         disabled={disabled}
-        onClick={start}
         style={{ display: "flex", alignItems: "center", gap: 10 }}
         title="Press R to start recording"
+        onClick={start}
       >
         <RecordCircle recordingDisabled={recordingDisabled} />
         Start recording

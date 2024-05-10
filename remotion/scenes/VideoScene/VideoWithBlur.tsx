@@ -11,8 +11,8 @@ export const VideoWithBlur: React.FC<
     containerLayout: Layout;
     videoSize: Dimensions;
     enableBlur: boolean;
-  } & OffthreadVideoProps
-> = ({ containerLayout, videoSize, style, enableBlur, ...props }) => {
+  } & Omit<OffthreadVideoProps, "style">
+> = ({ containerLayout, videoSize, enableBlur, ...props }) => {
   const { innerStyle, needsBlur, outerStyle, blurStyle } = useMemo(() => {
     return getBlurLayout({
       containerLayout,

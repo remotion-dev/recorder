@@ -27,11 +27,13 @@
     "@types/express": "^4.17.21",
     "@types/web": "^0.0.115",
     "@types/webrtc": "^0.0.37",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
     "@vitejs/plugin-react": "^4.1.0",
     "bun-types": "^1.0.4-canary.20231004T140131",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "eslint": "^8.50.0",
+    "eslint": "^8",
     "eslint-plugin-react": "^7.34.1",
     "express": "^4.19.2",
     "lucide-react": "^0.290.0",
@@ -45,8 +47,8 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@jonny/eslint-config": "^3.0.275",
     "@remotion/cli": "4.0.154",
+    "@remotion/eslint-config": "4.0.154",
     "@remotion/google-fonts": "4.0.154",
     "@remotion/install-whisper-cpp": "4.0.154",
     "@remotion/media-utils": "4.0.154",
@@ -59,7 +61,7 @@
     "postcss": "^8.4.31",
     "remotion": "4.0.154",
     "tailwindcss": "^3.3.5",
-    "typescript": "4.9.5",
+    "typescript": "^5.4.5",
     "vite": "5.2.11"
   }
 }

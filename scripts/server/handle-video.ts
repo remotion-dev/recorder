@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import fs, { createWriteStream } from "fs";
 import path from "path";
-import { convertAndTrimVideo } from "../convert-and-trim-video";
+import { convertVideosA } from "../convert-and-trim-video";
 
 export const handleVideoUpload = (req: Request, res: Response) => {
   try {
@@ -63,7 +63,7 @@ export const convertVideos = async (req: Request, res: Response) => {
       });
     }
 
-    await convertAndTrimVideo({
+    await convertVideosA({
       caller: "server",
       latestTimestamp: endDate,
       customFileLocation: absoluteFolderPath,
