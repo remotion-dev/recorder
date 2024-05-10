@@ -6,12 +6,12 @@ import {
   isWebCamAtBottom,
   isWebCamRight,
 } from "../animations/webcam-transitions/helpers";
-import { borderRadius } from "../layout/get-layout";
-import { getBottomSafeSpace } from "../layout/get-safe-space";
-import type { Layout } from "../layout/layout-types";
-import type { SubtitleType } from "./Segment";
+import type { SubtitleType } from "../captions/Segment";
+import { borderRadius } from "./get-layout";
+import { getBottomSafeSpace } from "./get-safe-space";
+import type { Layout } from "./layout-types";
 
-export const getSubsLayout = ({
+export const getCaptionsLayout = ({
   subtitleType,
   canvasLayout,
   canvasSize,

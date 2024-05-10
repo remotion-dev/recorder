@@ -1,5 +1,5 @@
 import { getImageDimensions, getVideoMetadata } from "@remotion/media-utils";
-import type { BRoll, BRollWithDimensions } from "../../../config/scenes";
+import type { BRoll, BRollWithDimensions } from "../../config/scenes";
 
 const imageFileExtensions = [
   "jpg",

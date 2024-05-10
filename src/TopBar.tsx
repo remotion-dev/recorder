@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { fetchProjectFolders } from "./actions/fetch-project-folders";
 import { NewFolderDialog } from "./components/NewFolderDialog";
 import { SelectedFolder } from "./components/SelectedFolder";
 import { SmallSpinner } from "./components/SmallSpinner";
@@ -9,11 +10,10 @@ import {
   UseThisTake,
 } from "./components/UseThisTake";
 import {
-  fetchProjectFolders,
   loadFolderFromUrl,
   loadSelectedFolder,
   persistSelectedFolder,
-} from "./get-projects";
+} from "./helpers/get-projects";
 import type { MediaSources } from "./RecordButton";
 import { RecordButton } from "./RecordButton";
 

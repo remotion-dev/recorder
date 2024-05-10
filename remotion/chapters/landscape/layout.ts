@@ -7,7 +7,7 @@ import {
 } from "../../animations/webcam-transitions/helpers";
 import type { Layout } from "../../layout/layout-types";
 
-export const getWidescreenChapterLayout = (
+const getWidescreenChapterLayout = (
   scene: VideoSceneAndMetadata,
   tableOfContentHeight: number,
 ) => {

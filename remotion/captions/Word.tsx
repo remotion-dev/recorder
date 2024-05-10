@@ -14,19 +14,14 @@ import {
 } from "../../config/fonts";
 import type { Theme } from "../../config/themes";
 import { COLORS } from "../../config/themes";
-
-export const useSequenceDuration = (trimStart: number) => {
-  const { durationInFrames, fps } = useVideoConfig();
-  const sequenceDuration = (durationInFrames - trimStart) / fps;
-  return sequenceDuration;
-};
+import { useCaptionOverlay } from "./Editor/use-caption-overlay";
 
 type WordColor = {
   appeared: string;
   greyed: string;
 };
 
-export const WORD_FADE_IN_DURATION_IN_MS = 100;
+const WORD_FADE_IN_DURATION_IN_MS = 100;
 
 const getShownWordColor = ({
   appeared,
@@ -82,15 +77,14 @@ const getWordColor = ({
     : normalWordColor;
 };
 
-export const WORD_HIGHLIGHT_BORDER_RADIUS = 10;
+const WORD_HIGHLIGHT_BORDER_RADIUS = 10;
 
 export const WordComp: React.FC<{
   word: Word;
   isLast: boolean;
   theme: Theme;
-  onOpenSubEditor: (word: Word) => void;
   startFrame: number;
-}> = ({ word, isLast, theme, onOpenSubEditor, startFrame }) => {
+}> = ({ word, isLast, theme, startFrame }) => {
   const { fps } = useVideoConfig();
   const frame = useCurrentFrame() + startFrame;
   const time = (frame / fps) * 1000;
@@ -178,9 +172,11 @@ export const WordComp: React.FC<{
     setHovered(false);
   }, []);
 
+  const overlay = useCaptionOverlay();
+
   const onClick = useCallback(() => {
-    onOpenSubEditor(word);
-  }, [onOpenSubEditor, word]);
+    overlay.setOpen(word);
+  }, [overlay, word]);
 
   return (
     <span

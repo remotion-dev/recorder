@@ -3,7 +3,7 @@ import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
-import type { LayoutAndFade } from "../../layout/layout-types";
+import type { Layout, LayoutAndFade } from "../../layout/layout-types";
 import { interpolateLayoutAndFade } from "../interpolate-layout";
 import { getLandscapeWebCamStartOrEndLayout } from "./landscape";
 import { getSquareWebcamStartOrEndLayout } from "./square";
@@ -58,7 +58,7 @@ export const getWebcamLayout = ({
   nextScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   previousScene: SceneAndMetadata | null;
-}): React.CSSProperties => {
+}): Layout => {
   const startLayout = getWebCamStartOrEndLayout({
     canvasLayout,
     currentScene,

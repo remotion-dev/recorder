@@ -8,17 +8,15 @@ import { createServer } from "vite";
 import { SERVER_PORT } from "../../config/server";
 import { indexHtmlDev } from "../../index-html";
 import {
-  CREATE_PROJECTS,
+  CREATE_FOLDER,
   GET_FOLDERS,
   PROCESS_VIDEOS,
-  SAVE_SUBTITLES,
   TRANSCRIBE_VIDEO,
   UPLOAD_VIDEO,
 } from "./constants";
 import { createProject } from "./create-project";
 import { convertVideos, handleVideoUpload } from "./handle-video";
 import { getProjectFolder } from "./projects";
-import { getOptions, saveSubtitles } from "./subtitles";
 import { transcribeVideo } from "./transcribe-video";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -52,7 +50,7 @@ export const startExpressServer = async () => {
     getProjectFolder(req, res, rootDir);
   });
 
-  app.post(CREATE_PROJECTS, (req: Request, res: Response) => {
+  app.post(CREATE_FOLDER, (req: Request, res: Response) => {
     createProject(req, res, rootDir);
   });
 
@@ -61,9 +59,6 @@ export const startExpressServer = async () => {
   app.post(TRANSCRIBE_VIDEO, (req: Request, res: Response) => {
     transcribeVideo(req, res, publicDir);
   });
-
-  app.post(SAVE_SUBTITLES, saveSubtitles);
-  app.options(SAVE_SUBTITLES, getOptions);
 
   const port = process.env.PORT || SERVER_PORT;
 

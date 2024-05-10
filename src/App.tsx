@@ -8,8 +8,8 @@ import {
 } from "../config/cameras";
 import "./App.css";
 import { Button } from "./components/ui/button";
-import type { Label } from "./helpers";
-import { formatLabel } from "./helpers";
+import type { Label } from "./helpers/device-labels";
+import { formatLabel } from "./helpers/device-labels";
 import type { MediaSources } from "./RecordButton";
 import { TopBar } from "./TopBar";
 import type { Prefix } from "./Views";

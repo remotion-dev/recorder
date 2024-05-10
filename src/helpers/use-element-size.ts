@@ -1,11 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-
-export type Size = {
-  width: number;
-  height: number;
-  left: number;
-  top: number;
-};
+import type { Rect } from "../../remotion/layout/layout-types";
 
 // If a pane has been moved, it will cause a layout shift without
 // the window having been resized. Those UI elements can call this API to
@@ -15,16 +9,10 @@ type ElementSizeForceUpdate = () => void;
 
 let elementSizeHooks: ElementSizeForceUpdate[] = [];
 
-export const updateAllElementsSizes = () => {
-  for (const listener of elementSizeHooks) {
-    listener();
-  }
-};
-
 export const useElementSize = (
   ref: React.RefObject<HTMLElement>,
-): Size | null => {
-  const [size, setSize] = useState<Size | null>(() => {
+): Rect | null => {
+  const [size, setSize] = useState<Rect | null>(() => {
     if (!ref.current) {
       return null;
     }

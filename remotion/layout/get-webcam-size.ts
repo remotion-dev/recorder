@@ -1,9 +1,10 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { getSafeSpace } from "../../config/layout";
 
+// TODO: Use this also in the recording interface
 const webcamRatio = 400 / 350;
 
-export const getWebcamSize = ({
+export const getNonFullscreenWebcamSize = ({
   displaySize,
   canvasSize,
   canvasLayout,

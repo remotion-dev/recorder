@@ -8,6 +8,7 @@ import {
   SECOND_COLUMN_WIDTH,
   SIDE_PADDING,
 } from "./layout";
+import { useCaptionOverlay } from "./use-caption-overlay";
 
 const Indent: React.FC<{ value: number; digits: number }> = ({
   digits,
@@ -30,7 +31,6 @@ export const EditWord: React.FC<{
   longestNumberLength: number;
   index: number;
   onUpdateText: (index: number, newText: string) => void;
-  onCloseEditor: () => void;
   isInitialWord: boolean;
   trimStart: number;
   theme: Theme;
@@ -40,10 +40,10 @@ export const EditWord: React.FC<{
   index,
   onUpdateText,
   isInitialWord,
-  onCloseEditor,
   trimStart,
   theme,
 }) => {
+  const overlay = useCaptionOverlay();
   const { width, fps } = useVideoConfig();
   const frame = useCurrentFrame();
   const milliSeconds = ((frame + trimStart) / fps) * 1000;
@@ -119,7 +119,7 @@ export const EditWord: React.FC<{
 
       if (e.key === "Enter") {
         e.preventDefault();
-        onCloseEditor();
+        overlay.setOpen(false);
       }
 
       if (e.key === "i" && e.metaKey) {
@@ -127,7 +127,7 @@ export const EditWord: React.FC<{
         toggleMonospace();
       }
     },
-    [onCloseEditor, toggleMonospace],
+    [overlay, toggleMonospace],
   );
 
   return (

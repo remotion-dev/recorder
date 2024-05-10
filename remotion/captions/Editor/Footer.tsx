@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { FOOTER_HEIGHT, SIDE_PADDING } from "./layout";
+import { useCaptionOverlay } from "./use-caption-overlay";
 
 export const SubsEditorFooter: React.FC<{
   fileName: string;
-  onCloseSubEditor: () => void;
-}> = ({ fileName, onCloseSubEditor }) => {
+}> = ({ fileName }) => {
+  const overlay = useCaptionOverlay();
+
+  const onCloseSubEditor = useCallback(() => {
+    overlay.setOpen(false);
+  }, [overlay]);
+
   return (
     <div
       style={{

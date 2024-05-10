@@ -28,10 +28,10 @@ import { postprocessSubtitles } from "./captions/processing/postprocess-subs";
 import type { SubTypes, WhisperOutput } from "./captions/types";
 import { truthy } from "./helpers/truthy";
 import { getDimensionsForLayout } from "./layout/dimensions";
+import { getBRollDimensions } from "./layout/get-broll-dimensions";
 import { getLayout } from "./layout/get-layout";
 import type { MainProps } from "./Main";
 import { applyBRollRules } from "./scenes/BRoll/apply-b-roll-rules";
-import { getBRollDimensions } from "./scenes/BRoll/get-broll-dimensions";
 
 const START_FRAME_PADDING = Math.ceil(FPS / 4);
 const END_FRAME_PADDING = FPS / 2;
@@ -102,11 +102,11 @@ const deriveEndFrameFromSubs = (subs: SubTypes | null) => {
 
   const lastSegment = subs.segments[subs.segments.length - 1];
   const lastWord = lastSegment?.words[lastSegment.words.length - 1];
-  if (!lastWord || !lastWord.firstTimestamp) {
+  if (!lastWord || !lastWord.lastTimestamp) {
     throw new Error("Last word or its timestampe is undefined");
   }
 
-  const lastFrame = Math.floor((lastWord.firstTimestamp / 1000) * FPS);
+  const lastFrame = Math.floor((lastWord.lastTimestamp / 1000) * FPS);
   return lastFrame;
 };
 

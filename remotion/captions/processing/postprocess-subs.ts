@@ -11,32 +11,36 @@ import type { CanvasLayout } from "../../../config/layout";
 import { getSafeSpace } from "../../../config/layout";
 import type { SubtitleType } from "../Segment";
 import { getBorderWidthForSubtitles } from "../Segment";
-import {
-  whisperWordToWord,
-  type Segment,
-  type SubTypes,
-  type WhisperOutput,
-} from "../types";
+import { type Segment, type SubTypes, type WhisperOutput } from "../types";
 import { hasMonoSpaceInIt } from "./has-monospace-in-word";
+import { removeBlankTokens } from "./remove-blank-tokens";
 import { splitWordIntoMonospaceSegment } from "./split-word-into-monospace-segment";
+import { whisperWordToWord } from "./whisper-word-to-word";
 import { wordsTogether } from "./words-together";
+
+type WordBalanceStrategy = "fill-box-if-possible" | "equal-width";
 
 const balanceWords = ({
   words,
-  wordsToUse,
+  wordsFitted,
   boxWidth,
   fontSize,
   maxLines,
+  wordBalanceStrategy,
 }: {
   words: Word[];
-  wordsToUse: number;
+  wordsFitted: number;
   boxWidth: number;
   maxLines: number;
   fontSize: number;
+  wordBalanceStrategy: WordBalanceStrategy;
 }) => {
-  let bestCut = wordsToUse;
+  let bestCut =
+    wordBalanceStrategy === "fill-box-if-possible"
+      ? wordsFitted
+      : Math.round(words.length / 2);
 
-  if (wordsToUse / words.length > 0.9) {
+  if (wordsFitted / words.length > 0.9) {
     // Prevent a few hanging words at the end
     bestCut = words.length - 5;
   }
@@ -61,13 +65,21 @@ const balanceWords = ({
   const secondHalf = words.slice(bestCut);
 
   return [
-    { words: firstHalf },
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    ...cutWords({
+      words: firstHalf,
+      boxWidth,
+      maxLines,
+      fontSize,
+      wordBalanceStrategy,
+    }),
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     ...cutWords({
       words: secondHalf,
       boxWidth,
       maxLines,
       fontSize,
+      wordBalanceStrategy,
     }),
   ];
 };
@@ -77,14 +89,16 @@ const cutWords = ({
   boxWidth,
   maxLines,
   fontSize,
+  wordBalanceStrategy,
 }: {
   words: Word[];
   boxWidth: number;
   maxLines: number;
   fontSize: number;
+  wordBalanceStrategy: WordBalanceStrategy;
 }): Segment[] => {
   const { add } = fillTextBox({ maxBoxWidth: boxWidth, maxLines });
-  let wordsToUse = 0;
+  let wordsFitted = 0;
 
   for (const word of words) {
     const { exceedsBox } = add({
@@ -98,11 +112,11 @@ const cutWords = ({
     if (exceedsBox) {
       break;
     } else {
-      wordsToUse++;
+      wordsFitted++;
     }
   }
 
-  if (wordsToUse === words.length) {
+  if (wordsFitted === words.length) {
     return [{ words }];
   }
 
@@ -111,16 +125,17 @@ const cutWords = ({
     boxWidth,
     fontSize,
     maxLines,
-    wordsToUse,
+    wordsFitted,
+    wordBalanceStrategy,
   });
 };
 
-export const removeWhisperBlankWords = (original: Word[]): Word[] => {
+const FILLER_WORDS = ["[PAUSE]", "[BLANK_AUDIO]", "[Silence]"];
+
+const removeWhisperBlankWords = (original: Word[]): Word[] => {
   let firstIdx = 0;
   let concatentatedWord = "";
   let inBlank = false;
-  const blankAudio = "[BLANK_AUDIO]";
-  const pause = "[PAUSE]";
 
   const words = [...original];
   words.forEach((word, index) => {
@@ -131,19 +146,13 @@ export const removeWhisperBlankWords = (original: Word[]): Word[] => {
       firstIdx = index;
     }
 
-    if (
-      inBlank &&
-      (blankAudio.includes(wordCopy.text) || pause.includes(wordCopy.text))
-    ) {
+    if (inBlank && FILLER_WORDS.find((w) => w.includes(wordCopy.text))) {
       concatentatedWord += wordCopy.text;
     }
 
     if (inBlank && wordCopy.text.includes("]")) {
       concatentatedWord += wordCopy.text;
-      if (
-        concatentatedWord.includes(blankAudio) ||
-        concatentatedWord.includes(pause)
-      ) {
+      if (FILLER_WORDS.find((w) => concatentatedWord.includes(w))) {
         for (let i = firstIdx; i <= index; i++) {
           const currentWord = words[i];
           if (currentWord?.text !== undefined) {
@@ -168,7 +177,7 @@ export const getHorizontalPaddingForSubtitles = (
   }
 
   if (subtitleType === "overlayed-center") {
-    return 20;
+    return 60;
   }
 
   return 0;
@@ -189,10 +198,21 @@ export const postprocessSubtitles = ({
   canvasLayout: CanvasLayout;
   subtitleType: SubtitleType;
 }): SubTypes => {
-  const words = subTypes.transcription.map((w, i) => {
-    return whisperWordToWord(w, subTypes.transcription[i + 1] ?? null);
+  const blankTokensRemoved = removeBlankTokens(subTypes.transcription);
+  const words = blankTokensRemoved.map((w, i) => {
+    return whisperWordToWord(w, blankTokensRemoved[i + 1] ?? null);
   });
-  const correctedWords = autocorrectWords(words);
+
+  const wordBalanceStrategy =
+    subtitleType === "square" ? "fill-box-if-possible" : "equal-width";
+
+  const removeBlankAudioAndPause = removeWhisperBlankWords(words);
+  const removeBlankTokensAgain = removeBlankAudioAndPause.filter(
+    (w) => w.text.trim() !== "",
+  );
+
+  const correctedWords = autocorrectWords(removeBlankTokensAgain);
+
   const movedBackTickToWord = correctedWords.map((word) => {
     return {
       ...word,
@@ -202,7 +222,7 @@ export const postprocessSubtitles = ({
 
   const allWords = wordsTogether(movedBackTickToWord);
 
-  const preFilteredWords = removeWhisperBlankWords(allWords);
+  const preFilteredWords = allWords;
   const segments = cutWords({
     words: preFilteredWords,
     boxWidth:
@@ -211,6 +231,7 @@ export const postprocessSubtitles = ({
       getBorderWidthForSubtitles(subtitleType) * 2,
     maxLines,
     fontSize,
+    wordBalanceStrategy,
   });
 
   return {

@@ -6,8 +6,8 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { createProject } from "../create-project";
-import { useKeyPress } from "../use-key-press";
+import { createFolder } from "../actions/create-folder";
+import { useKeyPress } from "../helpers/use-key-press";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -56,7 +56,7 @@ export const NewFolderDialog: React.FC<{
 
   const handleSubmit = useCallback(async () => {
     try {
-      const res = await createProject(newProject);
+      const res = await createFolder(newProject);
       if (!res.success) {
         throw new Error(res.message);
       }

@@ -7,12 +7,12 @@ import {
   interpolate,
   spring,
   useCurrentFrame,
+  useCurrentScale,
   useVideoConfig,
 } from "remotion";
 import type { Brand, LinkType, Platform } from "../../../config/endcard";
 import { avatars, channels } from "../../../config/endcard";
 import type { Theme } from "../../../config/themes";
-import { COLORS } from "../../../config/themes";
 import { SCENE_TRANSITION_DURATION } from "../../../config/transitions";
 import { FollowButton, followButtonHeight } from "./FollowButton";
 import { IconRow, spaceBetweenImgAndText } from "./IconRow";
@@ -28,7 +28,10 @@ const Avatar: React.FC<{
         height: followButtonHeight,
         width: followButtonHeight,
         borderRadius: "50%",
-        border: "6px solid " + COLORS[theme].WORD_COLOR_ON_BG_APPEARED,
+        boxShadow:
+          theme === "light"
+            ? "0px 0px 20px rgba(0, 0, 0, 0.2)"
+            : "0px 0px 50px rgba(255, 255, 255, 0.2)",
       }}
       src={avatar}
     />
@@ -76,6 +79,8 @@ export const LeftSide: React.FC<{
   const slideDelay = SCENE_TRANSITION_DURATION + 20;
   const slideDuration = 30;
 
+  const scale = useCurrentScale();
+
   const slideUp = spring({
     fps,
     frame,
@@ -88,25 +93,30 @@ export const LeftSide: React.FC<{
 
   useEffect(() => {
     const calc = () => {
-      window.requestAnimationFrame(() => {
+      const cb = window.requestAnimationFrame(() => {
         const height = ref.current?.getBoundingClientRect().height as number;
         if (height === 0) {
           calc();
           return;
         }
 
-        const scale =
-          (scaler.current?.getBoundingClientRect().height as number) / 100;
-
         const scaled = height / scale;
 
         setHeight(scaled);
         continueRender(handle);
       });
+
+      return () => {
+        window.cancelAnimationFrame(cb);
+      };
     };
 
-    calc();
-  }, [handle]);
+    const cleanup = calc();
+
+    return () => {
+      cleanup();
+    };
+  }, [handle, scale]);
 
   const otherPlatforms = useMemo(() => {
     const configs: {

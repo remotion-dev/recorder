@@ -1,5 +1,5 @@
-import type { Dimensions } from "../config/layout";
-import type { SelectedSource } from "./video-source";
+import type { Dimensions } from "../../config/layout";
+import type { SelectedSource } from "./get-selected-video-source";
 
 export const canRotateCamera = ({
   selectedSource,

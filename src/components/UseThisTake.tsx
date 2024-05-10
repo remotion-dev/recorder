@@ -1,10 +1,8 @@
 import React, { useCallback } from "react";
-import {
-  convertFilesInServer,
-  downloadVideo,
-  handleUploadFileToServer,
-} from "../download-video";
-import { transcribeVideoInServer } from "../transcribe-video";
+import { convertFilesInServer } from "../actions/convert-files";
+import { transcribeVideoInServer } from "../actions/transcribe-video-in-server";
+import { downloadVideo } from "../helpers/download-video";
+import { uploadFileToServer } from "../helpers/upload-file";
 import { Button } from "./ui/button";
 
 export type CurrentBlobs =
@@ -70,7 +68,7 @@ export const UseThisTake: React.FC<{
         continue;
       }
 
-      await handleUploadFileToServer({
+      await uploadFileToServer({
         blob,
         endDate: currentBlobs.endDate,
         prefix,

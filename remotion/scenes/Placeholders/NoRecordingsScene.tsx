@@ -4,18 +4,19 @@ import {
   REGULAR_FONT_FAMILY,
   REGULAR_FONT_WEIGHT,
 } from "../../../config/fonts";
+import { SERVER_PORT } from "../../../config/server";
 import { COLORS } from "../../../config/themes";
 
 const container: React.CSSProperties = {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  flex: 1,
   fontFamily: REGULAR_FONT_FAMILY,
   fontWeight: REGULAR_FONT_WEIGHT,
   fontSize: 36,
-  gap: 10,
+  padding: 60,
   flexDirection: "column",
+  lineHeight: 1.5,
+  width: 1080,
+  margin: "auto",
+  justifyContent: "center",
 };
 
 const accent: React.CSSProperties = {
@@ -23,39 +24,48 @@ const accent: React.CSSProperties = {
   color: COLORS.light.ACCENT_COLOR,
 };
 
+const link: React.CSSProperties = {
+  color: COLORS.light.ACCENT_COLOR,
+  borderBottom: "4px solid " + COLORS.light.ACCENT_COLOR,
+  textDecoration: "none",
+};
+
 export const NoRecordingsScene: React.FC<{ type: "none" | "no-more" }> = ({
   type,
 }) => {
   const { id } = useVideoConfig();
-  const url = `http://localhost:4000?folder=${id}`;
+  const url = `http://localhost:${SERVER_PORT}?folder=${id}`;
 
   return (
-    <AbsoluteFill>
-      <div style={container}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 8,
-            alignItems: "center",
-          }}
-        >
-          No {type === "no-more" ? "more" : null} recordings in the
-          <span style={accent}>{id}</span>
-          folder.
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+    <AbsoluteFill style={container}>
+      <p>
+        This is a video scene but there are no{" "}
+        {type === "no-more" ? "more" : null} recordings in the
+        <span style={accent}> public/{id} </span>
+        folder.
+      </p>
+      <br />
+      <div>Possible solutions:</div>
+      <ol>
+        <li>
+          <a href={url} target="_blank" style={link}>
+            Make
+          </a>{" "}
+          a new recording or add a new video{" "}
           <a
-            href={url}
-            target="_blank"
-            style={{ color: COLORS.light.ACCENT_COLOR }}
+            href="https://www.remotion.dev/docs/recorder/vlogging"
+            style={link}
           >
-            Go to the Recorder
+            manually
           </a>
-          to create {type === "no-more" ? "more clips" : "a clip"}!
-        </div>
-      </div>
+          .
+        </li>
+        <li>
+          Switch this scene to a different type, e.g.{" "}
+          <code style={accent}>&quot;title&quot;</code>
+        </li>
+        <li>Delete this scene.</li>
+      </ol>
     </AbsoluteFill>
   );
 };

@@ -9,16 +9,13 @@ export const TransitionFromPreviousSubtitles: React.FC<{
   subtitleType: SubtitleType;
 }> = ({ children, shouldTransitionFromPreviousSubtitle, subtitleType }) => {
   const frame = useCurrentFrame();
-  if (
-    !shouldTransitionFromPreviousSubtitle ||
-    subtitleType === "overlayed-center"
-  ) {
+  if (!shouldTransitionFromPreviousSubtitle) {
     return <div>{children}</div>;
   }
 
-  if (subtitleType === "below-video") {
+  if (subtitleType === "below-video" || subtitleType === "overlayed-center") {
     return (
-      <div style={{ opacity: frame >= SCENE_TRANSITION_DURATION / 2 ? 1 : 0 }}>
+      <div style={{ opacity: Number(frame >= SCENE_TRANSITION_DURATION / 2) }}>
         {children}
       </div>
     );
@@ -56,19 +53,17 @@ export const TransitionToNextSubtitles: React.FC<{
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
 
-  if (
-    !shouldTransitionToNextsSubtitles ||
-    subtitleType === "overlayed-center"
-  ) {
+  if (!shouldTransitionToNextsSubtitles) {
     return <div>{children}</div>;
   }
 
-  if (subtitleType === "below-video") {
+  if (subtitleType === "below-video" || subtitleType === "overlayed-center") {
     return (
       <div
         style={{
-          opacity:
-            frame < durationInFrames - SCENE_TRANSITION_DURATION / 2 ? 1 : 0,
+          opacity: Number(
+            frame < durationInFrames - SCENE_TRANSITION_DURATION / 2,
+          ),
         }}
       >
         {children}

@@ -10,8 +10,8 @@ import {
   isWebCamRight,
 } from "./webcam-transitions/helpers";
 
-export type OutTransition = "none" | "up" | "down" | "left" | "right";
-export type InTransition =
+type OutTransition = "none" | "up" | "down" | "left" | "right";
+type InTransition =
   | "none"
   | "from-top"
   | "from-bottom"
