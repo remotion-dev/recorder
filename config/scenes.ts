@@ -1,7 +1,7 @@
 import type { StaticFile } from "remotion";
 import { staticFile } from "remotion";
 import { z } from "zod";
-import type { CameraSceneLayout } from "../remotion/layout/get-layout";
+import { VideoSceneLayout } from "../remotion/layout/get-layout";
 import { brand, linkType, platform } from "./endcard";
 import type { Dimensions } from "./layout";
 import { canvasLayout } from "./layout";
@@ -137,7 +137,7 @@ export type VideoSceneAndMetadata = {
   durationInFrames: number;
   from: number;
   videos: SceneVideos;
-  layout: CameraSceneLayout;
+  layout: VideoSceneLayout;
   pair: Pair;
   finalWebcamPosition: FinalWebcamPosition;
   chapter: string | null;

@@ -63,7 +63,6 @@ export const ScaleDownIfBRollRequiresIt: React.FC<
   }
 > = ({ bRollType, bRolls, frame, children }) => {
   if (bRollType !== "scale") {
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;
   }
 

@@ -3,26 +3,17 @@ import { convertFilesInServer } from "../actions/convert-files";
 import { transcribeVideoInServer } from "../actions/transcribe-video-in-server";
 import { downloadVideo } from "../helpers/download-video";
 import { uploadFileToServer } from "../helpers/upload-file";
+import { Prefix } from "../Views";
 import { Button } from "./ui/button";
 
 export type CurrentBlobs =
   | {
       endDate: number;
-      blobs: {
-        webcam: Blob | null;
-        display: Blob | null;
-        alt1: Blob | null;
-        alt2: Blob | null;
-      };
+      blobs: { [key in Prefix]: Blob | null };
     }
   | {
       endDate: null;
-      blobs: {
-        webcam: null;
-        display: null;
-        alt1: null;
-        alt2: null;
-      };
+      blobs: { [key in Prefix]: null };
     };
 
 export const currentBlobsInitialState: CurrentBlobs = {
@@ -30,8 +21,8 @@ export const currentBlobsInitialState: CurrentBlobs = {
   blobs: {
     webcam: null,
     display: null,
-    alt1: null,
-    alt2: null,
+    alternative1: null,
+    alternative2: null,
   },
 };
 
@@ -153,11 +144,11 @@ export const UseThisTake: React.FC<{
 
   return (
     <Button
-      variant={"default"}
+      variant="default"
       type="button"
-      onClick={handleUseTake}
       title="Copy this take"
       disabled={uploading}
+      onClick={handleUseTake}
     >
       {uploading
         ? "Copying..."

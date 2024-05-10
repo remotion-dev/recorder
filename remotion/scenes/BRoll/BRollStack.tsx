@@ -18,7 +18,6 @@ export const BRollStack: React.FC<{
       {bRolls.map((roll, i) => {
         return (
           <BRoll
-            // eslint-disable-next-line react/no-array-index-key
             key={i}
             bRoll={roll}
             bRollsBefore={bRolls.slice(i + 1)}

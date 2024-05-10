@@ -120,7 +120,7 @@ export const Stream: React.FC<{
           : undefined,
     };
 
-    const cleanup: Function[] = [];
+    const cleanup: (() => void)[] = [];
 
     window.navigator.mediaDevices
       .getUserMedia(mediaStreamConstraints)

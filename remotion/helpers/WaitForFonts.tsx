@@ -30,6 +30,5 @@ export const WaitForFonts: React.FC<{
     return null;
   }
 
-  // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
 };

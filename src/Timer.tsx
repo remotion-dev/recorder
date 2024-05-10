@@ -15,5 +15,5 @@ export const Timer: React.FC<{
     };
   }, [recording]);
 
-  return <React.Fragment>{formatTime(Date.now() - recording)}</React.Fragment>;
+  return <>{formatTime(Date.now() - recording)}</>;
 };

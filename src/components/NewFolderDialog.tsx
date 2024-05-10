@@ -92,7 +92,7 @@ export const NewFolderDialog: React.FC<{
   useKeyPress({ keys: ["Enter"], callback: handlePressEnter, metaKey: false });
 
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[460px]">
         <DialogHeader>
           <DialogTitle>New Folder</DialogTitle>
@@ -120,7 +120,7 @@ export const NewFolderDialog: React.FC<{
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleSubmit} disabled={disabled}>
+          <Button type="submit" disabled={disabled} onClick={handleSubmit}>
             Create subfolder
           </Button>
         </DialogFooter>

@@ -10,8 +10,8 @@ export const ImgWithBlur: React.FC<
   {
     containerLayout: Layout;
     imageSize: Dimensions;
-  } & ImgProps
-> = ({ containerLayout, imageSize, style, ...props }) => {
+  } & Omit<ImgProps, "style">
+> = ({ containerLayout, imageSize, ...props }) => {
   const { innerStyle, needsBlur, outerStyle, blurStyle } = useMemo(() => {
     return getBlurLayout({
       containerLayout,

@@ -26,7 +26,6 @@ export const Captions: React.FC<{
       {segments.map((segment, index) => {
         return (
           <CaptionSentence
-            // eslint-disable-next-line react/no-array-index-key
             key={index}
             isFirst={index === 0}
             isLast={index === segments.length - 1}

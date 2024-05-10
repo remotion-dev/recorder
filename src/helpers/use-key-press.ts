@@ -24,7 +24,7 @@ export const useKeyPress = ({
         callbackRef.current(event);
       }
     },
-    [keys],
+    [keys, metaKey],
   );
 
   useEffect(() => {
