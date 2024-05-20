@@ -31,8 +31,8 @@ export const getLandscapeWebCamStartOrEndLayout = ({
 
   // Same position vertically, webcam can just move to the new position
   if (
-    isWebCamRight(otherScene.finalWebcamPosition) ===
-    isWebCamRight(currentScene.finalWebcamPosition)
+    isWebCamRight(otherScene.webcamPosition) ===
+    isWebCamRight(currentScene.webcamPosition)
   ) {
     return {
       layout: otherScene.layout.webcamLayout,
@@ -42,7 +42,7 @@ export const getLandscapeWebCamStartOrEndLayout = ({
 
   // Display is in the way, webcam needs to animate out of the edge
   // and appear from the other side
-  if (isWebCamRight(currentScene.finalWebcamPosition)) {
+  if (isWebCamRight(currentScene.webcamPosition)) {
     return {
       layout: {
         ...currentLayout,

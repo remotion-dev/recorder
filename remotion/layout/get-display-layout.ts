@@ -1,6 +1,6 @@
 import type { CanvasLayout } from "../../config/layout";
 import { getSafeSpace, type Dimensions } from "../../config/layout";
-import type { FinalWebcamPosition } from "../../config/scenes";
+import type { WebcamPosition } from "../../config/scenes";
 import {
   isWebCamAtBottom,
   isWebCamRight,
@@ -18,7 +18,7 @@ const getYForDisplayLayout = ({
   canvasSize,
   displayHeight,
 }: {
-  webcamPosition: FinalWebcamPosition;
+  webcamPosition: WebcamPosition;
   canvasSize: Dimensions;
   displayHeight: number;
 }): number => {
@@ -35,7 +35,7 @@ export const getSquareDisplayLayout = ({
   displaySize,
 }: {
   canvasSize: Dimensions;
-  webcamPosition: FinalWebcamPosition;
+  webcamPosition: WebcamPosition;
   displaySize: Dimensions;
 }): Layout => {
   return {
@@ -58,7 +58,7 @@ export const getSquareBRollLayout = ({
   displaySize,
 }: {
   canvasSize: Dimensions;
-  webcamPosition: FinalWebcamPosition;
+  webcamPosition: WebcamPosition;
   displaySize: Dimensions;
 }): { bRollLayout: Layout; bRollEnterDirection: BRollEnterDirection } => {
   return {
@@ -89,7 +89,7 @@ export const getLandscapeDisplayAndWebcamLayout = ({
   webcamSize: Dimensions;
   canvasLayout: CanvasLayout;
   canvasSize: Dimensions;
-  webcamPosition: FinalWebcamPosition;
+  webcamPosition: WebcamPosition;
 }): RecordingsLayout => {
   const totalWidth =
     displaySize.width + webcamSize.width + getSafeSpace(canvasLayout);

@@ -7,18 +7,19 @@ import type {
 } from "../../config/scenes";
 import type { Theme } from "../../config/themes";
 import { COLORS } from "../../config/themes";
-import { shouldInlineTransitionSubtitles } from "../animations/subtitle-transitions/should-transition-subtitle";
-import { getSubtitleTransform } from "../animations/subtitle-transitions/subtitle-transitions";
+import { shouldInlineTransitionSubtitles } from "../animations/caption-transitions/should-transition-subtitle";
+import { getSubtitleTransform } from "../animations/caption-transitions/subtitle-transitions";
 import { Captions } from "./Captions";
 import { useCaptions } from "./Editor/captions-provider";
-import { postprocessSubtitles } from "./processing/postprocess-subs";
 import { getBorderWidthForSubtitles, getSubsAlign } from "./Segment";
 import {
   TransitionFromPreviousSubtitles,
   TransitionToNextSubtitles,
 } from "./TransitionBetweenSubtitles";
+import { layoutCaptions } from "./processing/layout-captions";
+import { postprocessCaptions } from "./processing/postprocess-subs";
 
-const LINE_HEIGHT = 1.2;
+const LINE_HEIGHT = 2;
 
 export const Subs: React.FC<{
   trimStart: number;
@@ -53,14 +54,19 @@ export const Subs: React.FC<{
   });
 
   const whisperOutput = useCaptions();
+
   const postprocessed = useMemo(() => {
-    return postprocessSubtitles({
+    const words = postprocessCaptions({
       subTypes: whisperOutput,
+    });
+
+    return layoutCaptions({
       boxWidth: subtitleLayout.width,
       maxLines: subtitleLines,
       fontSize: subtitleFontSize,
       canvasLayout,
       subtitleType,
+      words,
     });
   }, [
     whisperOutput,
@@ -73,9 +79,7 @@ export const Subs: React.FC<{
 
   const outer: React.CSSProperties = useMemo(() => {
     const backgroundColor =
-      subtitleType === "square"
-        ? COLORS[theme].SUBTITLES_BACKGROUND
-        : undefined;
+      subtitleType === "square" ? COLORS[theme].CAPTIONS_BACKGROUND : undefined;
 
     return {
       fontSize: subtitleFontSize,

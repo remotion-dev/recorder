@@ -31,7 +31,7 @@ export const getLandscapeDisplayEnterOrExit = ({
 
   if (otherScene.layout.displayLayout === null) {
     // landscape, Slide in from left
-    if (isWebCamRight(currentScene.finalWebcamPosition)) {
+    if (isWebCamRight(currentScene.webcamPosition)) {
       return {
         layout: {
           ...currentScene.layout.displayLayout,

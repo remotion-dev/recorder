@@ -1,6 +1,6 @@
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { getSafeSpace } from "../../config/layout";
-import type { FinalWebcamPosition } from "../../config/scenes";
+import type { WebcamPosition } from "../../config/scenes";
 import {} from "../animations/webcam-transitions";
 import {
   isWebCamAtBottom,
@@ -24,7 +24,7 @@ export const getCaptionsLayout = ({
   canvasLayout: CanvasLayout;
   canvasSize: Dimensions;
   webcamLayout: Layout;
-  webcamPosition: FinalWebcamPosition;
+  webcamPosition: WebcamPosition;
   displayLayout: Dimensions | null;
   fontSize: number;
 }): Layout => {

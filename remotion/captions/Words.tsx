@@ -1,10 +1,10 @@
 import React from "react";
 import type { Theme } from "../../config/themes";
-import type { Segment } from "./types";
 import { WordComp } from "./Word";
+import type { CaptionPage } from "./types";
 
 export const Words: React.FC<{
-  segment: Segment;
+  segment: CaptionPage;
   theme: Theme;
   startFrame: number;
 }> = ({ segment, startFrame, theme }) => {

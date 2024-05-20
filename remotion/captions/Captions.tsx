@@ -2,13 +2,13 @@ import type { CanvasLayout } from "../../config/layout";
 import type { Theme } from "../../config/themes";
 import type { SubtitleType } from "./Segment";
 import { CaptionSentence } from "./Segment";
-import type { Segment } from "./types";
+import type { CaptionPage } from "./types";
 
 export const Captions: React.FC<{
   trimStart: number;
   canvasLayout: CanvasLayout;
   theme: Theme;
-  segments: Segment[];
+  segments: CaptionPage[];
   subtitleType: SubtitleType;
   fontSize: number;
   lines: number;

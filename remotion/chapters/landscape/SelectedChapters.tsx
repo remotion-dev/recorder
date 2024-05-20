@@ -11,12 +11,12 @@ import {
   makeOutTransition,
 } from "../../animations/widescreen-chapter-transitions";
 import type { ChapterType } from "../make-chapters";
-import { getWidescreenChapterStyle } from "./layout";
 import {
   CHAPTER_HEIGHT,
   CHAPTER_VERTICAL_MARGIN,
   WideLayoutChapter,
 } from "./WideLayoutChapter";
+import { getWidescreenChapterStyle } from "./layout";
 
 export const LandscapeChapters: React.FC<{
   scene: VideoSceneAndMetadata;
@@ -76,20 +76,18 @@ export const LandscapeChapters: React.FC<{
     (CHAPTER_HEIGHT + CHAPTER_VERTICAL_MARGIN * 2) * shownChapters.length -
     CHAPTER_VERTICAL_MARGIN * 2;
 
-  const { finalWebcamPosition } = scene;
-
-  const rightAligned = isWebCamRight(finalWebcamPosition);
+  const rightAligned = isWebCamRight(scene.webcamPosition);
 
   const styles = useMemo((): React.CSSProperties => {
     const currentStyle = getWidescreenChapterStyle(scene, tableOfContentHeight);
 
     const previousChapterStyle =
-      previousVideoScene && previousVideoScene.finalWebcamPosition !== "center"
+      previousVideoScene && previousVideoScene.webcamPosition !== "center"
         ? getWidescreenChapterStyle(previousVideoScene, tableOfContentHeight)
         : null;
 
     const nextChapterStyle =
-      nextVideoScene && nextVideoScene.finalWebcamPosition !== "center"
+      nextVideoScene && nextVideoScene.webcamPosition !== "center"
         ? getWidescreenChapterStyle(nextVideoScene, tableOfContentHeight)
         : null;
 
@@ -130,7 +128,7 @@ export const LandscapeChapters: React.FC<{
     }
 
     // Only if the webcam is in the same place
-    if (previousVideoScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+    if (previousVideoScene.webcamPosition !== scene.webcamPosition) {
       return false;
     }
 
@@ -156,7 +154,7 @@ export const LandscapeChapters: React.FC<{
     chapters,
     previousVideoScene,
     scene.chapter,
-    scene.finalWebcamPosition,
+    scene.webcamPosition,
   ]);
 
   // Should slide to the next chapter?
@@ -172,7 +170,7 @@ export const LandscapeChapters: React.FC<{
     }
 
     // Only if the webcam is in the same place
-    if (nextVideoScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+    if (nextVideoScene.webcamPosition !== scene.webcamPosition) {
       return false;
     }
 
@@ -202,7 +200,7 @@ export const LandscapeChapters: React.FC<{
     chapters,
     nextVideoScene,
     scene.chapter,
-    scene.finalWebcamPosition,
+    scene.webcamPosition,
   ]);
 
   // Should the chapter have it's highlight animated in the beginning?
@@ -223,7 +221,7 @@ export const LandscapeChapters: React.FC<{
     }
 
     // Only if the webcam is in the same place
-    if (previousVideoScene.finalWebcamPosition !== scene.finalWebcamPosition) {
+    if (previousVideoScene.webcamPosition !== scene.webcamPosition) {
       return false;
     }
 
@@ -233,7 +231,7 @@ export const LandscapeChapters: React.FC<{
     }
 
     return true;
-  }, [previousVideoScene, scene.chapter, scene.finalWebcamPosition]);
+  }, [previousVideoScene, scene.chapter, scene.webcamPosition]);
 
   if (scene.layout.displayLayout === null) {
     return null;

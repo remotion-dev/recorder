@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { existsSync, readdirSync } from "fs";
 import path from "path";
-import { SUBS_PREFIX, WEBCAM_PREFIX } from "../../config/cameras";
+import { CAPTIONS_PREFIX, WEBCAM_PREFIX } from "../../config/cameras";
 import { captionFile } from "../captions/caption-file";
 import { ensureWhisper } from "../captions/install-whisper";
 
@@ -49,7 +49,7 @@ export const transcribeVideo = async (
 
     const outPath = path.join(
       folderPath,
-      `${(fileName.split(".")[0] as string).replace(WEBCAM_PREFIX, SUBS_PREFIX)}.json`,
+      `${(fileName.split(".")[0] as string).replace(WEBCAM_PREFIX, CAPTIONS_PREFIX)}.json`,
     );
 
     if (existsSync(outPath)) {

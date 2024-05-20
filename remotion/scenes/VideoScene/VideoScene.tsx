@@ -47,7 +47,7 @@ export const VideoScene: React.FC<{
   return (
     <>
       <AbsoluteFill>
-        {sceneAndMetadata.pair.display ? (
+        {sceneAndMetadata.cameras.display ? (
           <Display
             scene={sceneAndMetadata}
             enterProgress={enterProgress}
@@ -64,14 +64,14 @@ export const VideoScene: React.FC<{
         {
           // TODO: Chapters are disabled if a webcam position is center
           canvasLayout === "landscape" &&
-          sceneAndMetadata.finalWebcamPosition !== "center" &&
+          sceneAndMetadata.webcamPosition !== "center" &&
           !(
             nextScene?.type === "video-scene" &&
-            nextScene.finalWebcamPosition === "center"
+            nextScene.webcamPosition === "center"
           ) &&
           !(
             previousScene?.type === "video-scene" &&
-            previousScene.finalWebcamPosition === "center"
+            previousScene.webcamPosition === "center"
           ) ? (
             <LandscapeChapters
               scene={sceneAndMetadata}
@@ -89,7 +89,9 @@ export const VideoScene: React.FC<{
           ) : null
         }
         <Webcam
-          bRolls={sceneAndMetadata.pair.display ? [] : sceneAndMetadata.bRolls}
+          bRolls={
+            sceneAndMetadata.cameras.display ? [] : sceneAndMetadata.bRolls
+          }
           currentScene={sceneAndMetadata}
           endAt={endAt}
           enterProgress={enterProgress}
@@ -103,10 +105,10 @@ export const VideoScene: React.FC<{
           bRollType={sceneAndMetadata.layout.bRollType}
         />
       </AbsoluteFill>
-      {sceneAndMetadata.pair.subs ? (
+      {sceneAndMetadata.cameras.captions ? (
         <WaitForFonts>
           <CaptionOverlay
-            file={sceneAndMetadata.pair.subs}
+            file={sceneAndMetadata.cameras.captions}
             theme={theme}
             trimStart={startFrom}
           >
@@ -134,8 +136,8 @@ export const VideoScene: React.FC<{
           displayLayout={sceneAndMetadata.layout.displayLayout}
           webcamLayout={sceneAndMetadata.layout.webcamLayout}
           didTransitionIn={getShouldTransitionIn({
-            previousScene,
-            scene: sceneAndMetadata,
+            previousSceneAndMetadata: previousScene,
+            sceneAndMetadata: sceneAndMetadata,
             canvasLayout,
           })}
         />

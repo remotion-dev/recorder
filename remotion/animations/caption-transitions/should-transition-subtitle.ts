@@ -39,7 +39,7 @@ export const shouldInlineTransitionSubtitles = ({
       nextSubtitleLayout.top === currentSubtitleLayout.top;
 
     return (
-      nextScene.finalWebcamPosition === currentScene.finalWebcamPosition &&
+      nextScene.webcamPosition === currentScene.webcamPosition &&
       Boolean(currentScene.videos.display) ===
         Boolean(nextScene.videos.display) &&
       !layoutsAreTheSameBox

@@ -25,7 +25,7 @@ export const getChapterOutTransition = ({
   currentScene: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
 }): OutTransition => {
-  const isCurrentlyLeft = !isWebCamRight(currentScene.finalWebcamPosition);
+  const isCurrentlyLeft = !isWebCamRight(currentScene.webcamPosition);
 
   if (nextScene === null || nextScene.type !== "video-scene") {
     return "left";
@@ -35,9 +35,9 @@ export const getChapterOutTransition = ({
     return "none";
   }
 
-  const isCurrentlyTop = !isWebCamAtBottom(currentScene.finalWebcamPosition);
-  const isNextLeft = !isWebCamRight(nextScene.finalWebcamPosition);
-  const isNextTop = !isWebCamAtBottom(nextScene.finalWebcamPosition);
+  const isCurrentlyTop = !isWebCamAtBottom(currentScene.webcamPosition);
+  const isNextLeft = !isWebCamRight(nextScene.webcamPosition);
+  const isNextTop = !isWebCamAtBottom(nextScene.webcamPosition);
 
   if (isCurrentlyLeft && !isNextLeft) {
     return "left";
@@ -58,7 +58,7 @@ export const getChapterOutTransition = ({
   if (
     isGrowingFromMiniature({ firstScene: currentScene, secondScene: nextScene })
   ) {
-    if (isWebCamAtBottom(nextScene.finalWebcamPosition)) {
+    if (isWebCamAtBottom(nextScene.webcamPosition)) {
       return "up";
     }
 
@@ -86,7 +86,7 @@ export const getChapterInTransition = ({
       secondScene: currentScene,
     })
   ) {
-    if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
+    if (isWebCamAtBottom(currentScene.webcamPosition)) {
       return "from-top";
     }
 

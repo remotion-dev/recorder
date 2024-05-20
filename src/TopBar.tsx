@@ -1,21 +1,21 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import type { MediaSources } from "./RecordButton";
+import { RecordButton } from "./RecordButton";
 import { fetchProjectFolders } from "./actions/fetch-project-folders";
 import { NewFolderDialog } from "./components/NewFolderDialog";
 import { SelectedFolder } from "./components/SelectedFolder";
 import { SmallSpinner } from "./components/SmallSpinner";
-import { Button } from "./components/ui/button";
 import type { CurrentBlobs } from "./components/UseThisTake";
 import {
-  currentBlobsInitialState,
   UseThisTake,
+  currentBlobsInitialState,
 } from "./components/UseThisTake";
+import { Button } from "./components/ui/button";
 import {
   loadFolderFromUrl,
   loadSelectedFolder,
   persistSelectedFolder,
-} from "./helpers/get-projects";
-import type { MediaSources } from "./RecordButton";
-import { RecordButton } from "./RecordButton";
+} from "./helpers/get-folders";
 
 const topBarContainer: React.CSSProperties = {
   display: "flex",

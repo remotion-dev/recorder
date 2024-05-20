@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import fs, { createWriteStream } from "fs";
 import path from "path";
-import { convertVideosA } from "../convert-and-trim-video";
+import { convertVideosA } from "../convert-video";
 
 export const handleVideoUpload = (req: Request, res: Response) => {
   try {

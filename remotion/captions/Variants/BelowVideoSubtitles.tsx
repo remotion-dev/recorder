@@ -1,12 +1,12 @@
 import type { CanvasLayout } from "../../../config/layout";
 import type { Theme } from "../../../config/themes";
-import { getHorizontalPaddingForSubtitles } from "../processing/postprocess-subs";
-import type { Segment } from "../types";
+import { getHorizontalPaddingForSubtitles } from "../processing/layout-captions";
+import type { CaptionPage } from "../types";
 import { Words } from "../Words";
 import { LINE_HEIGHT } from "./SquareSubtitles";
 
 export const BelowVideoSubtitles: React.FC<{
-  segment: Segment;
+  segment: CaptionPage;
   startFrame: number;
   theme: Theme;
   canvasLayout: CanvasLayout;

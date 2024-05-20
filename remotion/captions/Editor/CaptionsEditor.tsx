@@ -5,16 +5,18 @@ import { AbsoluteFill } from "remotion";
 import type { Word } from "../../../config/autocorrect";
 import type { Theme } from "../../../config/themes";
 import { whisperWordToWord } from "../processing/whisper-word-to-word";
-import type { WhisperOutput } from "../types";
+import type { WhisperCppOutput } from "../types";
 import { EditWord } from "./EditWord";
 import { SubsEditorFooter } from "./Footer";
 import { SubsEditorHeader } from "./Header";
-import { captionEditorPortal, FOOTER_HEIGHT, HEADER_HEIGHT } from "./layout";
+import { FOOTER_HEIGHT, HEADER_HEIGHT, captionEditorPortal } from "./layout";
 import { useCaptionOverlay } from "./use-caption-overlay";
 
 export const CaptionsEditor: React.FC<{
-  whisperOutput: WhisperOutput;
-  setWhisperOutput: React.Dispatch<React.SetStateAction<WhisperOutput | null>>;
+  whisperOutput: WhisperCppOutput;
+  setWhisperOutput: React.Dispatch<
+    React.SetStateAction<WhisperCppOutput | null>
+  >;
   filePath: string;
   initialWord: Word;
   trimStart: number;
@@ -29,7 +31,7 @@ export const CaptionsEditor: React.FC<{
 }) => {
   const overlay = useCaptionOverlay();
   const setAndSaveWhisperOutput = useCallback(
-    (updater: (old: WhisperOutput) => WhisperOutput) => {
+    (updater: (old: WhisperCppOutput) => WhisperCppOutput) => {
       setWhisperOutput((old) => {
         if (old === null) {
           return null;

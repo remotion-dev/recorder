@@ -29,10 +29,8 @@ const removeLeadingNumber = (label: string) => {
   return label.replace(/^\d+- /, "").trim();
 };
 
-export const formatLabel = (device: Omit<MediaDeviceInfo, "toJSON">) => {
-  const { label } = device;
-
-  const withoutUsb = removeUsbIdentifier(label);
+export const formatDeviceLabel = (device: Omit<MediaDeviceInfo, "toJSON">) => {
+  const withoutUsb = removeUsbIdentifier(device.label);
   const withoutBuiltIn = removeBuiltIn(withoutUsb);
   const withoutVirtual = removeVirtual(withoutBuiltIn);
   const stringFromBraces = takeStringInBraces(withoutVirtual);

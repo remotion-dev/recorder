@@ -38,8 +38,8 @@ export const getSquareWebcamStartOrEndLayout = ({
 
   // Same position horizontally, webcam can just move to the new position
   if (
-    isWebCamAtBottom(otherScene.finalWebcamPosition) ===
-    isWebCamAtBottom(currentScene.finalWebcamPosition)
+    isWebCamAtBottom(otherScene.webcamPosition) ===
+    isWebCamAtBottom(currentScene.webcamPosition)
   ) {
     return {
       layout: otherScene.layout.webcamLayout,
@@ -49,7 +49,7 @@ export const getSquareWebcamStartOrEndLayout = ({
 
   // Display is moving from bottom to top or vice versa
   // Webcam will animate out of the edge and appear from the other side
-  if (isWebCamAtBottom(currentScene.finalWebcamPosition)) {
+  if (isWebCamAtBottom(currentScene.webcamPosition)) {
     return {
       layout: {
         ...currentLayout,

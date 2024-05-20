@@ -4,12 +4,12 @@ import type { Word } from "../../config/autocorrect";
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import type { Theme } from "../../config/themes";
 import { FadeSentence } from "./FadeSentence";
-import type { Segment } from "./types";
 import { BelowVideoSubtitles } from "./Variants/BelowVideoSubtitles";
 import { OverlayedCenterSubtitles } from "./Variants/OverlayedCenterSubtitles";
 import { LINE_HEIGHT, SquareSubtitles } from "./Variants/SquareSubtitles";
+import type { CaptionPage } from "./types";
 
-const getStartOfSegment = (segment: Segment) => {
+const getStartOfSegment = (segment: CaptionPage) => {
   if (segment.words.length === 0) {
     return 0;
   }
@@ -17,7 +17,7 @@ const getStartOfSegment = (segment: Segment) => {
   return (segment.words[0] as Word).firstTimestamp;
 };
 
-const getEndOfSegment = (segment: Segment) => {
+const getEndOfSegment = (segment: CaptionPage) => {
   if (segment.words.length === 0) {
     return 0;
   }
@@ -127,7 +127,7 @@ export const getBorderWidthForSubtitles = (subtitleType: SubtitleType) => {
 };
 
 export const CaptionSentence: React.FC<{
-  segment: Segment;
+  segment: CaptionPage;
   isFirst: boolean;
   isLast: boolean;
   trimStart: number;

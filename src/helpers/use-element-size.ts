@@ -34,7 +34,6 @@ export const useElementSize = (
 
       // The contentRect returns the width without any `scale()`'s being applied. The height is wrong
       const { target } = entry;
-      console.log({ entry });
       // The clientRect returns the size with `scale()` being applied.
       const [newSize] = target.getClientRects();
 
@@ -64,8 +63,8 @@ export const useElementSize = (
         prevState &&
         prevState.width === rect.width &&
         prevState.height === rect.height &&
-        prevState.left === rect.x &&
-        prevState.top === rect.y;
+        prevState.left === rect.left &&
+        prevState.top === rect.top;
 
       if (isSame) {
         return prevState;

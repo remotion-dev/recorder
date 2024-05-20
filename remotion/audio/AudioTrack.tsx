@@ -111,7 +111,7 @@ export const AudioTrack: React.FC<{
     addedUpDurations += metadataForScene.durationInFrames;
     const isTransitioningOut = getShouldTransitionOut({
       sceneAndMetadata: scene,
-      nextScene: scenesAndMetadata[i + 1] ?? null,
+      nextSceneAndMetadata: scenesAndMetadata[i + 1] ?? null,
       canvasLayout,
     });
     if (isTransitioningOut) {
