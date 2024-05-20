@@ -41,8 +41,8 @@ export const makeChapters = ({
     const previousScene = scenes[i - 1] ?? null;
 
     const isTransitioningIn = getShouldTransitionIn({
-      scene,
-      previousScene,
+      sceneAndMetadata: scene,
+      previousSceneAndMetadata: previousScene,
       canvasLayout,
     });
 

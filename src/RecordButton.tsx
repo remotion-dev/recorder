@@ -4,9 +4,9 @@ import { BlinkingCircle, RecordCircle } from "./BlinkingCircle";
 import { Button } from "./components/ui/button";
 import type { CurrentBlobs } from "./components/UseThisTake";
 import { currentBlobsInitialState } from "./components/UseThisTake";
+import { Prefix } from "./helpers/prefixes";
 import { useKeyPress } from "./helpers/use-key-press";
 import { Timer } from "./Timer";
-import type { Prefix } from "./Views";
 
 export type MediaSources = {
   [key in Prefix]: MediaStream | null;

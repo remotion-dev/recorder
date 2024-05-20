@@ -1,11 +1,11 @@
 import type { CanvasLayout } from "../../../config/layout";
-import { getHorizontalPaddingForSubtitles } from "../processing/postprocess-subs";
-import type { Segment } from "../types";
+import { getHorizontalPaddingForSubtitles } from "../processing/layout-captions";
+import type { CaptionPage } from "../types";
 import { Words } from "../Words";
 import { LINE_HEIGHT } from "./SquareSubtitles";
 
 export const OverlayedCenterSubtitles: React.FC<{
-  segment: Segment;
+  segment: CaptionPage;
   startFrame: number;
   canvasLayout: CanvasLayout;
 }> = ({ segment, startFrame, canvasLayout }) => {

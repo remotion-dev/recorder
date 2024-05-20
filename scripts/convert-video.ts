@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import { existsSync, unlinkSync } from "node:fs";
 import path from "path";
-import { prefixes } from "../src/Views";
+import { prefixes } from "../src/helpers/prefixes";
 import { getDownloadsFolder } from "./get-downloads-folder";
 import { checkVideoIntegrity } from "./server/check-video-integrity";
 

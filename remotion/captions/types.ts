@@ -15,17 +15,17 @@ export type WhisperWord = {
   text: string;
 };
 
-export type WhisperOutput = {
+export type WhisperCppOutput = {
   transcription: WhisperWord[];
   result: {
     language: string;
   };
 };
 
-export type SubTypes = {
-  segments: Segment[];
+export type CaptionPage = {
+  words: Word[];
 };
 
-export type Segment = {
-  words: Word[];
+export type LayoutedCaptions = {
+  segments: CaptionPage[];
 };

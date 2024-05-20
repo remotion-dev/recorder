@@ -1,12 +1,7 @@
 /* eslint-disable no-negated-condition */
 /* eslint-disable no-alert */
 import { useCallback, useMemo, useRef, useState } from "react";
-import {
-  ALTERNATIVE1_PREFIX,
-  ALTERNATIVE2_PREFIX,
-  DISPLAY_PREFIX,
-  WEBCAM_PREFIX,
-} from "../config/cameras";
+import { WEBCAM_PREFIX } from "../config/cameras";
 import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
@@ -22,6 +17,7 @@ import { VolumeMeter } from "./components/VolumeMeter";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
 import type { SelectedSource } from "./helpers/get-selected-video-source";
 import { getSelectedVideoSource } from "./helpers/get-selected-video-source";
+import { Prefix } from "./helpers/prefixes";
 import { PrefixAndResolution } from "./PrefixAndResolution";
 import { ToggleRotate } from "./Rotate";
 import { Stream } from "./Stream";
@@ -47,14 +43,6 @@ const viewName: React.CSSProperties = {
   padding: 4,
   paddingLeft: 10,
 };
-
-export const prefixes = [
-  WEBCAM_PREFIX,
-  DISPLAY_PREFIX,
-  ALTERNATIVE1_PREFIX,
-  ALTERNATIVE2_PREFIX,
-] as const;
-export type Prefix = (typeof prefixes)[number];
 
 const localStorageKey = "showCropIndicator";
 

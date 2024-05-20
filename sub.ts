@@ -1,6 +1,6 @@
 import { existsSync, lstatSync, readdirSync } from "node:fs";
 import path from "path";
-import { SUBS_PREFIX, WEBCAM_PREFIX } from "./config/cameras";
+import { CAPTIONS_PREFIX, WEBCAM_PREFIX } from "./config/cameras";
 import { captionFile } from "./scripts/captions/caption-file";
 import { ensureWhisper } from "./scripts/captions/install-whisper";
 
@@ -25,7 +25,7 @@ for (const folder of foldersInPublicFolder) {
 
     const outPath = path.join(
       absoluteFolder,
-      `${(file.split(".")[0] as string).replace(WEBCAM_PREFIX, SUBS_PREFIX)}.json`,
+      `${(file.split(".")[0] as string).replace(WEBCAM_PREFIX, CAPTIONS_PREFIX)}.json`,
     );
 
     if (existsSync(outPath)) {

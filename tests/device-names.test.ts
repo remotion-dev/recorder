@@ -1,9 +1,9 @@
 import { expect, test } from "bun:test";
-import { formatLabel } from "../src/helpers/device-labels";
+import { formatDeviceLabel } from "../src/helpers/format-device-label";
 
 test("remove usb identifier ", () => {
   expect(
-    formatLabel({
+    formatDeviceLabel({
       deviceId:
         "dc1cdbc69d0aa62f2268026df6613b2d9f3dff499864e3a71485d93177298549",
       kind: "videoinput",
@@ -16,7 +16,7 @@ test("remove usb identifier ", () => {
 
 test("remove Speaker tag ", () => {
   expect(
-    formatLabel({
+    formatDeviceLabel({
       deviceId:
         "4d1eadce39fe6b8f80ccb8289da7b75c2ad498b49d908309bb03d498d36cdecd",
       kind: "audiooutput",
@@ -29,7 +29,7 @@ test("remove Speaker tag ", () => {
 
 test("remove (Built-in) ", () => {
   expect(
-    formatLabel({
+    formatDeviceLabel({
       deviceId: "default",
       kind: "audioinput",
       label: "Default - MacBook Pro Microphone (Built-in)",
@@ -41,7 +41,7 @@ test("remove (Built-in) ", () => {
 
 test("remove (Virtual) ", () => {
   expect(
-    formatLabel({
+    formatDeviceLabel({
       deviceId:
         "85ab9579e48914aeb630250c61ff7986b9f615c92762ce549cb53ebed346c327",
       kind: "audioinput",
@@ -54,7 +54,7 @@ test("remove (Virtual) ", () => {
 
 test("Simple label should stay unaffected ", () => {
   expect(
-    formatLabel({
+    formatDeviceLabel({
       deviceId:
         "931f56f2372d9681293bad225147f488dc7f49c4bf319d55abf01afbb601b1bd",
       kind: "videoinput",
@@ -67,7 +67,7 @@ test("Simple label should stay unaffected ", () => {
 
 test("Linkbuds S test ", () => {
   expect(
-    formatLabel({
+    formatDeviceLabel({
       deviceId:
         "50a6694639ca4046a0417487bdf7b7d7ff9ebecdacfdedbb1e475d9249b177c5",
       kind: "audioinput",

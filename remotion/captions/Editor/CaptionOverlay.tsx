@@ -3,10 +3,10 @@ import type { StaticFile } from "remotion";
 import { continueRender, delayRender, watchStaticFile } from "remotion";
 import type { Word } from "../../../config/autocorrect";
 import type { Theme } from "../../../config/themes";
-import type { WhisperOutput } from "../types";
+import type { WhisperCppOutput } from "../types";
+import { CaptionsEditor } from "./CaptionsEditor";
 import type { CaptionsContextType } from "./captions-provider";
 import { CaptionsProvider } from "./captions-provider";
-import { CaptionsEditor } from "./CaptionsEditor";
 import { CaptionOverlayProvider } from "./use-caption-overlay";
 
 export const CaptionOverlay: React.FC<{
@@ -15,7 +15,7 @@ export const CaptionOverlay: React.FC<{
   theme: Theme;
   trimStart: number;
 }> = ({ children, file, theme, trimStart }) => {
-  const [whisperOutput, setWhisperOutput] = useState<WhisperOutput | null>(
+  const [whisperOutput, setWhisperOutput] = useState<WhisperCppOutput | null>(
     null,
   );
   const [handle] = useState(() => delayRender());

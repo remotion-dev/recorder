@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import type { WhisperOutput } from "../types";
+import type { WhisperCppOutput } from "../types";
 
 export type CaptionsContextType = {
-  whisperOutput: WhisperOutput | null;
-  setWhisperOutput: (word: WhisperOutput | null) => void;
+  whisperOutput: WhisperCppOutput | null;
+  setWhisperOutput: (word: WhisperCppOutput | null) => void;
 };
 
 const context = React.createContext<CaptionsContextType>({
@@ -13,7 +13,7 @@ const context = React.createContext<CaptionsContextType>({
   },
 });
 
-export const useCaptions = (): WhisperOutput => {
+export const useCaptions = (): WhisperCppOutput => {
   const ctx = useContext(context);
 
   if (!ctx.whisperOutput) {

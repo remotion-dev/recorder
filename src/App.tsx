@@ -7,13 +7,13 @@ import {
   WEBCAM_PREFIX,
 } from "../config/cameras";
 import "./App.css";
-import { Button } from "./components/ui/button";
-import type { Label } from "./helpers/device-labels";
-import { formatLabel } from "./helpers/device-labels";
 import type { MediaSources } from "./RecordButton";
 import { TopBar } from "./TopBar";
-import type { Prefix } from "./Views";
 import { View } from "./Views";
+import { Button } from "./components/ui/button";
+import type { Label } from "./helpers/format-device-label";
+import { formatDeviceLabel } from "./helpers/format-device-label";
+import { Prefix } from "./helpers/prefixes";
 
 export const getDeviceLabel = (device: MediaDeviceInfo): string => {
   const labels: Label[] = JSON.parse(localStorage.getItem("labels") ?? "[]");
@@ -22,14 +22,14 @@ export const getDeviceLabel = (device: MediaDeviceInfo): string => {
     return found.label;
   }
 
-  return formatLabel(device);
+  return formatDeviceLabel(device);
 };
 
 const storeLabelsToLS = (devices: MediaDeviceInfo[]) => {
   const labels: Label[] = JSON.parse(localStorage.getItem("labels") ?? "[]");
   devices.forEach((device) => {
     const id = device.deviceId;
-    const cleanLabel = formatLabel(device);
+    const cleanLabel = formatDeviceLabel(device);
 
     if (!labels.some((l) => l.id === id) && cleanLabel !== "") {
       labels.push({ id, label: cleanLabel });

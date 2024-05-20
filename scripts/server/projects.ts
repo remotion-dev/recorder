@@ -17,7 +17,7 @@ export const getProjectFolder = (
     readdir(publicDir, { withFileTypes: true }, (err, files) => {
       if (err) {
         console.error("Error reading directory:", err);
-        throw new Error("Error reading directory: ", err);
+        throw new Error("Error reading directory: " + err.stack);
       }
 
       const folders = files.filter((file) => file.isDirectory());

@@ -88,7 +88,7 @@ export const Webcam: React.FC<{
           <VideoWithBlur
             startFrom={startFrom}
             endAt={endAt}
-            src={currentScene.pair.webcam.src}
+            src={currentScene.cameras.webcam.src}
             containerLayout={webcamLayout}
             videoSize={currentScene.videos.webcam}
             enableBlur={shouldEnableSceneBackgroundBlur(

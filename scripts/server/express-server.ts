@@ -24,7 +24,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const startExpressServer = async () => {
   console.log("Starting recording interface");
   const app = express();
-  app.use(bodyParser.json());
+  app.use(
+    bodyParser.json({
+      limit: "100mb",
+    }),
+  );
 
   const rootDir = path.join(__dirname, "..", "..");
   const publicDir = path.join(rootDir, "public");

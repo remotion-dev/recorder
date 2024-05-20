@@ -20,7 +20,6 @@ export const NoScenes: React.FC = () => {
   return (
     <AbsoluteFill>
       <div style={container}>
-        {" "}
         <div>No scenes defined for this video.</div>
         <div>Add a scene in the right sidebar -&gt;</div>
       </div>

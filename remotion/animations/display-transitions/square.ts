@@ -43,8 +43,8 @@ export const getSquareDisplayEnterOrExit = ({
 
   // 1. From bottom left/right to top: Display should disappear top edge
   if (
-    isWebCamAtBottom(currentScene.finalWebcamPosition) &&
-    !isWebCamAtBottom(otherScene.finalWebcamPosition)
+    isWebCamAtBottom(currentScene.webcamPosition) &&
+    !isWebCamAtBottom(otherScene.webcamPosition)
   ) {
     return {
       layout: {
@@ -57,8 +57,8 @@ export const getSquareDisplayEnterOrExit = ({
 
   // 2. From top to bottom left/right: Display should appear from bottom edge
   if (
-    !isWebCamAtBottom(currentScene.finalWebcamPosition) &&
-    isWebCamAtBottom(otherScene.finalWebcamPosition)
+    !isWebCamAtBottom(currentScene.webcamPosition) &&
+    isWebCamAtBottom(otherScene.webcamPosition)
   ) {
     return {
       layout: {
@@ -70,7 +70,7 @@ export const getSquareDisplayEnterOrExit = ({
   }
 
   // 3. From top right to top: Should slide display to left
-  if (currentScene.finalWebcamPosition === "top-right") {
+  if (currentScene.webcamPosition === "top-right") {
     return {
       layout: {
         ...currentScene.layout.displayLayout,
@@ -82,7 +82,7 @@ export const getSquareDisplayEnterOrExit = ({
   }
 
   // 4. From top left to top: Should slide display to right
-  if (currentScene.finalWebcamPosition === "top-left") {
+  if (currentScene.webcamPosition === "top-left") {
     return {
       layout: {
         ...currentScene.layout.displayLayout,
@@ -94,7 +94,7 @@ export const getSquareDisplayEnterOrExit = ({
   }
 
   // 5. From bottom left to bottom: Display should disappear to right
-  if (currentScene.finalWebcamPosition === "bottom-left") {
+  if (currentScene.webcamPosition === "bottom-left") {
     return {
       layout: {
         ...currentScene.layout.displayLayout,
@@ -110,7 +110,7 @@ export const getSquareDisplayEnterOrExit = ({
   }
 
   // 6. From bottom right to bottom: Display should disappear to left
-  if (currentScene.finalWebcamPosition === "bottom-right") {
+  if (currentScene.webcamPosition === "bottom-right") {
     return {
       layout: {
         ...currentScene.layout.displayLayout,

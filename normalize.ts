@@ -15,7 +15,7 @@ type FfmpegVolumeOutput = {
   target_offset: string;
 };
 
-const id = "zoomblur";
+const id = "reactqa";
 
 const files = await $`ls public/${id}`.quiet();
 const webcamFiles = files.stdout
@@ -34,9 +34,10 @@ for (const file of webcamFiles) {
   const indexOfLineBeforeStart = lines.findIndex((line) =>
     line.includes("[Parsed_loudnorm_0 @"),
   );
-  const json = JSON.parse(
-    lines.slice(indexOfLineBeforeStart + 1).join("\n"),
-  ) as FfmpegVolumeOutput;
+  const remaining = lines.slice(indexOfLineBeforeStart + 1);
+  const indexOfOut = remaining.findIndex((i) => i.startsWith("[out#0"));
+  const actual = indexOfOut === -1 ? remaining : remaining.slice(0, indexOfOut);
+  const json = JSON.parse(actual.join("\n")) as FfmpegVolumeOutput;
   console.log(path, `${json.input_i}dB`);
   decibelValues.push(parseFloat(json.input_i));
 }

@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { formatLabel } from "../src/helpers/device-labels";
+import { formatDeviceLabel } from "../src/helpers/format-device-label";
 type SimpleMediaDeviceInfo = Omit<MediaDeviceInfo, "toJSON">;
 
 const logiStreamCamDefault: SimpleMediaDeviceInfo = {
@@ -129,79 +129,89 @@ const speakersRodeNtUsb: SimpleMediaDeviceInfo = {
 };
 
 test("Test for logiStreamCamDefault", () => {
-  expect(formatLabel(logiStreamCamDefault)).toEqual("Logitech StreamCam");
+  expect(formatDeviceLabel(logiStreamCamDefault)).toEqual("Logitech StreamCam");
 });
 
 test("Test for logiStreamCamCommunicationMic", () => {
-  expect(formatLabel(logiStreamCamCommunicationMic)).toEqual(
+  expect(formatDeviceLabel(logiStreamCamCommunicationMic)).toEqual(
     "Logitech StreamCam",
   );
 });
 
 test("Test for HDMI Microphone", () => {
-  expect(formatLabel(hdmiMicrophone)).toEqual("Cam Link 4K");
+  expect(formatDeviceLabel(hdmiMicrophone)).toEqual("Cam Link 4K");
 });
 
 test("Test for Line Microphone", () => {
-  expect(formatLabel(elgatoSoundCapture)).toEqual("Elgato Sound Capture");
+  expect(formatDeviceLabel(elgatoSoundCapture)).toEqual("Elgato Sound Capture");
 });
 
 test("Test for Game Capture HD60 X Microphone", () => {
-  expect(formatLabel(gameCaptureMicrophone)).toEqual("Game Capture HD60 X");
+  expect(formatDeviceLabel(gameCaptureMicrophone)).toEqual(
+    "Game Capture HD60 X",
+  );
 });
 
 test("Test for RODE NT-USB Microphone", () => {
-  expect(formatLabel(rodeNtUsbMicrophone)).toEqual("RODE NT-USB");
+  expect(formatDeviceLabel(rodeNtUsbMicrophone)).toEqual("RODE NT-USB");
 });
 
 test("Test for Logitech StreamCam Microphone", () => {
-  expect(formatLabel(logitechStreamCamMicrophone)).toEqual(
+  expect(formatDeviceLabel(logitechStreamCamMicrophone)).toEqual(
     "Logitech StreamCam",
   );
 });
 
 test("Test for Logitech StreamCam Video", () => {
-  expect(formatLabel(logitechStreamCamVideo)).toEqual("Logitech StreamCam");
+  expect(formatDeviceLabel(logitechStreamCamVideo)).toEqual(
+    "Logitech StreamCam",
+  );
 });
 
 test("Test for Game Capture HD60 X Video", () => {
-  expect(formatLabel(gameCaptureHD60XVideo)).toEqual("Game Capture HD60 X");
+  expect(formatDeviceLabel(gameCaptureHD60XVideo)).toEqual(
+    "Game Capture HD60 X",
+  );
 });
 
 test("Test for Cam Link 4K Video", () => {
-  expect(formatLabel(camLink4KVideo)).toEqual("Cam Link 4K");
+  expect(formatDeviceLabel(camLink4KVideo)).toEqual("Cam Link 4K");
 });
 
 test("Test for Logi Capture Video", () => {
-  expect(formatLabel(logiCaptureVideo)).toEqual("Logi Capture");
+  expect(formatDeviceLabel(logiCaptureVideo)).toEqual("Logi Capture");
 });
 
 test("Test for LUMIX Webcam Video", () => {
-  expect(formatLabel(lumixWebcamVideo)).toEqual("LUMIX Webcam Software");
+  expect(formatDeviceLabel(lumixWebcamVideo)).toEqual("LUMIX Webcam Software");
 });
 
 test("Test for OBS Virtual Camera Video", () => {
-  expect(formatLabel(obsVirtualCameraVideo)).toEqual("OBS Virtual Camera");
+  expect(formatDeviceLabel(obsVirtualCameraVideo)).toEqual(
+    "OBS Virtual Camera",
+  );
 });
 
 test("Test for Elgato Screen Link Video", () => {
-  expect(formatLabel(elgatoScreenLinkVideo)).toEqual("Elgato Screen Link");
+  expect(formatDeviceLabel(elgatoScreenLinkVideo)).toEqual(
+    "Elgato Screen Link",
+  );
 });
 
 test("Test for Default Audio Output", () => {
-  expect(formatLabel(p27q20Default)).toEqual(
+  expect(formatDeviceLabel(p27q20Default)).toEqual(
     "AMD High Definition Audio Device",
   );
 });
 
 test("Test for Communications Speakers", () => {
-  expect(formatLabel(communicationsSpeakers)).toEqual("RODE NT-USB");
+  expect(formatDeviceLabel(communicationsSpeakers)).toEqual("RODE NT-USB");
 });
 
 test("Test for Realtek Digital Output", () => {
-  expect(formatLabel(realtekDigitalOutput)).toEqual("Realtek(R) Audio");
+  expect(formatDeviceLabel(realtekDigitalOutput)).toEqual("Realtek(R) Audio");
 });
 
 test("Test for Speakers RODE NT-USB", () => {
-  expect(formatLabel(speakersRodeNtUsb)).toEqual("RODE NT-USB");
+  expect(formatDeviceLabel(speakersRodeNtUsb)).toEqual("RODE NT-USB");
 });

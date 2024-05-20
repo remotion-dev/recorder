@@ -1,9 +1,6 @@
-import type {
-  FinalWebcamPosition,
-  SceneAndMetadata,
-} from "../../../config/scenes";
+import type { SceneAndMetadata, WebcamPosition } from "../../../config/scenes";
 
-export const isWebCamAtBottom = (webcamPosition: FinalWebcamPosition) => {
+export const isWebCamAtBottom = (webcamPosition: WebcamPosition) => {
   if (webcamPosition === "center") {
     throw new Error("Webcam position cannot be center if checking at bottom");
   }
@@ -11,7 +8,7 @@ export const isWebCamAtBottom = (webcamPosition: FinalWebcamPosition) => {
   return webcamPosition === "bottom-left" || webcamPosition === "bottom-right";
 };
 
-export const isWebCamRight = (webcamPosition: FinalWebcamPosition) => {
+export const isWebCamRight = (webcamPosition: WebcamPosition) => {
   if (webcamPosition === "center") {
     throw new Error("Webcam position cannot be center if checking at right");
   }

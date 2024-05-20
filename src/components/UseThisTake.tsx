@@ -2,8 +2,8 @@ import React, { useCallback } from "react";
 import { convertFilesInServer } from "../actions/convert-files";
 import { transcribeVideoInServer } from "../actions/transcribe-video-in-server";
 import { downloadVideo } from "../helpers/download-video";
+import { Prefix } from "../helpers/prefixes";
 import { uploadFileToServer } from "../helpers/upload-file";
-import { Prefix } from "../Views";
 import { Button } from "./ui/button";
 
 export type CurrentBlobs =

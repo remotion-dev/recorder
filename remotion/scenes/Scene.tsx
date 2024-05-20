@@ -111,7 +111,7 @@ const InnerScene: React.FC<
         theme={theme}
         chapters={chapters}
         willTransitionToNextScene={getShouldTransitionOut({
-          nextScene,
+          nextSceneAndMetadata: nextScene,
           sceneAndMetadata,
           canvasLayout,
         })}
@@ -130,14 +130,14 @@ const SceneWithTransition: React.FC<Props> = (props) => {
   const { fps, durationInFrames, width } = useVideoConfig();
   const frame = useCurrentFrame();
   const shouldEnter = getShouldTransitionIn({
-    scene: props.sceneAndMetadata,
-    previousScene: props.previousScene,
+    sceneAndMetadata: props.sceneAndMetadata,
+    previousSceneAndMetadata: props.previousScene,
     canvasLayout: props.canvasLayout,
   });
 
   const shouldExit = getShouldTransitionOut({
     sceneAndMetadata: props.sceneAndMetadata,
-    nextScene: props.nextScene,
+    nextSceneAndMetadata: props.nextScene,
     canvasLayout: props.canvasLayout,
   });
   const enter = shouldEnter

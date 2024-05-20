@@ -1,27 +1,27 @@
 import type { Dimensions } from "@remotion/layout-utils";
 import type { CanvasLayout } from "../../config/layout";
 import type {
-  ComparableWebcamPosition,
   SceneAndMetadata,
   VideoSceneAndMetadata,
+  WebcamPositionForComparison,
 } from "../../config/scenes";
 import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 
 const getComparableWebcamPosition = (
   sceneAndMetaData: VideoSceneAndMetadata,
   canvasLayout: CanvasLayout,
-): ComparableWebcamPosition => {
+): WebcamPositionForComparison => {
   if (canvasLayout !== "square") {
-    return sceneAndMetaData.finalWebcamPosition;
+    return sceneAndMetaData.webcamPosition;
   }
 
   if (sceneAndMetaData.videos.display) {
-    return sceneAndMetaData.finalWebcamPosition;
+    return sceneAndMetaData.webcamPosition;
   }
 
   if (
-    sceneAndMetaData.finalWebcamPosition === "bottom-left" ||
-    sceneAndMetaData.finalWebcamPosition === "bottom-right"
+    sceneAndMetaData.webcamPosition === "bottom-left" ||
+    sceneAndMetaData.webcamPosition === "bottom-right"
   ) {
     return "bottom";
   }
@@ -50,15 +50,15 @@ const getHasSameSize = (
 // We can do a transition if the layout is not the same.
 export const getShouldTransitionOut = ({
   sceneAndMetadata,
-  nextScene,
+  nextSceneAndMetadata,
   canvasLayout,
 }: {
   sceneAndMetadata: SceneAndMetadata;
-  nextScene: SceneAndMetadata | null;
+  nextSceneAndMetadata: SceneAndMetadata | null;
   canvasLayout: CanvasLayout;
 }) => {
   // Can not transition if this is the last scene
-  if (nextScene === null) {
+  if (nextSceneAndMetadata === null) {
     return false;
   }
 
@@ -70,7 +70,7 @@ export const getShouldTransitionOut = ({
   // If not both are video scenes, we can transition (slide)
   if (
     sceneAndMetadata.type !== "video-scene" ||
-    nextScene.type !== "video-scene"
+    nextSceneAndMetadata.type !== "video-scene"
   ) {
     return true;
   }
@@ -78,7 +78,7 @@ export const getShouldTransitionOut = ({
   // If the webcam position changed, we can transition (move webcam)
   if (
     getComparableWebcamPosition(sceneAndMetadata, canvasLayout) !==
-    getComparableWebcamPosition(nextScene, canvasLayout)
+    getComparableWebcamPosition(nextSceneAndMetadata, canvasLayout)
   ) {
     return true;
   }
@@ -87,7 +87,7 @@ export const getShouldTransitionOut = ({
   if (
     !getHasSameSize(
       sceneAndMetadata.layout.webcamLayout,
-      nextScene.layout.webcamLayout,
+      nextSceneAndMetadata.layout.webcamLayout,
     )
   ) {
     return true;
@@ -97,7 +97,7 @@ export const getShouldTransitionOut = ({
   if (
     !getHasSameSize(
       sceneAndMetadata.layout.displayLayout,
-      nextScene.layout.displayLayout,
+      nextSceneAndMetadata.layout.displayLayout,
     )
   ) {
     return true;
@@ -108,25 +108,27 @@ export const getShouldTransitionOut = ({
 };
 
 export const getShouldTransitionIn = ({
-  scene,
-  previousScene,
+  sceneAndMetadata: sceneAndMetadata,
+  previousSceneAndMetadata,
   canvasLayout,
 }: {
-  scene: SceneAndMetadata;
-  previousScene: SceneAndMetadata | null;
+  sceneAndMetadata: SceneAndMetadata;
+  previousSceneAndMetadata: SceneAndMetadata | null;
   canvasLayout: CanvasLayout;
 }) => {
-  if (previousScene === null) {
+  if (previousSceneAndMetadata === null) {
     return false;
   }
 
   return getShouldTransitionOut({
-    sceneAndMetadata: previousScene,
-    nextScene: scene,
+    sceneAndMetadata: previousSceneAndMetadata,
+    nextSceneAndMetadata: sceneAndMetadata,
     canvasLayout,
   });
 };
 
+// A duration that factors in the transition duration
+// to when added up you get the total duration of a video
 export const getSumUpDuration = ({
   scene,
   previousScene,
@@ -136,11 +138,15 @@ export const getSumUpDuration = ({
   previousScene: SceneAndMetadata | null;
   canvasLayout: CanvasLayout;
 }) => {
-  return getShouldTransitionIn({
-    scene,
-    previousScene,
-    canvasLayout,
-  })
-    ? scene.durationInFrames - SCENE_TRANSITION_DURATION
-    : scene.durationInFrames;
+  if (
+    getShouldTransitionIn({
+      sceneAndMetadata: scene,
+      previousSceneAndMetadata: previousScene,
+      canvasLayout,
+    })
+  ) {
+    return scene.durationInFrames - SCENE_TRANSITION_DURATION;
+  }
+
+  return scene.durationInFrames;
 };

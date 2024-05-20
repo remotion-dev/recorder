@@ -42,7 +42,7 @@ export const Display: React.FC<{
     throw new Error("No display");
   }
 
-  if (scene.pair.display === null) {
+  if (scene.cameras.display === null) {
     throw new Error("No display");
   }
 
@@ -90,7 +90,7 @@ export const Display: React.FC<{
             muted
             startFrom={startFrom}
             endAt={endAt}
-            src={scene.pair.display.src}
+            src={scene.cameras.display.src}
             style={{
               width: displayLayout.width,
               height: displayLayout.height,

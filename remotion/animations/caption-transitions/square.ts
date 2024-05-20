@@ -21,8 +21,8 @@ const getEnterAndExitOfFullscreenBox = ({
     return scene.layout.subtitleLayout;
   }
 
-  const previouslyAtBottom = isWebCamAtBottom(otherScene.finalWebcamPosition);
-  const currentlyAtBottom = isWebCamAtBottom(scene.finalWebcamPosition);
+  const previouslyAtBottom = isWebCamAtBottom(otherScene.webcamPosition);
+  const currentlyAtBottom = isWebCamAtBottom(scene.webcamPosition);
   const changedVerticalPosition = previouslyAtBottom !== currentlyAtBottom;
 
   // Changing from top to bottom or vice versa will push the subtitle out of the screen
@@ -47,14 +47,14 @@ const getEnterAndExitOfFullscreenBox = ({
   }
 
   // Now we expect that the other scene has a display video, and the webcam will shrink
-  const top = isWebCamAtBottom(scene.finalWebcamPosition)
+  const top = isWebCamAtBottom(scene.webcamPosition)
     ? otherScene.layout.webcamLayout.top -
       scene.layout.subtitleLayout.height -
       getSafeSpace("square")
     : getSafeSpace("square") * 2 + otherScene.layout.webcamLayout.height;
 
   // If the webcam moves to the top right corner, the subtitle should come from left corner
-  if (!isWebCamRight(otherScene.finalWebcamPosition)) {
+  if (!isWebCamRight(otherScene.webcamPosition)) {
     return {
       ...scene.layout.subtitleLayout,
       left: -scene.layout.subtitleLayout.width,
@@ -80,16 +80,16 @@ const getEnterAndExitLayoutOfWebcamPositionChange = ({
   canvasHeight: number;
   canvasWidth: number;
 }) => {
-  if (scene.finalWebcamPosition === otherScene.finalWebcamPosition) {
+  if (scene.webcamPosition === otherScene.webcamPosition) {
     return otherScene.layout.subtitleLayout;
   }
 
   // Horizontal position change, move the subtitle over the edge
   if (
-    isWebCamAtBottom(scene.finalWebcamPosition) !==
-    isWebCamAtBottom(otherScene.finalWebcamPosition)
+    isWebCamAtBottom(scene.webcamPosition) !==
+    isWebCamAtBottom(otherScene.webcamPosition)
   ) {
-    if (isWebCamAtBottom(scene.finalWebcamPosition)) {
+    if (isWebCamAtBottom(scene.webcamPosition)) {
       return {
         ...scene.layout.subtitleLayout,
         top: canvasHeight,
@@ -104,7 +104,7 @@ const getEnterAndExitLayoutOfWebcamPositionChange = ({
 
   // Vertical position change
   // Webcam moves from right to left
-  if (isWebCamRight(scene.finalWebcamPosition)) {
+  if (isWebCamRight(scene.webcamPosition)) {
     return {
       ...scene.layout.subtitleLayout,
       left: -scene.layout.subtitleLayout.width,
@@ -144,16 +144,16 @@ const getEnterAndExitOfBentoLayout = ({
 
   // We now assume the other scene has no display, webcam is getting bigger
   // and we need to animate the subtitles out
-  const left = isWebCamRight(scene.finalWebcamPosition)
+  const left = isWebCamRight(scene.webcamPosition)
     ? -scene.layout.subtitleLayout.width
     : canvasWidth;
 
   // Vertical position change
   if (
-    isWebCamAtBottom(otherScene.finalWebcamPosition) !==
-    isWebCamAtBottom(scene.finalWebcamPosition)
+    isWebCamAtBottom(otherScene.webcamPosition) !==
+    isWebCamAtBottom(scene.webcamPosition)
   ) {
-    if (isWebCamAtBottom(scene.finalWebcamPosition)) {
+    if (isWebCamAtBottom(scene.webcamPosition)) {
       return {
         ...scene.layout.subtitleLayout,
         top: getSafeSpace("square"),
@@ -171,7 +171,7 @@ const getEnterAndExitOfBentoLayout = ({
     };
   }
 
-  const top = isWebCamAtBottom(scene.finalWebcamPosition)
+  const top = isWebCamAtBottom(scene.webcamPosition)
     ? canvasHeight -
       otherScene.layout.webcamLayout.height -
       getSafeSpace("square")
