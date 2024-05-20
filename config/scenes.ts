@@ -1,7 +1,7 @@
 import type { StaticFile } from "remotion";
 import { staticFile } from "remotion";
 import { z } from "zod";
-import { VideoSceneLayout } from "../remotion/layout/get-layout";
+import type { VideoSceneLayout } from "../remotion/layout/get-layout";
 import { brand, linkType, platform } from "./endcard";
 import type { Dimensions } from "./layout";
 import { canvasLayout } from "./layout";
@@ -15,9 +15,9 @@ const availablePositions = [
   "bottom-right",
 ] as const;
 
-export type WebcamPosition = (typeof availablePositions)[number];
-export type FinalWebcamPosition = WebcamPosition | "center";
-export type ComparableWebcamPosition = FinalWebcamPosition | "bottom" | "top";
+type DesiredWebcamPosition = (typeof availablePositions)[number];
+export type WebcamPosition = DesiredWebcamPosition | "center";
+export type WebcamPositionForComparison = WebcamPosition | "bottom" | "top";
 
 const availablePositionsAndPrevious = [
   "previous",
@@ -44,7 +44,7 @@ const videoScene = z.object({
   bRolls: z.array(bRoll).default([]),
 });
 
-export type VideoScene = z.infer<typeof videoScene>;
+export type SelectableVideoScene = z.infer<typeof videoScene>;
 
 const baseScene = z.object({
   music,
@@ -111,10 +111,10 @@ export const videoConf = z.object({
   scenes: z.array(selectableScenes),
 });
 
-export type Pair = {
+export type Cameras = {
   webcam: StaticFile;
   display: StaticFile | null;
-  subs: StaticFile | null;
+  captions: StaticFile | null;
   alternative1: StaticFile | null;
   alternative2: StaticFile | null;
   timestamp: number;
@@ -133,20 +133,20 @@ export type BRollWithDimensions = BRoll & {
 
 export type VideoSceneAndMetadata = {
   type: "video-scene";
-  scene: VideoScene;
+  scene: SelectableVideoScene;
   durationInFrames: number;
   from: number;
   videos: SceneVideos;
   layout: VideoSceneLayout;
-  pair: Pair;
-  finalWebcamPosition: FinalWebcamPosition;
+  cameras: Cameras;
+  webcamPosition: WebcamPosition;
   chapter: string | null;
   startFrame: number;
   endFrame: number;
   bRolls: BRollWithDimensions[];
 };
 
-export type OtherScene = {
+type OtherScene = {
   type: "other-scene";
   scene: ComputedScene | SelectableScene;
   durationInFrames: number;

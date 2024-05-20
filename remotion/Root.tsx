@@ -1,7 +1,7 @@
 import { Composition } from "remotion";
 import { videoConf } from "../config/scenes";
-import { calcMetadata } from "./calc-metadata";
 import { Main } from "./Main";
+import { calcMetadata } from "./calculate-metadata/calc-metadata";
 
 export const Root = () => {
   return (
