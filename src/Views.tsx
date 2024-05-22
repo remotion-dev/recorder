@@ -1,10 +1,15 @@
 /* eslint-disable no-negated-condition */
 /* eslint-disable no-alert */
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { WEBCAM_PREFIX } from "../config/cameras";
 import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
+import { PrefixAndResolution } from "./PrefixAndResolution";
+import { ToggleRotate } from "./Rotate";
+import { Stream } from "./Stream";
+import { ToggleCrop } from "./ToggleCrop";
+import { VolumeMeter } from "./components/VolumeMeter";
 import { Button } from "./components/ui/button";
 import {
   Select,
@@ -13,15 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./components/ui/select";
-import { VolumeMeter } from "./components/VolumeMeter";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
 import type { SelectedSource } from "./helpers/get-selected-video-source";
 import { getSelectedVideoSource } from "./helpers/get-selected-video-source";
 import { Prefix } from "./helpers/prefixes";
-import { PrefixAndResolution } from "./PrefixAndResolution";
-import { ToggleRotate } from "./Rotate";
-import { Stream } from "./Stream";
-import { ToggleCrop } from "./ToggleCrop";
 
 const viewContainer: React.CSSProperties = {
   display: "flex",
@@ -52,8 +52,6 @@ export const View: React.FC<{
   mediaStream: MediaStream | null;
   prefix: Prefix;
 }> = ({ devices, setMediaStream, prefix, mediaStream }) => {
-  const sourceRef = useRef<HTMLVideoElement>(null);
-
   const initialCropIndicatorState = useMemo(() => {
     return (
       localStorage.getItem(localStorageKey) === "true" &&
@@ -87,17 +85,7 @@ export const View: React.FC<{
   }, []);
 
   const selectScreen = useCallback(async () => {
-    const stream = await window.navigator.mediaDevices
-      // GetDisplayMedia asks the user for permission to capture the screen
-      .getDisplayMedia({ video: true });
-
-    setMediaStream(prefix, stream);
-    if (!sourceRef.current) {
-      return;
-    }
-
-    sourceRef.current.srcObject = stream;
-    sourceRef.current.play();
+    setSelectedVideoSource({ type: "display" });
   }, [prefix, setMediaStream]);
 
   const onValueChange = useCallback(

@@ -6,8 +6,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Spinner } from "./components/Spinner";
 import { CropIndicator } from "./CropIndicator";
+import { Spinner } from "./components/Spinner";
+import { getVideoStream } from "./get-video-stream";
 import type { SelectedSource } from "./helpers/get-selected-video-source";
 import { Prefix } from "./helpers/prefixes";
 
@@ -22,6 +23,15 @@ const container: React.CSSProperties = {
 };
 
 type StreamState = "initial" | "loading" | "loaded";
+
+export type SelectedVideoSource =
+  | {
+      type: "camera";
+      constrain: ConstrainDOMString;
+    }
+  | {
+      type: "display";
+    };
 
 export const Stream: React.FC<{
   prefix: Prefix;
@@ -98,32 +108,15 @@ export const Stream: React.FC<{
     }
 
     setStreamState("loading");
-    const video: MediaTrackConstraints = {
-      deviceId: selectedVideoSource.deviceId,
-      width: preferPortrait
-        ? undefined
-        : selectedVideoSource.maxWidth
-          ? { min: selectedVideoSource.maxWidth }
-          : undefined,
-      height: preferPortrait
-        ? selectedVideoSource.maxHeight
-          ? { min: selectedVideoSource.maxHeight }
-          : undefined
-        : undefined,
-    };
-
-    const mediaStreamConstraints: MediaStreamConstraints = {
-      video,
-      audio:
-        recordAudio && selectedAudioSource
-          ? { deviceId: selectedAudioSource }
-          : undefined,
-    };
 
     const cleanup: (() => void)[] = [];
 
-    window.navigator.mediaDevices
-      .getUserMedia(mediaStreamConstraints)
+    getVideoStream({
+      preferPortrait,
+      recordAudio,
+      selectedAudioSource,
+      selectedVideoSource,
+    })
       .then((stream) => {
         if (current) {
           current.srcObject = stream;
