@@ -77,31 +77,6 @@ export const Root = () => {
         }}
         calculateMetadata={calcMetadata}
       />
-      <Composition
-        component={Main}
-        id="test-folder"
-        schema={videoConf}
-        defaultProps={{
-          theme: "light" as const,
-          canvasLayout: "square" as const,
-          scenes: [
-            {
-              type: "videoscene" as const,
-              webcamPosition: "previous" as const,
-              duration: null,
-              transitionToNextScene: true,
-              newChapter: "",
-              startOffset: 0,
-              stopChapteringAfterThis: false,
-              music: "previous" as const,
-              bRolls: [],
-            },
-          ],
-          scenesAndMetadata: [],
-          platform: "youtube" as const,
-        }}
-        calculateMetadata={calcMetadata}
-      />
     </>
   );
 };
