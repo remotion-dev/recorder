@@ -1,8 +1,13 @@
-export type SelectedSource = {
-  deviceId: string;
-  maxWidth: number | null;
-  maxHeight: number | null;
-};
+export type SelectedSource =
+  | {
+      type: "camera";
+      deviceId: string;
+      maxWidth: number | null;
+      maxHeight: number | null;
+    }
+  | {
+      type: "display";
+    };
 
 export const getSelectedVideoSource = ({
   value,
@@ -23,6 +28,7 @@ export const getSelectedVideoSource = ({
   ) {
     const capabilities = device.getCapabilities();
     return {
+      type: "camera",
       deviceId: device.deviceId,
       maxWidth: capabilities.width?.max ?? null,
       maxHeight: capabilities.height?.max ?? null,
@@ -30,6 +36,7 @@ export const getSelectedVideoSource = ({
   }
 
   return {
+    type: "camera",
     deviceId: value,
     maxWidth: null,
     maxHeight: null,

@@ -14,6 +14,10 @@ export const canRotateCamera = ({
     return false;
   }
 
+  if (selectedSource.type !== "camera") {
+    return false;
+  }
+
   if (resolution === null) {
     return false;
   }
