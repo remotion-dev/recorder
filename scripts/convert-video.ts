@@ -46,7 +46,7 @@ type ServerProps = {
   customFileLocation: string;
 };
 
-export const convertVideosA = async (props: ScriptProps | ServerProps) => {
+export const convertVideos = async (props: ScriptProps | ServerProps) => {
   const { latestTimestamp, caller } = props;
 
   let fileLocation;

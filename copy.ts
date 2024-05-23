@@ -1,6 +1,6 @@
 import fs from "fs";
 import { WEBCAM_PREFIX } from "./config/cameras";
-import { convertAndTrimVideo } from "./scripts/convert-and-trim-video";
+import { convertVideos } from "./scripts/convert-video";
 import { getDownloadsFolder } from "./scripts/get-downloads-folder";
 
 const prefix = "empty";
@@ -35,7 +35,7 @@ export const copyToDownloads = async () => {
     process.exit();
   }
 
-  await convertAndTrimVideo({ caller: "script", latestTimestamp, prefix });
+  await convertVideos({ caller: "script", latestTimestamp, prefix });
 
   console.log("Copied", latest);
 };
