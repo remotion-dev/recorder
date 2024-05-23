@@ -15,7 +15,7 @@ import {
   UPLOAD_VIDEO,
 } from "./constants";
 import { createProject } from "./create-project";
-import { convertVideos, handleVideoUpload } from "./handle-video";
+import { handleVideoConvertRequest, handleVideoUpload } from "./handle-video";
 import { getProjectFolder } from "./projects";
 import { transcribeVideo } from "./transcribe-video";
 
@@ -59,7 +59,7 @@ export const startExpressServer = async () => {
   });
 
   app.post(UPLOAD_VIDEO, handleVideoUpload);
-  app.post(PROCESS_VIDEOS, convertVideos);
+  app.post(PROCESS_VIDEOS, handleVideoConvertRequest);
   app.post(TRANSCRIBE_VIDEO, (req: Request, res: Response) => {
     transcribeVideo(req, res, publicDir);
   });

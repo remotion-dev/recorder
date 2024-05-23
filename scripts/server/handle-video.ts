@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import fs, { createWriteStream } from "fs";
 import path from "path";
-import { convertVideosA } from "../convert-video";
+import { convertVideos } from "../convert-video";
 
 export const handleVideoUpload = (req: Request, res: Response) => {
   try {
@@ -38,8 +38,11 @@ export const handleVideoUpload = (req: Request, res: Response) => {
   }
 };
 
-export const convertVideos = async (req: Request, res: Response) => {
-  console.log("converting videos...");
+export const handleVideoConvertRequest = async (
+  req: Request,
+  res: Response,
+) => {
+  console.log("Converting videos...");
   try {
     const { endDateAsString, folder } = req.query;
 
@@ -63,7 +66,7 @@ export const convertVideos = async (req: Request, res: Response) => {
       });
     }
 
-    await convertVideosA({
+    await convertVideos({
       caller: "server",
       latestTimestamp: endDate,
       customFileLocation: absoluteFolderPath,
