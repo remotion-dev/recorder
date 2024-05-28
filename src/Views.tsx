@@ -1,6 +1,6 @@
 /* eslint-disable no-negated-condition */
 /* eslint-disable no-alert */
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { WEBCAM_PREFIX } from "../config/cameras";
 import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
@@ -19,8 +19,12 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
-import type { SelectedSource } from "./helpers/get-selected-video-source";
-import { getSelectedVideoSource } from "./helpers/get-selected-video-source";
+import {
+  SelectedSource,
+  VIDEO_SIZES,
+  VideoSize,
+  getSelectedVideoSource,
+} from "./helpers/get-selected-video-source";
 import { Prefix } from "./helpers/prefixes";
 
 const viewContainer: React.CSSProperties = {
@@ -70,6 +74,14 @@ export const View: React.FC<{
   const recordAudio = prefix === WEBCAM_PREFIX;
   const [resolution, setResolution] = useState<Dimensions | null>(null);
   const [preferPortrait, setPreferPortrait] = useState(false);
+  const [activeDeviceId, setActiveDeviceId] = useState<string | null>(null);
+  const [activeVideoSize, setActiveVideoSize] = useState<VideoSize>(
+    VideoSize.HD,
+  );
+  const [activeVideoMaxSize, setActiveVideoMaxSize] = useState<Dimensions>({
+    width: 0,
+    height: 0,
+  });
 
   const onToggleCrop = useCallback(() => {
     setShowCropIndicator((prev) => {
@@ -88,12 +100,33 @@ export const View: React.FC<{
     setSelectedVideoSource({ type: "display" });
   }, [prefix, setMediaStream]);
 
-  const onValueChange = useCallback(
-    (value: string) => {
-      setSelectedVideoSource(getSelectedVideoSource({ value, devices }));
-    },
-    [devices],
-  );
+  useEffect(() => {
+    activeDeviceId &&
+      setSelectedVideoSource(
+        getSelectedVideoSource({
+          value: activeDeviceId,
+          devices,
+          size: activeVideoSize,
+        }),
+      );
+  }, [activeDeviceId, activeVideoSize]);
+
+  useEffect(() => {
+    const device = devices.find((d) => d.deviceId === activeDeviceId);
+
+    if (
+      typeof InputDeviceInfo !== "undefined" &&
+      device instanceof InputDeviceInfo
+    ) {
+      const capabilities = device.getCapabilities();
+      setActiveVideoMaxSize({
+        width: capabilities.width?.max ?? 0,
+        height: capabilities.height?.max ?? 0,
+      });
+    } else {
+      setActiveVideoMaxSize({ width: 0, height: 0 });
+    }
+  }, [activeDeviceId]);
 
   const cameraRotateable = canRotateCamera({
     selectedSource: selectedVideoSource,
@@ -117,7 +150,7 @@ export const View: React.FC<{
             onPressedChange={onToggleRotate}
           />
         ) : null}
-        <Select onValueChange={onValueChange}>
+        <Select onValueChange={(value: string) => setActiveDeviceId(value)}>
           <SelectTrigger>
             <SelectValue placeholder="Select video" />
           </SelectTrigger>
@@ -134,6 +167,29 @@ export const View: React.FC<{
               })}
           </SelectContent>
         </Select>
+        <div>
+          <Select
+            onValueChange={(value: VideoSize) => setActiveVideoSize(value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={VideoSize.HD} />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(VideoSize).map(([key, value]) => (
+                <SelectItem
+                  key={key}
+                  value={value}
+                  disabled={
+                    VIDEO_SIZES[value].width > activeVideoMaxSize.width ||
+                    VIDEO_SIZES[value].height > activeVideoMaxSize.height
+                  }
+                >
+                  <span style={{ whiteSpace: "nowrap" }}>{key}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         {prefix !== WEBCAM_PREFIX ? (
           <Button type="button" onClick={selectScreen}>
