@@ -167,29 +167,30 @@ export const View: React.FC<{
               })}
           </SelectContent>
         </Select>
-        <div>
-          <Select
-            onValueChange={(value: VideoSize) => setActiveVideoSize(value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={VideoSize.HD} />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(VideoSize).map(([key, value]) => (
-                <SelectItem
-                  key={key}
-                  value={value}
-                  disabled={
-                    VIDEO_SIZES[value].width > activeVideoMaxSize.width ||
-                    VIDEO_SIZES[value].height > activeVideoMaxSize.height
-                  }
-                >
-                  <span style={{ whiteSpace: "nowrap" }}>{key}</span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {Boolean(activeDeviceId) && (
+          <div>
+            <Select
+              onValueChange={(value: VideoSize) => setActiveVideoSize(value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={VideoSize.HD} />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(VideoSize)
+                  .filter(
+                    ([, value]) =>
+                      VIDEO_SIZES[value].width <= activeVideoMaxSize.width &&
+                      VIDEO_SIZES[value].height <= activeVideoMaxSize.height,
+                  )
+                  .map(([key, value]) => (
+                    <SelectItem key={key} value={value}>
+                      <span style={{ whiteSpace: "nowrap" }}>{key}</span>
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         {prefix !== WEBCAM_PREFIX ? (
           <Button type="button" onClick={selectScreen}>
