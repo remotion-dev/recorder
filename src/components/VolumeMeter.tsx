@@ -86,3 +86,7 @@ export const VolumeMeter: React.FC<{
     </div>
   );
 };
+
+export const NoVolumeMeter: React.FC = () => {
+  return <div style={{ height: 4, backgroundColor: "#242424" }}></div>;
+};
