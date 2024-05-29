@@ -223,6 +223,10 @@ export const View: React.FC<{
           }}
           canSelectAudio={recordAudio}
           devices={devices}
+          canSelectScreen={prefix === WEBCAM_PREFIX}
+          onPickScreen={() => {
+            selectScreen();
+          }}
         ></StreamPicker>
       </div>
     </div>

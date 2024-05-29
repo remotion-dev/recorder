@@ -168,7 +168,7 @@ const App = () => {
           </>
         ) : null}
       </div>
-      <div style={{ marginBottom: 10 }}>
+      <div style={{ marginBottom: 10, textAlign: "center" }}>
         {showAlternativeViews ? (
           <Button
             variant={"ghost"}
