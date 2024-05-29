@@ -1,6 +1,6 @@
+import { MicIcon } from "lucide-react";
 import React from "react";
 import { Divider } from "./Divider";
-import { MicIcon } from "./StreamPicker";
 
 const container: React.CSSProperties = {
   display: "flex",
