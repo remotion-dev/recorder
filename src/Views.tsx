@@ -155,6 +155,28 @@ export const View: React.FC<{
     });
   }, [preferPortrait, resolution, selectedVideoSource]);
 
+  const onPickVideo = useCallback(
+    (device: MediaDeviceInfo) => {
+      setSelectedVideoDevice(device.deviceId);
+      if (recordAudio && !selectedAudioDevice) {
+        return;
+      }
+      setShowPicker(false);
+    },
+    [recordAudio, selectedAudioDevice],
+  );
+
+  const onPickAudio = useCallback(
+    (device: MediaDeviceInfo) => {
+      setSelectedAudioDevice(device.deviceId);
+      if (!selectedVideoDevice) {
+        return;
+      }
+      setShowPicker(false);
+    },
+    [selectedVideoDevice],
+  );
+
   return (
     <div style={viewContainer}>
       <div style={topBar}>
@@ -205,18 +227,12 @@ export const View: React.FC<{
         />
         {showPicker ? (
           <StreamPicker
-            onPickVideo={(device) => {
-              setSelectedVideoDevice(device.deviceId);
-            }}
-            onPickAudio={(device) => {
-              setSelectedAudioDevice(device.deviceId);
-            }}
+            onPickVideo={onPickVideo}
+            onPickAudio={onPickAudio}
             canSelectAudio={recordAudio}
             devices={devices}
             canSelectScreen={prefix !== WEBCAM_PREFIX}
-            onPickScreen={() => {
-              selectScreen();
-            }}
+            onPickScreen={selectScreen}
           />
         ) : null}
       </div>
