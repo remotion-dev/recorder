@@ -1,11 +1,8 @@
 import { CameraIcon } from "lucide-react";
-import React from "react";
+import React, { useCallback } from "react";
 import { DisplayIcon } from "../DeviceItem";
 import { Resolution } from "../PrefixAndResolution";
-import { ResolutionLimiter } from "../ResolutionLimiter";
 import { ResolutionAndFps } from "../Stream";
-import { MaxResolution } from "../helpers/get-max-resolution-of-device";
-import { SizeConstraint } from "../helpers/get-selected-video-source";
 import { Divider } from "./Divider";
 
 const container: React.CSSProperties = {
@@ -22,25 +19,32 @@ const spacer: React.CSSProperties = {
   width: 12,
 };
 
+const buttonStyle: React.CSSProperties = {
+  display: "inline",
+  color: "rgba(255, 255, 255, 0.5)",
+  borderBottom: "1px solid",
+};
+
 export const CurrentVideo: React.FC<{
   label: string;
   resolution: ResolutionAndFps | null;
-  sizeConstraint: SizeConstraint | null;
-  maxResolution: MaxResolution | null;
-  setSizeConstraint: React.Dispatch<React.SetStateAction<SizeConstraint>>;
   isScreenshare: boolean;
   onClick: () => void;
-  deviceId: string | null;
+  setResolutionLimiterOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   label,
   resolution,
-  maxResolution,
-  sizeConstraint,
-  setSizeConstraint,
   isScreenshare,
   onClick,
-  deviceId,
+  setResolutionLimiterOpen,
 }) => {
+  const onOpen: React.MouseEventHandler<HTMLButtonElement> = useCallback(
+    (e) => {
+      e.stopPropagation();
+      setResolutionLimiterOpen(true);
+    },
+    [setResolutionLimiterOpen],
+  );
   return (
     <div style={container} onClick={onClick}>
       <Divider></Divider>
@@ -58,15 +62,10 @@ export const CurrentVideo: React.FC<{
           {resolution ? (
             <>
               <Resolution resolution={resolution} />
-              {isScreenshare ? null : deviceId ? (
-                <ResolutionLimiter
-                  sizeConstraint={sizeConstraint}
-                  setSizeConstraint={setSizeConstraint}
-                  maxResolution={maxResolution}
-                  deviceName={label}
-                  deviceId={deviceId}
-                />
-              ) : null}
+              <div style={{ width: 4 }}></div>
+              <button onClick={onOpen} style={buttonStyle}>
+                Change
+              </button>
             </>
           ) : null}
         </span>
