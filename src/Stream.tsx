@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { AbsoluteFill } from "remotion";
 import { Spinner } from "./components/Spinner";
 import type { SelectedSource } from "./helpers/get-selected-video-source";
 import { getVideoStream } from "./helpers/get-video-stream";
@@ -13,12 +14,8 @@ import { Prefix } from "./helpers/prefixes";
 
 const container: React.CSSProperties = {
   flex: 1,
-  overflow: "hidden",
-  position: "relative",
-  display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  flexDirection: "column",
 };
 
 type StreamState = "initial" | "loading" | "loaded";
@@ -161,7 +158,7 @@ export const Stream: React.FC<{
   }, [setResolution]);
 
   return (
-    <div style={container} id={prefix + "-video-container"}>
+    <AbsoluteFill style={container} id={prefix + "-video-container"}>
       <video
         ref={sourceRef}
         muted
@@ -169,6 +166,6 @@ export const Stream: React.FC<{
         onLoadedMetadata={onLoadedMetadata}
       />
       {streamState === "loading" ? <Spinner /> : null}
-    </div>
+    </AbsoluteFill>
   );
 };
