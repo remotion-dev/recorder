@@ -131,12 +131,16 @@ export const View: React.FC<{
   }, [activeVideoDevice, maxResolution, selectedVideoDevice, sizeConstraint]);
 
   const videoDeviceLabel = useMemo(() => {
+    if (selectedVideoDevice === "display") {
+      return "Screen Share";
+    }
+
     if (!activeVideoDevice) {
       return null;
     }
 
     return getDeviceLabel(activeVideoDevice);
-  }, [activeVideoDevice]);
+  }, [activeVideoDevice, selectedVideoDevice]);
 
   const audioDeviceLabel = useMemo(() => {
     if (!activeAudioDevice) {
@@ -183,7 +187,7 @@ export const View: React.FC<{
         <div style={{ width: 15 }}></div>
         <CurrentVideo
           resolution={resolution}
-          label={videoDeviceLabel ?? "Screen Share"}
+          label={videoDeviceLabel ?? "No video selected"}
           sizeConstraint={sizeConstraint}
           setSizeConstraint={setSizeConstraint}
           maxResolution={maxResolution}

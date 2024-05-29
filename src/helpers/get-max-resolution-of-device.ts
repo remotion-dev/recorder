@@ -24,6 +24,7 @@ export const getMaxResolutionOfDevice = (
   }
 
   const capabilities = device.getCapabilities();
+
   const width = capabilities.width?.max ?? null;
   const height = capabilities.height?.max ?? null;
 
