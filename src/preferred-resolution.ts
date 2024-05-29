@@ -9,12 +9,18 @@ export const setPreferredResolutionForDevice = (
 
 export const getPreferredResolutionForDevice = (deviceId: string | null) => {
   if (deviceId === null) {
-    return null;
+    return {
+      maxSize: null,
+      minimumFps: null,
+    };
   }
 
   const stored = localStorage.getItem(`preferred-resolution-${deviceId}`);
   if (stored === null || stored === "null") {
-    return null;
+    return {
+      maxSize: null,
+      minimumFps: null,
+    };
   }
 
   return stored as VideoSize;
