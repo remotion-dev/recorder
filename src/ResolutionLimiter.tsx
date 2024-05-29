@@ -27,7 +27,7 @@ const buttonStyle: React.CSSProperties = {
 export const ResolutionLimiter: React.FC<{
   maxResolution: MaxResolution | null;
   sizeConstraint: VideoSize | null;
-  setSizeConstraint: React.Dispatch<React.SetStateAction<VideoSize | null>>;
+  setSizeConstraint: (val: VideoSize | null) => void;
   deviceName: string;
 }> = ({
   deviceName,
