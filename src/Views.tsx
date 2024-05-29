@@ -6,7 +6,6 @@ import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
 import { AudioSelector } from "./AudioSelector";
 import { PrefixAndResolution } from "./PrefixAndResolution";
-import { ResolutionLimiter } from "./ResolutionLimiter";
 import { ToggleRotate } from "./Rotate";
 import { Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
@@ -19,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./components/ui/select";
+import { getMaxResolutionOfDevice } from "./get-max-resolution-of-device";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
 import {
   SelectedSource,
@@ -94,27 +94,59 @@ export const View: React.FC<{
     setSelectedVideoSource({ type: "display" });
   }, []);
 
-  useEffect(() => {
-    activeDeviceId &&
-      setSelectedVideoSource(
-        getSelectedVideoSource({
-          deviceId: activeDeviceId,
-          devices,
-          resolutionConstraint: sizeConstraint,
-        }),
-      );
-  }, [activeDeviceId, sizeConstraint, devices]);
+  const activeDevice = useMemo(() => {
+    return devices.find((d) => d.deviceId === activeDeviceId);
+  }, [activeDeviceId, devices]);
 
-  const cameraRotateable = canRotateCamera({
-    selectedSource: selectedVideoSource,
-    preferPortrait,
-    resolution,
-  });
+  const deviceLabel = useMemo(() => {
+    if (!activeDevice) {
+      return null;
+    }
+
+    return getDeviceLabel(activeDevice);
+  }, [activeDevice]);
+
+  const maxResolution = useMemo(() => {
+    if (!activeDevice) {
+      return null;
+    }
+
+    return getMaxResolutionOfDevice(activeDevice);
+  }, [activeDevice]);
+
+  useEffect(() => {
+    if (!activeDevice) {
+      return;
+    }
+
+    setSelectedVideoSource(
+      getSelectedVideoSource({
+        device: activeDevice,
+        resolutionConstraint: sizeConstraint,
+        maxResolution,
+      }),
+    );
+  }, [activeDeviceId, sizeConstraint, devices, activeDevice, maxResolution]);
+
+  const cameraRotateable = useMemo(() => {
+    return canRotateCamera({
+      selectedSource: selectedVideoSource,
+      preferPortrait,
+      resolution,
+    });
+  }, [preferPortrait, resolution, selectedVideoSource]);
 
   return (
     <div style={viewContainer}>
       <div style={viewName}>
-        <PrefixAndResolution prefix={prefix} resolution={resolution} />
+        <PrefixAndResolution
+          deviceName={deviceLabel}
+          setSizeConstraint={setSizeConstraint}
+          sizeConstraint={sizeConstraint}
+          prefix={prefix}
+          resolution={resolution}
+          maxResolution={maxResolution}
+        />
         {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop
             pressed={showCropIndicator}
@@ -144,13 +176,6 @@ export const View: React.FC<{
               })}
           </SelectContent>
         </Select>
-        {resolution && (
-          <ResolutionLimiter
-            sizeConstraint={sizeConstraint}
-            setSizeConstraint={setSizeConstraint}
-            activeResolution={resolution}
-          />
-        )}
 
         {prefix !== WEBCAM_PREFIX ? (
           <Button type="button" onClick={selectScreen}>
