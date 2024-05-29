@@ -44,7 +44,15 @@ export const StreamPicker: React.FC<{
 
   return (
     <AbsoluteFill style={container}>
-      <div style={{ flex: 1 }}>
+      <div
+        style={{
+          flex: 1,
+          opacity:
+            canSelectAudio && selectedVideoDevice && !selectedAudioDevice
+              ? 0.5
+              : 1,
+        }}
+      >
         <div style={title}>Select video</div>
         {canSelectScreen ? (
           <DeviceItem
