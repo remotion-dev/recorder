@@ -1,13 +1,22 @@
-import { VideoSize } from "./helpers/get-selected-video-source";
+import { SizeConstraint } from "./helpers/get-selected-video-source";
 
 export const setPreferredResolutionForDevice = (
   deviceId: string,
-  videoSize: VideoSize | null,
+  videoSize: SizeConstraint | null,
 ) => {
-  localStorage.setItem(`preferred-resolution-${deviceId}`, String(videoSize));
+  localStorage.setItem(
+    `preferred-constraint-${deviceId}`,
+    JSON.stringify(videoSize),
+  );
 };
 
-export const getPreferredResolutionForDevice = (deviceId: string | null) => {
+// The Recorder only records at frame rates at least of 23.976 FPS.
+// This is the lowest frame rate that is common, ignoring all frame rates lower than that.
+export const DEFAULT_MINIMUM_FPS = 23.976;
+
+export const getPreferredResolutionForDevice = (
+  deviceId: string | null,
+): SizeConstraint => {
   if (deviceId === null) {
     return {
       maxSize: null,
@@ -15,7 +24,7 @@ export const getPreferredResolutionForDevice = (deviceId: string | null) => {
     };
   }
 
-  const stored = localStorage.getItem(`preferred-resolution-${deviceId}`);
+  const stored = localStorage.getItem(`preferred-constraint-${deviceId}`);
   if (stored === null || stored === "null") {
     return {
       maxSize: null,
@@ -23,5 +32,5 @@ export const getPreferredResolutionForDevice = (deviceId: string | null) => {
     };
   }
 
-  return stored as VideoSize;
+  return JSON.parse(stored) as SizeConstraint;
 };

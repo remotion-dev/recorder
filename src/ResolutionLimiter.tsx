@@ -16,27 +16,31 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import { MaxResolution } from "./helpers/get-max-resolution-of-device";
-import { VIDEO_SIZES, VideoSize } from "./helpers/get-selected-video-source";
-
-const buttonStyle: React.CSSProperties = {
-  display: "inline",
-  color: "rgba(255, 255, 255, 0.5)",
-  borderBottom: "1px solid",
-};
+import {
+  FPS_AVAILABLE,
+  SizeConstraint,
+  VIDEO_SIZES,
+  VideoSize,
+} from "./helpers/get-selected-video-source";
+import { setPreferredResolutionForDevice } from "./preferred-resolution";
 
 export const ResolutionLimiter: React.FC<{
-  maxResolution: MaxResolution | null;
-  sizeConstraint: VideoSize | null;
-  setSizeConstraint: (val: VideoSize | null) => void;
+  maxResolution: MaxResolution;
+  sizeConstraint: SizeConstraint;
+  setSizeConstraint: React.Dispatch<React.SetStateAction<SizeConstraint>>;
   deviceName: string;
+  deviceId: string;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   deviceName,
   maxResolution,
-  sizeConstraint: videoConstraint,
+  sizeConstraint,
   setSizeConstraint: setActiveVideoSize,
+  deviceId,
+  open,
+  setOpen,
 }) => {
-  const [open, setOpen] = React.useState(false);
-
   const availableLowerResolutions = useMemo(() => {
     return Object.entries(VIDEO_SIZES).filter(([, value]) => {
       if (maxResolution === null) {
@@ -49,55 +53,99 @@ export const ResolutionLimiter: React.FC<{
     });
   }, [maxResolution]);
 
-  const onValueChange = useCallback(
+  const availableHigherFps = useMemo(() => {
+    return FPS_AVAILABLE.filter((fps) => {
+      if (maxResolution === null || maxResolution.frameRate === null) {
+        return true;
+      }
+      return fps <= maxResolution.frameRate;
+    }).reverse();
+  }, [maxResolution]);
+
+  const onResolutionChange = useCallback(
     (value: VideoSize | "full") => {
       if (value === "full") {
-        setActiveVideoSize(null);
+        setActiveVideoSize((v) => {
+          const newSize = {
+            ...v,
+            maxSize: null,
+          };
+          setPreferredResolutionForDevice(deviceId, newSize);
+          return newSize;
+        });
+        setPreferredResolutionForDevice(deviceId, null);
         return;
       }
 
-      setActiveVideoSize(value);
+      setActiveVideoSize((v) => {
+        const newSize = {
+          ...v,
+          maxSize: value,
+        };
+        setPreferredResolutionForDevice(deviceId, newSize);
+        return newSize;
+      });
     },
-    [setActiveVideoSize],
+    [deviceId, setActiveVideoSize],
+  );
+
+  const onFpsChange = useCallback(
+    (value: string | "any") => {
+      if (value === "any") {
+        setActiveVideoSize((v) => {
+          const newState: SizeConstraint = {
+            ...v,
+            minimumFps: null,
+          };
+          setPreferredResolutionForDevice(deviceId, newState);
+
+          return newState;
+        });
+        return;
+      }
+
+      setActiveVideoSize((v) => {
+        const newSize: SizeConstraint = {
+          ...v,
+          minimumFps: Number(value),
+        };
+        setPreferredResolutionForDevice(deviceId, newSize);
+
+        return newSize;
+      });
+    },
+    [deviceId, setActiveVideoSize],
   );
 
   const handleSubmit = useCallback(async () => {
     setOpen(false);
-  }, []);
+  }, [setOpen]);
 
-  const onOpen: React.MouseEventHandler<HTMLButtonElement> = useCallback(
-    (e) => {
-      e.stopPropagation();
-      setOpen(true);
+  const onOpenChange = useCallback(
+    (open: boolean) => {
+      setOpen(open);
     },
-    [],
+    [setOpen],
   );
-
-  const onOpenChange = useCallback((open: boolean) => {
-    setOpen(open);
-  }, []);
 
   const fullResolutionLabel = useMemo(() => {
     if (maxResolution === null) {
       return "Full resolution";
     }
     const { width, height } = maxResolution;
-    if (width && height) {
-      return `Full resolution (${width}x${height})`;
-    }
-    if (width) {
+    if (width && !height) {
       return `Full resolution (${width}p)`;
     }
 
     return "Full resolution";
   }, [maxResolution]);
 
+  const labelForFps = useCallback((fps: number | null) => {
+    return fps === null ? "Default" : `At least ${fps} FPS`;
+  }, []);
+
   return (
     <>
-      <div style={{ width: 4 }}></div>
-      <button onClick={onOpen} style={buttonStyle}>
-        Change
-      </button>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-[460px]">
           <DialogHeader>
@@ -107,10 +155,10 @@ export const ResolutionLimiter: React.FC<{
               experience dropped frames.
             </DialogDescription>
           </DialogHeader>
-          <Select onValueChange={onValueChange}>
+          <Select onValueChange={onResolutionChange}>
             <SelectTrigger>
               <SelectValue
-                placeholder={videoConstraint ?? fullResolutionLabel}
+                placeholder={sizeConstraint.maxSize ?? fullResolutionLabel}
               />
             </SelectTrigger>
             <SelectContent>
@@ -126,6 +174,47 @@ export const ResolutionLimiter: React.FC<{
               {availableLowerResolutions.map(([key]) => (
                 <SelectItem key={key} value={key}>
                   <span style={{ whiteSpace: "nowrap" }}>Limit to {key}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <br />
+          <DialogHeader>
+            <DialogTitle>Minimum frame rate</DialogTitle>
+            {maxResolution.frameRate === null ? (
+              <DialogDescription>
+                {deviceName} might be able to record in higher FPS, but the
+                resolution might drop.
+              </DialogDescription>
+            ) : (
+              <DialogDescription>
+                {deviceName} can record in up to{" "}
+                {Math.floor(maxResolution.frameRate * 100) / 100} FPS, but this
+                might drop the resolution.
+              </DialogDescription>
+            )}
+          </DialogHeader>
+          <Select onValueChange={onFpsChange}>
+            <SelectTrigger>
+              <SelectValue
+                placeholder={labelForFps(sizeConstraint.minimumFps ?? null)}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem key={"any"} value={"any"}>
+                <span
+                  style={{
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Default
+                </span>
+              </SelectItem>
+              {availableHigherFps.map((key) => (
+                <SelectItem key={key} value={String(key)}>
+                  <span style={{ whiteSpace: "nowrap" }}>
+                    {labelForFps(key)}
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>

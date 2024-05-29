@@ -1,11 +1,8 @@
 import { CameraIcon } from "lucide-react";
-import React from "react";
-import { Dimensions } from "../../config/layout";
+import React, { useCallback } from "react";
 import { DisplayIcon } from "../DeviceItem";
 import { Resolution } from "../PrefixAndResolution";
-import { ResolutionLimiter } from "../ResolutionLimiter";
-import { MaxResolution } from "../helpers/get-max-resolution-of-device";
-import { VideoSize } from "../helpers/get-selected-video-source";
+import { ResolutionAndFps } from "../Stream";
 import { Divider } from "./Divider";
 
 const container: React.CSSProperties = {
@@ -22,23 +19,32 @@ const spacer: React.CSSProperties = {
   width: 12,
 };
 
+const buttonStyle: React.CSSProperties = {
+  display: "inline",
+  color: "rgba(255, 255, 255, 0.5)",
+  borderBottom: "1px solid",
+};
+
 export const CurrentVideo: React.FC<{
   label: string;
-  resolution: Dimensions | null;
-  sizeConstraint: VideoSize | null;
-  maxResolution: MaxResolution | null;
-  setSizeConstraint: (val: VideoSize | null) => void;
+  resolution: ResolutionAndFps | null;
   isScreenshare: boolean;
   onClick: () => void;
+  setResolutionLimiterOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   label,
   resolution,
-  maxResolution,
-  sizeConstraint,
-  setSizeConstraint,
   isScreenshare,
   onClick,
+  setResolutionLimiterOpen,
 }) => {
+  const onOpen: React.MouseEventHandler<HTMLButtonElement> = useCallback(
+    (e) => {
+      e.stopPropagation();
+      setResolutionLimiterOpen(true);
+    },
+    [setResolutionLimiterOpen],
+  );
   return (
     <div style={container} onClick={onClick}>
       <Divider></Divider>
@@ -56,14 +62,10 @@ export const CurrentVideo: React.FC<{
           {resolution ? (
             <>
               <Resolution resolution={resolution} />
-              {isScreenshare ? null : (
-                <ResolutionLimiter
-                  sizeConstraint={sizeConstraint}
-                  setSizeConstraint={setSizeConstraint}
-                  maxResolution={maxResolution}
-                  deviceName={label}
-                />
-              )}
+              <div style={{ width: 4 }}></div>
+              <button onClick={onOpen} style={buttonStyle}>
+                Change
+              </button>
             </>
           ) : null}
         </span>

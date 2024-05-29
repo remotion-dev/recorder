@@ -1,3 +1,4 @@
+import { DEFAULT_MINIMUM_FPS } from "../preferred-resolution";
 import { SelectedSource } from "./get-selected-video-source";
 
 const getDisplayStream = async (selectedVideoSource: SelectedSource) => {
@@ -12,19 +13,12 @@ const getDisplayStream = async (selectedVideoSource: SelectedSource) => {
   return stream;
 };
 
-const getCameraStram = ({
-  selectedVideoSource,
-  preferPortrait,
-  recordAudio,
-  selectedAudioSource,
-}: {
-  selectedVideoSource: SelectedSource;
-  preferPortrait: boolean;
-  recordAudio: boolean;
-  selectedAudioSource: ConstrainDOMString | null;
-}) => {
+export const getCameraStreamConstraints = (
+  selectedVideoSource: SelectedSource,
+  preferPortrait: boolean,
+) => {
   if (selectedVideoSource.type !== "camera") {
-    throw new Error("Unknown video source type");
+    return null;
   }
   const video: MediaTrackConstraints = {
     deviceId: selectedVideoSource.deviceId,
@@ -38,10 +32,31 @@ const getCameraStram = ({
         ? { ideal: selectedVideoSource.maxHeight }
         : undefined
       : undefined,
+    frameRate: {
+      min: selectedVideoSource.minFps ?? DEFAULT_MINIMUM_FPS,
+    },
   };
+  return video;
+};
+
+export const getCameraStram = ({
+  selectedVideoSource,
+  preferPortrait,
+  recordAudio,
+  selectedAudioSource,
+}: {
+  selectedVideoSource: SelectedSource;
+  preferPortrait: boolean;
+  recordAudio: boolean;
+  selectedAudioSource: ConstrainDOMString | null;
+}): Promise<MediaStream> => {
+  if (selectedVideoSource.type !== "camera") {
+    throw new Error("Unknown video source type");
+  }
+  const video = getCameraStreamConstraints(selectedVideoSource, preferPortrait);
 
   const mediaStreamConstraints: MediaStreamConstraints = {
-    video,
+    video: video ?? undefined,
     audio:
       recordAudio && selectedAudioSource
         ? { deviceId: selectedAudioSource }
@@ -61,7 +76,7 @@ export const getVideoStream = async ({
   preferPortrait: boolean;
   recordAudio: boolean;
   selectedAudioSource: ConstrainDOMString | null;
-}) => {
+}): Promise<MediaStream> => {
   if (selectedVideoSource.type === "display") {
     return getDisplayStream(selectedVideoSource);
   }

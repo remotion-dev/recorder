@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./deviceitem.module.css";
-import { MaxResolution } from "./helpers/get-max-resolution-of-device";
 
 const deviceRow: React.CSSProperties = {
   display: "flex",
@@ -22,28 +21,9 @@ const label: React.CSSProperties = {
   fontSize: 14,
 };
 
-const subLabel: React.CSSProperties = {
-  ...label,
-  opacity: 0.7,
-};
-
 const iconStyle: React.CSSProperties = {
   width: 16,
   height: 16,
-};
-
-const MaxResolutionLabel: React.FC<{
-  maxResolution: MaxResolution | null;
-}> = ({ maxResolution }) => {
-  if (maxResolution === null) {
-    return null;
-  }
-
-  return (
-    <span style={subLabel}>
-      {maxResolution.width}x{maxResolution.height}
-    </span>
-  );
 };
 
 export const CameraIcon: React.FC = () => {
@@ -93,10 +73,9 @@ const CheckIcon: React.FC = () => {
 export const DeviceItem: React.FC<{
   deviceLabel: string;
   type: "camera" | "microphone" | "screen";
-  maxResolution: MaxResolution | null;
   handleClick: () => void;
   selected: boolean;
-}> = ({ deviceLabel, type, handleClick, maxResolution, selected }) => {
+}> = ({ deviceLabel, type, handleClick, selected }) => {
   return (
     <div className={styles.item} onClick={handleClick} style={deviceRow}>
       <div
@@ -114,7 +93,6 @@ export const DeviceItem: React.FC<{
       {type === "screen" ? <DisplayIcon></DisplayIcon> : null}
       <div style={spacer}></div> <span style={label}>{deviceLabel}</span>
       <div style={{ flex: 1 }}></div>
-      <MaxResolutionLabel maxResolution={maxResolution}></MaxResolutionLabel>
     </div>
   );
 };
