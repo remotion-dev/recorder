@@ -25,7 +25,7 @@ import {
 import { setPreferredResolutionForDevice } from "./preferred-resolution";
 
 export const ResolutionLimiter: React.FC<{
-  maxResolution: MaxResolution | null;
+  maxResolution: MaxResolution;
   sizeConstraint: SizeConstraint;
   setSizeConstraint: React.Dispatch<React.SetStateAction<SizeConstraint>>;
   deviceName: string;
@@ -181,9 +181,18 @@ export const ResolutionLimiter: React.FC<{
           <br />
           <DialogHeader>
             <DialogTitle>Minimum frame rate</DialogTitle>
-            <DialogDescription>
-              Ask for a higher frame rate. Might lead to a lower resolution.
-            </DialogDescription>
+            {maxResolution.frameRate === null ? (
+              <DialogDescription>
+                {deviceName} might be able to record in higher FPS, but the
+                resolution might drop.
+              </DialogDescription>
+            ) : (
+              <DialogDescription>
+                {deviceName} can record in up to{" "}
+                {Math.floor(maxResolution.frameRate * 100) / 100} FPS, but this
+                might drop the resolution.
+              </DialogDescription>
+            )}
           </DialogHeader>
           <Select onValueChange={onFpsChange}>
             <SelectTrigger>

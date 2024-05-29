@@ -270,7 +270,8 @@ export const View: React.FC<{
           />
         ) : null}
         {selectedVideoSource?.type === "display" ? null : videoDeviceLabel &&
-          activeVideoDevice ? (
+          activeVideoDevice &&
+          maxResolution ? (
           <ResolutionLimiter
             sizeConstraint={sizeConstraint}
             setSizeConstraint={setSizeConstraint}
