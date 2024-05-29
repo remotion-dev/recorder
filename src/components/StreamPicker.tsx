@@ -11,7 +11,7 @@ const iconStyle: React.CSSProperties = {
   height: 16,
 };
 
-const CameraIcon: React.FC = () => {
+export const CameraIcon: React.FC = () => {
   return (
     <svg style={iconStyle} viewBox="0 0 576 512">
       <path
@@ -22,7 +22,7 @@ const CameraIcon: React.FC = () => {
   );
 };
 
-const MicIcon: React.FC = () => {
+export const MicIcon: React.FC = () => {
   return (
     <svg style={iconStyle} viewBox="0 0 384 512">
       <path
@@ -33,7 +33,7 @@ const MicIcon: React.FC = () => {
   );
 };
 
-const DisplayIcon: React.FC = () => {
+export const DisplayIcon: React.FC = () => {
   return (
     <svg style={iconStyle} viewBox="0 0 576 512">
       <path
