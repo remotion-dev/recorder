@@ -11,7 +11,7 @@ const title: React.CSSProperties = {
 const container: React.CSSProperties = {
   display: "flex",
   flexDirection: "row",
-  backgroundColor: "rgba(0, 0, 0, 0.7)",
+  backgroundColor: "rgba(0, 0, 0, 0.9)",
   padding: 20,
   gap: 20,
 };
@@ -75,7 +75,6 @@ export const StreamPicker: React.FC<{
       {canSelectAudio ? (
         <div style={{ flex: 1 }}>
           <div style={title}>Select audio</div>
-
           {audioInputs.map((d) => {
             return (
               <DeviceItem
