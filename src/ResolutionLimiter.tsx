@@ -35,15 +35,17 @@ export const ResolutionLimiter: React.FC<{
   setSizeConstraint: React.Dispatch<React.SetStateAction<SizeConstraint>>;
   deviceName: string;
   deviceId: string;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   deviceName,
   maxResolution,
   sizeConstraint: videoConstraint,
   setSizeConstraint: setActiveVideoSize,
   deviceId,
+  open,
+  setOpen,
 }) => {
-  const [open, setOpen] = React.useState(false);
-
   const availableLowerResolutions = useMemo(() => {
     return Object.entries(VIDEO_SIZES).filter(([, value]) => {
       if (maxResolution === null) {
@@ -85,19 +87,22 @@ export const ResolutionLimiter: React.FC<{
 
   const handleSubmit = useCallback(async () => {
     setOpen(false);
-  }, []);
+  }, [setOpen]);
 
   const onOpen: React.MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.stopPropagation();
       setOpen(true);
     },
-    [],
+    [setOpen],
   );
 
-  const onOpenChange = useCallback((open: boolean) => {
-    setOpen(open);
-  }, []);
+  const onOpenChange = useCallback(
+    (open: boolean) => {
+      setOpen(open);
+    },
+    [setOpen],
+  );
 
   const fullResolutionLabel = useMemo(() => {
     if (maxResolution === null) {
@@ -113,10 +118,6 @@ export const ResolutionLimiter: React.FC<{
 
   return (
     <>
-      <div style={{ width: 4 }}></div>
-      <button onClick={onOpen} style={buttonStyle}>
-        Change
-      </button>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-[460px]">
           <DialogHeader>
