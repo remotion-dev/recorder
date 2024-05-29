@@ -20,6 +20,10 @@ import {
   getSelectedVideoSource,
 } from "./helpers/get-selected-video-source";
 import { Prefix } from "./helpers/prefixes";
+import {
+  getPreferredDeviceIfExists,
+  setPreferredDeviceForPrefix,
+} from "./preferred-device-localstorage";
 const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
@@ -70,7 +74,7 @@ export const View: React.FC<{
   const [showPicker, setShowPicker] = useState(true);
 
   const [selectedVideoDevice, setSelectedVideoDevice] = useState<string | null>(
-    null,
+    () => getPreferredDeviceIfExists(prefix, devices),
   );
 
   const [selectedAudioDevice, setSelectedAudioDevice] = useState<string | null>(
@@ -161,12 +165,13 @@ export const View: React.FC<{
   const onPickVideo = useCallback(
     (device: MediaDeviceInfo) => {
       setSelectedVideoDevice(device.deviceId);
+      setPreferredDeviceForPrefix(prefix, device.deviceId);
       if (recordAudio && !selectedAudioDevice) {
         return;
       }
       setShowPicker(false);
     },
-    [recordAudio, selectedAudioDevice],
+    [prefix, recordAudio, selectedAudioDevice],
   );
 
   const onPickAudio = useCallback(
