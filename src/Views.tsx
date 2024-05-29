@@ -243,6 +243,8 @@ export const View: React.FC<{
             devices={devices}
             canSelectScreen={prefix !== WEBCAM_PREFIX}
             onPickScreen={selectScreen}
+            selectedAudioDevice={selectedAudioDevice}
+            selectedVideoDevice={selectedVideoDevice}
           />
         ) : null}
       </div>
