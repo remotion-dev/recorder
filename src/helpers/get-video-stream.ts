@@ -38,6 +38,9 @@ const getCameraStram = ({
         ? { ideal: selectedVideoSource.maxHeight }
         : undefined
       : undefined,
+    frameRate: {
+      min: 20,
+    },
   };
 
   const mediaStreamConstraints: MediaStreamConstraints = {
