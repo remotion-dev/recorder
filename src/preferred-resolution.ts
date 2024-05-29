@@ -10,13 +10,17 @@ export const setPreferredResolutionForDevice = (
   );
 };
 
+// The Recorder only records at frame rates at least of 23.976 FPS.
+// This is the lowest frame rate that is common, ignoring all frame rates lower than that.
+export const DEFAULT_MINIMUM_FPS = 23.976;
+
 export const getPreferredResolutionForDevice = (
   deviceId: string | null,
 ): SizeConstraint => {
   if (deviceId === null) {
     return {
       maxSize: null,
-      highestResolution: false,
+      minimumFps: DEFAULT_MINIMUM_FPS,
     };
   }
 
@@ -24,7 +28,7 @@ export const getPreferredResolutionForDevice = (
   if (stored === null || stored === "null") {
     return {
       maxSize: null,
-      highestResolution: false,
+      minimumFps: DEFAULT_MINIMUM_FPS,
     };
   }
 
