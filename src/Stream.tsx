@@ -8,8 +8,8 @@ import React, {
 } from "react";
 import { CropIndicator } from "./CropIndicator";
 import { Spinner } from "./components/Spinner";
-import { getVideoStream } from "./get-video-stream";
 import type { SelectedSource } from "./helpers/get-selected-video-source";
+import { getVideoStream } from "./helpers/get-video-stream";
 import { Prefix } from "./helpers/prefixes";
 
 const container: React.CSSProperties = {

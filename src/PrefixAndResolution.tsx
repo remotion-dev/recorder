@@ -1,7 +1,7 @@
 import React from "react";
 import type { Dimensions } from "../config/layout";
 import { ResolutionLimiter } from "./ResolutionLimiter";
-import { MaxResolution } from "./get-max-resolution-of-device";
+import { MaxResolution } from "./helpers/get-max-resolution-of-device";
 import { VideoSize } from "./helpers/get-selected-video-source";
 
 export const PrefixAndResolution: React.FC<{
