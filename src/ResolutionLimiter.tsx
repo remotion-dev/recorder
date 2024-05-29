@@ -65,9 +65,13 @@ export const ResolutionLimiter: React.FC<{
     setOpen(false);
   }, []);
 
-  const onOpen = useCallback(() => {
-    setOpen(true);
-  }, []);
+  const onOpen: React.MouseEventHandler<HTMLButtonElement> = useCallback(
+    (e) => {
+      e.stopPropagation();
+      setOpen(true);
+    },
+    [],
+  );
 
   const onOpenChange = useCallback((open: boolean) => {
     setOpen(open);
