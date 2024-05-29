@@ -4,6 +4,7 @@ import { Dimensions } from "../../config/layout";
 import { DisplayIcon } from "../DeviceItem";
 import { Resolution } from "../PrefixAndResolution";
 import { ResolutionLimiter } from "../ResolutionLimiter";
+import styles from "../currentmedia.module.css";
 import { MaxResolution } from "../helpers/get-max-resolution-of-device";
 import { VideoSize } from "../helpers/get-selected-video-source";
 import { Divider } from "./Divider";
@@ -40,7 +41,7 @@ export const CurrentVideo: React.FC<{
   onClick,
 }) => {
   return (
-    <div style={container} onClick={onClick}>
+    <div className={styles.item} style={container} onClick={onClick}>
       <Divider></Divider>
       {isScreenshare ? <DisplayIcon></DisplayIcon> : <CameraIcon></CameraIcon>}
       <div style={spacer}></div>
