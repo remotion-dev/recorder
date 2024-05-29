@@ -9,6 +9,7 @@ import { PrefixAndResolution } from "./PrefixAndResolution";
 import { ToggleRotate } from "./Rotate";
 import { Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
+import { StreamPicker } from "./components/StreamPicker";
 import { VolumeMeter } from "./components/VolumeMeter";
 import { Button } from "./components/ui/button";
 import {
@@ -38,6 +39,7 @@ const viewContainer: React.CSSProperties = {
   height: "100%",
   maxHeight: "100%",
   maxWidth: "100%",
+  position: "relative",
 };
 
 const viewName: React.CSSProperties = {
@@ -46,6 +48,11 @@ const viewName: React.CSSProperties = {
   gap: 4,
   padding: 4,
   paddingLeft: 10,
+};
+
+const streamViewport: React.CSSProperties = {
+  flex: 1,
+  position: "relative",
 };
 
 const localStorageKey = "showCropIndicator";
@@ -194,18 +201,30 @@ export const View: React.FC<{
       {prefix === WEBCAM_PREFIX ? (
         <VolumeMeter mediaStream={mediaStream} />
       ) : null}
-      <Stream
-        selectedAudioSource={selectedAudioSource}
-        selectedVideoSource={selectedVideoSource}
-        recordAudio={recordAudio}
-        resolution={resolution}
-        setResolution={setResolution}
-        mediaStream={mediaStream}
-        setMediaStream={setMediaStream}
-        prefix={prefix}
-        showCropIndicator={showCropIndicator}
-        preferPortrait={preferPortrait}
-      />
+      <div style={streamViewport}>
+        <Stream
+          selectedAudioSource={selectedAudioSource}
+          selectedVideoSource={selectedVideoSource}
+          recordAudio={recordAudio}
+          resolution={resolution}
+          setResolution={setResolution}
+          mediaStream={mediaStream}
+          setMediaStream={setMediaStream}
+          prefix={prefix}
+          showCropIndicator={showCropIndicator}
+          preferPortrait={preferPortrait}
+        />
+        <StreamPicker
+          onPickVideo={(device) => {
+            setActiveDeviceId(device.deviceId);
+          }}
+          onPickAudio={(device) => {
+            setSelectedAudioSource(device.deviceId);
+          }}
+          canSelectAudio={recordAudio}
+          devices={devices}
+        ></StreamPicker>
+      </div>
     </div>
   );
 };
