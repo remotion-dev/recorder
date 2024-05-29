@@ -4,10 +4,12 @@ import { useCallback, useMemo, useState } from "react";
 import { WEBCAM_PREFIX } from "../config/cameras";
 import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
-import { PrefixAndResolution } from "./PrefixAndResolution";
+import { PrefixLabel } from "./PrefixAndResolution";
 import { ToggleRotate } from "./Rotate";
 import { Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
+import { CurrentAudio } from "./components/CurrentAudio";
+import { CurrentVideo } from "./components/CurrentVideo";
 import { StreamPicker } from "./components/StreamPicker";
 import { NoVolumeMeter, VolumeMeter } from "./components/VolumeMeter";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
@@ -136,6 +138,7 @@ export const View: React.FC<{
 
     return getDeviceLabel(activeVideoDevice);
   }, [activeVideoDevice]);
+
   const audioDeviceLabel = useMemo(() => {
     if (!activeAudioDevice) {
       return null;
@@ -155,14 +158,19 @@ export const View: React.FC<{
   return (
     <div style={viewContainer}>
       <div style={topBar}>
-        <PrefixAndResolution
-          deviceName={videoDeviceLabel}
-          setSizeConstraint={setSizeConstraint}
-          sizeConstraint={sizeConstraint}
-          prefix={prefix}
-          resolution={resolution}
-          maxResolution={maxResolution}
-        />
+        <PrefixLabel prefix={prefix} />
+        {videoDeviceLabel && (
+          <CurrentVideo
+            resolution={resolution}
+            label={videoDeviceLabel}
+            sizeConstraint={sizeConstraint}
+            setSizeConstraint={setSizeConstraint}
+            maxResolution={maxResolution}
+          ></CurrentVideo>
+        )}
+        {audioDeviceLabel ? (
+          <CurrentAudio label={audioDeviceLabel}></CurrentAudio>
+        ) : null}
         {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop
             pressed={showCropIndicator}
@@ -175,8 +183,6 @@ export const View: React.FC<{
             onPressedChange={onToggleRotate}
           />
         ) : null}
-        {videoDeviceLabel ? <div>{videoDeviceLabel}</div> : null}
-        {audioDeviceLabel ? <div>{audioDeviceLabel}</div> : null}
       </div>
       {prefix === WEBCAM_PREFIX ? (
         <VolumeMeter mediaStream={mediaStream} />
