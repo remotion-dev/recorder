@@ -189,10 +189,18 @@ export const View: React.FC<{
             setSizeConstraint={setSizeConstraint}
             maxResolution={maxResolution}
             isScreenshare={selectedVideoSource?.type === "display"}
+            onClick={() => {
+              setShowPicker(true);
+            }}
           ></CurrentVideo>
         )}
         {audioDeviceLabel ? (
-          <CurrentAudio label={audioDeviceLabel}></CurrentAudio>
+          <CurrentAudio
+            onClick={() => {
+              setShowPicker(true);
+            }}
+            label={audioDeviceLabel}
+          ></CurrentAudio>
         ) : null}
         {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop

@@ -9,6 +9,7 @@ const container: React.CSSProperties = {
   alignItems: "center",
   flex: 1,
   lineHeight: 1.4,
+  cursor: "pointer",
 };
 
 const spacer: React.CSSProperties = {
@@ -17,9 +18,10 @@ const spacer: React.CSSProperties = {
 
 export const CurrentAudio: React.FC<{
   label: string;
-}> = ({ label }) => {
+  onClick: () => void;
+}> = ({ label, onClick }) => {
   return (
-    <div style={container}>
+    <div style={container} onClick={onClick}>
       <Divider></Divider>
       <MicIcon></MicIcon>
       <div style={spacer}></div>

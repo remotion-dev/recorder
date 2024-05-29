@@ -27,6 +27,7 @@ export const CurrentVideo: React.FC<{
   maxResolution: MaxResolution | null;
   setSizeConstraint: React.Dispatch<React.SetStateAction<VideoSize | null>>;
   isScreenshare: boolean;
+  onClick: () => void;
 }> = ({
   label,
   resolution,
@@ -34,9 +35,10 @@ export const CurrentVideo: React.FC<{
   sizeConstraint,
   setSizeConstraint,
   isScreenshare,
+  onClick,
 }) => {
   return (
-    <div style={container}>
+    <div style={container} onClick={onClick}>
       <Divider></Divider>
       {isScreenshare ? <DisplayIcon></DisplayIcon> : <CameraIcon></CameraIcon>}
       <div style={spacer}></div>
