@@ -1,15 +1,11 @@
-import type { Dimensions } from "@remotion/layout-utils";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AbsoluteFill } from "remotion";
 import { Spinner } from "./components/Spinner";
 import type { SelectedSource } from "./helpers/get-selected-video-source";
-import { getVideoStream } from "./helpers/get-video-stream";
+import {
+  getCameraStreamConstraints,
+  getVideoStream,
+} from "./helpers/get-video-stream";
 import { Prefix } from "./helpers/prefixes";
 
 const container: React.CSSProperties = {
@@ -18,7 +14,13 @@ const container: React.CSSProperties = {
   alignItems: "center",
 };
 
-type StreamState = "initial" | "loading" | "loaded";
+type StreamState =
+  | {
+      type: "initial";
+    }
+  | { type: "loading" }
+  | { type: "loaded" }
+  | { type: "error"; error: string };
 
 export type SelectedVideoSource =
   | {
@@ -29,11 +31,17 @@ export type SelectedVideoSource =
       type: "display";
     };
 
+export type ResolutionAndFps = {
+  width: number;
+  height: number;
+  fps: number;
+};
+
 export const Stream: React.FC<{
   prefix: Prefix;
   setMediaStream: (prefix: Prefix, source: MediaStream | null) => void;
   mediaStream: MediaStream | null;
-  setResolution: React.Dispatch<React.SetStateAction<Dimensions | null>>;
+  setResolution: React.Dispatch<React.SetStateAction<ResolutionAndFps | null>>;
   recordAudio: boolean;
   selectedVideoSource: SelectedSource | null;
   selectedAudioSource: ConstrainDOMString | null;
@@ -48,7 +56,9 @@ export const Stream: React.FC<{
   selectedAudioSource,
   preferPortrait,
 }) => {
-  const [streamState, setStreamState] = useState<StreamState>("initial");
+  const [streamState, setStreamState] = useState<StreamState>({
+    type: "initial",
+  });
 
   const sourceRef = useRef<HTMLVideoElement>(null);
 
@@ -99,7 +109,7 @@ export const Stream: React.FC<{
       return;
     }
 
-    setStreamState("loading");
+    setStreamState({ type: "loading" });
 
     const cleanup: (() => void)[] = [];
 
@@ -110,6 +120,22 @@ export const Stream: React.FC<{
       selectedVideoSource,
     })
       .then((stream) => {
+        const videoTrack = stream.getVideoTracks()[0];
+        if (!videoTrack) {
+          throw new Error("No video track");
+        }
+
+        const settings = videoTrack.getSettings();
+        if (!settings) {
+          throw new Error("No video settings");
+        }
+
+        setResolution({
+          width: settings.width as number,
+          height: settings.height as number,
+          fps: settings.frameRate as number,
+        });
+
         if (current) {
           current.srcObject = stream;
           current.play();
@@ -122,20 +148,28 @@ export const Stream: React.FC<{
         });
 
         setMediaStream(prefix, stream);
-        setStreamState("loaded");
+        setStreamState({ type: "loaded" });
       })
       .catch((e) => {
-        if (e.name === "NotReadableError") {
-          // eslint-disable-next-line no-alert
-          alert(
-            "The selected device is not readable. Is the device already in use by another program?",
-          );
-        } else {
-          console.log(e);
-        }
+        console.log(e);
+
+        const errMessage =
+          e.name === "NotReadableError"
+            ? "The selected device is not readable. This could be due to another app using this camera."
+            : e.name === "OverconstrainedError"
+              ? `Could not find a resolution satisfying these constraints: ${JSON.stringify(
+                  getCameraStreamConstraints(
+                    selectedVideoSource,
+                    preferPortrait,
+                  ),
+                )}`
+              : e.message || e.name;
 
         setMediaStream(prefix, null);
-        setStreamState("initial");
+        setStreamState({
+          type: "error",
+          error: errMessage,
+        });
       });
 
     return () => {
@@ -148,24 +182,27 @@ export const Stream: React.FC<{
     selectedAudioSource,
     selectedVideoSource,
     setMediaStream,
+    setResolution,
   ]);
-
-  const onLoadedMetadata = useCallback(() => {
-    setResolution({
-      width: sourceRef.current?.videoWidth as number,
-      height: sourceRef.current?.videoHeight as number,
-    });
-  }, [setResolution]);
 
   return (
     <AbsoluteFill style={container} id={prefix + "-video-container"}>
-      <video
-        ref={sourceRef}
-        muted
-        style={videoStyle}
-        onLoadedMetadata={onLoadedMetadata}
-      />
-      {streamState === "loading" ? <Spinner /> : null}
+      <video ref={sourceRef} muted style={videoStyle} />
+      {streamState.type === "loading" ? <Spinner /> : null}
+      {streamState.type === "error" ? (
+        <AbsoluteFill
+          style={{
+            padding: 20,
+            textWrap: "balance",
+            color: "rgba(255, 255, 255, 0.5)",
+            fontSize: 14,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {streamState.error}
+        </AbsoluteFill>
+      ) : null}
     </AbsoluteFill>
   );
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import type { Dimensions } from "../config/layout";
+import { ResolutionAndFps } from "./Stream";
 
 export const PrefixLabel: React.FC<{
   prefix: string;
@@ -17,7 +17,7 @@ export const PrefixLabel: React.FC<{
 };
 
 export const Resolution: React.FC<{
-  resolution: Dimensions;
+  resolution: ResolutionAndFps;
 }> = ({ resolution }) => {
   return (
     <>
@@ -33,7 +33,8 @@ export const Resolution: React.FC<{
             color: "rgba(255, 255, 255, 0.5)",
           }}
         >
-          {resolution.width}x{resolution.height}
+          {resolution.width}x{resolution.height},{" "}
+          {Math.round(resolution.fps * 100) / 100} FPS
         </span>
       </span>
     </>

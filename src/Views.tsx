@@ -2,12 +2,12 @@
 /* eslint-disable no-alert */
 import { useCallback, useMemo, useState } from "react";
 import { WEBCAM_PREFIX } from "../config/cameras";
-import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
 import { CropIndicator } from "./CropIndicator";
 import { PrefixLabel } from "./PrefixAndResolution";
+import { ResolutionLimiter } from "./ResolutionLimiter";
 import { ToggleRotate } from "./Rotate";
-import { Stream } from "./Stream";
+import { ResolutionAndFps, Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
 import { CurrentAudio } from "./components/CurrentAudio";
 import { CurrentVideo } from "./components/CurrentVideo";
@@ -16,7 +16,7 @@ import { NoVolumeMeter, VolumeMeter } from "./components/VolumeMeter";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
 import { getMaxResolutionOfDevice } from "./helpers/get-max-resolution-of-device";
 import {
-  VideoSize,
+  SizeConstraint,
   getSelectedVideoSource,
 } from "./helpers/get-selected-video-source";
 import { Prefix } from "./helpers/prefixes";
@@ -24,10 +24,7 @@ import {
   getPreferredDeviceIfExists,
   setPreferredDeviceForPrefix,
 } from "./preferred-device-localstorage";
-import {
-  getPreferredResolutionForDevice,
-  setPreferredResolutionForDevice,
-} from "./preferred-resolution";
+import { getPreferredResolutionForDevice } from "./preferred-resolution";
 const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
@@ -87,9 +84,9 @@ export const View: React.FC<{
   );
 
   const recordAudio = prefix === WEBCAM_PREFIX;
-  const [resolution, setResolution] = useState<Dimensions | null>(null);
+  const [resolution, setResolution] = useState<ResolutionAndFps | null>(null);
   const [preferPortrait, setPreferPortrait] = useState(false);
-  const [sizeConstraint, setSizeConstraint] = useState<VideoSize | null>(() =>
+  const [sizeConstraint, setSizeConstraint] = useState<SizeConstraint>(() =>
     getPreferredResolutionForDevice(selectedVideoDevice),
   );
 
@@ -202,6 +199,8 @@ export const View: React.FC<{
     setResolution(null);
   }, [prefix]);
 
+  const [resolutionLimiterOpen, setResolutionLimiterOpen] = useState(false);
+
   return (
     <div style={viewContainer}>
       <div style={topBar}>
@@ -210,18 +209,11 @@ export const View: React.FC<{
         <CurrentVideo
           resolution={resolution}
           label={videoDeviceLabel ?? "No video selected"}
-          sizeConstraint={sizeConstraint}
-          setSizeConstraint={(val) => {
-            setSizeConstraint(val);
-            if (selectedVideoDevice) {
-              setPreferredResolutionForDevice(selectedVideoDevice, val);
-            }
-          }}
-          maxResolution={maxResolution}
           isScreenshare={selectedVideoSource?.type === "display"}
           onClick={() => {
             setShowPicker((p) => !p);
           }}
+          setResolutionLimiterOpen={setResolutionLimiterOpen}
         ></CurrentVideo>
         {prefix === WEBCAM_PREFIX ? (
           <CurrentAudio
@@ -275,6 +267,19 @@ export const View: React.FC<{
             selectedVideoDevice={selectedVideoDevice}
             clear={clear}
             canClear={prefix !== WEBCAM_PREFIX}
+          />
+        ) : null}
+        {selectedVideoSource?.type === "display" ? null : videoDeviceLabel &&
+          activeVideoDevice &&
+          maxResolution ? (
+          <ResolutionLimiter
+            sizeConstraint={sizeConstraint}
+            setSizeConstraint={setSizeConstraint}
+            maxResolution={maxResolution}
+            deviceName={videoDeviceLabel}
+            deviceId={activeVideoDevice.deviceId}
+            open={resolutionLimiterOpen}
+            setOpen={setResolutionLimiterOpen}
           />
         ) : null}
       </div>
