@@ -24,6 +24,10 @@ import {
   getPreferredDeviceIfExists,
   setPreferredDeviceForPrefix,
 } from "./preferred-device-localstorage";
+import {
+  getPreferredResolutionForDevice,
+  setPreferredResolutionForDevice,
+} from "./preferred-resolution";
 const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
@@ -85,7 +89,9 @@ export const View: React.FC<{
   const recordAudio = prefix === WEBCAM_PREFIX;
   const [resolution, setResolution] = useState<Dimensions | null>(null);
   const [preferPortrait, setPreferPortrait] = useState(false);
-  const [sizeConstraint, setSizeConstraint] = useState<VideoSize | null>(null);
+  const [sizeConstraint, setSizeConstraint] = useState<VideoSize | null>(() =>
+    getPreferredResolutionForDevice(selectedVideoDevice),
+  );
 
   const onToggleCrop = useCallback(() => {
     setShowCropIndicator((prev) => {
@@ -124,6 +130,7 @@ export const View: React.FC<{
     if (selectedVideoDevice === "display") {
       return { type: "display" as const };
     }
+
     if (!activeVideoDevice) {
       return null;
     }
@@ -204,7 +211,12 @@ export const View: React.FC<{
           resolution={resolution}
           label={videoDeviceLabel ?? "No video selected"}
           sizeConstraint={sizeConstraint}
-          setSizeConstraint={setSizeConstraint}
+          setSizeConstraint={(val) => {
+            setSizeConstraint(val);
+            if (selectedVideoDevice) {
+              setPreferredResolutionForDevice(selectedVideoDevice, val);
+            }
+          }}
           maxResolution={maxResolution}
           isScreenshare={selectedVideoSource?.type === "display"}
           onClick={() => {

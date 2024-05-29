@@ -27,7 +27,7 @@ export const CurrentVideo: React.FC<{
   resolution: Dimensions | null;
   sizeConstraint: VideoSize | null;
   maxResolution: MaxResolution | null;
-  setSizeConstraint: React.Dispatch<React.SetStateAction<VideoSize | null>>;
+  setSizeConstraint: (val: VideoSize | null) => void;
   isScreenshare: boolean;
   onClick: () => void;
 }> = ({
