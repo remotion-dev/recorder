@@ -81,7 +81,12 @@ export const StreamPicker: React.FC<{
         })}
       </div>
       {canSelectAudio ? (
-        <div style={{ flex: 1 }}>
+        <div
+          style={{
+            flex: 1,
+            opacity: !selectedVideoDevice && selectedAudioDevice ? 0.5 : 1,
+          }}
+        >
           <div style={title}>Select audio</div>
           {audioInputs.map((d) => {
             return (
