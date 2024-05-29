@@ -74,11 +74,11 @@ export const View: React.FC<{
   const [showPicker, setShowPicker] = useState(true);
 
   const [selectedVideoDevice, setSelectedVideoDevice] = useState<string | null>(
-    () => getPreferredDeviceIfExists(prefix, devices),
+    () => getPreferredDeviceIfExists(prefix, "video", devices),
   );
 
   const [selectedAudioDevice, setSelectedAudioDevice] = useState<string | null>(
-    null,
+    () => getPreferredDeviceIfExists(prefix, "audio", devices),
   );
 
   const recordAudio = prefix === WEBCAM_PREFIX;
@@ -165,7 +165,7 @@ export const View: React.FC<{
   const onPickVideo = useCallback(
     (device: MediaDeviceInfo) => {
       setSelectedVideoDevice(device.deviceId);
-      setPreferredDeviceForPrefix(prefix, device.deviceId);
+      setPreferredDeviceForPrefix(prefix, "video", device.deviceId);
       if (recordAudio && !selectedAudioDevice) {
         return;
       }
@@ -177,12 +177,13 @@ export const View: React.FC<{
   const onPickAudio = useCallback(
     (device: MediaDeviceInfo) => {
       setSelectedAudioDevice(device.deviceId);
+      setPreferredDeviceForPrefix(prefix, "audio", device.deviceId);
       if (!selectedVideoDevice) {
         return;
       }
       setShowPicker(false);
     },
-    [selectedVideoDevice],
+    [prefix, selectedVideoDevice],
   );
 
   return (
