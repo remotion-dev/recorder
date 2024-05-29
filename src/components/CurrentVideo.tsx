@@ -14,6 +14,7 @@ const container: React.CSSProperties = {
   alignItems: "center",
   flex: 1,
   lineHeight: 1.4,
+  cursor: "pointer",
 };
 
 const spacer: React.CSSProperties = {

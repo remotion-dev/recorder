@@ -6,7 +6,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { CropIndicator } from "./CropIndicator";
 import { Spinner } from "./components/Spinner";
 import type { SelectedSource } from "./helpers/get-selected-video-source";
 import { getVideoStream } from "./helpers/get-video-stream";
@@ -37,10 +36,8 @@ export const Stream: React.FC<{
   prefix: Prefix;
   setMediaStream: (prefix: Prefix, source: MediaStream | null) => void;
   mediaStream: MediaStream | null;
-  resolution: Dimensions | null;
   setResolution: React.Dispatch<React.SetStateAction<Dimensions | null>>;
   recordAudio: boolean;
-  showCropIndicator: boolean;
   selectedVideoSource: SelectedSource | null;
   selectedAudioSource: ConstrainDOMString | null;
   preferPortrait: boolean;
@@ -48,10 +45,8 @@ export const Stream: React.FC<{
   prefix,
   mediaStream,
   setMediaStream,
-  resolution,
   setResolution,
   recordAudio,
-  showCropIndicator,
   selectedVideoSource,
   selectedAudioSource,
   preferPortrait,
@@ -174,9 +169,6 @@ export const Stream: React.FC<{
         onLoadedMetadata={onLoadedMetadata}
       />
       {streamState === "loading" ? <Spinner /> : null}
-      {showCropIndicator && resolution ? (
-        <CropIndicator resolution={resolution} />
-      ) : null}
     </div>
   );
 };

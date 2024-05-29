@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { WEBCAM_PREFIX } from "../config/cameras";
 import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
+import { CropIndicator } from "./CropIndicator";
 import { PrefixLabel } from "./PrefixAndResolution";
 import { ToggleRotate } from "./Rotate";
 import { Stream } from "./Stream";
@@ -190,14 +191,14 @@ export const View: React.FC<{
             maxResolution={maxResolution}
             isScreenshare={selectedVideoSource?.type === "display"}
             onClick={() => {
-              setShowPicker(true);
+              setShowPicker((p) => !p);
             }}
           ></CurrentVideo>
         )}
         {audioDeviceLabel ? (
           <CurrentAudio
             onClick={() => {
-              setShowPicker(true);
+              setShowPicker((p) => !p);
             }}
             label={audioDeviceLabel}
           ></CurrentAudio>
@@ -225,14 +226,15 @@ export const View: React.FC<{
           selectedAudioSource={selectedAudioDevice}
           selectedVideoSource={selectedVideoSource}
           recordAudio={recordAudio}
-          resolution={resolution}
           setResolution={setResolution}
           mediaStream={mediaStream}
           setMediaStream={setMediaStream}
           prefix={prefix}
-          showCropIndicator={showCropIndicator}
           preferPortrait={preferPortrait}
         />
+        {showCropIndicator && resolution ? (
+          <CropIndicator resolution={resolution} />
+        ) : null}
         {showPicker ? (
           <StreamPicker
             onPickVideo={onPickVideo}
