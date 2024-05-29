@@ -12,11 +12,11 @@ export const getPreferredDeviceForPrefix = (
 export const setPreferredDeviceForPrefix = (
   prefix: Prefix,
   type: "video" | "audio",
-  deviceId: string,
+  deviceId: string | null,
 ) => {
   window.localStorage.setItem(
     `recorder.preferredDevice.${type}.${prefix}`,
-    deviceId,
+    String(deviceId),
   );
 };
 
