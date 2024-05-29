@@ -1,16 +1,8 @@
-export type MaxResolution =
-  | {
-      width: number;
-      height: null;
-    }
-  | {
-      width: null;
-      height: number;
-    }
-  | {
-      width: number;
-      height: number;
-    };
+export type MaxResolution = {
+  width: number | null;
+  height: number | null;
+  frameRate: number | null;
+};
 
 export const getMaxResolutionOfDevice = (
   device: MediaDeviceInfo,
@@ -27,6 +19,7 @@ export const getMaxResolutionOfDevice = (
 
   const width = capabilities.width?.max ?? null;
   const height = capabilities.height?.max ?? null;
+  const frameRate = capabilities.frameRate?.max ?? null;
 
   if (width === null && height === null) {
     return null;
@@ -35,5 +28,6 @@ export const getMaxResolutionOfDevice = (
   return {
     width,
     height,
+    frameRate,
   } as MaxResolution;
 };

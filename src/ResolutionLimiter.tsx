@@ -17,21 +17,16 @@ import {
 } from "./components/ui/select";
 import { MaxResolution } from "./helpers/get-max-resolution-of-device";
 import {
+  FPS_AVAILABLE,
   SizeConstraint,
   VIDEO_SIZES,
   VideoSize,
 } from "./helpers/get-selected-video-source";
 import { setPreferredResolutionForDevice } from "./preferred-resolution";
 
-const buttonStyle: React.CSSProperties = {
-  display: "inline",
-  color: "rgba(255, 255, 255, 0.5)",
-  borderBottom: "1px solid",
-};
-
 export const ResolutionLimiter: React.FC<{
   maxResolution: MaxResolution | null;
-  sizeConstraint: SizeConstraint | null;
+  sizeConstraint: SizeConstraint;
   setSizeConstraint: React.Dispatch<React.SetStateAction<SizeConstraint>>;
   deviceName: string;
   deviceId: string;
@@ -40,7 +35,7 @@ export const ResolutionLimiter: React.FC<{
 }> = ({
   deviceName,
   maxResolution,
-  sizeConstraint: videoConstraint,
+  sizeConstraint,
   setSizeConstraint: setActiveVideoSize,
   deviceId,
   open,
@@ -58,7 +53,16 @@ export const ResolutionLimiter: React.FC<{
     });
   }, [maxResolution]);
 
-  const onValueChange = useCallback(
+  const availableHigherFps = useMemo(() => {
+    return FPS_AVAILABLE.filter((fps) => {
+      if (maxResolution === null || maxResolution.frameRate === null) {
+        return true;
+      }
+      return fps <= maxResolution.frameRate;
+    }).reverse();
+  }, [maxResolution]);
+
+  const onResolutionChange = useCallback(
     (value: VideoSize | "full") => {
       if (value === "full") {
         setActiveVideoSize((v) => {
@@ -85,17 +89,37 @@ export const ResolutionLimiter: React.FC<{
     [deviceId, setActiveVideoSize],
   );
 
+  const onFpsChange = useCallback(
+    (value: string | "any") => {
+      if (value === "any") {
+        setActiveVideoSize((v) => {
+          const newState: SizeConstraint = {
+            ...v,
+            minimumFps: null,
+          };
+          setPreferredResolutionForDevice(deviceId, newState);
+
+          return newState;
+        });
+        return;
+      }
+
+      setActiveVideoSize((v) => {
+        const newSize: SizeConstraint = {
+          ...v,
+          minimumFps: Number(value),
+        };
+        setPreferredResolutionForDevice(deviceId, newSize);
+
+        return newSize;
+      });
+    },
+    [deviceId, setActiveVideoSize],
+  );
+
   const handleSubmit = useCallback(async () => {
     setOpen(false);
   }, [setOpen]);
-
-  const onOpen: React.MouseEventHandler<HTMLButtonElement> = useCallback(
-    (e) => {
-      e.stopPropagation();
-      setOpen(true);
-    },
-    [setOpen],
-  );
 
   const onOpenChange = useCallback(
     (open: boolean) => {
@@ -116,6 +140,10 @@ export const ResolutionLimiter: React.FC<{
     return "Full resolution";
   }, [maxResolution]);
 
+  const labelForFps = useCallback((fps: number | null) => {
+    return fps === null ? "Default" : `At least ${fps} FPS`;
+  }, []);
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -127,10 +155,10 @@ export const ResolutionLimiter: React.FC<{
               experience dropped frames.
             </DialogDescription>
           </DialogHeader>
-          <Select onValueChange={onValueChange}>
+          <Select onValueChange={onResolutionChange}>
             <SelectTrigger>
               <SelectValue
-                placeholder={videoConstraint?.maxSize ?? fullResolutionLabel}
+                placeholder={sizeConstraint.maxSize ?? fullResolutionLabel}
               />
             </SelectTrigger>
             <SelectContent>
@@ -146,6 +174,38 @@ export const ResolutionLimiter: React.FC<{
               {availableLowerResolutions.map(([key]) => (
                 <SelectItem key={key} value={key}>
                   <span style={{ whiteSpace: "nowrap" }}>Limit to {key}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <br />
+          <DialogHeader>
+            <DialogTitle>Minimum frame rate</DialogTitle>
+            <DialogDescription>
+              Ask for a higher frame rate. Might lead to a lower resolution.
+            </DialogDescription>
+          </DialogHeader>
+          <Select onValueChange={onFpsChange}>
+            <SelectTrigger>
+              <SelectValue
+                placeholder={labelForFps(sizeConstraint.minimumFps ?? null)}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem key={"any"} value={"any"}>
+                <span
+                  style={{
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Default
+                </span>
+              </SelectItem>
+              {availableHigherFps.map((key) => (
+                <SelectItem key={key} value={String(key)}>
+                  <span style={{ whiteSpace: "nowrap" }}>
+                    {labelForFps(key)}
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>

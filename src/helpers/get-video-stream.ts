@@ -1,3 +1,4 @@
+import { DEFAULT_MINIMUM_FPS } from "../preferred-resolution";
 import { SelectedSource } from "./get-selected-video-source";
 
 const getDisplayStream = async (selectedVideoSource: SelectedSource) => {
@@ -39,7 +40,7 @@ const getCameraStram = ({
         : undefined
       : undefined,
     frameRate: {
-      min: 20,
+      min: selectedVideoSource.minFps ?? DEFAULT_MINIMUM_FPS,
     },
   };
 
