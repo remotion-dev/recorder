@@ -5,7 +5,7 @@ import { Resolution } from "../PrefixAndResolution";
 import { ResolutionLimiter } from "../ResolutionLimiter";
 import { ResolutionAndFps } from "../Stream";
 import { MaxResolution } from "../helpers/get-max-resolution-of-device";
-import { VideoSize } from "../helpers/get-selected-video-source";
+import { SizeConstraint } from "../helpers/get-selected-video-source";
 import { Divider } from "./Divider";
 
 const container: React.CSSProperties = {
@@ -25,11 +25,12 @@ const spacer: React.CSSProperties = {
 export const CurrentVideo: React.FC<{
   label: string;
   resolution: ResolutionAndFps | null;
-  sizeConstraint: VideoSize | null;
+  sizeConstraint: SizeConstraint | null;
   maxResolution: MaxResolution | null;
-  setSizeConstraint: (val: VideoSize | null) => void;
+  setSizeConstraint: React.Dispatch<React.SetStateAction<SizeConstraint>>;
   isScreenshare: boolean;
   onClick: () => void;
+  deviceId: string | null;
 }> = ({
   label,
   resolution,
@@ -38,6 +39,7 @@ export const CurrentVideo: React.FC<{
   setSizeConstraint,
   isScreenshare,
   onClick,
+  deviceId,
 }) => {
   return (
     <div style={container} onClick={onClick}>
@@ -56,14 +58,15 @@ export const CurrentVideo: React.FC<{
           {resolution ? (
             <>
               <Resolution resolution={resolution} />
-              {isScreenshare ? null : (
+              {isScreenshare ? null : deviceId ? (
                 <ResolutionLimiter
                   sizeConstraint={sizeConstraint}
                   setSizeConstraint={setSizeConstraint}
                   maxResolution={maxResolution}
                   deviceName={label}
+                  deviceId={deviceId}
                 />
-              )}
+              ) : null}
             </>
           ) : null}
         </span>

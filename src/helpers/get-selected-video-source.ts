@@ -14,6 +14,11 @@ export type SelectedSource =
 
 export type VideoSize = "4K" | "1080p" | "720p" | "480p";
 
+export type SizeConstraint = {
+  maxSize: VideoSize | null;
+  highestResolution: boolean;
+};
+
 export const VIDEO_SIZES: { [key in VideoSize]: Dimensions } = {
   "4K": { width: 3840, height: 2160 },
   "1080p": { width: 1920, height: 1080 },
@@ -26,18 +31,18 @@ export const getSelectedVideoSource = ({
   maxResolution,
   device,
 }: {
-  resolutionConstraint: VideoSize | null;
+  resolutionConstraint: SizeConstraint;
   maxResolution: MaxResolution | null;
   device: MediaDeviceInfo;
 }): SelectedSource | null => {
   const constrainedWidth =
-    resolutionConstraint === null
+    resolutionConstraint.maxSize === null
       ? null
-      : VIDEO_SIZES[resolutionConstraint].width;
+      : VIDEO_SIZES[resolutionConstraint.maxSize].width;
   const constrainedHeight =
-    resolutionConstraint === null
+    resolutionConstraint.maxSize === null
       ? null
-      : VIDEO_SIZES[resolutionConstraint].height;
+      : VIDEO_SIZES[resolutionConstraint.maxSize].height;
 
   if (maxResolution === null) {
     return {

@@ -15,7 +15,7 @@ import { NoVolumeMeter, VolumeMeter } from "./components/VolumeMeter";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
 import { getMaxResolutionOfDevice } from "./helpers/get-max-resolution-of-device";
 import {
-  VideoSize,
+  SizeConstraint,
   getSelectedVideoSource,
 } from "./helpers/get-selected-video-source";
 import { Prefix } from "./helpers/prefixes";
@@ -23,10 +23,7 @@ import {
   getPreferredDeviceIfExists,
   setPreferredDeviceForPrefix,
 } from "./preferred-device-localstorage";
-import {
-  getPreferredResolutionForDevice,
-  setPreferredResolutionForDevice,
-} from "./preferred-resolution";
+import { getPreferredResolutionForDevice } from "./preferred-resolution";
 const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
@@ -88,7 +85,7 @@ export const View: React.FC<{
   const recordAudio = prefix === WEBCAM_PREFIX;
   const [resolution, setResolution] = useState<ResolutionAndFps | null>(null);
   const [preferPortrait, setPreferPortrait] = useState(false);
-  const [sizeConstraint, setSizeConstraint] = useState<VideoSize | null>(() =>
+  const [sizeConstraint, setSizeConstraint] = useState<SizeConstraint>(() =>
     getPreferredResolutionForDevice(selectedVideoDevice),
   );
 
@@ -210,17 +207,13 @@ export const View: React.FC<{
           resolution={resolution}
           label={videoDeviceLabel ?? "No video selected"}
           sizeConstraint={sizeConstraint}
-          setSizeConstraint={(val) => {
-            setSizeConstraint(val);
-            if (selectedVideoDevice) {
-              setPreferredResolutionForDevice(selectedVideoDevice, val);
-            }
-          }}
+          setSizeConstraint={setSizeConstraint}
           maxResolution={maxResolution}
           isScreenshare={selectedVideoSource?.type === "display"}
           onClick={() => {
             setShowPicker((p) => !p);
           }}
+          deviceId={activeVideoDevice?.deviceId ?? null}
         ></CurrentVideo>
         {prefix === WEBCAM_PREFIX ? (
           <CurrentAudio
