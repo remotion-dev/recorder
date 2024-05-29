@@ -16,7 +16,12 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import { MaxResolution } from "./helpers/get-max-resolution-of-device";
-import { VIDEO_SIZES, VideoSize } from "./helpers/get-selected-video-source";
+import {
+  SizeConstraint,
+  VIDEO_SIZES,
+  VideoSize,
+} from "./helpers/get-selected-video-source";
+import { setPreferredResolutionForDevice } from "./preferred-resolution";
 
 const buttonStyle: React.CSSProperties = {
   display: "inline",
@@ -26,14 +31,16 @@ const buttonStyle: React.CSSProperties = {
 
 export const ResolutionLimiter: React.FC<{
   maxResolution: MaxResolution | null;
-  sizeConstraint: VideoSize | null;
-  setSizeConstraint: (val: VideoSize | null) => void;
+  sizeConstraint: SizeConstraint | null;
+  setSizeConstraint: React.Dispatch<React.SetStateAction<SizeConstraint>>;
   deviceName: string;
+  deviceId: string;
 }> = ({
   deviceName,
   maxResolution,
   sizeConstraint: videoConstraint,
   setSizeConstraint: setActiveVideoSize,
+  deviceId,
 }) => {
   const [open, setOpen] = React.useState(false);
 
@@ -52,13 +59,28 @@ export const ResolutionLimiter: React.FC<{
   const onValueChange = useCallback(
     (value: VideoSize | "full") => {
       if (value === "full") {
-        setActiveVideoSize(null);
+        setActiveVideoSize((v) => {
+          const newSize = {
+            ...v,
+            maxSize: null,
+          };
+          setPreferredResolutionForDevice(deviceId, newSize);
+          return newSize;
+        });
+        setPreferredResolutionForDevice(deviceId, null);
         return;
       }
 
-      setActiveVideoSize(value);
+      setActiveVideoSize((v) => {
+        const newSize = {
+          ...v,
+          maxSize: value,
+        };
+        setPreferredResolutionForDevice(deviceId, newSize);
+        return newSize;
+      });
     },
-    [setActiveVideoSize],
+    [deviceId, setActiveVideoSize],
   );
 
   const handleSubmit = useCallback(async () => {
@@ -107,7 +129,7 @@ export const ResolutionLimiter: React.FC<{
           <Select onValueChange={onValueChange}>
             <SelectTrigger>
               <SelectValue
-                placeholder={videoConstraint ?? fullResolutionLabel}
+                placeholder={videoConstraint?.maxSize ?? fullResolutionLabel}
               />
             </SelectTrigger>
             <SelectContent>
