@@ -76,6 +76,21 @@ export const ResolutionLimiter: React.FC<{
     setOpen(open);
   }, []);
 
+  const fullResolutionLabel = useMemo(() => {
+    if (maxResolution === null) {
+      return "Full resolution";
+    }
+    const { width, height } = maxResolution;
+    if (width && height) {
+      return `Full resolution (${width}x${height})`;
+    }
+    if (width) {
+      return `Full resolution (${width}p)`;
+    }
+
+    return "Full resolution";
+  }, [maxResolution]);
+
   return (
     <>
       <div style={{ width: 4 }}></div>
@@ -102,11 +117,15 @@ export const ResolutionLimiter: React.FC<{
           </DialogHeader>
           <Select onValueChange={onValueChange}>
             <SelectTrigger>
-              <SelectValue placeholder={videoConstraint ?? "Full resolution"} />
+              <SelectValue
+                placeholder={videoConstraint ?? fullResolutionLabel}
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectItem key={"full"} value={"full"}>
-                <span style={{ whiteSpace: "nowrap" }}>Full resolution</span>
+                <span style={{ whiteSpace: "nowrap" }}>
+                  {fullResolutionLabel}
+                </span>
               </SelectItem>
               {availableLowerResolutions.map(([key]) => (
                 <SelectItem key={key} value={key}>
