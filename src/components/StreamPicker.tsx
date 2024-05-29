@@ -23,6 +23,8 @@ export const StreamPicker: React.FC<{
   onPickVideo: (device: MediaDeviceInfo) => void;
   onPickAudio: (device: MediaDeviceInfo) => void;
   onPickScreen: () => void;
+  selectedVideoDevice: string | null;
+  selectedAudioDevice: string | null;
 }> = ({
   canSelectAudio,
   devices,
@@ -30,6 +32,8 @@ export const StreamPicker: React.FC<{
   onPickAudio,
   onPickVideo,
   onPickScreen,
+  selectedAudioDevice,
+  selectedVideoDevice,
 }) => {
   const videoInputs = useMemo(() => {
     return devices.filter((d) => d.kind === "videoinput");
@@ -50,6 +54,7 @@ export const StreamPicker: React.FC<{
             deviceLabel={"Screen capture"}
             maxResolution={null}
             type="screen"
+            selected={selectedVideoDevice === "display"}
           />
         ) : null}
         {videoInputs.map((d) => {
@@ -62,6 +67,7 @@ export const StreamPicker: React.FC<{
               handleClick={() => {
                 onPickVideo(d);
               }}
+              selected={selectedVideoDevice === d.deviceId}
             />
           );
         })}
@@ -80,6 +86,7 @@ export const StreamPicker: React.FC<{
                 handleClick={() => {
                   onPickAudio(d);
                 }}
+                selected={selectedAudioDevice === d.deviceId}
               />
             );
           })}

@@ -1,3 +1,4 @@
+import React from "react";
 import { MaxResolution } from "./helpers/get-max-resolution-of-device";
 
 const deviceRow: React.CSSProperties = {
@@ -76,14 +77,36 @@ export const DisplayIcon: React.FC = () => {
   );
 };
 
+const CheckIcon: React.FC = () => {
+  return (
+    <svg style={iconStyle} viewBox="0 0 512 512">
+      <path
+        fill="#eee"
+        d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM241 337l-17 17-17-17-80-80L161 223l63 63L351 159 385 193 241 337z"
+      />
+    </svg>
+  );
+};
+
 export const DeviceItem: React.FC<{
   deviceLabel: string;
   type: "camera" | "microphone" | "screen";
   maxResolution: MaxResolution | null;
   handleClick: () => void;
-}> = ({ deviceLabel, type, handleClick, maxResolution }) => {
+  selected: boolean;
+}> = ({ deviceLabel, type, handleClick, maxResolution, selected }) => {
   return (
     <div onClick={handleClick} style={deviceRow}>
+      <div
+        style={{
+          width: 36,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {selected && <CheckIcon></CheckIcon>}
+      </div>
       {type === "camera" ? <CameraIcon></CameraIcon> : null}
       {type === "microphone" ? <MicIcon></MicIcon> : null}
       {type === "screen" ? <DisplayIcon></DisplayIcon> : null}
