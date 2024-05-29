@@ -1,3 +1,5 @@
+import { Dimensions } from "../../config/layout";
+
 export type SelectedSource =
   | {
       type: "camera";
@@ -9,62 +11,74 @@ export type SelectedSource =
       type: "display";
     };
 
-export enum VideoSize {
-  "4K" = "4k",
-  "Full HD" = "FullHD",
-  HD = "HD",
-  SD = "SD",
-}
+export type VideoSize = "4K" | "1080p" | "720p" | "480p";
 
-export const VIDEO_SIZES: Record<VideoSize, { width: number; height: number }> =
-  {
-    [VideoSize["4K"]]: { width: 3840, height: 2160 },
-    [VideoSize["Full HD"]]: { width: 1920, height: 1080 },
-    [VideoSize.HD]: { width: 1280, height: 720 },
-    [VideoSize.SD]: { width: 640, height: 480 },
-  };
+export const VIDEO_SIZES: { [key in VideoSize]: Dimensions } = {
+  "4K": { width: 3840, height: 2160 },
+  "1080p": { width: 1920, height: 1080 },
+  "720p": { width: 1280, height: 720 },
+  "480p": { width: 640, height: 480 },
+};
 
 export const getSelectedVideoSource = ({
-  value,
+  deviceId,
   devices,
-  size = VideoSize.HD,
+  resolutionConstraint,
 }: {
-  value: string;
+  deviceId: string;
   devices: MediaDeviceInfo[];
-  size?: VideoSize;
+  resolutionConstraint: VideoSize | null;
 }): SelectedSource | null => {
-  if (value === "undefined") {
+  if (deviceId === "undefined") {
     return null;
   }
 
-  const device = devices.find((d) => d.deviceId === value);
+  const constrainedWidth =
+    resolutionConstraint === null
+      ? null
+      : VIDEO_SIZES[resolutionConstraint].width;
+  const constrainedHeight =
+    resolutionConstraint === null
+      ? null
+      : VIDEO_SIZES[resolutionConstraint].height;
 
-  if (
-    typeof InputDeviceInfo !== "undefined" &&
-    device instanceof InputDeviceInfo
-  ) {
-    const capabilities = device.getCapabilities();
-    const width = capabilities.width?.max ?? null;
-    const height = capabilities.height?.max ?? null;
+  const device = devices.find((d) => d.deviceId === deviceId);
 
+  if (typeof InputDeviceInfo === "undefined") {
     return {
       type: "camera",
-      deviceId: device.deviceId,
-      maxWidth:
-        !width || width < VIDEO_SIZES[size].width
-          ? width
-          : VIDEO_SIZES[size].width,
-      maxHeight:
-        !height || height < VIDEO_SIZES[size].height
-          ? height
-          : VIDEO_SIZES[size].height,
+      deviceId: deviceId,
+      maxWidth: constrainedWidth,
+      maxHeight: constrainedHeight,
     };
   }
 
+  if (!(device instanceof InputDeviceInfo)) {
+    return {
+      type: "camera",
+      deviceId: deviceId,
+      maxWidth: constrainedWidth,
+      maxHeight: constrainedHeight,
+    };
+  }
+
+  const capabilities = device.getCapabilities();
+  const width = capabilities.width?.max ?? null;
+  const height = capabilities.height?.max ?? null;
+
+  const maxWidth =
+    constrainedWidth === null
+      ? width
+      : Math.min(constrainedWidth, width ?? Infinity);
+  const maxHeight =
+    constrainedHeight === null
+      ? height
+      : Math.min(constrainedHeight, height ?? Infinity);
+
   return {
     type: "camera",
-    deviceId: value,
-    maxWidth: null,
-    maxHeight: null,
+    deviceId: device.deviceId,
+    maxWidth: maxWidth,
+    maxHeight: maxHeight,
   };
 };
