@@ -45,7 +45,7 @@ export const CurrentVideo: React.FC<{
       {isScreenshare ? <DisplayIcon></DisplayIcon> : <CameraIcon></CameraIcon>}
       <div style={spacer}></div>
       <div>
-        <div>{resolution ? label : "No camera selected"}</div>
+        <div>{label}</div>
         <span
           style={{
             whiteSpace: "nowrap",
