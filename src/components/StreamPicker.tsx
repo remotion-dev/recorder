@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { AbsoluteFill } from "remotion";
 import { getDeviceLabel } from "../App";
 import { DeviceItem } from "../DeviceItem";
-import { getMaxResolutionOfDevice } from "../helpers/get-max-resolution-of-device";
 
 const title: React.CSSProperties = {
   fontWeight: "bold",
@@ -74,7 +73,6 @@ export const StreamPicker: React.FC<{
               onPickScreen();
             }}
             deviceLabel={"Screen capture"}
-            maxResolution={null}
             type="screen"
             selected={selectedVideoDevice === "display"}
           />
@@ -85,7 +83,6 @@ export const StreamPicker: React.FC<{
               type="camera"
               key={d.deviceId}
               deviceLabel={getDeviceLabel(d)}
-              maxResolution={getMaxResolutionOfDevice(d)}
               handleClick={() => {
                 onPickVideo(d);
               }}
@@ -113,7 +110,6 @@ export const StreamPicker: React.FC<{
                 type="microphone"
                 key={d.deviceId}
                 deviceLabel={getDeviceLabel(d)}
-                maxResolution={null}
                 handleClick={() => {
                   onPickAudio(d);
                 }}

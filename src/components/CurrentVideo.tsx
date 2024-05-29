@@ -1,9 +1,9 @@
 import { CameraIcon } from "lucide-react";
 import React from "react";
-import { Dimensions } from "../../config/layout";
 import { DisplayIcon } from "../DeviceItem";
 import { Resolution } from "../PrefixAndResolution";
 import { ResolutionLimiter } from "../ResolutionLimiter";
+import { ResolutionAndFps } from "../Stream";
 import { MaxResolution } from "../helpers/get-max-resolution-of-device";
 import { VideoSize } from "../helpers/get-selected-video-source";
 import { Divider } from "./Divider";
@@ -24,7 +24,7 @@ const spacer: React.CSSProperties = {
 
 export const CurrentVideo: React.FC<{
   label: string;
-  resolution: Dimensions | null;
+  resolution: ResolutionAndFps | null;
   sizeConstraint: VideoSize | null;
   maxResolution: MaxResolution | null;
   setSizeConstraint: (val: VideoSize | null) => void;

@@ -2,12 +2,11 @@
 /* eslint-disable no-alert */
 import { useCallback, useMemo, useState } from "react";
 import { WEBCAM_PREFIX } from "../config/cameras";
-import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
 import { CropIndicator } from "./CropIndicator";
 import { PrefixLabel } from "./PrefixAndResolution";
 import { ToggleRotate } from "./Rotate";
-import { Stream } from "./Stream";
+import { ResolutionAndFps, Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
 import { CurrentAudio } from "./components/CurrentAudio";
 import { CurrentVideo } from "./components/CurrentVideo";
@@ -87,7 +86,7 @@ export const View: React.FC<{
   );
 
   const recordAudio = prefix === WEBCAM_PREFIX;
-  const [resolution, setResolution] = useState<Dimensions | null>(null);
+  const [resolution, setResolution] = useState<ResolutionAndFps | null>(null);
   const [preferPortrait, setPreferPortrait] = useState(false);
   const [sizeConstraint, setSizeConstraint] = useState<VideoSize | null>(() =>
     getPreferredResolutionForDevice(selectedVideoDevice),
