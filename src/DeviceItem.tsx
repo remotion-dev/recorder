@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./deviceitem.module.css";
 import { MaxResolution } from "./helpers/get-max-resolution-of-device";
 
 const deviceRow: React.CSSProperties = {
@@ -96,7 +97,7 @@ export const DeviceItem: React.FC<{
   selected: boolean;
 }> = ({ deviceLabel, type, handleClick, maxResolution, selected }) => {
   return (
-    <div onClick={handleClick} style={deviceRow}>
+    <div className={styles.item} onClick={handleClick} style={deviceRow}>
       <div
         style={{
           width: 36,

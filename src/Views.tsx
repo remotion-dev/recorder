@@ -38,7 +38,6 @@ const viewContainer: React.CSSProperties = {
 const topBar: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
-  gap: 4,
   padding: 4,
   paddingLeft: 10,
   height: 48,
@@ -182,6 +181,8 @@ export const View: React.FC<{
     <div style={viewContainer}>
       <div style={topBar}>
         <PrefixLabel prefix={prefix} />
+        <div style={{ width: 15 }}></div>
+
         {resolution && (
           <CurrentVideo
             resolution={resolution}
