@@ -1,11 +1,4 @@
-import type { Dimensions } from "@remotion/layout-utils";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AbsoluteFill } from "remotion";
 import { Spinner } from "./components/Spinner";
 import type { SelectedSource } from "./helpers/get-selected-video-source";
@@ -29,11 +22,17 @@ export type SelectedVideoSource =
       type: "display";
     };
 
+export type ResolutionAndFps = {
+  width: number;
+  height: number;
+  fps: number;
+};
+
 export const Stream: React.FC<{
   prefix: Prefix;
   setMediaStream: (prefix: Prefix, source: MediaStream | null) => void;
   mediaStream: MediaStream | null;
-  setResolution: React.Dispatch<React.SetStateAction<Dimensions | null>>;
+  setResolution: React.Dispatch<React.SetStateAction<ResolutionAndFps | null>>;
   recordAudio: boolean;
   selectedVideoSource: SelectedSource | null;
   selectedAudioSource: ConstrainDOMString | null;
@@ -110,6 +109,22 @@ export const Stream: React.FC<{
       selectedVideoSource,
     })
       .then((stream) => {
+        const videoTrack = stream.getVideoTracks()[0];
+        if (!videoTrack) {
+          throw new Error("No video track");
+        }
+
+        const settings = videoTrack.getSettings();
+        if (!settings) {
+          throw new Error("No video settings");
+        }
+
+        setResolution({
+          width: settings.width as number,
+          height: settings.height as number,
+          fps: settings.frameRate as number,
+        });
+
         if (current) {
           current.srcObject = stream;
           current.play();
@@ -148,23 +163,12 @@ export const Stream: React.FC<{
     selectedAudioSource,
     selectedVideoSource,
     setMediaStream,
+    setResolution,
   ]);
-
-  const onLoadedMetadata = useCallback(() => {
-    setResolution({
-      width: sourceRef.current?.videoWidth as number,
-      height: sourceRef.current?.videoHeight as number,
-    });
-  }, [setResolution]);
 
   return (
     <AbsoluteFill style={container} id={prefix + "-video-container"}>
-      <video
-        ref={sourceRef}
-        muted
-        style={videoStyle}
-        onLoadedMetadata={onLoadedMetadata}
-      />
+      <video ref={sourceRef} muted style={videoStyle} />
       {streamState === "loading" ? <Spinner /> : null}
     </AbsoluteFill>
   );
