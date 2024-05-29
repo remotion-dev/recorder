@@ -1,4 +1,5 @@
 import { Dimensions } from "../../config/layout";
+import { MaxResolution } from "../get-max-resolution-of-device";
 
 export type SelectedSource =
   | {
@@ -21,18 +22,14 @@ export const VIDEO_SIZES: { [key in VideoSize]: Dimensions } = {
 };
 
 export const getSelectedVideoSource = ({
-  deviceId,
-  devices,
   resolutionConstraint,
+  maxResolution,
+  device,
 }: {
-  deviceId: string;
-  devices: MediaDeviceInfo[];
   resolutionConstraint: VideoSize | null;
+  maxResolution: MaxResolution | null;
+  device: MediaDeviceInfo;
 }): SelectedSource | null => {
-  if (deviceId === "undefined") {
-    return null;
-  }
-
   const constrainedWidth =
     resolutionConstraint === null
       ? null
@@ -42,38 +39,23 @@ export const getSelectedVideoSource = ({
       ? null
       : VIDEO_SIZES[resolutionConstraint].height;
 
-  const device = devices.find((d) => d.deviceId === deviceId);
-
-  if (typeof InputDeviceInfo === "undefined") {
+  if (maxResolution === null) {
     return {
       type: "camera",
-      deviceId: deviceId,
+      deviceId: device.deviceId,
       maxWidth: constrainedWidth,
       maxHeight: constrainedHeight,
     };
   }
-
-  if (!(device instanceof InputDeviceInfo)) {
-    return {
-      type: "camera",
-      deviceId: deviceId,
-      maxWidth: constrainedWidth,
-      maxHeight: constrainedHeight,
-    };
-  }
-
-  const capabilities = device.getCapabilities();
-  const width = capabilities.width?.max ?? null;
-  const height = capabilities.height?.max ?? null;
 
   const maxWidth =
     constrainedWidth === null
-      ? width
-      : Math.min(constrainedWidth, width ?? Infinity);
+      ? maxResolution.width
+      : Math.min(constrainedWidth, maxResolution.width ?? Infinity);
   const maxHeight =
     constrainedHeight === null
-      ? height
-      : Math.min(constrainedHeight, height ?? Infinity);
+      ? maxResolution.height
+      : Math.min(constrainedHeight, maxResolution.height ?? Infinity);
 
   return {
     type: "camera",
