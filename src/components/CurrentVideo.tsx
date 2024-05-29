@@ -1,11 +1,12 @@
+import { CameraIcon } from "lucide-react";
 import React from "react";
 import { Dimensions } from "../../config/layout";
+import { DisplayIcon } from "../DeviceItem";
 import { Resolution } from "../PrefixAndResolution";
 import { ResolutionLimiter } from "../ResolutionLimiter";
 import { MaxResolution } from "../helpers/get-max-resolution-of-device";
 import { VideoSize } from "../helpers/get-selected-video-source";
 import { Divider } from "./Divider";
-import { CameraIcon, DisplayIcon } from "./StreamPicker";
 
 const container: React.CSSProperties = {
   display: "flex",
