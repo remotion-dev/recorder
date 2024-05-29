@@ -20,7 +20,6 @@ import {
   getSelectedVideoSource,
 } from "./helpers/get-selected-video-source";
 import { Prefix } from "./helpers/prefixes";
-
 const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
@@ -182,28 +181,23 @@ export const View: React.FC<{
       <div style={topBar}>
         <PrefixLabel prefix={prefix} />
         <div style={{ width: 15 }}></div>
-
-        {resolution && (
-          <CurrentVideo
-            resolution={resolution}
-            label={videoDeviceLabel ?? "Screen Share"}
-            sizeConstraint={sizeConstraint}
-            setSizeConstraint={setSizeConstraint}
-            maxResolution={maxResolution}
-            isScreenshare={selectedVideoSource?.type === "display"}
-            onClick={() => {
-              setShowPicker((p) => !p);
-            }}
-          ></CurrentVideo>
-        )}
-        {audioDeviceLabel ? (
-          <CurrentAudio
-            onClick={() => {
-              setShowPicker((p) => !p);
-            }}
-            label={audioDeviceLabel}
-          ></CurrentAudio>
-        ) : null}
+        <CurrentVideo
+          resolution={resolution}
+          label={videoDeviceLabel ?? "Screen Share"}
+          sizeConstraint={sizeConstraint}
+          setSizeConstraint={setSizeConstraint}
+          maxResolution={maxResolution}
+          isScreenshare={selectedVideoSource?.type === "display"}
+          onClick={() => {
+            setShowPicker((p) => !p);
+          }}
+        ></CurrentVideo>
+        <CurrentAudio
+          onClick={() => {
+            setShowPicker((p) => !p);
+          }}
+          label={audioDeviceLabel}
+        ></CurrentAudio>
         {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop
             pressed={showCropIndicator}
@@ -233,7 +227,7 @@ export const View: React.FC<{
           prefix={prefix}
           preferPortrait={preferPortrait}
         />
-        {showCropIndicator && resolution ? (
+        {showCropIndicator && resolution && !showPicker ? (
           <CropIndicator resolution={resolution} />
         ) : null}
         {showPicker ? (

@@ -4,7 +4,6 @@ import { Dimensions } from "../../config/layout";
 import { DisplayIcon } from "../DeviceItem";
 import { Resolution } from "../PrefixAndResolution";
 import { ResolutionLimiter } from "../ResolutionLimiter";
-import styles from "../currentmedia.module.css";
 import { MaxResolution } from "../helpers/get-max-resolution-of-device";
 import { VideoSize } from "../helpers/get-selected-video-source";
 import { Divider } from "./Divider";
@@ -25,7 +24,7 @@ const spacer: React.CSSProperties = {
 
 export const CurrentVideo: React.FC<{
   label: string;
-  resolution: Dimensions;
+  resolution: Dimensions | null;
   sizeConstraint: VideoSize | null;
   maxResolution: MaxResolution | null;
   setSizeConstraint: React.Dispatch<React.SetStateAction<VideoSize | null>>;
@@ -41,12 +40,12 @@ export const CurrentVideo: React.FC<{
   onClick,
 }) => {
   return (
-    <div className={styles.item} style={container} onClick={onClick}>
+    <div style={container} onClick={onClick}>
       <Divider></Divider>
       {isScreenshare ? <DisplayIcon></DisplayIcon> : <CameraIcon></CameraIcon>}
       <div style={spacer}></div>
       <div>
-        <div>{label}</div>
+        <div>{resolution ? label : "No camera selected"}</div>
         <span
           style={{
             whiteSpace: "nowrap",
@@ -54,15 +53,19 @@ export const CurrentVideo: React.FC<{
             flexDirection: "row",
           }}
         >
-          <Resolution resolution={resolution} />
-          {isScreenshare ? null : (
-            <ResolutionLimiter
-              sizeConstraint={sizeConstraint}
-              setSizeConstraint={setSizeConstraint}
-              maxResolution={maxResolution}
-              deviceName={label}
-            />
-          )}
+          {resolution ? (
+            <>
+              <Resolution resolution={resolution} />
+              {isScreenshare ? null : (
+                <ResolutionLimiter
+                  sizeConstraint={sizeConstraint}
+                  setSizeConstraint={setSizeConstraint}
+                  maxResolution={maxResolution}
+                  deviceName={label}
+                />
+              )}
+            </>
+          ) : null}
         </span>
       </div>
       <div style={spacer}></div>

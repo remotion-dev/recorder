@@ -1,6 +1,5 @@
 import { MicIcon } from "lucide-react";
 import React from "react";
-import styles from "../currentmedia.module.css";
 import { Divider } from "./Divider";
 
 const container: React.CSSProperties = {
@@ -18,15 +17,15 @@ const spacer: React.CSSProperties = {
 };
 
 export const CurrentAudio: React.FC<{
-  label: string;
+  label: string | null;
   onClick: () => void;
 }> = ({ label, onClick }) => {
   return (
-    <div className={styles.item} style={container} onClick={onClick}>
+    <div style={container} onClick={onClick}>
       <Divider></Divider>
       <MicIcon></MicIcon>
       <div style={spacer}></div>
-      <div>{label}</div>
+      <div>{label ?? "No audio selected"}</div>
     </div>
   );
 };

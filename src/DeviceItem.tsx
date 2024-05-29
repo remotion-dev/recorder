@@ -11,6 +11,7 @@ const deviceRow: React.CSSProperties = {
   paddingBottom: 10,
   borderBottom: "1px solid #333",
   cursor: "pointer",
+  paddingRight: 10,
 };
 
 const spacer: React.CSSProperties = {
