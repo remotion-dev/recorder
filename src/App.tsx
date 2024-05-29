@@ -72,7 +72,7 @@ const App = () => {
   const [showAlternativeViews, setShowAlternativeViews] = useState<boolean>(
     localStorage.getItem("showAlternativeViews") === "true",
   );
-  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+  const [devices, setDevices] = useState<MediaDeviceInfo[] | null>(null);
 
   const [mediaSources, setMediaSources] = useState<MediaSources>({
     webcam: null,
@@ -138,37 +138,40 @@ const App = () => {
   return (
     <div style={outer}>
       <TopBar mediaSources={mediaSources} />
-      <div style={dynamicGridContainer}>
-        <View
-          prefix={WEBCAM_PREFIX}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.webcam}
-        />
-        <View
-          prefix={DISPLAY_PREFIX}
-          devices={devices}
-          setMediaStream={setMediaStream}
-          mediaStream={mediaSources.display}
-        />
-        {showAlternativeViews ? (
-          <>
-            <View
-              prefix={ALTERNATIVE1_PREFIX}
-              devices={devices}
-              setMediaStream={setMediaStream}
-              mediaStream={mediaSources.alternative1}
-            />
-            <View
-              prefix={ALTERNATIVE2_PREFIX}
-              devices={devices}
-              setMediaStream={setMediaStream}
-              mediaStream={mediaSources.alternative2}
-            />
-          </>
-        ) : null}
-      </div>
-      <div style={{ marginBottom: 10 }}>
+      {devices ? (
+        <div style={dynamicGridContainer}>
+          <View
+            prefix={WEBCAM_PREFIX}
+            devices={devices}
+            setMediaStream={setMediaStream}
+            mediaStream={mediaSources.webcam}
+          />
+          <View
+            prefix={DISPLAY_PREFIX}
+            devices={devices}
+            setMediaStream={setMediaStream}
+            mediaStream={mediaSources.display}
+          />
+          {showAlternativeViews ? (
+            <>
+              <View
+                prefix={ALTERNATIVE1_PREFIX}
+                devices={devices}
+                setMediaStream={setMediaStream}
+                mediaStream={mediaSources.alternative1}
+              />
+              <View
+                prefix={ALTERNATIVE2_PREFIX}
+                devices={devices}
+                setMediaStream={setMediaStream}
+                mediaStream={mediaSources.alternative2}
+              />
+            </>
+          ) : null}
+        </div>
+      ) : null}
+
+      <div style={{ marginBottom: 10, textAlign: "center" }}>
         {showAlternativeViews ? (
           <Button
             variant={"ghost"}

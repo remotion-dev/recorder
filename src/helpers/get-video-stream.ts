@@ -31,11 +31,11 @@ const getCameraStram = ({
     width: preferPortrait
       ? undefined
       : selectedVideoSource.maxWidth
-        ? { min: selectedVideoSource.maxWidth }
+        ? { ideal: selectedVideoSource.maxWidth }
         : undefined,
     height: preferPortrait
       ? selectedVideoSource.maxHeight
-        ? { min: selectedVideoSource.maxHeight }
+        ? { ideal: selectedVideoSource.maxHeight }
         : undefined
       : undefined,
   };

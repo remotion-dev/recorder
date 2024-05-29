@@ -1,32 +1,33 @@
 /* eslint-disable no-negated-condition */
 /* eslint-disable no-alert */
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { WEBCAM_PREFIX } from "../config/cameras";
 import type { Dimensions } from "../config/layout";
 import { getDeviceLabel } from "./App";
-import { AudioSelector } from "./AudioSelector";
-import { PrefixAndResolution } from "./PrefixAndResolution";
+import { CropIndicator } from "./CropIndicator";
+import { PrefixLabel } from "./PrefixAndResolution";
 import { ToggleRotate } from "./Rotate";
 import { Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
-import { VolumeMeter } from "./components/VolumeMeter";
-import { Button } from "./components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./components/ui/select";
+import { CurrentAudio } from "./components/CurrentAudio";
+import { CurrentVideo } from "./components/CurrentVideo";
+import { StreamPicker } from "./components/StreamPicker";
+import { NoVolumeMeter, VolumeMeter } from "./components/VolumeMeter";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
 import { getMaxResolutionOfDevice } from "./helpers/get-max-resolution-of-device";
 import {
-  SelectedSource,
   VideoSize,
   getSelectedVideoSource,
 } from "./helpers/get-selected-video-source";
 import { Prefix } from "./helpers/prefixes";
-
+import {
+  getPreferredDeviceIfExists,
+  setPreferredDeviceForPrefix,
+} from "./preferred-device-localstorage";
+import {
+  getPreferredResolutionForDevice,
+  setPreferredResolutionForDevice,
+} from "./preferred-resolution";
 const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
@@ -38,14 +39,20 @@ const viewContainer: React.CSSProperties = {
   height: "100%",
   maxHeight: "100%",
   maxWidth: "100%",
+  position: "relative",
 };
 
-const viewName: React.CSSProperties = {
+const topBar: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
-  gap: 4,
   padding: 4,
   paddingLeft: 10,
+  height: 48,
+};
+
+const streamViewport: React.CSSProperties = {
+  flex: 1,
+  position: "relative",
 };
 
 const localStorageKey = "showCropIndicator";
@@ -67,15 +74,24 @@ export const View: React.FC<{
     initialCropIndicatorState,
   );
 
-  const [selectedAudioSource, setSelectedAudioSource] =
-    useState<ConstrainDOMString | null>(null);
-  const [selectedVideoSource, setSelectedVideoSource] =
-    useState<SelectedSource | null>(null);
+  const [selectedVideoDevice, setSelectedVideoDevice] = useState<string | null>(
+    () => getPreferredDeviceIfExists(prefix, "video", devices),
+  );
+
+  const [selectedAudioDevice, setSelectedAudioDevice] = useState<string | null>(
+    () => getPreferredDeviceIfExists(prefix, "audio", devices),
+  );
+
+  const [showPicker, setShowPicker] = useState(
+    () => !selectedVideoDevice && !selectedAudioDevice,
+  );
+
   const recordAudio = prefix === WEBCAM_PREFIX;
   const [resolution, setResolution] = useState<Dimensions | null>(null);
   const [preferPortrait, setPreferPortrait] = useState(false);
-  const [activeDeviceId, setActiveDeviceId] = useState<string | null>(null);
-  const [sizeConstraint, setSizeConstraint] = useState<VideoSize | null>(null);
+  const [sizeConstraint, setSizeConstraint] = useState<VideoSize | null>(() =>
+    getPreferredResolutionForDevice(selectedVideoDevice),
+  );
 
   const onToggleCrop = useCallback(() => {
     setShowCropIndicator((prev) => {
@@ -91,42 +107,60 @@ export const View: React.FC<{
   }, []);
 
   const selectScreen = useCallback(async () => {
-    setSelectedVideoSource({ type: "display" });
+    setSelectedVideoDevice("display");
+    setShowPicker(false);
   }, []);
 
-  const activeDevice = useMemo(() => {
-    return devices.find((d) => d.deviceId === activeDeviceId);
-  }, [activeDeviceId, devices]);
-
-  const deviceLabel = useMemo(() => {
-    if (!activeDevice) {
-      return null;
-    }
-
-    return getDeviceLabel(activeDevice);
-  }, [activeDevice]);
+  const activeVideoDevice = useMemo(() => {
+    return devices.find((d) => d.deviceId === selectedVideoDevice);
+  }, [selectedVideoDevice, devices]);
+  const activeAudioDevice = useMemo(() => {
+    return devices.find((d) => d.deviceId === selectedAudioDevice);
+  }, [selectedAudioDevice, devices]);
 
   const maxResolution = useMemo(() => {
-    if (!activeDevice) {
+    if (!activeVideoDevice) {
       return null;
     }
 
-    return getMaxResolutionOfDevice(activeDevice);
-  }, [activeDevice]);
+    return getMaxResolutionOfDevice(activeVideoDevice);
+  }, [activeVideoDevice]);
 
-  useEffect(() => {
-    if (!activeDevice) {
-      return;
+  const selectedVideoSource = useMemo(() => {
+    if (selectedVideoDevice === "display") {
+      return { type: "display" as const };
     }
 
-    setSelectedVideoSource(
-      getSelectedVideoSource({
-        device: activeDevice,
-        resolutionConstraint: sizeConstraint,
-        maxResolution,
-      }),
-    );
-  }, [activeDeviceId, sizeConstraint, devices, activeDevice, maxResolution]);
+    if (!activeVideoDevice) {
+      return null;
+    }
+
+    return getSelectedVideoSource({
+      device: activeVideoDevice,
+      resolutionConstraint: sizeConstraint,
+      maxResolution,
+    });
+  }, [activeVideoDevice, maxResolution, selectedVideoDevice, sizeConstraint]);
+
+  const videoDeviceLabel = useMemo(() => {
+    if (selectedVideoDevice === "display") {
+      return "Screen Share";
+    }
+
+    if (!activeVideoDevice) {
+      return null;
+    }
+
+    return getDeviceLabel(activeVideoDevice);
+  }, [activeVideoDevice, selectedVideoDevice]);
+
+  const audioDeviceLabel = useMemo(() => {
+    if (!activeAudioDevice) {
+      return null;
+    }
+
+    return getDeviceLabel(activeAudioDevice);
+  }, [activeAudioDevice]);
 
   const cameraRotateable = useMemo(() => {
     return canRotateCamera({
@@ -136,17 +170,67 @@ export const View: React.FC<{
     });
   }, [preferPortrait, resolution, selectedVideoSource]);
 
+  const onPickVideo = useCallback(
+    (device: MediaDeviceInfo) => {
+      setSelectedVideoDevice(device.deviceId);
+      setPreferredDeviceForPrefix(prefix, "video", device.deviceId);
+      if (recordAudio && !selectedAudioDevice) {
+        return;
+      }
+      setShowPicker(false);
+    },
+    [prefix, recordAudio, selectedAudioDevice],
+  );
+
+  const onPickAudio = useCallback(
+    (device: MediaDeviceInfo) => {
+      setSelectedAudioDevice(device.deviceId);
+      setPreferredDeviceForPrefix(prefix, "audio", device.deviceId);
+      if (!selectedVideoDevice) {
+        return;
+      }
+      setShowPicker(false);
+    },
+    [prefix, selectedVideoDevice],
+  );
+
+  const clear = useCallback(() => {
+    setSelectedVideoDevice(null);
+    setSelectedAudioDevice(null);
+    setPreferredDeviceForPrefix(prefix, "video", null);
+    setShowPicker(false);
+    setResolution(null);
+  }, [prefix]);
+
   return (
     <div style={viewContainer}>
-      <div style={viewName}>
-        <PrefixAndResolution
-          deviceName={deviceLabel}
-          setSizeConstraint={setSizeConstraint}
-          sizeConstraint={sizeConstraint}
-          prefix={prefix}
+      <div style={topBar}>
+        <PrefixLabel prefix={prefix} />
+        <div style={{ width: 15 }}></div>
+        <CurrentVideo
           resolution={resolution}
+          label={videoDeviceLabel ?? "No video selected"}
+          sizeConstraint={sizeConstraint}
+          setSizeConstraint={(val) => {
+            setSizeConstraint(val);
+            if (selectedVideoDevice) {
+              setPreferredResolutionForDevice(selectedVideoDevice, val);
+            }
+          }}
           maxResolution={maxResolution}
-        />
+          isScreenshare={selectedVideoSource?.type === "display"}
+          onClick={() => {
+            setShowPicker((p) => !p);
+          }}
+        ></CurrentVideo>
+        {prefix === WEBCAM_PREFIX ? (
+          <CurrentAudio
+            onClick={() => {
+              setShowPicker((p) => !p);
+            }}
+            label={audioDeviceLabel}
+          />
+        ) : null}
         {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop
             pressed={showCropIndicator}
@@ -159,53 +243,41 @@ export const View: React.FC<{
             onPressedChange={onToggleRotate}
           />
         ) : null}
-        <Select onValueChange={(value: string) => setActiveDeviceId(value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select video" />
-          </SelectTrigger>
-          <SelectContent>
-            {devices
-              .filter((d) => d.kind === "videoinput")
-              .map((d) => {
-                const label = getDeviceLabel(d);
-                return (
-                  <SelectItem key={d.deviceId} value={d.deviceId}>
-                    {label}
-                  </SelectItem>
-                );
-              })}
-          </SelectContent>
-        </Select>
-
-        {prefix !== WEBCAM_PREFIX ? (
-          <Button type="button" onClick={selectScreen}>
-            Select screen
-          </Button>
-        ) : null}
-
-        {recordAudio ? (
-          <AudioSelector
-            devices={devices}
-            setSelectedAudioSource={setSelectedAudioSource}
-            audioSource={selectedAudioSource}
-          />
-        ) : null}
       </div>
       {prefix === WEBCAM_PREFIX ? (
         <VolumeMeter mediaStream={mediaStream} />
-      ) : null}
-      <Stream
-        selectedAudioSource={selectedAudioSource}
-        selectedVideoSource={selectedVideoSource}
-        recordAudio={recordAudio}
-        resolution={resolution}
-        setResolution={setResolution}
-        mediaStream={mediaStream}
-        setMediaStream={setMediaStream}
-        prefix={prefix}
-        showCropIndicator={showCropIndicator}
-        preferPortrait={preferPortrait}
-      />
+      ) : (
+        <NoVolumeMeter></NoVolumeMeter>
+      )}
+      <div style={streamViewport}>
+        <Stream
+          selectedAudioSource={selectedAudioDevice}
+          selectedVideoSource={selectedVideoSource}
+          recordAudio={recordAudio}
+          setResolution={setResolution}
+          mediaStream={mediaStream}
+          setMediaStream={setMediaStream}
+          prefix={prefix}
+          preferPortrait={preferPortrait}
+        />
+        {showCropIndicator && resolution && !showPicker ? (
+          <CropIndicator resolution={resolution} />
+        ) : null}
+        {showPicker ? (
+          <StreamPicker
+            onPickVideo={onPickVideo}
+            onPickAudio={onPickAudio}
+            canSelectAudio={recordAudio}
+            devices={devices}
+            canSelectScreen={prefix !== WEBCAM_PREFIX}
+            onPickScreen={selectScreen}
+            selectedAudioDevice={selectedAudioDevice}
+            selectedVideoDevice={selectedVideoDevice}
+            clear={clear}
+            canClear={prefix !== WEBCAM_PREFIX}
+          />
+        ) : null}
+      </div>
     </div>
   );
 };

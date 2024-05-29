@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { CropIndicator } from "./CropIndicator";
+import { AbsoluteFill } from "remotion";
 import { Spinner } from "./components/Spinner";
 import type { SelectedSource } from "./helpers/get-selected-video-source";
 import { getVideoStream } from "./helpers/get-video-stream";
@@ -14,12 +14,8 @@ import { Prefix } from "./helpers/prefixes";
 
 const container: React.CSSProperties = {
   flex: 1,
-  overflow: "hidden",
-  position: "relative",
-  display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  flexDirection: "column",
 };
 
 type StreamState = "initial" | "loading" | "loaded";
@@ -37,10 +33,8 @@ export const Stream: React.FC<{
   prefix: Prefix;
   setMediaStream: (prefix: Prefix, source: MediaStream | null) => void;
   mediaStream: MediaStream | null;
-  resolution: Dimensions | null;
   setResolution: React.Dispatch<React.SetStateAction<Dimensions | null>>;
   recordAudio: boolean;
-  showCropIndicator: boolean;
   selectedVideoSource: SelectedSource | null;
   selectedAudioSource: ConstrainDOMString | null;
   preferPortrait: boolean;
@@ -48,10 +42,8 @@ export const Stream: React.FC<{
   prefix,
   mediaStream,
   setMediaStream,
-  resolution,
   setResolution,
   recordAudio,
-  showCropIndicator,
   selectedVideoSource,
   selectedAudioSource,
   preferPortrait,
@@ -166,7 +158,7 @@ export const Stream: React.FC<{
   }, [setResolution]);
 
   return (
-    <div style={container} id={prefix + "-video-container"}>
+    <AbsoluteFill style={container} id={prefix + "-video-container"}>
       <video
         ref={sourceRef}
         muted
@@ -174,9 +166,6 @@ export const Stream: React.FC<{
         onLoadedMetadata={onLoadedMetadata}
       />
       {streamState === "loading" ? <Spinner /> : null}
-      {showCropIndicator && resolution ? (
-        <CropIndicator resolution={resolution} />
-      ) : null}
-    </div>
+    </AbsoluteFill>
   );
 };
