@@ -34,7 +34,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "eslint": "^8",
-    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "4.6.2",
     "express": "^4.19.2",
     "lucide-react": "^0.290.0",
     "prettier": "^3.0.3",
@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@remotion/cli": "4.0.159",
+    "@remotion/eslint-plugin": "4.0.159",
     "@remotion/eslint-config": "4.0.159",
     "@remotion/google-fonts": "4.0.159",
     "@remotion/install-whisper-cpp": "4.0.159",
