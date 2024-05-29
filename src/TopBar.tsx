@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Logo } from "./Logo";
 import type { MediaSources } from "./RecordButton";
 import { RecordButton } from "./RecordButton";
 import { fetchProjectFolders } from "./actions/fetch-project-folders";
@@ -21,8 +22,9 @@ const topBarContainer: React.CSSProperties = {
   display: "flex",
   gap: 10,
   margin: 10,
-  marginBottom: 0,
   alignItems: "center",
+  flexDirection: "row",
+  justifyContent: "center",
 };
 
 const recordWrapper: React.CSSProperties = {
@@ -107,36 +109,35 @@ export const TopBar: React.FC<{
 
   return (
     <div style={topBarContainer}>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <div style={recordWrapper}>
-          {uploading ? null : (
-            <RecordButton
-              recording={recording}
-              showHandleVideos={showHandleVideos}
-              recordingDisabled={recordingDisabled}
-              setCurrentBlobs={setCurrentBlobs}
-              mediaSources={mediaSources}
-              setRecording={setRecording}
-              setShowHandleVideos={setShowHandleVideos}
-            />
-          )}
+      <Logo></Logo>
+      <div style={recordWrapper}>
+        {uploading ? null : (
+          <RecordButton
+            recording={recording}
+            showHandleVideos={showHandleVideos}
+            recordingDisabled={recordingDisabled}
+            setCurrentBlobs={setCurrentBlobs}
+            mediaSources={mediaSources}
+            setRecording={setRecording}
+            setShowHandleVideos={setShowHandleVideos}
+          />
+        )}
 
-          {showHandleVideos ? (
-            <UseThisTake
-              selectedFolder={selectedFolder}
-              currentBlobs={currentBlobs}
-              setCurrentBlobs={setCurrentBlobs}
-              setShowHandleVideos={setShowHandleVideos}
-              uploading={uploading}
-              setUploading={setUploading}
-              setTranscribing={setTranscribing}
-            />
-          ) : null}
-        </div>
+        {showHandleVideos ? (
+          <UseThisTake
+            selectedFolder={selectedFolder}
+            currentBlobs={currentBlobs}
+            setCurrentBlobs={setCurrentBlobs}
+            setShowHandleVideos={setShowHandleVideos}
+            uploading={uploading}
+            setUploading={setUploading}
+            setTranscribing={setTranscribing}
+          />
+        ) : null}
+      </div>
 
-        <div style={dynamicTranscribeIndicator}>
-          Transcribing last recording <SmallSpinner />
-        </div>
+      <div style={dynamicTranscribeIndicator}>
+        Transcribing last recording <SmallSpinner />
       </div>
 
       <div style={{ flex: 1 }} />
