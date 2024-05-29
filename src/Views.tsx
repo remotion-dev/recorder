@@ -18,8 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./components/ui/select";
-import { getMaxResolutionOfDevice } from "./get-max-resolution-of-device";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
+import { getMaxResolutionOfDevice } from "./helpers/get-max-resolution-of-device";
 import {
   SelectedSource,
   VideoSize,

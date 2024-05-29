@@ -1,4 +1,4 @@
-import { SelectedSource } from "./helpers/get-selected-video-source";
+import { SelectedSource } from "./get-selected-video-source";
 
 const getDisplayStream = async (selectedVideoSource: SelectedSource) => {
   if (selectedVideoSource.type !== "display") {

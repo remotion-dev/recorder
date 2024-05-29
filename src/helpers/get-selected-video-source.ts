@@ -1,5 +1,5 @@
 import { Dimensions } from "../../config/layout";
-import { MaxResolution } from "../get-max-resolution-of-device";
+import { MaxResolution } from "./get-max-resolution-of-device";
 
 export type SelectedSource =
   | {

@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./components/ui/select";
-import { MaxResolution } from "./get-max-resolution-of-device";
+import { MaxResolution } from "./helpers/get-max-resolution-of-device";
 import { VIDEO_SIZES, VideoSize } from "./helpers/get-selected-video-source";
 
 const buttonStyle: React.CSSProperties = {
