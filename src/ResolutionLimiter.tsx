@@ -82,10 +82,7 @@ export const ResolutionLimiter: React.FC<{
       return "Full resolution";
     }
     const { width, height } = maxResolution;
-    if (width && height) {
-      return `Full resolution (${width}x${height})`;
-    }
-    if (width) {
+    if (width && !height) {
       return `Full resolution (${width}p)`;
     }
 
