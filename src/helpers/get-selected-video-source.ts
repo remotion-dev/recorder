@@ -1,3 +1,6 @@
+import { Dimensions } from "../../config/layout";
+import { MaxResolution } from "../get-max-resolution-of-device";
+
 export type SelectedSource =
   | {
       type: "camera";
@@ -9,36 +12,55 @@ export type SelectedSource =
       type: "display";
     };
 
+export type VideoSize = "4K" | "1080p" | "720p" | "480p";
+
+export const VIDEO_SIZES: { [key in VideoSize]: Dimensions } = {
+  "4K": { width: 3840, height: 2160 },
+  "1080p": { width: 1920, height: 1080 },
+  "720p": { width: 1280, height: 720 },
+  "480p": { width: 640, height: 480 },
+};
+
 export const getSelectedVideoSource = ({
-  value,
-  devices,
+  resolutionConstraint,
+  maxResolution,
+  device,
 }: {
-  value: string;
-  devices: MediaDeviceInfo[];
+  resolutionConstraint: VideoSize | null;
+  maxResolution: MaxResolution | null;
+  device: MediaDeviceInfo;
 }): SelectedSource | null => {
-  if (value === "undefined") {
-    return null;
-  }
+  const constrainedWidth =
+    resolutionConstraint === null
+      ? null
+      : VIDEO_SIZES[resolutionConstraint].width;
+  const constrainedHeight =
+    resolutionConstraint === null
+      ? null
+      : VIDEO_SIZES[resolutionConstraint].height;
 
-  const device = devices.find((d) => d.deviceId === value);
-
-  if (
-    typeof InputDeviceInfo !== "undefined" &&
-    device instanceof InputDeviceInfo
-  ) {
-    const capabilities = device.getCapabilities();
+  if (maxResolution === null) {
     return {
       type: "camera",
       deviceId: device.deviceId,
-      maxWidth: capabilities.width?.max ?? null,
-      maxHeight: capabilities.height?.max ?? null,
+      maxWidth: constrainedWidth,
+      maxHeight: constrainedHeight,
     };
   }
 
+  const maxWidth =
+    constrainedWidth === null
+      ? maxResolution.width
+      : Math.min(constrainedWidth, maxResolution.width ?? Infinity);
+  const maxHeight =
+    constrainedHeight === null
+      ? maxResolution.height
+      : Math.min(constrainedHeight, maxResolution.height ?? Infinity);
+
   return {
     type: "camera",
-    deviceId: value,
-    maxWidth: null,
-    maxHeight: null,
+    deviceId: device.deviceId,
+    maxWidth: maxWidth,
+    maxHeight: maxHeight,
   };
 };

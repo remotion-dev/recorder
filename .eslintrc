@@ -1,6 +1,10 @@
 {
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
-  "plugins": ["@remotion"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+  ],
+  "plugins": ["@remotion", "react-hooks"],
   "parser": "@typescript-eslint/parser",
   "overrides": [
     {

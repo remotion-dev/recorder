@@ -15,6 +15,12 @@ export const Root = () => {
           canvasLayout: "square" as const,
           scenes: [
             {
+              type: "recorder" as const,
+              durationInFrames: 80,
+              music: "previous" as const,
+              transitionToNextScene: true,
+            },
+            {
               type: "videoscene" as const,
               webcamPosition: "previous" as const,
               duration: null,
