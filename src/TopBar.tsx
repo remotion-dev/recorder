@@ -76,13 +76,11 @@ export const TopBar: React.FC<{
   const selectedFolder = useMemo(() => {
     return preferredSelectedFolder ?? folders?.[0] ?? null;
   }, [folders, preferredSelectedFolder]);
+
   const refreshFoldersList = useCallback(async () => {
     const json = await fetchProjectFolders();
     setFolders(json.folders);
-    if (selectedFolder && !json.folders.includes(selectedFolder)) {
-      setSelectedFolder(json.folders[0] ?? "");
-    }
-  }, [selectedFolder]);
+  }, []);
 
   useEffect(() => {
     if (!window.remotionServerEnabled) {
