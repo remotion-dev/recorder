@@ -14,6 +14,16 @@ const container: React.CSSProperties = {
   backgroundColor: "rgba(0, 0, 0, 0.9)",
   padding: 20,
   gap: 20,
+  overflowY: "auto",
+};
+
+const clearStyle: React.CSSProperties = {
+  borderBottom: "1px solid",
+  color: "rgba(255, 255, 255, 0.5)",
+  fontSize: 14,
+  marginTop: 10,
+  display: "inline-block",
+  cursor: "pointer",
 };
 
 export const StreamPicker: React.FC<{
@@ -25,6 +35,8 @@ export const StreamPicker: React.FC<{
   onPickScreen: () => void;
   selectedVideoDevice: string | null;
   selectedAudioDevice: string | null;
+  clear: () => void;
+  canClear: boolean;
 }> = ({
   canSelectAudio,
   devices,
@@ -34,6 +46,8 @@ export const StreamPicker: React.FC<{
   onPickScreen,
   selectedAudioDevice,
   selectedVideoDevice,
+  clear,
+  canClear,
 }) => {
   const videoInputs = useMemo(() => {
     return devices.filter((d) => d.kind === "videoinput");
@@ -79,6 +93,11 @@ export const StreamPicker: React.FC<{
             />
           );
         })}
+        {selectedVideoDevice && canClear ? (
+          <a style={clearStyle} onClick={clear}>
+            Clear
+          </a>
+        ) : null}
       </div>
       {canSelectAudio ? (
         <div

@@ -70,15 +70,16 @@ export const View: React.FC<{
     initialCropIndicatorState,
   );
 
-  // TODO: Based on initial value
-  const [showPicker, setShowPicker] = useState(true);
-
   const [selectedVideoDevice, setSelectedVideoDevice] = useState<string | null>(
     () => getPreferredDeviceIfExists(prefix, "video", devices),
   );
 
   const [selectedAudioDevice, setSelectedAudioDevice] = useState<string | null>(
     () => getPreferredDeviceIfExists(prefix, "audio", devices),
+  );
+
+  const [showPicker, setShowPicker] = useState(
+    () => !selectedVideoDevice && !selectedAudioDevice,
   );
 
   const recordAudio = prefix === WEBCAM_PREFIX;
@@ -186,6 +187,14 @@ export const View: React.FC<{
     [prefix, selectedVideoDevice],
   );
 
+  const clear = useCallback(() => {
+    setSelectedVideoDevice(null);
+    setSelectedAudioDevice(null);
+    setPreferredDeviceForPrefix(prefix, "video", null);
+    setShowPicker(false);
+    setResolution(null);
+  }, [prefix]);
+
   return (
     <div style={viewContainer}>
       <div style={topBar}>
@@ -202,12 +211,14 @@ export const View: React.FC<{
             setShowPicker((p) => !p);
           }}
         ></CurrentVideo>
-        <CurrentAudio
-          onClick={() => {
-            setShowPicker((p) => !p);
-          }}
-          label={audioDeviceLabel}
-        ></CurrentAudio>
+        {prefix === WEBCAM_PREFIX ? (
+          <CurrentAudio
+            onClick={() => {
+              setShowPicker((p) => !p);
+            }}
+            label={audioDeviceLabel}
+          />
+        ) : null}
         {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop
             pressed={showCropIndicator}
@@ -250,6 +261,8 @@ export const View: React.FC<{
             onPickScreen={selectScreen}
             selectedAudioDevice={selectedAudioDevice}
             selectedVideoDevice={selectedVideoDevice}
+            clear={clear}
+            canClear={prefix !== WEBCAM_PREFIX}
           />
         ) : null}
       </div>
