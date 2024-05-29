@@ -159,13 +159,14 @@ export const View: React.FC<{
     <div style={viewContainer}>
       <div style={topBar}>
         <PrefixLabel prefix={prefix} />
-        {videoDeviceLabel && (
+        {resolution && (
           <CurrentVideo
             resolution={resolution}
-            label={videoDeviceLabel}
+            label={videoDeviceLabel ?? "Screen Share"}
             sizeConstraint={sizeConstraint}
             setSizeConstraint={setSizeConstraint}
             maxResolution={maxResolution}
+            isScreenshare={selectedVideoSource?.type === "display"}
           ></CurrentVideo>
         )}
         {audioDeviceLabel ? (
