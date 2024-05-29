@@ -138,6 +138,16 @@ export const StreamPicker: React.FC<{
     <AbsoluteFill style={container}>
       <div style={{ flex: 1 }}>
         <div style={title}>Select video</div>
+        {canSelectScreen ? (
+          <DeviceItem
+            handleClick={() => {
+              onPickScreen();
+            }}
+            deviceLabel={"Screen capture"}
+            maxResolution={null}
+            type="screen"
+          ></DeviceItem>
+        ) : null}
         {videoInputs.map((d) => {
           return (
             <DeviceItem
@@ -151,16 +161,6 @@ export const StreamPicker: React.FC<{
             />
           );
         })}
-        {canSelectScreen ? (
-          <DeviceItem
-            handleClick={() => {
-              onPickScreen();
-            }}
-            deviceLabel={"Screen capture"}
-            maxResolution={null}
-            type="screen"
-          ></DeviceItem>
-        ) : null}
       </div>
       {canSelectAudio ? (
         <div style={{ flex: 1 }}>
