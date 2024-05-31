@@ -49,6 +49,7 @@ const mapFile = ({
     .replace(`${compositionId}/${WEBCAM_PREFIX}`, "")
     .replace(".webm", "")
     .replace(".mov", "")
+    .replace(".mkv", "")
     .replace(".mp4", "");
 
   const display = findMatchingFile({
