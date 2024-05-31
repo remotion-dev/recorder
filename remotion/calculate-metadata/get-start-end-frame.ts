@@ -22,6 +22,22 @@ const deriveEndFrameFromSubs = (words: Word[] | null) => {
   return lastFrame;
 };
 
+const deriveStartFrameFromSubsJSON = (words: Word[] | null): number => {
+  if (!words) {
+    return 0;
+  }
+
+  // taking the first real word and take its start timestamp in ms.
+  const startFromInHundrethsOfSec = words[0]?.firstTimestamp;
+  if (startFromInHundrethsOfSec === undefined) {
+    return 0;
+  }
+
+  const startFromInFrames =
+    Math.floor((startFromInHundrethsOfSec / 1000) * FPS) - START_FRAME_PADDING;
+  return startFromInFrames > 0 ? startFromInFrames : 0;
+};
+
 const getClampedStartFrame = ({
   startOffset,
   startFrameFromSubs,
@@ -44,35 +60,21 @@ const getClampedStartFrame = ({
   return combinedStartFrame;
 };
 
-const deriveStartFrameFromSubsJSON = (words: Word[] | null): number => {
-  if (!words) {
-    return 0;
-  }
-
-  // taking the first real word and take its start timestamp in ms.
-  const startFromInHundrethsOfSec = words[0]?.firstTimestamp;
-  if (startFromInHundrethsOfSec === undefined) {
-    return 0;
-  }
-
-  const startFromInFrames =
-    Math.floor((startFromInHundrethsOfSec / 1000) * FPS) - START_FRAME_PADDING;
-  return startFromInFrames > 0 ? startFromInFrames : 0;
-};
-
 const getClampedEndFrame = ({
   durationInSeconds,
   endFrameFromCaptions,
+  endOffset,
 }: {
+  endOffset: number;
   durationInSeconds: number;
   endFrameFromCaptions: number | null;
 }): number => {
   const videoDurationInFrames = Math.floor(durationInSeconds * FPS);
   if (!endFrameFromCaptions) {
-    return videoDurationInFrames;
+    return Math.min(videoDurationInFrames, videoDurationInFrames + endOffset);
   }
 
-  const paddedEndFrame = endFrameFromCaptions + END_FRAME_PADDING;
+  const paddedEndFrame = endFrameFromCaptions + END_FRAME_PADDING + endOffset;
   if (paddedEndFrame > videoDurationInFrames) {
     return videoDurationInFrames;
   }
@@ -104,6 +106,7 @@ export const getStartEndFrame = async ({
   const derivedEndFrame = getClampedEndFrame({
     durationInSeconds: recordingDurationInSeconds,
     endFrameFromCaptions,
+    endOffset: scene.endOffset,
   });
 
   const startFrameFromSubs = deriveStartFrameFromSubsJSON(subsForTimestamps);

@@ -35,7 +35,7 @@ export type BRoll = z.infer<typeof bRoll>;
 const videoScene = z.object({
   type: z.literal("videoscene"),
   webcamPosition: z.enum(availablePositionsAndPrevious),
-  duration: z.number().nullable().default(null),
+  endOffset: z.number().default(0),
   transitionToNextScene: z.boolean().default(true),
   newChapter: z.string().optional(),
   stopChapteringAfterThis: z.boolean().optional(),
@@ -134,11 +134,11 @@ export type BRollWithDimensions = BRoll & {
 export type VideoSceneAndMetadata = {
   type: "video-scene";
   scene: SelectableVideoScene;
-  durationInFrames: number;
   from: number;
   videos: SceneVideos;
   layout: VideoSceneLayout;
   cameras: Cameras;
+  durationInFrames: number;
   webcamPosition: WebcamPosition;
   chapter: string | null;
   startFrame: number;
