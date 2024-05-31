@@ -35,12 +35,12 @@ export type BRoll = z.infer<typeof bRoll>;
 const videoScene = z.object({
   type: z.literal("videoscene"),
   webcamPosition: z.enum(availablePositionsAndPrevious),
+  startOffset: z.number(),
   endOffset: z.number().default(0),
   transitionToNextScene: z.boolean().default(true),
   newChapter: z.string().optional(),
   stopChapteringAfterThis: z.boolean().optional(),
   music,
-  startOffset: z.number(),
   bRolls: z.array(bRoll).default([]),
 });
 
