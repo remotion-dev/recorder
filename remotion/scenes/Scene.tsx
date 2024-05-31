@@ -21,6 +21,8 @@ import {
   getShouldTransitionOut,
 } from "../animations/transitions";
 import type { ChapterType } from "../chapters/make-chapters";
+import { useRefreshOnPublicFolderChange } from "../helpers/refresh-on-public-folder-change";
+import { useScrollToCurrentScene } from "../helpers/scroll-to-current-scene";
 import { EndCard } from "./EndCard";
 import { NoRecordingsScene } from "./Placeholders/NoRecordingsScene";
 import { NoScenes } from "./Placeholders/NoScenes";
@@ -127,7 +129,7 @@ const InnerScene: React.FC<
 };
 
 const SceneWithTransition: React.FC<Props> = (props) => {
-  const { fps, durationInFrames, width } = useVideoConfig();
+  const { fps, durationInFrames, width, id } = useVideoConfig();
   const frame = useCurrentFrame();
   const shouldEnter = getShouldTransitionIn({
     sceneAndMetadata: props.sceneAndMetadata,
@@ -185,6 +187,9 @@ const SceneWithTransition: React.FC<Props> = (props) => {
       endStyle,
     ],
   );
+
+  useRefreshOnPublicFolderChange(id);
+  useScrollToCurrentScene({ index: props.index, fullyEntered: enter === 1 });
 
   return (
     <AbsoluteFill style={style}>
