@@ -22,14 +22,14 @@ export const getDeviceLabel = (device: MediaDeviceInfo): string => {
     return found.label;
   }
 
-  return formatDeviceLabel(device);
+  return formatDeviceLabel(device.label);
 };
 
 const storeLabelsToLS = (devices: MediaDeviceInfo[]) => {
   const labels: Label[] = JSON.parse(localStorage.getItem("labels") ?? "[]");
   devices.forEach((device) => {
     const id = device.deviceId;
-    const cleanLabel = formatDeviceLabel(device);
+    const cleanLabel = formatDeviceLabel(device.label);
 
     if (!labels.some((l) => l.id === id) && cleanLabel !== "") {
       labels.push({ id, label: cleanLabel });

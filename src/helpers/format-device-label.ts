@@ -11,6 +11,9 @@ const removeBuiltIn = (label: string) => {
 const removeVirtual = (label: string) => {
   return label.replace(/\(Virtual\)/, "").trim();
 };
+const removeMdevice = (label: string) => {
+  return label.replace(/\(m-de:vice\)/, "").trim();
+};
 
 const takeStringInBraces = (label: string): string => {
   const match = label.match(/\((.*)\)/);
@@ -29,11 +32,12 @@ const removeLeadingNumber = (label: string) => {
   return label.replace(/^\d+- /, "").trim();
 };
 
-export const formatDeviceLabel = (device: Omit<MediaDeviceInfo, "toJSON">) => {
-  const withoutUsb = removeUsbIdentifier(device.label);
+export const formatDeviceLabel = (label: string) => {
+  const withoutUsb = removeUsbIdentifier(label);
   const withoutBuiltIn = removeBuiltIn(withoutUsb);
   const withoutVirtual = removeVirtual(withoutBuiltIn);
-  const stringFromBraces = takeStringInBraces(withoutVirtual);
+  const withoutDevice = removeMdevice(withoutVirtual);
+  const stringFromBraces = takeStringInBraces(withoutDevice);
   const withoutLeadingNumber = removeLeadingNumber(stringFromBraces);
 
   return withoutLeadingNumber;
