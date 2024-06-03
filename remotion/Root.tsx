@@ -1,5 +1,6 @@
 import { Composition } from "remotion";
 import { videoConf } from "../config/scenes";
+import { GoToRecorder } from "./GoToRecorder";
 import { Main } from "./Main";
 import { calcMetadata } from "./calculate-metadata/calc-metadata";
 
@@ -17,7 +18,7 @@ export const Root = () => {
             {
               type: "recorder" as const,
               durationInFrames: 80,
-              music: "previous" as const,
+              music: "epic" as const,
               transitionToNextScene: true,
             },
             {
@@ -63,12 +64,31 @@ export const Root = () => {
               music: "previous" as const,
               startOffset: 0,
               bRolls: [],
+            },
+            {
+              music: "previous" as const,
+              transitionToNextScene: true,
+              type: "endcard" as const,
+              durationInFrames: 200,
+              channel: "remotion" as const,
+              links: [
+                { link: "remotion.dev/recorder" },
+                { link: "remotion.dev/discord" },
+              ],
             },
           ],
           scenesAndMetadata: [],
-          platform: "youtube" as const,
+          platform: "x" as const,
         }}
         calculateMetadata={calcMetadata}
+      />
+      <Composition
+        component={GoToRecorder}
+        id="record"
+        width={1080}
+        height={1080}
+        fps={30}
+        durationInFrames={100}
       />
       <Composition
         component={Main}
