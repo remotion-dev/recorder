@@ -53,7 +53,8 @@ export const NoRecordingsScene: React.FC<{ type: "none" | "no-more" }> = ({
           </a>{" "}
           a new recording or add a new video{" "}
           <a
-            href="https://www.remotion.dev/docs/recorder/vlogging"
+            target="_blank"
+            href="https://www.remotion.dev/docs/recorder/external-recordings"
             style={link}
           >
             manually

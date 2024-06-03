@@ -1,16 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { BlinkingCircle } from "./BlinkingCircle";
 import { Logo } from "./Logo";
-import type { MediaSources } from "./RecordButton";
+import type { MediaSources, RecordingStatus } from "./RecordButton";
 import { RecordButton } from "./RecordButton";
+import { Timer } from "./Timer";
 import { fetchProjectFolders } from "./actions/fetch-project-folders";
 import { NewFolderDialog } from "./components/NewFolderDialog";
+import { ProcessStatus, ProcessingStatus } from "./components/ProcessingStatus";
 import { SelectedFolder } from "./components/SelectedFolder";
-import { SmallSpinner } from "./components/SmallSpinner";
-import type { CurrentBlobs } from "./components/UseThisTake";
-import {
-  UseThisTake,
-  currentBlobsInitialState,
-} from "./components/UseThisTake";
+import { UseThisTake } from "./components/UseThisTake";
 import { Button } from "./components/ui/button";
 import {
   loadFolderFromUrl,
@@ -35,28 +33,15 @@ const recordWrapper: React.CSSProperties = {
   gap: 10,
 };
 
-const transcribeIndicator: React.CSSProperties = {
-  fontSize: 10,
-  display: "flex",
-  paddingLeft: 2,
-  alignItems: "center",
-  marginTop: 2,
-  gap: 4,
-  color: "grey",
-};
-
 export const TopBar: React.FC<{
   mediaSources: MediaSources;
 }> = ({ mediaSources }) => {
-  const [recording, setRecording] = useState<false | number>(false);
-  const [currentBlobs, setCurrentBlobs] = useState<CurrentBlobs>(
-    currentBlobsInitialState,
-  );
+  const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>({
+    type: "idle",
+  });
 
   const [folders, setFolders] = useState<string[] | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [transcribing, setTranscribing] = useState(false);
-  const [showHandleVideos, setShowHandleVideos] = useState<boolean>(false);
+  const [status, setStatus] = useState<ProcessStatus | null>(null);
 
   const folderFromUrl: string | null = useMemo(() => {
     return loadFolderFromUrl();
@@ -65,13 +50,6 @@ export const TopBar: React.FC<{
   const [preferredSelectedFolder, setSelectedFolder] = useState<string | null>(
     folderFromUrl ?? loadSelectedFolder(),
   );
-
-  const dynamicTranscribeIndicator: React.CSSProperties = useMemo(() => {
-    return {
-      ...transcribeIndicator,
-      visibility: transcribing ? "visible" : "hidden",
-    };
-  }, [transcribing]);
 
   const selectedFolder = useMemo(() => {
     return preferredSelectedFolder ?? folders?.[0] ?? null;
@@ -109,33 +87,28 @@ export const TopBar: React.FC<{
     <div style={topBarContainer}>
       <Logo></Logo>
       <div style={recordWrapper}>
-        {uploading ? null : (
-          <RecordButton
-            recording={recording}
-            showHandleVideos={showHandleVideos}
-            recordingDisabled={recordingDisabled}
-            setCurrentBlobs={setCurrentBlobs}
-            mediaSources={mediaSources}
-            setRecording={setRecording}
-            setShowHandleVideos={setShowHandleVideos}
-          />
-        )}
-
-        {showHandleVideos ? (
+        <RecordButton
+          recordingStatus={recordingStatus}
+          recordingDisabled={recordingDisabled}
+          mediaSources={mediaSources}
+          setRecordingStatus={setRecordingStatus}
+        />
+        {recordingStatus.type === "recording" ? (
+          <>
+            <BlinkingCircle />
+            <Timer startDate={recordingStatus.ongoing.startDate} />
+          </>
+        ) : null}
+        {recordingStatus.type === "recording-finished" ||
+        recordingStatus.type === "processing-recording" ? (
           <UseThisTake
             selectedFolder={selectedFolder}
-            currentBlobs={currentBlobs}
-            setCurrentBlobs={setCurrentBlobs}
-            setShowHandleVideos={setShowHandleVideos}
-            uploading={uploading}
-            setUploading={setUploading}
-            setTranscribing={setTranscribing}
+            recordingStatus={recordingStatus}
+            setRecordingStatus={setRecordingStatus}
+            setStatus={setStatus}
           />
         ) : null}
-      </div>
-
-      <div style={dynamicTranscribeIndicator}>
-        Transcribing last recording <SmallSpinner />
+        {status && <ProcessingStatus status={status}></ProcessingStatus>}
       </div>
 
       <div style={{ flex: 1 }} />

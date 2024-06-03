@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import { formatTime } from "./helpers/format-time";
 
 export const Timer: React.FC<{
-  recording: number;
-}> = ({ recording }) => {
+  startDate: number;
+}> = ({ startDate }) => {
   const [, setTime] = useState(0);
   useEffect(() => {
     const int = setInterval(() => {
-      setTime(Date.now() - recording);
+      setTime(Date.now() - startDate);
     }, 1000);
 
     return () => {
       clearInterval(int);
     };
-  }, [recording]);
+  }, [startDate]);
 
-  return <>{formatTime(Date.now() - recording)}</>;
+  return <>{formatTime(Date.now() - startDate)}</>;
 };

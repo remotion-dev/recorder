@@ -1,5 +1,5 @@
-import type { Request, Response } from "express";
 import { readdir } from "fs";
+import { IncomingMessage, ServerResponse } from "http";
 import path from "path";
 
 export type FolderResBody = {
@@ -7,8 +7,8 @@ export type FolderResBody = {
 };
 
 export const getProjectFolder = (
-  req: Request,
-  res: Response,
+  req: IncomingMessage,
+  res: ServerResponse,
   rootDir: string,
 ) => {
   const publicDir = path.join(rootDir, "public");
@@ -26,11 +26,13 @@ export const getProjectFolder = (
         .map((folder) => folder.name)
         .filter((f) => f !== "sounds");
 
-      res.status(200);
-      return res.send({ folders: folderNames });
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify({ folders: folderNames }));
     });
   } catch (e) {
-    res.status(500);
-    return res.send(e);
+    res.statusCode = 500;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ error: (e as Error).message }));
   }
 };

@@ -9,10 +9,17 @@ export const captionFile = async ({
   file,
   fileToTranscribe,
   outPath,
+  onProgress,
+  signal,
 }: {
   file: string;
   fileToTranscribe: string;
   outPath: string;
+  onProgress: (options: {
+    filename: string;
+    progressInPercent: number;
+  }) => void;
+  signal: AbortSignal | null;
 }): Promise<void> => {
   const tmpDir = path.join(tmpdir(), "remotion-recorder");
 
@@ -22,11 +29,16 @@ export const captionFile = async ({
 
   const wavFile = path.join(tmpDir, `${file.split(".")[0]}.wav`);
 
+  onProgress({ filename: file, progressInPercent: 0 });
+
   // extracting audio from mp4 and save it as 16khz wav file
   await new Promise<void>((resolve, reject) => {
     const command = `bunx remotion ffmpeg -hide_banner -i ${fileToTranscribe} -ar 16000 -y ${wavFile}`;
     const [bin, ...args] = command.split(" ");
-    const child = spawn(bin as string, args, { stdio: "ignore" });
+    const child = spawn(bin as string, args, {
+      stdio: "ignore",
+      signal: signal ?? undefined,
+    });
 
     child.on("exit", (code, signal) => {
       if (code !== 0) {
@@ -44,6 +56,12 @@ export const captionFile = async ({
     whisperPath: WHISPER_PATH,
     translateToEnglish: false,
     printOutput: true,
+    onProgress: (progress) => {
+      onProgress({
+        filename: file,
+        progressInPercent: Math.round(progress * 100),
+      });
+    },
   });
 
   rmSync(wavFile);

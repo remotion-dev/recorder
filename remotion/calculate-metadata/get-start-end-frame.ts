@@ -15,7 +15,7 @@ const deriveEndFrameFromSubs = (words: Word[] | null) => {
 
   const lastWord = words[words.length - 1];
   if (!lastWord || !lastWord.lastTimestamp) {
-    throw new Error("Last word or its timestampe is undefined");
+    return null;
   }
 
   const lastFrame = Math.floor((lastWord.lastTimestamp / 1000) * FPS);

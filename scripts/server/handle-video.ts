@@ -1,12 +1,22 @@
-import type { Request, Response } from "express";
 import fs, { createWriteStream } from "fs";
+import { IncomingMessage, ServerResponse } from "http";
+import os from "os";
 import path from "path";
-import { convertVideos } from "../convert-video";
+import { convertVideo } from "../convert-video";
+import { makeStreamPayload } from "./streaming";
+import { transcribeVideo } from "./transcribe-video";
 
-export const handleVideoUpload = (req: Request, res: Response) => {
+export const handleVideoUpload = async (
+  req: IncomingMessage,
+  res: ServerResponse,
+) => {
+  const url = req.url as string;
+  const params = new URLSearchParams(url.substring(1));
+  const endDateAsString = params.get("endDateAsString");
+  const folder = params.get("folder");
+  const prefix = params.get("prefix");
+  const expectedFrames = Number(params.get("expectedFrames"));
   try {
-    const { prefix, endDateAsString, folder } = req.query;
-
     if (typeof prefix !== "string") {
       throw new Error("No `prefix` provided");
     }
@@ -19,70 +29,70 @@ export const handleVideoUpload = (req: Request, res: Response) => {
       throw new Error("No `folder` provided");
     }
 
-    const file = `${prefix}${endDateAsString}.webm`;
+    if (typeof expectedFrames !== "number") {
+      throw new Error("No `expectedFrames` provided");
+    }
 
-    const folderPath = path.join(process.cwd(), "public", folder);
+    const file = `${prefix}${endDateAsString}.mp4`;
+
+    const publicDir = path.join(process.cwd(), "public");
+    const folderPath = path.join(publicDir, folder);
     const filePath = path.join(folderPath, file);
+    const input = path.join(os.tmpdir(), Math.random() + ".webm");
 
+    fs.mkdirSync(path.dirname(input), { recursive: true });
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-    req.pipe(createWriteStream(filePath));
-    req.on("end", () => {
-      res.statusCode = 200;
-      res.end(JSON.stringify({ success: true }));
+    const writeStream = createWriteStream(input);
+
+    req.pipe(writeStream);
+
+    await new Promise((resolve) => writeStream.on("finish", resolve));
+
+    await convertVideo({
+      input: input,
+      output: filePath,
+      onProgress: ({ filename, framesEncoded, progress }) => {
+        const payload = makeStreamPayload({
+          message: {
+            type: "converting-progress",
+            payload: {
+              progress,
+              framesConverted: framesEncoded,
+              filename,
+            },
+          },
+        });
+        res.write(payload);
+      },
+      signal: undefined,
+      expectedFrames,
     });
+
+    await transcribeVideo({
+      endDateAsString,
+      folder,
+      publicDir,
+      onProgress: ({ filename, progressInPercent: progress }) => {
+        const payload = makeStreamPayload({
+          message: {
+            type: "transcribing-progress",
+            payload: {
+              filename,
+              progress,
+            },
+          },
+        });
+        res.write(payload);
+      },
+      signal: null,
+    });
+
+    res.statusCode = 200;
+    res.end();
   } catch (e) {
     console.error(e);
     res.statusCode = 500;
     res.end(JSON.stringify({ error: (e as Error).message }));
-  }
-};
-
-export const handleVideoConvertRequest = async (
-  req: Request,
-  res: Response,
-) => {
-  console.log("Converting videos...");
-  try {
-    const { endDateAsString, folder } = req.query;
-
-    if (typeof endDateAsString !== "string") {
-      throw new Error("No `endDate` provided");
-    }
-
-    if (typeof folder !== "string") {
-      throw new Error("No `folder` provided");
-    }
-
-    const absoluteFolderPath = path.join(process.cwd(), "public", folder);
-
-    const endDate = Number(endDateAsString);
-
-    if (isNaN(endDate)) {
-      res.status(500);
-      return res.send({
-        success: false,
-        message: "NaN. Invalid endDate provided. ",
-      });
-    }
-
-    await convertVideos({
-      caller: "server",
-      latestTimestamp: endDate,
-      customFileLocation: absoluteFolderPath,
-    });
-
-    console.log("Successfully converted to mp4.");
-    res.status(200);
-    return res.send(JSON.stringify({ success: true }));
-  } catch (e) {
-    console.error(e);
-    res.status(500);
-    return res.send({
-      success: false,
-      message:
-        "Something went wrong while converting the webm files to mp4: " +
-        (e as Error).message,
-    });
   }
 };
