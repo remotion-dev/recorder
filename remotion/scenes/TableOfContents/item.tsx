@@ -1,25 +1,7 @@
 import { useMemo } from "react";
 import { useVideoConfig } from "remotion";
-import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
-
-const formatTime = (seconds: number) => {
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-
-  const formattedSeconds = seconds % 60;
-  const formattedMinutes = minutes % 60;
-
-  const timeArray = [];
-
-  if (hours > 0) {
-    timeArray.push(hours.toString().padStart(2, "0"));
-  }
-
-  timeArray.push(formattedMinutes);
-  timeArray.push(formattedSeconds.toString().padStart(2, "0"));
-
-  return timeArray.join(":");
-};
+import { REGULAR_FONT_WEIGHT, TITLE_FONT_FAMILY } from "../../../config/fonts";
+import { formatMilliseconds } from "../../../src/helpers/format-time";
 
 export const TableOfContentItem: React.FC<{
   title: string;
@@ -36,7 +18,7 @@ export const TableOfContentItem: React.FC<{
       style={{
         fontFamily: TITLE_FONT_FAMILY,
         fontSize: 46,
-        fontWeight: TITLE_FONT_WEIGHT,
+        fontWeight: REGULAR_FONT_WEIGHT,
         display: "flex",
         flexDirection: "row",
         width: "100%",
@@ -51,7 +33,7 @@ export const TableOfContentItem: React.FC<{
           fontVariantNumeric: "tabular-nums",
         }}
       >
-        {formatTime(time)}
+        {formatMilliseconds(time * 1000)}
       </div>
     </div>
   );

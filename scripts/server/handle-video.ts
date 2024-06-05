@@ -2,6 +2,7 @@ import fs, { createWriteStream } from "fs";
 import { IncomingMessage, ServerResponse } from "http";
 import os from "os";
 import path from "path";
+import { ensureWhisper } from "../captions/install-whisper";
 import { convertVideo } from "../convert-video";
 import { makeStreamPayload } from "./streaming";
 import { transcribeVideo } from "./transcribe-video";
@@ -67,6 +68,31 @@ export const handleVideoUpload = async (
       },
       signal: undefined,
       expectedFrames,
+    });
+
+    await ensureWhisper({
+      onInstall: () => {
+        res.write(
+          makeStreamPayload({
+            message: {
+              type: "install-whisper-progress",
+              payload: {},
+            },
+          }),
+        );
+      },
+      onModelProgressInPercent: (progress) => {
+        res.write(
+          makeStreamPayload({
+            message: {
+              type: "downloading-whisper-model-progress",
+              payload: {
+                progressInPercent: progress,
+              },
+            },
+          }),
+        );
+      },
     });
 
     await transcribeVideo({

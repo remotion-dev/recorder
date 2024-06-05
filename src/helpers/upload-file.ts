@@ -52,7 +52,7 @@ export const uploadFileToServer = async ({
         ? parseJsonOrThrowSource(data, messageType)
         : data;
 
-    const message: StreamingMessage = {
+    const { message }: StreamingMessage = {
       successType: status,
       message: {
         type: messageType,
@@ -60,17 +60,29 @@ export const uploadFileToServer = async ({
       },
     };
 
-    if (message.message.type === "converting-progress") {
+    if (message.type === "converting-progress") {
       onProgress({
-        title: `Converting ${message.message.payload.filename}`,
-        description: `${message.message.payload.framesConverted} frames (${Math.round(message.message.payload.progress * 100)}%)`,
+        title: `Converting ${message.payload.filename}`,
+        description: `${message.payload.framesConverted} frames (${Math.round(message.payload.progress * 100)}%)`,
+      });
+      return;
+    }
+    if (message.type === "transcribing-progress") {
+      onProgress({
+        title: `Transcribing ${message.payload.filename}`,
+        description: `${message.payload.progress}%`,
       });
     }
-
-    if (message.message.type === "transcribing-progress") {
+    if (message.type === "install-whisper-progress") {
       onProgress({
-        title: `Transcribing ${message.message.payload.filename}`,
-        description: `${message.message.payload.progress}%`,
+        title: `Installing Whisper`,
+        description: `See console for progress`,
+      });
+    }
+    if (message.type === "downloading-whisper-model-progress") {
+      onProgress({
+        title: `Downloading Whisper model`,
+        description: `${Math.round(message.payload.progressInPercent)}%`,
       });
     }
   });

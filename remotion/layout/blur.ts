@@ -1,5 +1,9 @@
 import type React from "react";
-import type { CanvasLayout, Dimensions } from "../../config/layout";
+import {
+  DIMENSIONS,
+  type CanvasLayout,
+  type Dimensions,
+} from "../../config/layout";
 import type { SceneAndMetadata } from "../../config/scenes";
 import { fitElementSizeInContainer } from "./fit-element";
 import type { Layout } from "./layout-types";
@@ -18,7 +22,15 @@ export const shouldEnableSceneBackgroundBlur = (
     return false;
   }
 
-  return canvasLayout === "landscape";
+  if (canvasLayout !== "landscape") {
+    return false;
+  }
+
+  const sameAspectRatio =
+    scene.layout.webcamLayout.width / scene.layout.webcamLayout.height ===
+    DIMENSIONS[canvasLayout].width / DIMENSIONS[canvasLayout].height;
+
+  return !sameAspectRatio;
 };
 
 export const getBlurLayout = ({

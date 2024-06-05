@@ -1,3 +1,4 @@
+import React from "react";
 import { getSafeSpace } from "../../../config/layout";
 import type { VideoSceneAndMetadata } from "../../../config/scenes";
 import {} from "../../animations/webcam-transitions";
@@ -10,8 +11,20 @@ import type { Layout } from "../../layout/layout-types";
 const getWidescreenChapterLayout = (
   scene: VideoSceneAndMetadata,
   tableOfContentHeight: number,
-) => {
+): React.CSSProperties => {
   const { layout, webcamPosition } = scene;
+
+  if (webcamPosition === "center") {
+    return {
+      height: 1000,
+      borderRadius: 0,
+      opacity: 1,
+      left: getSafeSpace("landscape"),
+      bottom: getSafeSpace("landscape"),
+      width: 10000,
+      top: undefined,
+    };
+  }
 
   const rightAligned = isWebCamRight(webcamPosition);
   const bottomAligned = isWebCamAtBottom(webcamPosition);
@@ -32,12 +45,14 @@ const getWidescreenChapterLayout = (
             layout.webcamLayout.top -
             tableOfContentHeight -
             getSafeSpace("landscape"),
+          bottom: undefined,
         }
       : {
           top:
             getSafeSpace("landscape") +
             layout.webcamLayout.top +
             layout.webcamLayout.height,
+          bottom: undefined,
         }),
   };
 
@@ -47,16 +62,15 @@ const getWidescreenChapterLayout = (
 export const getWidescreenChapterStyle = (
   scene: VideoSceneAndMetadata,
   tableOfContentHeight: number,
-) => {
+): React.CSSProperties => {
   const chapterLayout = getWidescreenChapterLayout(scene, tableOfContentHeight);
 
-  const rightAligned = isWebCamRight(scene.webcamPosition);
+  const rightAligned = isWebCamRight(
+    scene.webcamPosition === "center" ? "bottom-left" : scene.webcamPosition,
+  );
 
-  const style: React.CSSProperties = {
-    left: chapterLayout.left,
-    top: chapterLayout.top,
-    width: chapterLayout.width,
-    height: chapterLayout.height,
+  return {
+    ...chapterLayout,
     ...(rightAligned
       ? {
           alignSelf: "flex-end",
@@ -64,5 +78,4 @@ export const getWidescreenChapterStyle = (
         }
       : {}),
   };
-  return style;
 };

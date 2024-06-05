@@ -9,10 +9,7 @@ import {
 } from "remotion";
 import type { Platform } from "../../config/endcard";
 import type { CanvasLayout } from "../../config/layout";
-import type {
-  SceneAndMetadata,
-  VideoSceneAndMetadata,
-} from "../../config/scenes";
+import type { SceneAndMetadata } from "../../config/scenes";
 import type { Theme } from "../../config/themes";
 import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 import { getSceneEnter, getSceneExit } from "../animations/scene-transitions";
@@ -59,6 +56,26 @@ const InnerScene: React.FC<
   exitProgress,
   platform,
 }) => {
+  if (sceneAndMetadata.type === "video-scene") {
+    return (
+      <VideoScene
+        enterProgress={enterProgress}
+        canvasLayout={canvasLayout}
+        exitProgress={exitProgress}
+        nextScene={nextScene}
+        previousScene={previousScene}
+        sceneAndMetadata={sceneAndMetadata}
+        theme={theme}
+        chapters={chapters}
+        willTransitionToNextScene={getShouldTransitionOut({
+          nextSceneAndMetadata: nextScene,
+          sceneAndMetadata,
+          canvasLayout,
+        })}
+      />
+    );
+  }
+
   if (sceneAndMetadata.scene.type === "title") {
     return (
       <Title
@@ -100,24 +117,9 @@ const InnerScene: React.FC<
   if (sceneAndMetadata.scene.type === "noscenes") {
     return <NoScenes />;
   }
-
   if (sceneAndMetadata.scene.type === "videoscene") {
-    return (
-      <VideoScene
-        enterProgress={enterProgress}
-        canvasLayout={canvasLayout}
-        exitProgress={exitProgress}
-        nextScene={nextScene}
-        previousScene={previousScene}
-        sceneAndMetadata={sceneAndMetadata as VideoSceneAndMetadata}
-        theme={theme}
-        chapters={chapters}
-        willTransitionToNextScene={getShouldTransitionOut({
-          nextSceneAndMetadata: nextScene,
-          sceneAndMetadata,
-          canvasLayout,
-        })}
-      />
+    throw new Error(
+      'Video scene should be handled using sceneAndMetadata.type === "video-scene"',
     );
   }
 
@@ -131,17 +133,18 @@ const InnerScene: React.FC<
 const SceneWithTransition: React.FC<Props> = (props) => {
   const { fps, durationInFrames, width, id } = useVideoConfig();
   const frame = useCurrentFrame();
+
   const shouldEnter = getShouldTransitionIn({
     sceneAndMetadata: props.sceneAndMetadata,
     previousSceneAndMetadata: props.previousScene,
     canvasLayout: props.canvasLayout,
   });
-
   const shouldExit = getShouldTransitionOut({
     sceneAndMetadata: props.sceneAndMetadata,
     nextSceneAndMetadata: props.nextScene,
     canvasLayout: props.canvasLayout,
   });
+
   const enter = shouldEnter
     ? spring({
         fps,
@@ -179,13 +182,7 @@ const SceneWithTransition: React.FC<Props> = (props) => {
   const style = interpolateStyles(
     enter + exit,
     [0, 1, 2],
-    [
-      startStyle,
-      {
-        left: 0,
-      },
-      endStyle,
-    ],
+    [startStyle, { left: 0 }, endStyle],
   );
 
   useRefreshOnPublicFolderChange(id);
@@ -194,11 +191,12 @@ const SceneWithTransition: React.FC<Props> = (props) => {
   return (
     <AbsoluteFill style={style}>
       <InnerScene {...props} enterProgress={enter} exitProgress={exit} />
-      <SoundEffects
-        previousScene={props.previousScene}
-        sceneAndMetadata={props.sceneAndMetadata}
-        shouldEnter={shouldEnter}
-      />
+      {shouldEnter ? (
+        <SoundEffects
+          previousScene={props.previousScene}
+          sceneAndMetadata={props.sceneAndMetadata}
+        />
+      ) : null}
     </AbsoluteFill>
   );
 };

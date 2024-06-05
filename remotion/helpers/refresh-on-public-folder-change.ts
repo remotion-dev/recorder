@@ -5,13 +5,25 @@ import {
 } from "@remotion/studio";
 import { useEffect, useState } from "react";
 import { StaticFile } from "remotion";
+import {
+  ALTERNATIVE1_PREFIX,
+  DISPLAY_PREFIX,
+  WEBCAM_PREFIX,
+} from "../../config/cameras";
 
 const filterForCurrentComposition = (
   files: StaticFile[],
   compositionId: string,
 ) => {
   return files.filter((f) => {
-    return f.name.startsWith(compositionId + "/");
+    const PREFIXES_TO_WATCH = [
+      `${compositionId}/${WEBCAM_PREFIX}`,
+      `${compositionId}/${DISPLAY_PREFIX}`,
+      `${compositionId}/${DISPLAY_PREFIX}`,
+      `${compositionId}/${ALTERNATIVE1_PREFIX}`,
+    ];
+
+    return PREFIXES_TO_WATCH.some((p) => f.name.startsWith(p));
   });
 };
 

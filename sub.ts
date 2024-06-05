@@ -4,7 +4,10 @@ import { CAPTIONS_PREFIX, WEBCAM_PREFIX } from "./config/cameras";
 import { captionFile } from "./scripts/captions/caption-file";
 import { ensureWhisper } from "./scripts/captions/install-whisper";
 
-await ensureWhisper();
+await ensureWhisper({
+  onInstall: () => undefined,
+  onModelProgressInPercent: () => undefined,
+});
 
 const publicFolder = path.join(process.cwd(), "public");
 const foldersInPublicFolder = readdirSync(publicFolder).filter((f) => {

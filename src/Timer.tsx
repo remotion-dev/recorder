@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { formatTime } from "./helpers/format-time";
+import { formatMilliseconds } from "./helpers/format-time";
 
 export const Timer: React.FC<{
   startDate: number;
@@ -15,5 +15,5 @@ export const Timer: React.FC<{
     };
   }, [startDate]);
 
-  return <>{formatTime(Date.now() - startDate)}</>;
+  return <>{formatMilliseconds(Date.now() - startDate)}</>;
 };

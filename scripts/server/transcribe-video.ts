@@ -2,7 +2,6 @@ import { existsSync, readdirSync } from "fs";
 import path from "path";
 import { CAPTIONS_PREFIX, WEBCAM_PREFIX } from "../../config/cameras";
 import { captionFile } from "../captions/caption-file";
-import { ensureWhisper } from "../captions/install-whisper";
 
 export const transcribeVideo = async ({
   endDateAsString,
@@ -20,8 +19,6 @@ export const transcribeVideo = async ({
   }) => void;
   signal: AbortSignal | null;
 }) => {
-  await ensureWhisper();
-
   if (typeof endDateAsString !== "string") {
     throw new Error("No `endDate` provided");
   }

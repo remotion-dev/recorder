@@ -5,7 +5,6 @@ import type {
   VideoSceneAndMetadata,
   WebcamPositionForComparison,
 } from "../../config/scenes";
-import { SCENE_TRANSITION_DURATION } from "../../config/transitions";
 
 const getComparableWebcamPosition = (
   sceneAndMetaData: VideoSceneAndMetadata,
@@ -125,28 +124,4 @@ export const getShouldTransitionIn = ({
     nextSceneAndMetadata: sceneAndMetadata,
     canvasLayout,
   });
-};
-
-// A duration that factors in the transition duration
-// to when added up you get the total duration of a video
-export const getSumUpDuration = ({
-  scene,
-  previousScene,
-  canvasLayout,
-}: {
-  scene: SceneAndMetadata;
-  previousScene: SceneAndMetadata | null;
-  canvasLayout: CanvasLayout;
-}) => {
-  if (
-    getShouldTransitionIn({
-      sceneAndMetadata: scene,
-      previousSceneAndMetadata: previousScene,
-      canvasLayout,
-    })
-  ) {
-    return scene.durationInFrames - SCENE_TRANSITION_DURATION;
-  }
-
-  return scene.durationInFrames;
 };

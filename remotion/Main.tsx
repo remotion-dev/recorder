@@ -27,24 +27,10 @@ export const Main: React.FC<MainProps> = ({
   scenes,
 }) => {
   const chapters = useMemo(() => {
-    return makeChapters({ scenes: scenesAndMetadata, canvasLayout });
-  }, [canvasLayout, scenesAndMetadata]);
+    return makeChapters({ scenes: scenesAndMetadata });
+  }, [scenesAndMetadata]);
 
-  const displayNoSceneDefinedIndicator = useMemo(() => {
-    return scenesAndMetadata.length === 0 && scenes.length === 0;
-  }, [scenes.length, scenesAndMetadata.length]);
-
-  const displayNoVideosIndicator = useMemo(() => {
-    return (
-      scenesAndMetadata.length === 0 && scenes.length > scenesAndMetadata.length
-    );
-  }, [scenes.length, scenesAndMetadata.length]);
-
-  if (displayNoVideosIndicator) {
-    return <NoDataScene theme={theme} />;
-  }
-
-  if (displayNoSceneDefinedIndicator) {
+  if (scenesAndMetadata.length === 0) {
     return <NoDataScene theme={theme} />;
   }
 
@@ -75,8 +61,7 @@ export const Main: React.FC<MainProps> = ({
           />
         );
       })}
-
-      {scenes.length > scenesAndMetadata.length && scenesAndMetadata ? (
+      {scenes.length > scenesAndMetadata.length ? (
         <Sequence
           name="No more videos"
           from={lastSceneFrame}

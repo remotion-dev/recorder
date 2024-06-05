@@ -37,7 +37,7 @@ export const TableOfContents: React.FC<{
       {chapters.map((chapter) => {
         return (
           <TableOfContentItem
-            key={chapter.id}
+            key={chapter.index}
             startTime={chapter.start}
             title={chapter.title}
           />

@@ -24,6 +24,9 @@ export const startExpressServer = async () => {
     root: rootDir,
     server: {
       middlewareMode: true,
+      watch: {
+        ignored: [path.join(rootDir, "whisper.cpp/**")],
+      },
     },
     appType: "custom",
     plugins: [react()],
