@@ -8,12 +8,9 @@ import { addMetadataToScene } from "./add-metadata-to-scene";
 import { getAllCameras } from "./get-camera";
 
 export const calcMetadata: CalculateMetadataFunction<MainProps> = async ({
-  props: _props,
+  props,
   compositionId,
-  defaultProps,
 }) => {
-  // TODO: Remove workaround until remotion 4.0.168 is released
-  const props = { ...defaultProps, ..._props };
   const { hasAtLeast1Camera, scenesWithCameras } = getAllCameras({
     compositionId,
     scenes: props.scenes,
