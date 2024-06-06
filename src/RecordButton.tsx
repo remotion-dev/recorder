@@ -45,7 +45,7 @@ export type RecordingStatus =
       endDate: number;
     };
 
-export type OngoingRecording = {
+type OngoingRecording = {
   startDate: number;
   recorders: CurrentRecorder[];
 };

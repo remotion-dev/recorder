@@ -9,7 +9,7 @@ const chapterFontFamily = TITLE_FONT_FAMILY;
 const chapterFontWeight = TITLE_FONT_WEIGHT;
 const chapterFontSize = 32;
 
-export const getChapterWidth = (text: string) => {
+const getChapterWidth = (text: string) => {
   return measureText({
     text,
     fontFamily: chapterFontFamily,

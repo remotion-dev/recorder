@@ -22,15 +22,6 @@ type StreamState =
   | { type: "loaded" }
   | { type: "error"; error: string };
 
-export type SelectedVideoSource =
-  | {
-      type: "camera";
-      constrain: ConstrainDOMString;
-    }
-  | {
-      type: "display";
-    };
-
 export type ResolutionAndFps = {
   width: number;
   height: number;

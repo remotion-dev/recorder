@@ -1,14 +1,14 @@
 import { staticFile } from "remotion";
 import { z } from "zod";
 
-export const SOUNDS_FOLDER = "sounds";
+const SOUNDS_FOLDER = "sounds";
 export const AUDIO_FADE_IN_FRAMES = 30;
 export const BACKGROUND_VOLUME = 0.04;
 export const REGULAR_VOLUME = 1;
 
 export const music = z.enum(["previous", "soft", "epic", "euphoric", "none"]);
 
-export type Music = z.infer<typeof music>;
+type Music = z.infer<typeof music>;
 
 export const getAudioSource = (track: Music) => {
   if (track === "none") {
