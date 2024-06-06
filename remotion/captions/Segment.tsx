@@ -4,10 +4,10 @@ import type { Word } from "../../config/autocorrect";
 import type { CanvasLayout, Dimensions } from "../../config/layout";
 import type { Theme } from "../../config/themes";
 import { FadeSentence } from "./FadeSentence";
-import { BelowVideoSubtitles } from "./Variants/BelowVideoSubtitles";
-import { OverlayedCenterSubtitles } from "./Variants/OverlayedCenterSubtitles";
-import { LINE_HEIGHT, SquareSubtitles } from "./Variants/SquareSubtitles";
 import type { CaptionPage } from "./types";
+import { BelowVideoSubtitles } from "./variants/BelowVideoSubtitles";
+import { OverlayedCenterSubtitles } from "./variants/OverlayedCenterSubtitles";
+import { LINE_HEIGHT, SquareSubtitles } from "./variants/SquareSubtitles";
 
 const getStartOfSegment = (segment: CaptionPage) => {
   if (segment.words.length === 0) {
