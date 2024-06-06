@@ -6,7 +6,7 @@ import type {
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
 import { getShouldTransitionIn } from "../../animations/transitions";
-import { CaptionOverlay } from "../../captions/Editor/CaptionOverlay";
+import { CaptionOverlay } from "../../captions/Edito/CaptionOverlay";
 import { NoCaptionsPlaceholder } from "../../captions/NoCaptionsPlaceholder";
 import { Subs } from "../../captions/Subs";
 import { LandscapeChapters } from "../../chapters/landscape/LandscapeChapters";

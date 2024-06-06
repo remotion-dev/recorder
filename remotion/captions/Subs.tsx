@@ -10,7 +10,7 @@ import { COLORS } from "../../config/themes";
 import { shouldInlineTransitionSubtitles } from "../animations/caption-transitions/should-transition-subtitle";
 import { getSubtitleTransform } from "../animations/caption-transitions/subtitle-transitions";
 import { Captions } from "./Captions";
-import { useCaptions } from "./Editor/captions-provider";
+import { useCaptions } from "./Edito/captions-provider";
 import { getBorderWidthForSubtitles, getSubsAlign } from "./Segment";
 import {
   TransitionFromPreviousSubtitles,
