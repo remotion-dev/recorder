@@ -13,7 +13,7 @@ import { getProjectFolder } from "./projects";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export const startExpressServer = async () => {
+export const startServer = async () => {
   const app = connect();
 
   const rootDir = path.join(__dirname, "..", "..");
