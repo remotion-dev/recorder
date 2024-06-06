@@ -6,7 +6,7 @@ import type { SceneAndMetadata, SelectableScene } from "../config/scenes";
 import type { Theme } from "../config/themes";
 import { COLORS } from "../config/themes";
 import { AudioTrack } from "./audio/AudioTrack";
-import { captionEditorPortal } from "./captions/Edito/layout";
+import { captionEditorPortal } from "./captions/editor/layout";
 import { makeChapters } from "./chapters/make-chapters";
 import { Scene } from "./scenes/Scene";
 import { NoDataScene } from "./scenes/VideoScene/NoDataScene";

@@ -10,12 +10,12 @@ import { COLORS } from "../../config/themes";
 import { shouldInlineTransitionSubtitles } from "../animations/caption-transitions/should-transition-subtitle";
 import { getSubtitleTransform } from "../animations/caption-transitions/subtitle-transitions";
 import { Captions } from "./Captions";
-import { useCaptions } from "./Edito/captions-provider";
 import { getBorderWidthForSubtitles, getSubsAlign } from "./Segment";
 import {
   TransitionFromPreviousSubtitles,
   TransitionToNextSubtitles,
 } from "./TransitionBetweenSubtitles";
+import { useCaptions } from "./editor/captions-provider";
 import { layoutCaptions } from "./processing/layout-captions";
 import { postprocessCaptions } from "./processing/postprocess-subs";
 
