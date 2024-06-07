@@ -15,5 +15,10 @@ View documentation at: [remotion.dev/recorder](https://remotion.dev/recorder)
 
 ## License
 
-Note that for some entities a company license is needed. [Read the terms here](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md).  
-Additionally, you may not share the source code of this private template with others.
+It is not allowed to share any source code of this template (i.e. the Remotion Recorder) with a third party. 
+
+Remotion, as an underlying technology of the Remotion Recorder, is free to use for individuals and small companies. Read the terms [here](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md). If you fall in this category, you can buy the Remotion Recorder as a one-time purchase.
+
+If you are a larger company, you can subscribe to the [Company License](https://www.remotion.pro/license). The Remotion Recorder is complimentary with it.
+
+
