@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import type { Word } from "../../../config/autocorrect";
 import type { Theme } from "../../../config/themes";
@@ -53,9 +53,7 @@ export const EditWord: React.FC<{
   const usableWidth = width - SIDE_PADDING * 2;
   const ref = useRef<HTMLDivElement>(null);
 
-  const initialFrame = useMemo(() => {
-    return frame;
-  }, []);
+  const [initialFrame] = useState(() => frame);
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,7 +89,7 @@ export const EditWord: React.FC<{
         block: "center",
       });
     }
-  }, [active]);
+  }, [active, frame, initialFrame]);
 
   const onInputKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
