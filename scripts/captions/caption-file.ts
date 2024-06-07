@@ -3,7 +3,11 @@ import { spawn } from "child_process";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import { EOL, tmpdir } from "os";
 import path from "path";
-import { WHISPER_MODEL, WHISPER_PATH } from "../../config/whisper";
+import {
+  TRANSCRIPTION_LANGUAGE,
+  WHISPER_MODEL,
+  WHISPER_PATH,
+} from "../../config/whisper";
 
 export const captionFile = async ({
   file,
@@ -62,6 +66,7 @@ export const captionFile = async ({
         progressInPercent: Math.round(progress * 100),
       });
     },
+    language: TRANSCRIPTION_LANGUAGE,
   });
 
   rmSync(wavFile);
