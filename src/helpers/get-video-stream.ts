@@ -39,7 +39,7 @@ export const getCameraStreamConstraints = (
   return video;
 };
 
-export const getCameraStram = ({
+const getCameraStram = ({
   selectedVideoSource,
   preferPortrait,
   recordAudio,

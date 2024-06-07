@@ -87,7 +87,7 @@ const mapFile = ({
   };
 };
 
-export const getCameras = (compositionId: string) => {
+const getCameras = (compositionId: string) => {
   const files = getStaticFiles().filter((f) =>
     f.name.startsWith(compositionId),
   );

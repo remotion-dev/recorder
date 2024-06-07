@@ -1,11 +1,12 @@
 import { StudioServerInternals } from "@remotion/studio-server";
 import { spawn } from "child_process";
-import { startExpressServer } from "./express-server";
+import { SERVER_PORT } from "../../config/server";
+import { startServer } from "./express-server";
 
 export const startStudioAndServer = async () => {
-  await startExpressServer();
+  await startServer();
   StudioServerInternals.openBrowser({
-    url: "http://localhost:4000",
+    url: `http://localhost:${SERVER_PORT}`,
     browserArgs: undefined,
     browserFlag: undefined,
   });
@@ -15,7 +16,7 @@ export const startStudioAndServer = async () => {
     detached: false,
   });
 
-  // Must be started with Node.js for the moment (npx tsx studio.ts)
+  // Forces the process to crash in case of error
   process.on("uncaughtException", (e) => {
     console.error(e);
     bunxProcess.kill();

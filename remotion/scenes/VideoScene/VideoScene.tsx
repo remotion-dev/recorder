@@ -6,9 +6,9 @@ import type {
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
 import { getShouldTransitionIn } from "../../animations/transitions";
-import { CaptionOverlay } from "../../captions/Editor/CaptionOverlay";
 import { NoCaptionsPlaceholder } from "../../captions/NoCaptionsPlaceholder";
 import { Subs } from "../../captions/Subs";
+import { CaptionOverlay } from "../../captions/editor/CaptionOverlay";
 import { LandscapeChapters } from "../../chapters/landscape/LandscapeChapters";
 import type { ChapterType } from "../../chapters/make-chapters";
 import { SquareChapter } from "../../chapters/square/SquareChapter";

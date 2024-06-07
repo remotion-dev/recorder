@@ -23,7 +23,7 @@ export const formatMap: { [key in MessageType]: "json" | "binary" } = {
   [downloadingWhisperModelProgress]: "json",
 };
 
-export type StreamingPayload =
+type StreamingPayload =
   | {
       type: typeof convertingProgress;
       payload: {

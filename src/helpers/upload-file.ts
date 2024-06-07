@@ -63,7 +63,7 @@ export const uploadFileToServer = async ({
     if (message.type === "converting-progress") {
       onProgress({
         title: `Converting ${message.payload.filename}`,
-        description: `${message.payload.framesConverted} frames (${Math.round(message.payload.progress * 100)}%)`,
+        description: `${Math.round(message.payload.framesConverted)} frames (${Math.round(message.payload.progress * 100)}%)`,
       });
       return;
     }

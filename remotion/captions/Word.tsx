@@ -14,7 +14,7 @@ import {
 } from "../../config/fonts";
 import type { Theme } from "../../config/themes";
 import { COLORS } from "../../config/themes";
-import { useCaptionOverlay } from "./Editor/use-caption-overlay";
+import { useCaptionOverlay } from "./editor/use-caption-overlay";
 
 type WordColor = {
   appeared: string;

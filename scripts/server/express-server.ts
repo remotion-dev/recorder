@@ -5,15 +5,15 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 import { SERVER_PORT } from "../../config/server";
-import { indexHtmlDev } from "../../index-html";
 import { CREATE_FOLDER, GET_FOLDERS, UPLOAD_VIDEO } from "./constants";
 import { createProject } from "./create-project";
 import { handleVideoUpload } from "./handle-video";
+import { indexHtmlDev } from "./index-html";
 import { getProjectFolder } from "./projects";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export const startExpressServer = async () => {
+export const startServer = async () => {
   const app = connect();
 
   const rootDir = path.join(__dirname, "..", "..");

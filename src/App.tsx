@@ -11,6 +11,7 @@ import type { MediaSources } from "./RecordButton";
 import { TopBar } from "./TopBar";
 import { View } from "./Views";
 import { Button } from "./components/ui/button";
+import { enumerateDevicesOrTimeOut } from "./helpers/enumerate-devices-or-time-out";
 import type { Label } from "./helpers/format-device-label";
 import { formatDeviceLabel } from "./helpers/format-device-label";
 import { Prefix } from "./helpers/prefixes";
@@ -111,25 +112,31 @@ const App = () => {
 
   useEffect(() => {
     const checkDeviceLabels = async () => {
-      const fetchedDevices = await navigator.mediaDevices.enumerateDevices();
-      const hasEmptyLabels = fetchedDevices.some(
-        (device) => device.label === "",
-      );
-      const hasNew = hasNewDevices(fetchedDevices);
-      if (hasNew && hasEmptyLabels) {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
-        const _devices = await navigator.mediaDevices.enumerateDevices();
-        storeLabelsToLS(_devices);
-        stream.getAudioTracks().forEach((track) => track.stop());
-        stream.getVideoTracks().forEach((track) => track.stop());
-      } else if (hasNew) {
-        storeLabelsToLS(fetchedDevices);
-      }
+      try {
+        const fetchedDevices = await enumerateDevicesOrTimeOut();
 
-      setDevices(fetchedDevices);
+        const hasEmptyLabels = fetchedDevices.some(
+          (device) => device.label === "",
+        );
+        const hasNew = hasNewDevices(fetchedDevices);
+        if (hasNew && hasEmptyLabels) {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+          });
+          const _devices = await navigator.mediaDevices.enumerateDevices();
+          storeLabelsToLS(_devices);
+          stream.getAudioTracks().forEach((track) => track.stop());
+          stream.getVideoTracks().forEach((track) => track.stop());
+        } else if (hasNew) {
+          storeLabelsToLS(fetchedDevices);
+        }
+
+        setDevices(fetchedDevices);
+      } catch (err) {
+        alert(err.message);
+        console.log(err);
+      }
     };
 
     checkDeviceLabels();

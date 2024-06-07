@@ -1,6 +1,6 @@
 import { Prefix } from "./helpers/prefixes";
 
-export const getPreferredDeviceForPrefix = (
+const getPreferredDeviceForPrefix = (
   prefix: Prefix,
   type: "video" | "audio",
 ) => {
