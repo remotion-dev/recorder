@@ -134,7 +134,7 @@ const App = () => {
 
         setDevices(fetchedDevices);
       } catch (err) {
-        alert(err.message);
+        alert((err as Error).message);
         console.log(err);
       }
     };
