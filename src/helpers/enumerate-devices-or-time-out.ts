@@ -5,10 +5,10 @@ export const enumerateDevicesOrTimeOut = async () => {
     const int = setTimeout(() => {
       reject(
         new Error(
-          "navigator.mediaDevices.enumerateDevices() has not responded within 5000ms. Usually this can be fixed by restarting your browser.",
+          "navigator.mediaDevices.enumerateDevices() has not responded within 10000ms. Usually this can be fixed by restarting your browser.",
         ),
       );
-    }, 5000);
+    }, 10000);
 
     clear = () => {
       clearTimeout(int);
