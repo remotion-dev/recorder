@@ -120,7 +120,11 @@ export const EditWord: React.FC<{
         overlay.setOpen(false);
       }
 
-      if (e.key === "i" && e.metaKey) {
+      const ctrlOrCommandKey = window.navigator.platform.startsWith("Mac")
+        ? e.metaKey
+        : e.ctrlKey;
+
+      if (e.key === "i" && ctrlOrCommandKey) {
         e.preventDefault();
         toggleMonospace();
       }
