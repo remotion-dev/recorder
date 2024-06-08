@@ -46,7 +46,10 @@ export const convertVideo = async ({
     },
   );
 
+  const ffmpegOutput: Buffer[] = [];
+
   proc.stderr.on("data", (d) => {
+    ffmpegOutput.push(d);
     const framesEncoded = parseFfmpegProgress(d.toString(), 30);
     if (framesEncoded !== undefined) {
       onProgress({
@@ -56,8 +59,23 @@ export const convertVideo = async ({
       });
     }
   });
+  proc.stdout.on("data", (d) => {
+    ffmpegOutput.push(d);
+  });
 
-  await new Promise((resolve) => proc.on("close", resolve));
+  await new Promise<void>((resolve, reject) => {
+    return proc.on("close", (code, signal) => {
+      if (code !== 0) {
+        reject(
+          new Error(
+            `FFmpeg quit with code ${code} (signal ${signal}): ${Buffer.concat(ffmpegOutput).toString("utf8")}`,
+          ),
+        );
+      } else {
+        resolve();
+      }
+    });
+  });
 
   if (expectedFrames) {
     onProgress({
