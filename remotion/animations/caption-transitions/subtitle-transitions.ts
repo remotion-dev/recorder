@@ -49,7 +49,7 @@ const getSubtitleEnterOrExitLayout = ({
     });
   }
 
-  throw new Error("Unknown subtitle type: " + subtitleType);
+  throw new Error(`Unknown subtitle type: ${subtitleType satisfies never}`);
 };
 
 export const getSubtitleTransform = ({

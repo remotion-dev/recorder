@@ -37,5 +37,5 @@ export const getNonFullscreenWebcamSize = ({
     };
   }
 
-  throw new Error("Invalid canvas layout");
+  throw new Error(`Invalid canvas layout ${canvasLayout satisfies never}`);
 };
