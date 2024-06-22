@@ -10,7 +10,7 @@ export const startStudioAndServer = async () => {
     browserArgs: undefined,
     browserFlag: undefined,
   });
-  const bunxProcess = spawn("bunx", ["remotion", "studio"], {
+  const bunxProcess = spawn("bun", ["x", "remotion", "studio"], {
     stdio: "inherit",
     shell: process.platform === "win32" ? "cmd.exe" : undefined,
     detached: false,
