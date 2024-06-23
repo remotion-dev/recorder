@@ -118,6 +118,7 @@ export type Cameras = {
   captions: StaticFile | null;
   alternative1: StaticFile | null;
   alternative2: StaticFile | null;
+  code: StaticFile | null;
   timestamp: number;
 };
 

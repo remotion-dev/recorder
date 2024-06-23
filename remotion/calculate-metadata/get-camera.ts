@@ -86,11 +86,12 @@ const mapFile = ({
 
   return {
     webcam: file,
-    display: display ?? code ?? null,
+    display: display ?? null,
     captions: sub ?? null,
     alternative1: alternative1 ?? null,
     alternative2: alternative2 ?? null,
     timestamp: parseInt(timestamp, 10),
+    code: code ?? null,
   };
 };
 
