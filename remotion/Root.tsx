@@ -34,7 +34,7 @@ export const Root = () => {
             },
             {
               type: "videoscene" as const,
-              webcamPosition: "previous" as const,
+              webcamPosition: "bottom-right" as const,
               endOffset: 0,
               transitionToNextScene: true,
               newChapter: "",

@@ -94,6 +94,11 @@ export const Display: React.FC<{
           ) : scene.cameras.code ? (
             <CodeFrame
               code={scene.cameras.code}
+              oldCode={
+                previousScene?.type === "video-scene"
+                  ? previousScene.cameras.code
+                  : null
+              }
               displayLayout={displayLayout}
             />
           ) : null}

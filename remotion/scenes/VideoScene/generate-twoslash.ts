@@ -4,7 +4,10 @@ import { createTwoslashFromCDN } from "twoslash-cdn";
 
 const twoslash = createTwoslashFromCDN();
 
-export const generateTwoslash = async (staticFile: StaticFile) => {
+export const generateTwoslash = async (staticFile: StaticFile | null) => {
+  if (!staticFile) {
+    return null;
+  }
   const data = await (await fetch(staticFile.src)).text();
 
   const twoslashResult = await twoslash.run(data, "tsx", {

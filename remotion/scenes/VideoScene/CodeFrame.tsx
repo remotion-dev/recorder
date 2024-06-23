@@ -7,21 +7,30 @@ import { Layout } from "../../layout/layout-types";
 import { CodeTransition } from "./CodeTransition";
 import { generateTwoslash } from "./generate-twoslash";
 
+type State = {
+  code: HighlightedCode;
+  oldCode: HighlightedCode | null;
+};
+
 export const CodeFrame: React.FC<{
   displayLayout: Layout;
   code: StaticFile;
-}> = ({ displayLayout, code }) => {
-  const [slash, setSlash] = useState<HighlightedCode | null>(null);
+  oldCode: StaticFile | null;
+}> = ({ displayLayout, code, oldCode }) => {
+  const [slash, setSlash] = useState<State | null>(null);
 
   useEffect(() => {
-    generateTwoslash(code)
-      .then((slash) => {
-        setSlash(slash);
+    Promise.all([generateTwoslash(code), generateTwoslash(oldCode)])
+      .then(([newSlash, oldSlash]) => {
+        setSlash({
+          code: newSlash as HighlightedCode,
+          oldCode: oldSlash,
+        });
       })
       .catch((err) => {
         cancelRender(err);
       });
-  }, [code]);
+  }, [code, oldCode]);
 
   return (
     <AbsoluteFill
@@ -30,14 +39,16 @@ export const CodeFrame: React.FC<{
         height: displayLayout.height,
         borderRadius: displayLayout.borderRadius,
         objectFit: "cover",
-        backgroundColor: "black",
+        backgroundColor: "#24292F",
         paddingLeft: 50,
+        paddingRight: 50,
+        overflow: "hidden",
       }}
     >
       {slash ? (
         <CodeTransition
-          newCode={slash}
-          oldCode={null}
+          newCode={slash.code}
+          oldCode={slash.oldCode}
           durationInFrames={SCENE_TRANSITION_DURATION}
         ></CodeTransition>
       ) : null}

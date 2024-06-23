@@ -29,8 +29,8 @@ export const callout: AnnotationHandler = {
             minWidth: `${column + 4}ch`,
             marginLeft: `${indentation}ch`,
             width: "fit-content",
-            border: "1px solid #aaa",
-            backgroundColor: "#171717",
+            border: "1px solid #43484B",
+            backgroundColor: "#2e3337",
             borderRadius: "0.25rem",
             padding: "1rem",
             position: "relative",
@@ -44,13 +44,13 @@ export const callout: AnnotationHandler = {
             style={{
               left: `${column - indentation - 0.5}ch`,
               position: "absolute",
-              borderLeft: "2px solid #888",
-              borderTop: "2px solid #888",
+              borderLeft: "2px solid #43484B",
+              borderTop: "2px solid #43484B",
               width: "1rem",
               height: "1rem",
               transform: "rotate(45deg) translateY(-50%)",
               top: "-3px",
-              backgroundColor: "#171717",
+              backgroundColor: "#2e3337",
             }}
           />
           {annotation.data.children || annotation.query}
