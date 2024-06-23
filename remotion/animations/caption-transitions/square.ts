@@ -184,7 +184,7 @@ const getEnterAndExitOfBentoLayout = ({
       getSafeSpace("square");
 
   return {
-    ...(otherScene.layout.subtitleLayout as Layout),
+    ...subtitleLayout,
     left,
     top,
   };
