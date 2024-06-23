@@ -3,9 +3,9 @@ import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import {
   continueRender,
   delayRender,
-  Easing,
-  interpolate,
+  spring,
   useCurrentFrame,
+  useVideoConfig,
 } from "remotion";
 
 import {
@@ -33,6 +33,7 @@ export function CodeTransition({
   canvasLayout: CanvasLayout;
 }) {
   const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
 
   const ref = React.useRef<HTMLPreElement>(null);
   const [oldSnapshot, setOldSnapshot] =
@@ -62,10 +63,16 @@ export function CodeTransition({
     transitions.forEach(({ element, keyframes, options }) => {
       const delay = durationInFrames * options.delay;
       const duration = durationInFrames * options.duration;
-      const progress = interpolate(frame, [delay, delay + duration], [0, 1], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-        easing: Easing.inOut(Easing.ease),
+
+      const progress = spring({
+        fps,
+        frame,
+        config: {
+          damping: 200,
+          mass: 0.3,
+        },
+        delay: delay,
+        durationInFrames: duration,
       });
 
       applyStyle({
@@ -84,7 +91,7 @@ export function CodeTransition({
   const style: React.CSSProperties = useMemo(() => {
     return {
       position: "relative",
-      fontSize: canvasLayout === "landscape" ? 60 : 40,
+      fontSize: canvasLayout === "landscape" ? 60 : 30,
       lineHeight: 1.5,
       fontFamily,
     };

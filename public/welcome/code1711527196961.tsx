@@ -3,7 +3,7 @@ type Props = {
   onDblClick: () => void;
 };
 
-// @errors: 2741
 const props: Props = {
   onClick: () => {},
+  onDblClick: () => {},
 };

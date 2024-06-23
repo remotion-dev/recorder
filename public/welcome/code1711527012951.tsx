@@ -1,3 +1,10 @@
-const a = 1;
-const b = 1;
-const c = 1;
+// @noErrors
+
+type Props = {
+  onClick: () => void;
+  onDblClick: () => void;
+};
+
+const props: Props = {
+  onClick: () => {},
+};
