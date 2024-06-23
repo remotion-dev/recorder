@@ -56,7 +56,7 @@ export const VideoScene: React.FC<{
 
   return (
     <>
-      {sceneAndMetadata.cameras.display ? (
+      {sceneAndMetadata.cameras.display || sceneAndMetadata.cameras.code ? (
         <Display
           scene={sceneAndMetadata}
           enterProgress={enterProgress}
