@@ -1,6 +1,9 @@
 import React, { useMemo } from "react";
-import { AbsoluteFill, OffthreadVideo } from "remotion";
-import type { OffthreadVideoProps } from "remotion/dist/cjs/video/props";
+import {
+  AbsoluteFill,
+  OffthreadVideo,
+  RemotionOffthreadVideoProps,
+} from "remotion";
 import type { Dimensions } from "../../../config/layout";
 import { getBlurLayout } from "../../layout/blur";
 import type { Layout } from "../../layout/layout-types";
@@ -11,7 +14,7 @@ export const VideoWithBlur: React.FC<
     containerLayout: Layout;
     videoSize: Dimensions;
     enableBlur: boolean;
-  } & Omit<OffthreadVideoProps, "style">
+  } & Omit<RemotionOffthreadVideoProps, "style">
 > = ({ containerLayout, videoSize, enableBlur, ...props }) => {
   const { innerStyle, needsBlur, outerStyle, blurStyle } = useMemo(() => {
     return getBlurLayout({
