@@ -25,6 +25,8 @@
     "@remotion/studio-server": "4.0.176",
     "@remotion/zod-types": "4.0.176",
     "class-variance-authority": "^0.7.0",
+    "twoslash-cdn": "^0.2.8",
+    "codehike": "^1.0.0-beta.0",
     "clsx": "^2.0.0",
     "connect": "3.7.0",
     "eslint": "^8",

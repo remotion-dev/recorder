@@ -3,6 +3,7 @@ import {
   ALTERNATIVE1_PREFIX,
   ALTERNATIVE2_PREFIX,
   CAPTIONS_PREFIX,
+  CODE_PREFIX,
   DISPLAY_PREFIX,
   WEBCAM_PREFIX,
 } from "../../config/cameras";
@@ -58,6 +59,12 @@ const mapFile = ({
     prefix: DISPLAY_PREFIX,
     timestamp,
   });
+  const code = findMatchingFile({
+    files,
+    compositionId,
+    prefix: CODE_PREFIX,
+    timestamp,
+  });
   const sub = findMatchingFile({
     files,
     compositionId,
@@ -79,7 +86,7 @@ const mapFile = ({
 
   return {
     webcam: file,
-    display: display ?? null,
+    display: display ?? code ?? null,
     captions: sub ?? null,
     alternative1: alternative1 ?? null,
     alternative2: alternative2 ?? null,
