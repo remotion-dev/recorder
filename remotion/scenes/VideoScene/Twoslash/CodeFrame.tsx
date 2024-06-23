@@ -7,8 +7,8 @@ import {
   continueRender,
   delayRender,
 } from "remotion";
-import { CanvasLayout } from "../../../config/layout";
-import { Layout } from "../../layout/layout-types";
+import { CanvasLayout } from "../../../../config/layout";
+import { Layout } from "../../../layout/layout-types";
 import { CodeTransition } from "./CodeTransition";
 import { generateTwoslash } from "./generate-twoslash";
 

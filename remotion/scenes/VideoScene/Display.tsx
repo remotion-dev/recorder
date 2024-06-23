@@ -8,7 +8,7 @@ import type {
 import { getDisplayPosition } from "../../animations/display-transitions";
 import { BRollStack } from "../BRoll/BRollStack";
 import { ScaleDownIfBRollRequiresIt } from "../BRoll/ScaleDownWithBRoll";
-import { CodeFrame } from "./CodeFrame";
+import { CodeFrame } from "./Twoslash/CodeFrame";
 
 const outer: React.CSSProperties = {
   position: "absolute",

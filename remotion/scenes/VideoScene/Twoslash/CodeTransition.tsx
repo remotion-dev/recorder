@@ -15,7 +15,7 @@ import {
 } from "codehike/utils/token-transitions";
 
 import { loadFont } from "@remotion/google-fonts/RobotoMono";
-import { CanvasLayout } from "../../../config/layout";
+import { CanvasLayout } from "../../../../config/layout";
 import { applyStyle } from "./apply-style";
 import { callout } from "./Callout";
 import { inlineBlockTokens } from "./InlineBlockTokens";
