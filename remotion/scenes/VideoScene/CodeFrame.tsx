@@ -2,6 +2,7 @@ import { StaticFile } from "@remotion/studio";
 import { HighlightedCode } from "codehike/code";
 import React, { useEffect, useState } from "react";
 import { AbsoluteFill, cancelRender } from "remotion";
+import { CanvasLayout } from "../../../config/layout";
 import { SCENE_TRANSITION_DURATION } from "../../../config/transitions";
 import { Layout } from "../../layout/layout-types";
 import { CodeTransition } from "./CodeTransition";
@@ -16,7 +17,8 @@ export const CodeFrame: React.FC<{
   displayLayout: Layout;
   code: StaticFile;
   oldCode: StaticFile | null;
-}> = ({ displayLayout, code, oldCode }) => {
+  canvasLayout: CanvasLayout;
+}> = ({ displayLayout, code, oldCode, canvasLayout }) => {
   const [slash, setSlash] = useState<State | null>(null);
 
   useEffect(() => {
@@ -50,6 +52,7 @@ export const CodeFrame: React.FC<{
           newCode={slash.code}
           oldCode={slash.oldCode}
           durationInFrames={SCENE_TRANSITION_DURATION}
+          canvasLayout={canvasLayout}
         ></CodeTransition>
       ) : null}
     </AbsoluteFill>

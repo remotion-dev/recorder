@@ -6,6 +6,7 @@ import type {
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
 import { getShouldTransitionIn } from "../../animations/transitions";
+import { hasDisplay } from "../../calculate-metadata/has-display";
 import { BoxedCaptions } from "../../captions/boxed/BoxedCaptions";
 import { SrtPreviewAndEditor } from "../../captions/srt/SrtPreviewAndEditor/SrtPreviewAndEditor";
 import { LandscapeChapters } from "../../chapters/landscape/LandscapeChapters";
@@ -48,15 +49,15 @@ export const VideoScene: React.FC<{
   });
 
   const bRollsOnTopOfWebcam = useMemo(() => {
-    if (sceneAndMetadata.cameras.display !== null) {
+    if (hasDisplay(sceneAndMetadata.cameras)) {
       return [];
     }
     return sceneAndMetadata.bRolls;
-  }, [sceneAndMetadata.bRolls, sceneAndMetadata.cameras.display]);
+  }, [sceneAndMetadata.bRolls, sceneAndMetadata.cameras]);
 
   return (
     <>
-      {sceneAndMetadata.cameras.display || sceneAndMetadata.cameras.code ? (
+      {hasDisplay(sceneAndMetadata.cameras) ? (
         <Display
           scene={sceneAndMetadata}
           enterProgress={enterProgress}

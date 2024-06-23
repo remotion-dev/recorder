@@ -15,6 +15,7 @@ import {
 } from "codehike/utils/token-transitions";
 
 import { loadFont } from "@remotion/google-fonts/RobotoMono";
+import { CanvasLayout } from "../../../config/layout";
 import { applyStyle } from "./apply-style";
 import { callout } from "./Callout";
 import { inlineBlockTokens } from "./InlineBlockTokens";
@@ -23,11 +24,13 @@ const { fontFamily } = loadFont();
 export function CodeTransition({
   oldCode,
   newCode,
-  durationInFrames = 30,
+  durationInFrames,
+  canvasLayout,
 }: {
   oldCode: HighlightedCode | null;
   newCode: HighlightedCode;
-  durationInFrames?: number;
+  durationInFrames: number;
+  canvasLayout: CanvasLayout;
 }) {
   const frame = useCurrentFrame();
 
@@ -81,11 +84,11 @@ export function CodeTransition({
   const style: React.CSSProperties = useMemo(() => {
     return {
       position: "relative",
-      fontSize: 40,
+      fontSize: canvasLayout === "landscape" ? 60 : 40,
       lineHeight: 1.5,
       fontFamily,
     };
-  }, []);
+  }, [canvasLayout]);
 
   return <Pre ref={ref} code={code} handlers={handlers} style={style} />;
 }

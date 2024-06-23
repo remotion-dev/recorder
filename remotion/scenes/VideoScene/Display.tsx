@@ -100,6 +100,7 @@ export const Display: React.FC<{
                   : null
               }
               displayLayout={displayLayout}
+              canvasLayout={canvasLayout}
             />
           ) : null}
         </ScaleDownIfBRollRequiresIt>
