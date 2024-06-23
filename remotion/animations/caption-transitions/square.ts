@@ -185,6 +185,7 @@ const getEnterAndExitOfBentoLayout = ({
 
   return {
     ...(otherScene.layout.subtitleLayout as Layout),
+    width: subtitleLayout.width,
     left,
     top,
   };
