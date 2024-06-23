@@ -1,7 +1,14 @@
 import type { Word } from "../../../config/autocorrect";
 
-export const wordsTogether = (words: Word[]): Word[] => {
+export const fixBackticks = (_words: Word[]): Word[] => {
   const newWords: Word[] = [];
+
+  const words = _words.map((word) => {
+    return {
+      ...word,
+      text: word.text.replaceAll(/`\s/g, " `"),
+    };
+  });
 
   for (let i = 0; i < words.length; i++) {
     const word = words[i] as Word;

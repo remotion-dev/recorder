@@ -26,7 +26,7 @@ export const getNonFullscreenWebcamSize = ({
   if (canvasLayout === "landscape") {
     const remainingWidth =
       canvasSize.width - displaySize.width - getSafeSpace(canvasLayout) * 3;
-    const maxWidth = 450;
+    const maxWidth = 350;
     const width = Math.min(remainingWidth, maxWidth);
 
     const height = webcamRatio * width;

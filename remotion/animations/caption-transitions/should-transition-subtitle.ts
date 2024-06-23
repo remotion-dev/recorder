@@ -14,7 +14,6 @@ export const shouldInlineTransitionSubtitles = ({
   currentScene: VideoSceneAndMetadata;
   nextScene: SceneAndMetadata | null;
 }) => {
-  const currentSubtitleType = currentScene.layout.subtitleType;
   if (nextScene === null) {
     return false;
   }
@@ -23,29 +22,26 @@ export const shouldInlineTransitionSubtitles = ({
     return false;
   }
 
-  const nextSubtitleType = nextScene.layout.subtitleType;
-
-  if (currentSubtitleType === "square" && nextSubtitleType === "square") {
-    // In square layout, we resize the box if the aspect ratio of the videos has changed.
-    // While resizing the box, the subtitles fade out.
-
-    const nextSubtitleLayout = nextScene.layout.subtitleLayout;
-    const currentSubtitleLayout = currentScene.layout.subtitleLayout;
-
-    const layoutsAreTheSameBox =
-      nextSubtitleLayout.width === currentSubtitleLayout.width &&
-      nextSubtitleLayout.height === currentSubtitleLayout.height &&
-      nextSubtitleLayout.left === currentSubtitleLayout.left &&
-      nextSubtitleLayout.top === currentSubtitleLayout.top;
-
-    return (
-      nextScene.webcamPosition === currentScene.webcamPosition &&
-      Boolean(currentScene.videos.display) ===
-        Boolean(nextScene.videos.display) &&
-      !layoutsAreTheSameBox
-    );
+  if (!currentScene.layout.subtitleLayout || !nextScene.layout.subtitleLayout) {
+    return false;
   }
 
-  // Should transition to ensure subtitles don't overlap each other.
-  return currentSubtitleType === nextSubtitleType;
+  // In square layout, we resize the box if the aspect ratio of the videos has changed.
+  // While resizing the box, the subtitles fade out.
+
+  const nextSubtitleLayout = nextScene.layout.subtitleLayout;
+  const currentSubtitleLayout = currentScene.layout.subtitleLayout;
+
+  const layoutsAreTheSameBox =
+    nextSubtitleLayout.width === currentSubtitleLayout.width &&
+    nextSubtitleLayout.height === currentSubtitleLayout.height &&
+    nextSubtitleLayout.left === currentSubtitleLayout.left &&
+    nextSubtitleLayout.top === currentSubtitleLayout.top;
+
+  return (
+    nextScene.webcamPosition === currentScene.webcamPosition &&
+    Boolean(currentScene.videos.display) ===
+      Boolean(nextScene.videos.display) &&
+    !layoutsAreTheSameBox
+  );
 };

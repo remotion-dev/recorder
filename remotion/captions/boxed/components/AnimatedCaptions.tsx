@@ -1,48 +1,50 @@
 import React, { useMemo } from "react";
 import { AbsoluteFill, useVideoConfig } from "remotion";
-import type { CanvasLayout } from "../../config/layout";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
-} from "../../config/scenes";
-import type { Theme } from "../../config/themes";
-import { COLORS } from "../../config/themes";
-import { shouldInlineTransitionSubtitles } from "../animations/caption-transitions/should-transition-subtitle";
-import { getSubtitleTransform } from "../animations/caption-transitions/subtitle-transitions";
-import { Captions } from "./Captions";
-import { getBorderWidthForSubtitles, getSubsAlign } from "./Segment";
+} from "../../../../config/scenes";
+import type { Theme } from "../../../../config/themes";
+import { COLORS } from "../../../../config/themes";
+import { shouldInlineTransitionSubtitles } from "../../../animations/caption-transitions/should-transition-subtitle";
+import { getSubtitleTransform } from "../../../animations/caption-transitions/subtitle-transitions";
+import { Layout } from "../../../layout/layout-types";
+import { useCaptions } from "../../editor/captions-provider";
+import { layoutCaptions } from "../../processing/layout-captions";
+import { postprocessCaptions } from "../../processing/postprocess-subs";
+import {
+  CaptionSentence,
+  getBorderWidthForSubtitles,
+  getSubtitlesLines,
+} from "./CaptionSentence";
 import {
   TransitionFromPreviousSubtitles,
   TransitionToNextSubtitles,
 } from "./TransitionBetweenSubtitles";
-import { useCaptions } from "./editor/captions-provider";
-import { layoutCaptions } from "./processing/layout-captions";
-import { postprocessCaptions } from "./processing/postprocess-subs";
 
 const LINE_HEIGHT = 2;
+const SUBTITLES_FONT_SIZE = 56;
 
-export const Subs: React.FC<{
+export const AnimatedCaptions: React.FC<{
   trimStart: number;
-  canvasLayout: CanvasLayout;
   scene: VideoSceneAndMetadata;
   enterProgress: number;
   exitProgress: number;
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
   theme: Theme;
+  subtitleLayout: Layout;
 }> = ({
   trimStart,
-  canvasLayout,
   scene,
   enterProgress,
   exitProgress,
   nextScene,
   previousScene,
   theme,
+  subtitleLayout,
 }) => {
   const { width, height } = useVideoConfig();
-  const { subtitleType, subtitleFontSize, subtitleLayout, subtitleLines } =
-    scene.layout;
 
   const shouldTransitionToNext = shouldInlineTransitionSubtitles({
     currentScene: scene,
@@ -55,44 +57,34 @@ export const Subs: React.FC<{
 
   const whisperOutput = useCaptions();
 
+  const subtitleLines = getSubtitlesLines({
+    boxHeight: subtitleLayout.height,
+    fontSize: SUBTITLES_FONT_SIZE,
+  });
+
   const postprocessed = useMemo(() => {
-    const words = postprocessCaptions({
-      subTypes: whisperOutput,
-    });
+    const words = postprocessCaptions(whisperOutput);
 
     return layoutCaptions({
       boxWidth: subtitleLayout.width,
       maxLines: subtitleLines,
-      fontSize: subtitleFontSize,
-      canvasLayout,
-      subtitleType,
+      fontSize: SUBTITLES_FONT_SIZE,
       words,
     });
-  }, [
-    whisperOutput,
-    subtitleLayout.width,
-    subtitleLines,
-    subtitleFontSize,
-    canvasLayout,
-    subtitleType,
-  ]);
+  }, [whisperOutput, subtitleLayout, subtitleLines]);
 
   const outer: React.CSSProperties = useMemo(() => {
-    const backgroundColor =
-      subtitleType === "square" ? COLORS[theme].CAPTIONS_BACKGROUND : undefined;
+    const backgroundColor = COLORS[theme].CAPTIONS_BACKGROUND;
 
     return {
-      fontSize: subtitleFontSize,
+      fontSize: SUBTITLES_FONT_SIZE,
       display: "flex",
       lineHeight: LINE_HEIGHT,
-      borderWidth: getBorderWidthForSubtitles(subtitleType),
+      borderWidth: getBorderWidthForSubtitles(),
       borderStyle: "solid",
       borderColor: COLORS[theme].BORDER_COLOR,
       backgroundColor,
-      ...getSubsAlign({
-        canvasLayout,
-        subtitleType,
-      }),
+      justifyContent: "center",
       ...getSubtitleTransform({
         enterProgress,
         exitProgress,
@@ -101,19 +93,17 @@ export const Subs: React.FC<{
         previousScene,
         scene,
         canvasWidth: width,
-        subtitleType,
+        subtitleLayout,
       }),
     };
   }, [
-    canvasLayout,
     enterProgress,
     exitProgress,
     height,
     nextScene,
     previousScene,
     scene,
-    subtitleFontSize,
-    subtitleType,
+    subtitleLayout,
     theme,
     width,
   ]);
@@ -122,21 +112,24 @@ export const Subs: React.FC<{
     <AbsoluteFill style={outer}>
       <TransitionFromPreviousSubtitles
         shouldTransitionFromPreviousSubtitle={shouldTransitionFromPrevious}
-        subtitleType={subtitleType}
       >
         <TransitionToNextSubtitles
           shouldTransitionToNextsSubtitles={shouldTransitionToNext}
-          subtitleType={subtitleType}
         >
-          <Captions
-            canvasLayout={canvasLayout}
-            fontSize={scene.layout.subtitleFontSize}
-            lines={scene.layout.subtitleLines}
-            segments={postprocessed.segments}
-            subtitleType={subtitleType}
-            theme={theme}
-            trimStart={trimStart}
-          />
+          {postprocessed.segments.map((segment, index) => {
+            return (
+              <CaptionSentence
+                key={index}
+                isFirst={index === 0}
+                isLast={index === postprocessed.segments.length - 1}
+                segment={segment}
+                trimStart={trimStart}
+                theme={theme}
+                fontSize={SUBTITLES_FONT_SIZE}
+                lines={subtitleLines}
+              />
+            );
+          })}
         </TransitionToNextSubtitles>
       </TransitionFromPreviousSubtitles>
     </AbsoluteFill>

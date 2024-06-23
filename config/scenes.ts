@@ -1,6 +1,7 @@
 import type { StaticFile } from "remotion";
 import { staticFile } from "remotion";
 import { z } from "zod";
+import { UnserializedSrt } from "../remotion/captions/srt/helpers/serialize-srt";
 import type { VideoSceneLayout } from "../remotion/layout/get-layout";
 import { brand, linkType, platform } from "./endcard";
 import type { Dimensions } from "./layout";
@@ -144,6 +145,7 @@ export type VideoSceneAndMetadata = {
   startFrame: number;
   endFrame: number;
   bRolls: BRollWithDimensions[];
+  srt: UnserializedSrt[];
 };
 
 type OtherScene = {

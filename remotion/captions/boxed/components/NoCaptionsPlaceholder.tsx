@@ -1,9 +1,12 @@
 import React, { useMemo } from "react";
 import { AbsoluteFill, getRemotionEnvironment } from "remotion";
-import { MONOSPACE_FONT_FAMILY, REGULAR_FONT_FAMILY } from "../../config/fonts";
-import type { Theme } from "../../config/themes";
-import { COLORS } from "../../config/themes";
-import type { Layout } from "../layout/layout-types";
+import {
+  MONOSPACE_FONT_FAMILY,
+  REGULAR_FONT_FAMILY,
+} from "../../../../config/fonts";
+import type { Theme } from "../../../../config/themes";
+import { COLORS } from "../../../../config/themes";
+import type { Layout } from "../../../layout/layout-types";
 
 export const NoCaptionsPlaceholder: React.FC<{
   layout: Layout;

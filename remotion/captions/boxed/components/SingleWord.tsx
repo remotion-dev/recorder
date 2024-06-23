@@ -5,16 +5,16 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { Word } from "../../config/autocorrect";
+import type { Word } from "../../../../config/autocorrect";
 import {
   MONOSPACE_FONT_FAMILY,
   MONOSPACE_FONT_WEIGHT,
   REGULAR_FONT_FAMILY,
   REGULAR_FONT_WEIGHT,
-} from "../../config/fonts";
-import type { Theme } from "../../config/themes";
-import { COLORS } from "../../config/themes";
-import { useCaptionOverlay } from "./editor/use-caption-overlay";
+} from "../../../../config/fonts";
+import type { Theme } from "../../../../config/themes";
+import { COLORS } from "../../../../config/themes";
+import { useCaptionOverlay } from "../../editor/use-caption-overlay";
 
 type WordColor = {
   appeared: string;
@@ -79,7 +79,7 @@ const getWordColor = ({
 
 const WORD_HIGHLIGHT_BORDER_RADIUS = 10;
 
-export const WordComp: React.FC<{
+export const BoxedSingleWord: React.FC<{
   word: Word;
   isLast: boolean;
   theme: Theme;
@@ -129,10 +129,10 @@ export const WordComp: React.FC<{
     active,
   });
 
-  const backgroundColor = active
-    ? word.monospace
-      ? COLORS[theme].ACCENT_COLOR
-      : "transparent"
+  const shouldHighlight = active && word.monospace;
+
+  const backgroundColor = shouldHighlight
+    ? COLORS[theme].ACCENT_COLOR
     : "transparent";
 
   const style: React.CSSProperties = useMemo(() => {
@@ -149,8 +149,7 @@ export const WordComp: React.FC<{
           : "none",
       whiteSpace: word.monospace ? "nowrap" : undefined,
       // Fix gap inbetween background and outline
-      boxShadow:
-        active && word.monospace ? `0 0 0 1px ${backgroundColor}` : "none",
+      boxShadow: shouldHighlight ? `0 0 0 1px ${backgroundColor}` : "none",
       borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS,
       scale: String(progress),
       cursor: "pointer",
@@ -160,6 +159,7 @@ export const WordComp: React.FC<{
     backgroundColor,
     hovered,
     progress,
+    shouldHighlight,
     shownWordColor,
     word.monospace,
   ]);

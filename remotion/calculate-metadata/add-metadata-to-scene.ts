@@ -6,9 +6,11 @@ import {
   SceneVideos,
   SelectableScene,
 } from "../../config/scenes";
+import { calculateSrt } from "../captions/srt/helpers/calculate-srt";
 import { getBRollDimensions } from "../layout/get-broll-dimensions";
 import { getVideoSceneLayout } from "../layout/get-layout";
 import { PLACEHOLDER_DURATION_IN_FRAMES } from "./empty-place-holder";
+import { fetchWhisperCppOutput } from "./fetch-captions";
 import { getFinalWebcamPosition } from "./get-final-webcam-position";
 import { getStartEndFrame } from "./get-start-end-frame";
 
@@ -53,11 +55,20 @@ export const addMetadataToScene = async ({
     ? await getVideoMetadata(cameras.display.src)
     : null;
 
+  const whisperCppOutput = await fetchWhisperCppOutput(cameras.captions);
+
   const { actualStartFrame, derivedEndFrame } = await getStartEndFrame({
     scene,
     recordingDurationInSeconds: webcamMetadata.durationInSeconds,
-    captions: cameras.captions,
+    whisperCppOutput: whisperCppOutput,
   });
+
+  const srt = whisperCppOutput
+    ? calculateSrt({
+        startFrame: actualStartFrame,
+        whisperCppOutput,
+      })
+    : [];
 
   const webcamPosition = getFinalWebcamPosition({
     canvasLayout,
@@ -92,5 +103,6 @@ export const addMetadataToScene = async ({
     startFrame: actualStartFrame,
     endFrame: derivedEndFrame,
     bRolls: bRollWithDimensions,
+    srt,
   };
 };

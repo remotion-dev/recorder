@@ -11,14 +11,16 @@ const getEnterAndExitOfFullscreenBox = ({
   otherScene,
   canvasHeight,
   canvasWidth,
+  subtitleLayout,
 }: {
   scene: VideoSceneAndMetadata;
   otherScene: VideoSceneAndMetadata;
   canvasHeight: number;
   canvasWidth: number;
+  subtitleLayout: Layout;
 }) => {
   if (otherScene === null || otherScene.type !== "video-scene") {
-    return scene.layout.subtitleLayout;
+    return subtitleLayout;
   }
 
   const previouslyAtBottom = isWebCamAtBottom(otherScene.webcamPosition);
@@ -29,13 +31,13 @@ const getEnterAndExitOfFullscreenBox = ({
   if (changedVerticalPosition) {
     if (currentlyAtBottom) {
       return {
-        ...scene.layout.subtitleLayout,
-        top: -scene.layout.subtitleLayout.height,
+        ...subtitleLayout,
+        top: -subtitleLayout.height,
       };
     }
 
     return {
-      ...scene.layout.subtitleLayout,
+      ...subtitleLayout,
       top: canvasHeight,
     };
   }
@@ -43,27 +45,27 @@ const getEnterAndExitOfFullscreenBox = ({
   // If the vertical position has not changed, and the next scene also
   // has no display video, then nothing changes in the layout
   if (otherScene.layout.displayLayout === null) {
-    return otherScene.layout.subtitleLayout;
+    return otherScene.layout.subtitleLayout as Layout;
   }
 
   // Now we expect that the other scene has a display video, and the webcam will shrink
   const top = isWebCamAtBottom(scene.webcamPosition)
     ? otherScene.layout.webcamLayout.top -
-      scene.layout.subtitleLayout.height -
+      subtitleLayout.height -
       getSafeSpace("square")
     : getSafeSpace("square") * 2 + otherScene.layout.webcamLayout.height;
 
   // If the webcam moves to the top right corner, the subtitle should come from left corner
   if (!isWebCamRight(otherScene.webcamPosition)) {
     return {
-      ...scene.layout.subtitleLayout,
-      left: -scene.layout.subtitleLayout.width,
+      ...subtitleLayout,
+      left: -subtitleLayout.width,
       top,
     };
   }
 
   return {
-    ...scene.layout.subtitleLayout,
+    ...subtitleLayout,
     left: canvasWidth,
     top,
   };
@@ -74,14 +76,16 @@ const getEnterAndExitLayoutOfWebcamPositionChange = ({
   scene,
   canvasHeight,
   canvasWidth,
+  subtitleLayout,
 }: {
   otherScene: VideoSceneAndMetadata;
   scene: VideoSceneAndMetadata;
   canvasHeight: number;
   canvasWidth: number;
+  subtitleLayout: Layout;
 }) => {
   if (scene.webcamPosition === otherScene.webcamPosition) {
-    return otherScene.layout.subtitleLayout;
+    return otherScene.layout.subtitleLayout as Layout;
   }
 
   // Horizontal position change, move the subtitle over the edge
@@ -91,14 +95,14 @@ const getEnterAndExitLayoutOfWebcamPositionChange = ({
   ) {
     if (isWebCamAtBottom(scene.webcamPosition)) {
       return {
-        ...scene.layout.subtitleLayout,
+        ...subtitleLayout,
         top: canvasHeight,
       };
     }
 
     return {
-      ...scene.layout.subtitleLayout,
-      top: -scene.layout.subtitleLayout.height,
+      ...subtitleLayout,
+      top: -subtitleLayout.height,
     };
   }
 
@@ -106,14 +110,14 @@ const getEnterAndExitLayoutOfWebcamPositionChange = ({
   // Webcam moves from right to left
   if (isWebCamRight(scene.webcamPosition)) {
     return {
-      ...scene.layout.subtitleLayout,
-      left: -scene.layout.subtitleLayout.width,
+      ...subtitleLayout,
+      left: -subtitleLayout.width,
     };
   }
 
   // Webcam moves from left to right
   return {
-    ...scene.layout.subtitleLayout,
+    ...subtitleLayout,
     left: canvasWidth,
   };
 };
@@ -123,11 +127,13 @@ const getEnterAndExitOfBentoLayout = ({
   otherScene,
   canvasWidth,
   canvasHeight,
+  subtitleLayout,
 }: {
   otherScene: VideoSceneAndMetadata;
   scene: VideoSceneAndMetadata;
   canvasWidth: number;
   canvasHeight: number;
+  subtitleLayout: Layout;
 }) => {
   if (!scene.layout.displayLayout) {
     throw new Error("Expected display layout to be present");
@@ -139,13 +145,14 @@ const getEnterAndExitOfBentoLayout = ({
       scene,
       canvasHeight,
       canvasWidth,
+      subtitleLayout,
     });
   }
 
   // We now assume the other scene has no display, webcam is getting bigger
   // and we need to animate the subtitles out
   const left = isWebCamRight(scene.webcamPosition)
-    ? -scene.layout.subtitleLayout.width
+    ? -subtitleLayout.width
     : canvasWidth;
 
   // Vertical position change
@@ -155,18 +162,15 @@ const getEnterAndExitOfBentoLayout = ({
   ) {
     if (isWebCamAtBottom(scene.webcamPosition)) {
       return {
-        ...scene.layout.subtitleLayout,
+        ...subtitleLayout,
         top: getSafeSpace("square"),
         left,
       };
     }
 
     return {
-      ...scene.layout.subtitleLayout,
-      top:
-        canvasHeight -
-        scene.layout.subtitleLayout.height -
-        getSafeSpace("square"),
+      ...subtitleLayout,
+      top: canvasHeight - subtitleLayout.height - getSafeSpace("square"),
       left,
     };
   }
@@ -176,11 +180,11 @@ const getEnterAndExitOfBentoLayout = ({
       otherScene.layout.webcamLayout.height -
       getSafeSpace("square")
     : otherScene.layout.webcamLayout.height -
-      scene.layout.subtitleLayout.height +
+      subtitleLayout.height +
       getSafeSpace("square");
 
   return {
-    ...otherScene.layout.subtitleLayout,
+    ...(otherScene.layout.subtitleLayout as Layout),
     left,
     top,
   };
@@ -191,14 +195,16 @@ export const getSquareEnterOrExit = ({
   canvasHeight,
   otherScene,
   canvasWidth,
+  subtitleLayout,
 }: {
   otherScene: SceneAndMetadata | null;
   scene: VideoSceneAndMetadata;
   canvasWidth: number;
   canvasHeight: number;
+  subtitleLayout: Layout;
 }): Layout => {
   if (otherScene === null || otherScene.type !== "video-scene") {
-    return scene.layout.subtitleLayout;
+    return subtitleLayout;
   }
 
   if (scene.layout.displayLayout === null) {
@@ -207,6 +213,7 @@ export const getSquareEnterOrExit = ({
       canvasWidth,
       otherScene,
       scene,
+      subtitleLayout,
     });
   }
 
@@ -215,5 +222,6 @@ export const getSquareEnterOrExit = ({
     scene,
     canvasWidth,
     canvasHeight,
+    subtitleLayout,
   });
 };

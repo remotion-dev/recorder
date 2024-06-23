@@ -21,11 +21,12 @@ export const getLandscapeWebCamStartOrEndLayout = ({
     return { layout: currentLayout, shouldFadeRecording: false };
   }
 
-  // When at least 1 scene is fullscreen, the webcam can just move to the new position
+  // When at least 1 scene is fullscreen, the webcam can just move to the new position.
   if (!currentScene.layout.displayLayout || !otherScene.layout.displayLayout) {
+    // The next display may overlap the webcam, so we cannot use a fade
     return {
       layout: otherScene.layout.webcamLayout,
-      shouldFadeRecording: true,
+      shouldFadeRecording: false,
     };
   }
 

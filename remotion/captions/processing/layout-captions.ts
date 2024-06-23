@@ -6,13 +6,11 @@ import {
   REGULAR_FONT_FAMILY,
   REGULAR_FONT_WEIGHT,
 } from "../../../config/fonts";
-import { CanvasLayout, getSafeSpace } from "../../../config/layout";
-import { SubtitleType, getBorderWidthForSubtitles } from "../Segment";
+import { getSafeSpace } from "../../../config/layout";
+import { getBorderWidthForSubtitles } from "../boxed/components/CaptionSentence";
 import { CaptionPage, LayoutedCaptions } from "../types";
 import { hasMonoSpaceInIt } from "./has-monospace-in-word";
 import { splitWordIntoMonospaceSegment } from "./split-word-into-monospace-segment";
-
-type WordBalanceStrategy = "fill-box-if-possible" | "equal-width";
 
 const balanceWords = ({
   words,
@@ -20,19 +18,14 @@ const balanceWords = ({
   boxWidth,
   fontSize,
   maxLines,
-  wordBalanceStrategy,
 }: {
   words: Word[];
   wordsFitted: number;
   boxWidth: number;
   maxLines: number;
   fontSize: number;
-  wordBalanceStrategy: WordBalanceStrategy;
 }) => {
-  let bestCut =
-    wordBalanceStrategy === "fill-box-if-possible"
-      ? wordsFitted
-      : Math.round(words.length / 2);
+  let bestCut = wordsFitted;
 
   if (wordsFitted / words.length > 0.9) {
     // Prevent a few hanging words at the end
@@ -65,7 +58,6 @@ const balanceWords = ({
       boxWidth,
       maxLines,
       fontSize,
-      wordBalanceStrategy,
     }),
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     ...cutWords({
@@ -73,7 +65,6 @@ const balanceWords = ({
       boxWidth,
       maxLines,
       fontSize,
-      wordBalanceStrategy,
     }),
   ];
 };
@@ -83,13 +74,11 @@ const cutWords = ({
   boxWidth,
   maxLines,
   fontSize,
-  wordBalanceStrategy,
 }: {
   words: Word[];
   boxWidth: number;
   maxLines: number;
   fontSize: number;
-  wordBalanceStrategy: WordBalanceStrategy;
 }): CaptionPage[] => {
   const { add } = fillTextBox({ maxBoxWidth: boxWidth, maxLines });
   let wordsFitted = 0;
@@ -120,52 +109,32 @@ const cutWords = ({
     fontSize,
     maxLines,
     wordsFitted,
-    wordBalanceStrategy,
   });
 };
 
-export const getHorizontalPaddingForSubtitles = (
-  subtitleType: SubtitleType,
-  canvasLayout: CanvasLayout,
-) => {
-  if (subtitleType === "square") {
-    return getSafeSpace(canvasLayout);
-  }
-
-  if (subtitleType === "overlayed-center") {
-    return 60;
-  }
-
-  return 0;
+export const getHorizontalPaddingForSubtitles = () => {
+  return getSafeSpace("square");
 };
 
 export const layoutCaptions = ({
   words,
-  subtitleType,
   boxWidth,
   fontSize,
   maxLines,
-  canvasLayout,
 }: {
   words: Word[];
-  subtitleType: SubtitleType;
   boxWidth: number;
   maxLines: number;
   fontSize: number;
-  canvasLayout: CanvasLayout;
 }): LayoutedCaptions => {
-  const wordBalanceStrategy =
-    subtitleType === "square" ? "fill-box-if-possible" : "equal-width";
-
   const segments = cutWords({
     words,
     boxWidth:
       boxWidth -
-      getHorizontalPaddingForSubtitles(subtitleType, canvasLayout) * 2 -
-      getBorderWidthForSubtitles(subtitleType) * 2,
+      getHorizontalPaddingForSubtitles() * 2 -
+      getBorderWidthForSubtitles() * 2,
     maxLines,
     fontSize,
-    wordBalanceStrategy,
   });
 
   return {

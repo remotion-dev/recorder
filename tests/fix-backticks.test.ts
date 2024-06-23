@@ -2,7 +2,7 @@
 
 import { expect, test } from "bun:test";
 import type { Word } from "../config/autocorrect";
-import { wordsTogether } from "../remotion/captions/processing/words-together";
+import { fixBackticks } from "../remotion/captions/processing/fix-backticks";
 
 const example: Word[] = [
   {
@@ -33,7 +33,7 @@ const example: Word[] = [
 ];
 
 test("join words correctly", () => {
-  const words = wordsTogether(example);
+  const words = fixBackticks(example);
   expect(words).toEqual([
     {
       lastTimestamp: 5.94,

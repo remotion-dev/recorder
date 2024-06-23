@@ -25,7 +25,6 @@ const getDisplayStartOrEndLayout = ({
     return getLandscapeDisplayEnterOrExit({
       currentScene,
       otherScene,
-      canvasWidth,
     });
   }
 

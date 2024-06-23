@@ -5,8 +5,7 @@ import {
   isWebCamAtBottom,
   isWebCamRight,
 } from "../animations/webcam-transitions/helpers";
-import { borderRadius } from "./get-layout";
-import { getBottomSafeSpace } from "./get-safe-space";
+import { borderRadius, fullscreenLayout } from "./get-layout";
 import type {
   BRollEnterDirection,
   Layout,
@@ -79,37 +78,17 @@ export const getSquareBRollLayout = ({
 };
 
 export const getLandscapeDisplayAndWebcamLayout = ({
-  displaySize,
   webcamSize,
   canvasLayout,
   canvasSize,
   webcamPosition,
 }: {
-  displaySize: Dimensions;
   webcamSize: Dimensions;
   canvasLayout: CanvasLayout;
   canvasSize: Dimensions;
   webcamPosition: WebcamPosition;
 }): RecordingsLayout => {
-  const totalWidth =
-    displaySize.width + webcamSize.width + getSafeSpace(canvasLayout);
-
-  const totalHeight = Math.max(displaySize.height, webcamSize.height);
-  const left = (canvasSize.width - totalWidth) / 2;
-  const top =
-    (canvasSize.height - totalHeight) / 2 -
-    (getBottomSafeSpace(canvasLayout) - getSafeSpace(canvasLayout)) / 2;
-
-  const displayLayout: Layout = {
-    borderRadius,
-    height: displaySize.height,
-    width: displaySize.width,
-    opacity: 1,
-    left: isWebCamRight(webcamPosition)
-      ? left
-      : left + getSafeSpace("landscape") + webcamSize.width,
-    top,
-  };
+  const displayLayout: Layout = fullscreenLayout(canvasSize);
 
   const webcamLayout: Layout = {
     borderRadius,
@@ -117,11 +96,11 @@ export const getLandscapeDisplayAndWebcamLayout = ({
     width: webcamSize.width,
     opacity: 1,
     left: isWebCamRight(webcamPosition)
-      ? displayLayout.left + displayLayout.width + getSafeSpace("landscape")
-      : left,
+      ? canvasSize.width - webcamSize.width - getSafeSpace(canvasLayout)
+      : getSafeSpace("landscape"),
     top: isWebCamAtBottom(webcamPosition)
-      ? top + displaySize.height - webcamSize.height
-      : top,
+      ? canvasSize.height - webcamSize.height - getSafeSpace(canvasLayout)
+      : getSafeSpace("landscape"),
   };
 
   return {

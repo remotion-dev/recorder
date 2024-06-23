@@ -8,11 +8,6 @@ import type {
 } from "../../../config/scenes";
 import { getWebcamLayout } from "../../animations/webcam-transitions";
 import { shouldEnableSceneBackgroundBlur } from "../../layout/blur";
-import type {
-  BRollEnterDirection,
-  BRollType,
-  Layout,
-} from "../../layout/layout-types";
 import { BRollStack } from "../BRoll/BRollStack";
 import { ScaleDownIfBRollRequiresIt } from "../BRoll/ScaleDownWithBRoll";
 import { VideoWithBlur } from "./VideoWithBlur";
@@ -20,29 +15,23 @@ import { VideoWithBlur } from "./VideoWithBlur";
 export const Webcam: React.FC<{
   enterProgress: number;
   exitProgress: number;
-  startFrom: number;
+  startFrame: number;
   endAt: number | undefined;
   canvasLayout: CanvasLayout;
   nextScene: SceneAndMetadata | null;
   previousScene: SceneAndMetadata | null;
   currentScene: VideoSceneAndMetadata;
   bRolls: BRollWithDimensions[];
-  bRollLayout: Layout;
-  bRollEnterDirection: BRollEnterDirection;
-  bRollType: BRollType;
 }> = ({
   enterProgress,
   exitProgress,
-  startFrom,
+  startFrame,
   endAt,
   nextScene,
   previousScene,
   canvasLayout,
   currentScene,
   bRolls,
-  bRollLayout,
-  bRollEnterDirection,
-  bRollType,
 }) => {
   const frame = useCurrentFrame();
   const { height, width } = useVideoConfig();
@@ -83,10 +72,10 @@ export const Webcam: React.FC<{
         <ScaleDownIfBRollRequiresIt
           bRolls={bRolls}
           frame={frame}
-          bRollType={bRollType}
+          bRollType={currentScene.layout.bRollType}
         >
           <VideoWithBlur
-            startFrom={startFrom}
+            startFrom={startFrame}
             endAt={endAt}
             src={currentScene.cameras.webcam.src}
             containerLayout={webcamLayout}
@@ -100,9 +89,9 @@ export const Webcam: React.FC<{
       </div>
       <BRollStack
         canvasLayout={canvasLayout}
-        bRollEnterDirection={bRollEnterDirection}
+        bRollEnterDirection={currentScene.layout.bRollEnterDirection}
         bRolls={bRolls}
-        bRollLayout={bRollLayout}
+        bRollLayout={currentScene.layout.bRollLayout}
       />
     </>
   );

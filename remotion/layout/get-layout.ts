@@ -2,12 +2,6 @@ import type { CanvasLayout, Dimensions } from "../../config/layout";
 import { getSafeSpace } from "../../config/layout";
 import type { SceneVideos, WebcamPosition } from "../../config/scenes";
 import { isWebCamAtBottom } from "../animations/webcam-transitions/helpers";
-import type { SubtitleType } from "../captions/Segment";
-import {
-  getSubtitlesFontSize,
-  getSubtitlesLines,
-  getSubtitlesType,
-} from "../captions/Segment";
 import { getDimensionsForLayout } from "./dimensions";
 import { getCaptionsLayout } from "./get-captions-layout";
 import {
@@ -16,7 +10,6 @@ import {
   getSquareDisplayLayout,
 } from "./get-display-layout";
 import { getDisplaySize } from "./get-display-size";
-import { getBottomSafeSpace } from "./get-safe-space";
 import { getNonFullscreenWebcamSize } from "./get-webcam-size";
 import type {
   BRollEnterDirection,
@@ -81,7 +74,7 @@ const squareFullscreenWebcamLayout = ({
   };
 };
 
-const fullscreenLayout = (canvasSize: Dimensions): Layout => {
+export const fullscreenLayout = (canvasSize: Dimensions): Layout => {
   return {
     ...canvasSize,
     left: 0,
@@ -104,7 +97,7 @@ const getSquareBentoBoxWebcamLayout = ({
     return {
       ...webcamSize,
       left: canvasSize.width - webcamSize.width - getSafeSpace("square"),
-      top: canvasSize.height - webcamSize.height - getBottomSafeSpace("square"),
+      top: canvasSize.height - webcamSize.height - getSafeSpace("square"),
       borderRadius,
       opacity: 1,
     };
@@ -114,7 +107,7 @@ const getSquareBentoBoxWebcamLayout = ({
     return {
       ...webcamSize,
       left: getSafeSpace("square"),
-      top: canvasSize.height - webcamSize.height - getBottomSafeSpace("square"),
+      top: canvasSize.height - webcamSize.height - getSafeSpace("square"),
       borderRadius,
       opacity: 1,
     };
@@ -177,10 +170,7 @@ export type VideoSceneLayout = {
   displayLayout: Layout | null;
   bRollLayout: Layout;
   bRollType: BRollType;
-  subtitleLayout: Layout;
-  subtitleType: SubtitleType;
-  subtitleFontSize: number;
-  subtitleLines: number;
+  subtitleLayout: Layout | null;
   bRollEnterDirection: BRollEnterDirection;
 };
 
@@ -275,7 +265,6 @@ const getDisplayAndWebcamLayout = ({
 
   if (canvasLayout === "landscape") {
     return getLandscapeDisplayAndWebcamLayout({
-      displaySize,
       webcamSize,
       canvasLayout,
       canvasSize,
@@ -305,26 +294,12 @@ export const getVideoSceneLayout = ({
       videos,
     });
 
-  const subtitleType = getSubtitlesType({
-    canvasLayout,
-    displayLayout,
-  });
-
-  const subtitleFontSize = getSubtitlesFontSize(subtitleType, displayLayout);
   const subtitleLayout = getCaptionsLayout({
     canvasLayout,
     canvasSize,
     displayLayout,
-    subtitleType,
     webcamLayout,
     webcamPosition: webcamPosition,
-    fontSize: subtitleFontSize,
-  });
-
-  const subtitleLines = getSubtitlesLines({
-    boxHeight: subtitleLayout.height,
-    fontSize: subtitleFontSize,
-    subtitleType,
   });
 
   const bRollType =
@@ -335,9 +310,6 @@ export const getVideoSceneLayout = ({
     webcamLayout,
     bRollLayout,
     subtitleLayout,
-    subtitleType,
-    subtitleFontSize,
-    subtitleLines,
     bRollEnterDirection,
     bRollType,
   };
