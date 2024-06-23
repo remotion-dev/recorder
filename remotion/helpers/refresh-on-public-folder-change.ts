@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { StaticFile } from "remotion";
 import {
   ALTERNATIVE1_PREFIX,
+  ALTERNATIVE2_PREFIX,
   DISPLAY_PREFIX,
   WEBCAM_PREFIX,
 } from "../../config/cameras";
@@ -19,8 +20,8 @@ const filterForCurrentComposition = (
     const PREFIXES_TO_WATCH = [
       `${compositionId}/${WEBCAM_PREFIX}`,
       `${compositionId}/${DISPLAY_PREFIX}`,
-      `${compositionId}/${DISPLAY_PREFIX}`,
       `${compositionId}/${ALTERNATIVE1_PREFIX}`,
+      `${compositionId}/${ALTERNATIVE2_PREFIX}`,
     ];
 
     return PREFIXES_TO_WATCH.some((p) => f.name.startsWith(p));
