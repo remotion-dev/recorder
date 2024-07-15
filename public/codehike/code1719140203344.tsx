@@ -1,3 +1,4 @@
+// @errors: 2304
 type Props = {
   onClick: () => void;
   onDblClick: () => void;

@@ -1,10 +1,10 @@
 // @noErrors
 
-type Props = {
+type MyProps = {
   onClick: () => void;
   onDblClick: () => void;
 };
 
-const props: Props = {
+const props: MyProps = {
   onClick: () => {},
 };
