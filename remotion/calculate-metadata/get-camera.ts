@@ -45,8 +45,10 @@ const mapFile = ({
   }
 
   const timestamp = file.name
-    .toLowerCase()
+    // compositionId is case sensitive:
+    // Need to replace it first before calling .toLowerCase()
     .replace(`${compositionId}/${WEBCAM_PREFIX}`, "")
+    .toLowerCase()
     .replace(".webm", "")
     .replace(".mov", "")
     .replace(".mkv", "")
