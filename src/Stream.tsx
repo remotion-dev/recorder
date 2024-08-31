@@ -176,6 +176,28 @@ export const Stream: React.FC<{
     setResolution,
   ]);
 
+  useEffect(() => {
+    const resized = () => {
+      setResolution((r) => ({
+        width: sourceRef.current?.videoWidth ?? 0,
+        height: sourceRef.current?.videoHeight ?? 0,
+        fps: r?.fps ?? 0,
+      }));
+    };
+
+    const { current } = sourceRef;
+
+    if (!current) {
+      return;
+    }
+
+    current.addEventListener("resize", resized);
+
+    return () => {
+      current.removeEventListener("resize", resized);
+    };
+  }, [setResolution]);
+
   return (
     <AbsoluteFill style={container} id={prefix + "-video-container"}>
       <video ref={sourceRef} muted style={videoStyle} />
