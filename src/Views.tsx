@@ -204,10 +204,11 @@ export const View: React.FC<{
 
   const [resolutionLimiterOpen, setResolutionLimiterOpen] = useState(false);
 
-  const canShowResolutionLimiter =
+  const canShowResolutionLimiter = Boolean(
     selectedVideoSource?.type === "display"
-      ? null
-      : videoDeviceLabel && activeVideoDevice && maxResolution;
+      ? false
+      : videoDeviceLabel && activeVideoDevice && maxResolution,
+  );
 
   return (
     <div style={viewContainer}>
@@ -222,6 +223,7 @@ export const View: React.FC<{
             setShowPicker((p) => !p);
           }}
           setResolutionLimiterOpen={setResolutionLimiterOpen}
+          canShowResolutionLimiter={canShowResolutionLimiter}
         ></CurrentVideo>
         {prefix === WEBCAM_PREFIX ? (
           <CurrentAudio
