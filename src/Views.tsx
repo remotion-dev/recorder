@@ -261,6 +261,7 @@ export const View: React.FC<{
           setMediaStream={setMediaStream}
           prefix={prefix}
           preferPortrait={preferPortrait}
+          clear={clear}
         />
         {showCropIndicator && resolution && !showPicker ? (
           <CropIndicator resolution={resolution} />
