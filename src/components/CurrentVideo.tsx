@@ -31,12 +31,14 @@ export const CurrentVideo: React.FC<{
   isScreenshare: boolean;
   onClick: () => void;
   setResolutionLimiterOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  canShowResolutionLimiter: boolean | null;
 }> = ({
   label,
   resolution,
   isScreenshare,
   onClick,
   setResolutionLimiterOpen,
+  canShowResolutionLimiter,
 }) => {
   const onOpen: React.MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
@@ -62,10 +64,14 @@ export const CurrentVideo: React.FC<{
           {resolution ? (
             <>
               <Resolution resolution={resolution} />
-              <div style={{ width: 4 }}></div>
-              <button onClick={onOpen} style={buttonStyle}>
-                Change
-              </button>
+              {canShowResolutionLimiter ? (
+                <>
+                  <div style={{ width: 4 }}></div>
+                  <button onClick={onOpen} style={buttonStyle}>
+                    Change
+                  </button>
+                </>
+              ) : null}
             </>
           ) : null}
         </span>

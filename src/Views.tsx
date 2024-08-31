@@ -14,7 +14,10 @@ import { CurrentVideo } from "./components/CurrentVideo";
 import { StreamPicker } from "./components/StreamPicker";
 import { NoVolumeMeter, VolumeMeter } from "./components/VolumeMeter";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
-import { getMaxResolutionOfDevice } from "./helpers/get-max-resolution-of-device";
+import {
+  MaxResolution,
+  getMaxResolutionOfDevice,
+} from "./helpers/get-max-resolution-of-device";
 import {
   SizeConstraint,
   getSelectedVideoSource,
@@ -201,6 +204,11 @@ export const View: React.FC<{
 
   const [resolutionLimiterOpen, setResolutionLimiterOpen] = useState(false);
 
+  const canShowResolutionLimiter =
+    selectedVideoSource?.type === "display"
+      ? null
+      : videoDeviceLabel && activeVideoDevice && maxResolution;
+
   return (
     <div style={viewContainer}>
       <div style={topBar}>
@@ -269,15 +277,13 @@ export const View: React.FC<{
             canClear={prefix !== WEBCAM_PREFIX}
           />
         ) : null}
-        {selectedVideoSource?.type === "display" ? null : videoDeviceLabel &&
-          activeVideoDevice &&
-          maxResolution ? (
+        {canShowResolutionLimiter ? (
           <ResolutionLimiter
             sizeConstraint={sizeConstraint}
             setSizeConstraint={setSizeConstraint}
-            maxResolution={maxResolution}
-            deviceName={videoDeviceLabel}
-            deviceId={activeVideoDevice.deviceId}
+            maxResolution={maxResolution as MaxResolution}
+            deviceName={videoDeviceLabel as string}
+            deviceId={(activeVideoDevice as MediaDeviceInfo).deviceId}
             open={resolutionLimiterOpen}
             setOpen={setResolutionLimiterOpen}
           />
