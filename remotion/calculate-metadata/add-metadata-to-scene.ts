@@ -53,7 +53,12 @@ export const addMetadataToScene = async ({
 
   const displayMetadata = cameras.display
     ? await getVideoMetadata(cameras.display.src)
-    : null;
+    : cameras.code
+      ? {
+          width: 1920,
+          height: 1080,
+        }
+      : null;
 
   const whisperCppOutput = await fetchWhisperCppOutput(cameras.captions);
 

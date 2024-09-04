@@ -8,6 +8,7 @@ import type {
 import { getDisplayPosition } from "../../animations/display-transitions";
 import { BRollStack } from "../BRoll/BRollStack";
 import { ScaleDownIfBRollRequiresIt } from "../BRoll/ScaleDownWithBRoll";
+import { CodeFrame } from "./Twoslash/CodeFrame";
 
 const outer: React.CSSProperties = {
   position: "absolute",
@@ -34,10 +35,6 @@ export const Display: React.FC<{
   startFrame,
 }) => {
   if (scene.layout.displayLayout === null) {
-    throw new Error("No display");
-  }
-
-  if (scene.cameras.display === null) {
     throw new Error("No display");
   }
 
@@ -81,18 +78,31 @@ export const Display: React.FC<{
           bRollType={scene.layout.bRollType}
           frame={frame}
         >
-          <OffthreadVideo
-            muted
-            startFrom={startFrame}
-            endAt={endAt}
-            src={scene.cameras.display.src}
-            style={{
-              width: displayLayout.width,
-              height: displayLayout.height,
-              borderRadius: displayLayout.borderRadius,
-              objectFit: "cover",
-            }}
-          />
+          {scene.cameras.display ? (
+            <OffthreadVideo
+              muted
+              startFrom={startFrame}
+              endAt={endAt}
+              src={scene.cameras.display.src}
+              style={{
+                width: displayLayout.width,
+                height: displayLayout.height,
+                borderRadius: displayLayout.borderRadius,
+                objectFit: "cover",
+              }}
+            />
+          ) : scene.cameras.code ? (
+            <CodeFrame
+              code={scene.cameras.code}
+              oldCode={
+                previousScene?.type === "video-scene"
+                  ? previousScene.cameras.code
+                  : null
+              }
+              displayLayout={displayLayout}
+              canvasLayout={canvasLayout}
+            />
+          ) : null}
         </ScaleDownIfBRollRequiresIt>
       </div>
 

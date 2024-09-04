@@ -5,6 +5,7 @@ import {
   SelectableVideoScene,
   WebcamPosition,
 } from "../../config/scenes";
+import { hasDisplay } from "./has-display";
 
 export const getFinalWebcamPosition = ({
   scenes,
@@ -17,7 +18,7 @@ export const getFinalWebcamPosition = ({
   cameras: Cameras;
   canvasLayout: CanvasLayout;
 }): WebcamPosition => {
-  if (!cameras.display && canvasLayout === "landscape") {
+  if (!hasDisplay(cameras) && canvasLayout === "landscape") {
     return "center";
   }
 

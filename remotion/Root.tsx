@@ -13,7 +13,7 @@ export const Root = () => {
         schema={videoConf}
         defaultProps={{
           theme: "light" as const,
-          canvasLayout: "square" as const,
+          canvasLayout: "landscape" as const,
           scenes: [
             {
               type: "recorder" as const,
@@ -99,6 +99,72 @@ export const Root = () => {
           canvasLayout: "square" as const,
           platform: "youtube",
           scenes: [],
+          scenesAndMetadata: [],
+        }}
+        calculateMetadata={calcMetadata}
+      />
+      <Composition
+        component={Main}
+        id="codehike"
+        schema={videoConf}
+        defaultProps={{
+          theme: "light" as const,
+          canvasLayout: "square" as const,
+          platform: "x" as const,
+          scenes: [
+            {
+              type: "videoscene" as const,
+              webcamPosition: "bottom-right" as const,
+              startOffset: 0,
+              endOffset: 0,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+              bRolls: [],
+            },
+            {
+              type: "videoscene" as const,
+              webcamPosition: "top-right" as const,
+              startOffset: 0,
+              endOffset: 0,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+              bRolls: [],
+            },
+            {
+              type: "videoscene" as const,
+              webcamPosition: "previous" as const,
+              startOffset: 0,
+              endOffset: 0,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+              bRolls: [],
+            },
+            {
+              type: "videoscene" as const,
+              webcamPosition: "previous" as const,
+              startOffset: 0,
+              endOffset: 0,
+              transitionToNextScene: true,
+              newChapter: "",
+              stopChapteringAfterThis: false,
+              music: "previous" as const,
+              bRolls: [],
+            },
+            {
+              music: "previous" as const,
+              transitionToNextScene: true,
+              type: "endcard" as const,
+              durationInFrames: 200,
+              channel: "jonny" as const,
+              links: [],
+            },
+          ],
           scenesAndMetadata: [],
         }}
         calculateMetadata={calcMetadata}

@@ -8,6 +8,7 @@ import { StaticFile } from "remotion";
 import {
   ALTERNATIVE1_PREFIX,
   ALTERNATIVE2_PREFIX,
+  CODE_PREFIX,
   DISPLAY_PREFIX,
   WEBCAM_PREFIX,
 } from "../../config/cameras";
@@ -22,6 +23,7 @@ const filterForCurrentComposition = (
       `${compositionId}/${DISPLAY_PREFIX}`,
       `${compositionId}/${ALTERNATIVE1_PREFIX}`,
       `${compositionId}/${ALTERNATIVE2_PREFIX}`,
+      `${compositionId}/${CODE_PREFIX}`,
     ];
 
     return PREFIXES_TO_WATCH.some((p) => f.name.startsWith(p));
