@@ -55,6 +55,7 @@ const InnerScene: React.FC<
   enterProgress,
   exitProgress,
   platform,
+  index,
 }) => {
   if (sceneAndMetadata.type === "video-scene") {
     return (
@@ -67,11 +68,7 @@ const InnerScene: React.FC<
         sceneAndMetadata={sceneAndMetadata}
         theme={theme}
         chapters={chapters}
-        willTransitionToNextScene={getShouldTransitionOut({
-          nextSceneAndMetadata: nextScene,
-          sceneAndMetadata,
-          canvasLayout,
-        })}
+        sceneIndex={index}
       />
     );
   }
