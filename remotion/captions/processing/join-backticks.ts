@@ -1,33 +1,33 @@
-import { Word } from "../../../config/autocorrect";
+import { Caption } from "@remotion/captions";
 
-export const joinBackticks = (words: Word[]): Word[] => {
-  const newWords: Word[] = [];
-  for (let i = 0; i < words.length; i++) {
-    const previousWord = newWords[i - 1] ?? null;
-    const newWord = words[i] as Word;
+export const joinBackticks = (captions: Caption[]): Caption[] => {
+  const newCaptions: Caption[] = [];
+  for (let i = 0; i < captions.length; i++) {
+    const previousCaption = newCaptions[i - 1] ?? null;
+    const newCaption = captions[i] as Caption;
 
-    const previousWordEndsInMonospace = previousWord?.text.endsWith("`");
+    const previousCaptionEndsInMonospace = previousCaption?.text.endsWith("`");
 
-    if (previousWord && previousWordEndsInMonospace) {
-      if (newWord.text.startsWith("`")) {
-        previousWord.text = previousWord.text.substring(
+    if (previousCaption && previousCaptionEndsInMonospace) {
+      if (newCaption.text.startsWith("`")) {
+        previousCaption.text = previousCaption.text.substring(
           0,
-          previousWord.text.length - 1,
+          previousCaption.text.length - 1,
         );
-        newWord.text = newWord.text.slice(1);
+        newCaption.text = newCaption.text.slice(1);
       }
 
-      if (newWord.text.startsWith(" `")) {
-        previousWord.text = previousWord.text.substring(
+      if (newCaption.text.startsWith(" `")) {
+        previousCaption.text = previousCaption.text.substring(
           0,
-          previousWord.text.length - 1,
+          previousCaption.text.length - 1,
         );
-        newWord.text = " " + newWord.text.slice(2);
+        newCaption.text = " " + newCaption.text.slice(2);
       }
     }
 
-    newWords.push(newWord);
+    newCaptions.push(newCaption);
   }
 
-  return newWords;
+  return newCaptions;
 };

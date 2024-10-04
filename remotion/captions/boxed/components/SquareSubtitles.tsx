@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import type { Theme } from "../../../../config/themes";
 import { getHorizontalPaddingForSubtitles } from "../../processing/layout-captions";
 import type { CaptionPage } from "../../types";
-import { BoxedSingleWord } from "./SingleWord";
+import { BoxedSingleCaption } from "./SingleCaption";
 
 export const LINE_HEIGHT = 1.2;
 
@@ -35,12 +35,12 @@ export const SquareSubtitles: React.FC<{
   return (
     <div style={container}>
       <span style={style}>
-        {segment.words.map((word, index) => {
+        {segment.captions.map((caption, index) => {
           return (
-            <BoxedSingleWord
-              key={word.startMs + word.text + index}
-              isLast={index === segment.words.length - 1}
-              word={word}
+            <BoxedSingleCaption
+              key={caption.startMs + caption.text + index}
+              isLast={index === segment.captions.length - 1}
+              caption={caption}
               theme={theme}
               startFrame={startFrame}
             />

@@ -11,19 +11,19 @@ import type { CaptionPage } from "../../types";
 import { LINE_HEIGHT, SquareSubtitles } from "./SquareSubtitles";
 
 const getStartOfSegment = (segment: CaptionPage) => {
-  if (segment.words.length === 0) {
+  if (segment.captions.length === 0) {
     return 0;
   }
 
-  return (segment.words[0] as Caption).startMs;
+  return (segment.captions[0] as Caption).startMs;
 };
 
 const getEndOfSegment = (segment: CaptionPage) => {
-  if (segment.words.length === 0) {
+  if (segment.captions.length === 0) {
     return 0;
   }
 
-  return (segment.words[segment.words.length - 1] as Caption).endMs;
+  return (segment.captions[segment.captions.length - 1] as Caption).endMs;
 };
 
 export const getSubtitlesFontSize = () => {

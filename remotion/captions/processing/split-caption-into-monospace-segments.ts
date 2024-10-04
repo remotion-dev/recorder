@@ -1,26 +1,31 @@
 import { Caption } from "@remotion/captions";
 
-export const splitWordIntoMonospaceSegment = (word: Caption): Caption[] => {
+export const splitCaptionIntoMonospaceSegments = (
+  caption: Caption,
+): Caption[] => {
   const result: Caption[] = [];
 
   const regex = /`([^`]+)`/g; // regex pattern to find text enclosed in backticks
   let lastIndex = 0;
 
   let match;
-  while ((match = regex.exec(word.text)) !== null) {
+  while ((match = regex.exec(caption.text)) !== null) {
     if (match.index > lastIndex) {
-      result.push({ ...word, text: word.text.slice(lastIndex, match.index) });
+      result.push({
+        ...caption,
+        text: caption.text.slice(lastIndex, match.index),
+      });
     }
 
     result.push({
-      ...word,
+      ...caption,
       text: `${("`" + match[1]) as string}\``,
     });
     lastIndex = regex.lastIndex;
   }
 
-  if (lastIndex < word.text.length) {
-    result.push({ ...word, text: word.text.slice(lastIndex) });
+  if (lastIndex < caption.text.length) {
+    result.push({ ...caption, text: caption.text.slice(lastIndex) });
   }
 
   return result;

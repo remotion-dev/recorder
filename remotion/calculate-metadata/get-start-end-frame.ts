@@ -6,27 +6,27 @@ import { postprocessCaptions } from "../captions/processing/postprocess-subs";
 const START_FRAME_PADDING = Math.ceil(FPS / 4);
 const END_FRAME_PADDING = FPS / 2;
 
-const deriveEndFrameFromSubs = (words: Caption[] | null) => {
-  if (!words) {
+const deriveEndFrameFromSubs = (captions: Caption[] | null) => {
+  if (!captions) {
     return null;
   }
 
-  const lastWord = words[words.length - 1];
-  if (!lastWord || !lastWord.endMs) {
+  const lastCaption = captions[captions.length - 1];
+  if (!lastCaption || !lastCaption.endMs) {
     return null;
   }
 
-  const lastFrame = Math.floor((lastWord.endMs / 1000) * FPS);
+  const lastFrame = Math.floor((lastCaption.endMs / 1000) * FPS);
   return lastFrame;
 };
 
-const deriveStartFrameFromSubsJSON = (words: Caption[] | null): number => {
-  if (!words) {
+const deriveStartFrameFromSubsJSON = (captions: Caption[] | null): number => {
+  if (!captions) {
     return 0;
   }
 
   // taking the first real word and take its start timestamp in ms.
-  const startFromInHundrethsOfSec = words[0]?.startMs;
+  const startFromInHundrethsOfSec = captions[0]?.startMs;
   if (startFromInHundrethsOfSec === undefined) {
     return 0;
   }

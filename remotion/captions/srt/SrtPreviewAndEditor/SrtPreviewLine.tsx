@@ -1,6 +1,6 @@
 import React from "react";
 import { UnserializedSrt } from "../helpers/serialize-srt";
-import { SrtSingleWord } from "./SingleWord";
+import { SrtSingleCaption } from "./SingleCaption";
 
 const container: React.CSSProperties = {
   justifyContent: "flex-end",
@@ -30,12 +30,12 @@ export const SrtPreviewLine: React.FC<{
   return (
     <div style={container}>
       <div style={inner}>
-        {segment.words.map((word) => {
+        {segment.captions.map((caption) => {
           return (
-            <SrtSingleWord
-              word={word}
-              key={word.firstTimestamp}
-            ></SrtSingleWord>
+            <SrtSingleCaption
+              caption={caption}
+              key={caption.startMs}
+            ></SrtSingleCaption>
           );
         })}
       </div>

@@ -42,9 +42,9 @@ const example: Caption[] = [
   },
 ];
 
-test("join words correctly", () => {
-  const words = fixBackticks(example);
-  expect(words).toEqual([
+test("join captions correctly", () => {
+  const captions = fixBackticks(example);
+  expect(captions).toEqual([
     {
       endMs: 5.94,
       text: " `bun`",

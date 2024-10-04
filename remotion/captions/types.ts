@@ -1,7 +1,7 @@
 import { Caption } from "@remotion/captions";
 
 export type CaptionPage = {
-  words: Caption[];
+  captions: Caption[];
 };
 
 export type LayoutedCaptions = {

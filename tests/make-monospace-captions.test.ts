@@ -2,10 +2,10 @@
 
 import { Caption } from "@remotion/captions";
 import { expect, test } from "bun:test";
-import { splitWordIntoMonospaceSegment } from "../remotion/captions/processing/split-word-into-monospace-segment";
+import { splitCaptionIntoMonospaceSegments } from "../remotion/captions/processing/split-caption-into-monospace-segments";
 
 test("Should split up into monospace words", () => {
-  const word: Caption = {
+  const caption: Caption = {
     text: "This is a `monospace` word",
     startMs: 0,
     endMs: 0,
@@ -13,7 +13,7 @@ test("Should split up into monospace words", () => {
     timestampMs: 0,
   };
 
-  expect(splitWordIntoMonospaceSegment(word)).toEqual([
+  expect(splitCaptionIntoMonospaceSegments(caption)).toEqual([
     {
       text: "This is a ",
       startMs: 0,

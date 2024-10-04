@@ -1,38 +1,38 @@
 import { Caption } from "@remotion/captions";
-import type { Word } from "../../../config/autocorrect";
 import { autocorrectWords } from "../../../config/autocorrect";
 import { fixBackticks } from "./fix-backticks";
 import { removeBlankTokens } from "./remove-blank-tokens";
-import { whisperWordToWord } from "./whisper-word-to-word";
 
 const FILLER_WORDS = ["[PAUSE]", "[BLANK_AUDIO]", "[Silence]", "[INAUDIBLE]"];
 
-const removeWhisperBlankWords = (original: Word[]): Word[] => {
+const removeWhisperBlankWords = (original: Caption[]): Caption[] => {
   let firstIdx = 0;
-  let concatentatedWord = "";
+  let concatenatedCaption = "";
   let inBlank = false;
 
-  const words = [...original];
-  words.forEach((word, index) => {
-    const wordCopy = { ...word };
-    wordCopy.text = wordCopy.text.trim();
-    if (wordCopy.text.includes("[")) {
+  const captions = [...original];
+  captions.forEach((caption, index) => {
+    const captionCopy = { ...caption };
+    captionCopy.text = captionCopy.text.trim();
+    if (captionCopy.text.includes("[")) {
       inBlank = true;
       firstIdx = index;
     }
 
-    if (inBlank && FILLER_WORDS.find((w) => w.includes(wordCopy.text))) {
-      concatentatedWord += wordCopy.text;
+    if (inBlank && FILLER_WORDS.find((w) => w.includes(captionCopy.text))) {
+      concatenatedCaption += captionCopy.text;
     }
 
-    if (inBlank && wordCopy.text.includes("]")) {
-      concatentatedWord += wordCopy.text;
-      if (FILLER_WORDS.find((w) => concatentatedWord.includes(w))) {
+    if (inBlank && captionCopy.text.includes("]")) {
+      concatenatedCaption += captionCopy.text;
+      if (
+        FILLER_WORDS.find((caption) => concatenatedCaption.includes(caption))
+      ) {
         for (let i = firstIdx; i <= index; i++) {
-          const currentWord = words[i];
-          if (currentWord?.text !== undefined) {
-            words[i] = {
-              ...currentWord,
+          const currentCaption = captions[i];
+          if (currentCaption?.text !== undefined) {
+            captions[i] = {
+              ...currentCaption,
               text: "",
             };
           }
@@ -40,21 +40,18 @@ const removeWhisperBlankWords = (original: Word[]): Word[] => {
       }
     }
   });
-  return words;
+  return captions;
 };
 
-export const postprocessCaptions = (subTypes: Caption[]): Word[] => {
+export const postprocessCaptions = (subTypes: Caption[]): Caption[] => {
   const blankTokensRemoved = removeBlankTokens(subTypes);
-  const words = blankTokensRemoved.map((w, i) => {
-    return whisperWordToWord(w, blankTokensRemoved[i + 1] ?? null);
-  });
 
-  const removeBlankAudioAndPause = removeWhisperBlankWords(words);
+  const removeBlankAudioAndPause = removeWhisperBlankWords(blankTokensRemoved);
   const removeBlankTokensAgain = removeBlankAudioAndPause.filter(
     (w) => w.text.trim() !== "",
   );
 
-  const correctedWords = autocorrectWords(removeBlankTokensAgain);
+  const correctedCaptions = autocorrectWords(removeBlankTokensAgain);
 
-  return fixBackticks(correctedWords);
+  return fixBackticks(correctedCaptions);
 };

@@ -1,26 +1,26 @@
+import { Caption } from "@remotion/captions";
 import React, { useContext } from "react";
-import type { WhisperCppOutput } from "../types";
 
 export type CaptionsContextType = {
-  whisperOutput: WhisperCppOutput | null;
-  setWhisperOutput: (word: WhisperCppOutput | null) => void;
+  captions: Caption[] | null;
+  setCaptions: (captions: Caption[] | null) => void;
 };
 
 const context = React.createContext<CaptionsContextType>({
-  whisperOutput: null,
-  setWhisperOutput: () => {
+  captions: null,
+  setCaptions: () => {
     throw new Error("React Context not initialized");
   },
 });
 
-export const useCaptions = (): WhisperCppOutput => {
+export const useCaptions = (): Caption[] => {
   const ctx = useContext(context);
 
-  if (!ctx.whisperOutput) {
-    throw new Error("Should not render without a whisperOutput");
+  if (!ctx.captions) {
+    throw new Error("Should not render without a captions");
   }
 
-  return ctx.whisperOutput;
+  return ctx.captions;
 };
 
 export const CaptionsProvider: React.FC<{

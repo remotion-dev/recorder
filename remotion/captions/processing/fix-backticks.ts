@@ -1,35 +1,35 @@
 import { Caption } from "@remotion/captions";
 
-export const fixBackticks = (_words: Caption[]): Caption[] => {
-  const newWords: Caption[] = [];
+export const fixBackticks = (_captions: Caption[]): Caption[] => {
+  const newCaptions: Caption[] = [];
 
-  const words = _words.map((word) => {
+  const captions = _captions.map((caption) => {
     return {
-      ...word,
-      text: word.text.replaceAll(/`\s/g, " `"),
+      ...caption,
+      text: caption.text.replaceAll(/`\s/g, " `"),
     };
   });
 
-  for (let i = 0; i < words.length; i++) {
-    const word = words[i] as Caption;
-    const previousWord = words[i - 1] ?? null;
+  for (let i = 0; i < captions.length; i++) {
+    const caption = captions[i] as Caption;
+    const previousCaption = captions[i - 1] ?? null;
 
-    if (word.text.startsWith(". ")) {
-      const lastAddedWord = newWords[newWords.length - 1] as Caption;
-      lastAddedWord.text += ".";
-      word.text = word.text.slice(1);
+    if (caption.text.startsWith(". ")) {
+      const lastAddedCaption = newCaptions[newCaptions.length - 1] as Caption;
+      lastAddedCaption.text += ".";
+      caption.text = caption.text.slice(1);
     }
 
-    if (!word.text.startsWith(" ") && previousWord) {
-      const lastAddedWord = newWords[newWords.length - 1] as Caption;
-      lastAddedWord.text += word.text;
-      lastAddedWord.endMs = word.endMs;
+    if (!caption.text.startsWith(" ") && previousCaption) {
+      const lastAddedCaption = newCaptions[newCaptions.length - 1] as Caption;
+      lastAddedCaption.text += caption.text;
+      lastAddedCaption.endMs = caption.endMs;
     } else {
-      newWords.push(word);
+      newCaptions.push(caption);
     }
   }
 
-  return newWords.map((w) => {
+  return newCaptions.map((w) => {
     return {
       ...w,
       text:

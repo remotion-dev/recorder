@@ -1,38 +1,34 @@
+import { Caption } from "@remotion/captions";
 import { writeStaticFile } from "@remotion/studio";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { AbsoluteFill } from "remotion";
-import type { Word } from "../../../config/autocorrect";
 import type { Theme } from "../../../config/themes";
-import { whisperWordToWord } from "../processing/whisper-word-to-word";
-import type { WhisperCppOutput } from "../types";
-import { EditWord } from "./EditWord";
+import { EditCaption } from "./EditCaption";
 import { SubsEditorFooter } from "./Footer";
 import { SubsEditorHeader } from "./Header";
 import { FOOTER_HEIGHT, HEADER_HEIGHT, captionEditorPortal } from "./layout";
 import { useCaptionOverlay } from "./use-caption-overlay";
 
 export const CaptionsEditor: React.FC<{
-  whisperOutput: WhisperCppOutput;
-  setWhisperOutput: React.Dispatch<
-    React.SetStateAction<WhisperCppOutput | null>
-  >;
+  captions: Caption[];
+  setCaptions: React.Dispatch<React.SetStateAction<Caption[] | null>>;
   filePath: string;
-  initialWord: Word;
+  initialCaption: Caption;
   trimStart: number;
   theme: Theme;
 }> = ({
-  whisperOutput,
+  captions,
   filePath,
-  initialWord,
+  initialCaption,
   trimStart,
   theme,
-  setWhisperOutput,
+  setCaptions,
 }) => {
   const overlay = useCaptionOverlay();
   const setAndSaveWhisperOutput = useCallback(
-    (updater: (old: WhisperCppOutput) => WhisperCppOutput) => {
-      setWhisperOutput((old) => {
+    (updater: (old: Caption[]) => Caption[]) => {
+      setCaptions((old) => {
         if (old === null) {
           return null;
         }
@@ -52,29 +48,20 @@ export const CaptionsEditor: React.FC<{
         return newOutput;
       });
     },
-    [filePath, setWhisperOutput],
+    [filePath, setCaptions],
   );
-
-  const words = useMemo(() => {
-    return whisperOutput.transcription.map((whisperWord, i) => {
-      const nextWhisperWord = whisperOutput.transcription[i + 1];
-      return whisperWordToWord(whisperWord, nextWhisperWord ?? null);
-    });
-  }, [whisperOutput.transcription]);
 
   const longestNumberLength = String(
     Math.max(
-      ...words.map((t) => t.firstTimestamp),
-      ...(words
-        .map((t) => t.lastTimestamp)
-        .filter((t) => t !== null) as number[]),
+      ...captions.map((t) => t.startMs),
+      ...(captions.map((t) => t.endMs).filter((t) => t !== null) as number[]),
     ),
   ).length;
 
   const onChangeText = useCallback(
     (index: number, newText: string) => {
       setAndSaveWhisperOutput((old) => {
-        const newTranscription = old.transcription.map((t, i) => {
+        const newTranscription = old.map((t, i) => {
           if (i === index) {
             return {
               ...t,
@@ -124,15 +111,15 @@ export const CaptionsEditor: React.FC<{
           paddingBottom: FOOTER_HEIGHT,
         }}
       >
-        {words.map((word, i) => {
+        {captions.map((caption, i) => {
           return (
-            <EditWord
-              key={[word.firstTimestamp, word.lastTimestamp, i].join("-")}
+            <EditCaption
+              key={[caption.startMs, caption.endMs, i].join("-")}
               theme={theme}
               index={i}
               longestNumberLength={longestNumberLength}
-              word={word}
-              isInitialWord={word.firstTimestamp === initialWord.firstTimestamp}
+              caption={caption}
+              isInitialCaption={caption.startMs === initialCaption.endMs}
               trimStart={trimStart}
               onUpdateText={onChangeText}
             />

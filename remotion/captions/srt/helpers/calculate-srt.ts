@@ -1,5 +1,4 @@
 import { Caption } from "@remotion/captions";
-import { Word } from "../../../../config/autocorrect";
 import { FPS } from "../../../../config/fps";
 import { joinBackticks } from "../../processing/join-backticks";
 import { postprocessCaptions } from "../../processing/postprocess-subs";
@@ -9,25 +8,25 @@ import { UnserializedSrt } from "./serialize-srt";
 
 const MAX_CHARS_PER_LINE = 42;
 
-const segmentWords = (word: Word[]) => {
-  const segments: Word[][] = [];
-  let currentSegment: Word[] = [];
+const segmentCaptions = (caption: Caption[]) => {
+  const segments: Caption[][] = [];
+  let currentSegment: Caption[] = [];
 
-  for (let i = 0; i < word.length; i++) {
-    const w = word[i] as Word;
-    const remainingWords = word.slice(i + 1);
+  for (let i = 0; i < caption.length; i++) {
+    const w = caption[i] as Caption;
+    const remainingCaptions = caption.slice(i + 1);
     const filledCharactersInLine = currentSegment
       .map((s) => s.text.length)
       .reduce((a, b) => a + b, 0);
 
-    const preventOrphanWord =
-      remainingWords.length < 4 &&
-      remainingWords.length > 1 &&
+    const preventOrphanCaption =
+      remainingCaptions.length < 4 &&
+      remainingCaptions.length > 1 &&
       filledCharactersInLine > MAX_CHARS_PER_LINE / 2;
 
     if (
       filledCharactersInLine + w.text.length > MAX_CHARS_PER_LINE ||
-      preventOrphanWord
+      preventOrphanCaption
     ) {
       segments.push(currentSegment);
       currentSegment = [];
@@ -47,7 +46,7 @@ export const calculateSrt = ({
   startFrame: number;
 }) => {
   const postprocessed = joinBackticks(postprocessCaptions(captions));
-  const segments = segmentWords(postprocessed);
+  const segments = segmentCaptions(postprocessed);
 
   const srtSegments: UnserializedSrt[] = [];
 
@@ -69,21 +68,21 @@ export const calculateSrt = ({
 
     const offset = -(startFrame / FPS) * 1000;
 
-    const firstTimestamp = Math.round(firstSegment.firstTimestamp + offset);
-    if (lastSegment.lastTimestamp === null) {
+    const firstTimestampMs = Math.round(firstSegment.startMs + offset);
+    if (lastSegment.endMs === null) {
       throw new Error("Cannot serialize .srt file: lastTimestamp is null");
     }
 
-    const lastTimestamp = lastSegment.lastTimestamp + offset;
+    const lastTimestampMs = lastSegment.endMs + offset;
 
     const unserialized: UnserializedSrt = {
-      firstTimestamp,
-      lastTimestamp,
+      firstTimestampMs,
+      lastTimestampMs,
       text: segment
         .map((s) => s.text.trim())
         .join(" ")
         .trim(),
-      words: segment,
+      captions: segment,
     };
     srtSegments.push(unserialized);
   }

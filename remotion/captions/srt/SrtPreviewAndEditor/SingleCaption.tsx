@@ -1,10 +1,10 @@
+import { Caption } from "@remotion/captions";
 import React, { useCallback, useMemo, useState } from "react";
-import { Word } from "../../../../config/autocorrect";
 import { useCaptionOverlay } from "../../editor/use-caption-overlay";
 
-export const SrtSingleWord: React.FC<{
-  word: Word;
-}> = ({ word }) => {
+export const SrtSingleCaption: React.FC<{
+  caption: Caption;
+}> = ({ caption }) => {
   const overlay = useCaptionOverlay();
 
   const [hovered, setHovered] = useState(false);
@@ -25,8 +25,8 @@ export const SrtSingleWord: React.FC<{
   }, [hovered]);
 
   const onClick = useCallback(() => {
-    overlay.setOpen(word);
-  }, [overlay, word]);
+    overlay.setOpen(caption);
+  }, [overlay, caption]);
 
   return (
     <span
@@ -35,7 +35,7 @@ export const SrtSingleWord: React.FC<{
       onPointerLeave={onPointerLeave}
       onClick={onClick}
     >
-      {word.text}
+      {caption.text}
     </span>
   );
 };

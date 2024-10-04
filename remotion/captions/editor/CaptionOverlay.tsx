@@ -1,9 +1,8 @@
+import { Caption } from "@remotion/captions";
 import React, { useEffect, useMemo, useState } from "react";
 import type { StaticFile } from "remotion";
 import { continueRender, delayRender, watchStaticFile } from "remotion";
-import type { Word } from "../../../config/autocorrect";
 import type { Theme } from "../../../config/themes";
-import type { WhisperCppOutput } from "../types";
 import { CaptionsEditor } from "./CaptionsEditor";
 import type { CaptionsContextType } from "./captions-provider";
 import { CaptionsProvider } from "./captions-provider";
@@ -15,12 +14,10 @@ export const CaptionOverlay: React.FC<{
   theme: Theme;
   trimStart: number;
 }> = ({ children, file, theme, trimStart }) => {
-  const [whisperOutput, setWhisperOutput] = useState<WhisperCppOutput | null>(
-    null,
-  );
+  const [captions, setCaptions] = useState<Caption[] | null>(null);
   const [handle] = useState(() => delayRender());
 
-  const [subEditorOpen, setSubEditorOpen] = useState<Word | false>(false);
+  const [subEditorOpen, setSubEditorOpen] = useState<Caption | false>(false);
   const [changeStatus, setChangeStatus] = useState<
     "initial" | "changed" | "unchanged"
   >("initial");
@@ -55,31 +52,31 @@ export const CaptionOverlay: React.FC<{
         .then((res) => res.json())
         .then((d) => {
           continueRender(handle);
-          setWhisperOutput(d);
+          setCaptions(d);
         });
       setChangeStatus("unchanged");
     }
   }, [changeStatus, file.src, handle]);
 
-  const captions: CaptionsContextType = useMemo(() => {
+  const captionState: CaptionsContextType = useMemo(() => {
     return {
-      whisperOutput,
-      setWhisperOutput,
+      captions,
+      setCaptions,
     };
-  }, [whisperOutput]);
+  }, [captions]);
 
-  if (!whisperOutput) {
+  if (!captionState) {
     return null;
   }
 
   return (
     <CaptionOverlayProvider state={state}>
-      <CaptionsProvider state={captions}>{children}</CaptionsProvider>
-      {subEditorOpen ? (
+      <CaptionsProvider state={captionState}>{children}</CaptionsProvider>
+      {subEditorOpen && captions ? (
         <CaptionsEditor
-          initialWord={subEditorOpen}
-          setWhisperOutput={setWhisperOutput}
-          whisperOutput={whisperOutput}
+          initialCaption={subEditorOpen}
+          setCaptions={setCaptions}
+          captions={captions}
           filePath={file.name}
           trimStart={trimStart}
           theme={theme}

@@ -1,6 +1,6 @@
+import { Caption } from "@remotion/captions";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import type { Word } from "../../../config/autocorrect";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
 import {
@@ -26,20 +26,20 @@ const Indent: React.FC<{ value: number; digits: number }> = ({
   );
 };
 
-export const EditWord: React.FC<{
-  word: Word;
+export const EditCaption: React.FC<{
+  caption: Caption;
   longestNumberLength: number;
   index: number;
   onUpdateText: (index: number, newText: string) => void;
-  isInitialWord: boolean;
+  isInitialCaption: boolean;
   trimStart: number;
   theme: Theme;
 }> = ({
-  word,
-  longestNumberLength: longestWordLength,
+  caption,
+  longestNumberLength,
   index,
   onUpdateText,
-  isInitialWord,
+  isInitialCaption,
   trimStart,
   theme,
 }) => {
@@ -48,8 +48,8 @@ export const EditWord: React.FC<{
   const frame = useCurrentFrame();
   const milliSeconds = ((frame + trimStart) / fps) * 1000;
   const active =
-    word.firstTimestamp <= milliSeconds &&
-    (word.lastTimestamp === null || word.lastTimestamp >= milliSeconds);
+    caption.startMs <= milliSeconds &&
+    (caption.endMs === null || caption.endMs >= milliSeconds);
   const usableWidth = width - SIDE_PADDING * 2;
   const ref = useRef<HTMLDivElement>(null);
 
@@ -63,24 +63,24 @@ export const EditWord: React.FC<{
   );
 
   const isMonospaced =
-    word.text.trim().startsWith("`") && word.text.trim().endsWith("`");
+    caption.text.trim().startsWith("`") && caption.text.trim().endsWith("`");
 
   const toggleMonospace = useCallback(() => {
     if (isMonospaced) {
-      onUpdateText(index, word.text.replace(/`/g, ""));
+      onUpdateText(index, caption.text.replace(/`/g, ""));
     } else {
-      let newWord = word.text;
-      if (!newWord.trim().startsWith("`")) {
-        newWord = "`" + newWord;
+      let newCaption = caption.text;
+      if (!newCaption.trim().startsWith("`")) {
+        newCaption = "`" + newCaption;
       }
 
-      if (!newWord.trim().endsWith("`") || newWord.trim().length === 1) {
-        newWord += "`";
+      if (!newCaption.trim().endsWith("`") || newCaption.trim().length === 1) {
+        newCaption += "`";
       }
 
-      onUpdateText(index, newWord);
+      onUpdateText(index, newCaption);
     }
-  }, [index, isMonospaced, onUpdateText, word.text]);
+  }, [index, isMonospaced, onUpdateText, caption.text]);
 
   useEffect(() => {
     if (active && initialFrame !== frame) {
@@ -156,13 +156,10 @@ export const EditWord: React.FC<{
           paddingRight: 30,
         }}
       >
-        <Indent value={word.firstTimestamp} digits={longestWordLength} />
-        {String(word.firstTimestamp)} :{" "}
-        <Indent
-          value={word.lastTimestamp ? word.lastTimestamp : word.firstTimestamp}
-          digits={longestWordLength}
-        />
-        {word.lastTimestamp ? word.lastTimestamp : word.firstTimestamp}
+        <Indent value={caption.startMs} digits={longestNumberLength} />
+        {String(caption.startMs)} :{" "}
+        <Indent value={caption.endMs} digits={longestNumberLength} />
+        {caption.endMs}
       </div>
       <div
         style={{
@@ -172,7 +169,7 @@ export const EditWord: React.FC<{
       >
         <input
           type="text"
-          autoFocus={isInitialWord}
+          autoFocus={isInitialCaption}
           style={{
             fontSize: 30,
             fontFamily: isMonospaced ? "monospace" : "Helvetica",
@@ -180,7 +177,7 @@ export const EditWord: React.FC<{
             border: "none",
             color: isMonospaced ? COLORS[theme].ACCENT_COLOR : "black",
           }}
-          value={word.text}
+          value={caption.text}
           onKeyDown={onInputKeyDown}
           onChange={onChange}
         />

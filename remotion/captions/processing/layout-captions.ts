@@ -1,5 +1,5 @@
+import { Caption } from "@remotion/captions";
 import { fillTextBox } from "@remotion/layout-utils";
-import { Word } from "../../../config/autocorrect";
 import {
   MONOSPACE_FONT_FAMILY,
   MONOSPACE_FONT_WEIGHT,
@@ -9,59 +9,62 @@ import {
 import { getSafeSpace } from "../../../config/layout";
 import { getBorderWidthForSubtitles } from "../boxed/components/CaptionSentence";
 import { CaptionPage, LayoutedCaptions } from "../types";
-import { hasMonoSpaceInIt } from "./has-monospace-in-word";
-import { splitWordIntoMonospaceSegment } from "./split-word-into-monospace-segment";
+import { hasMonoSpaceInCaption } from "./has-monospace-in-caption";
+import {
+  isCaptionMonospace,
+  splitCaptionIntoMonospaceSegments,
+} from "./split-caption-into-monospace-segments";
 
-const balanceWords = ({
-  words,
-  wordsFitted,
+const balanceCaptions = ({
+  captions,
+  captionsFitted,
   boxWidth,
   fontSize,
   maxLines,
 }: {
-  words: Word[];
-  wordsFitted: number;
+  captions: Caption[];
+  captionsFitted: number;
   boxWidth: number;
   maxLines: number;
   fontSize: number;
 }) => {
-  let bestCut = wordsFitted;
+  let bestCut = captionsFitted;
 
-  if (wordsFitted / words.length > 0.9) {
+  if (captionsFitted / captions.length > 0.9) {
     // Prevent a few hanging words at the end
-    bestCut = words.length - 5;
+    bestCut = captions.length - 5;
   }
 
   for (let i = 1; i < 4; i++) {
     const index = bestCut - i;
-    const word = (words[index] as Word).text.trim();
-    if (word.endsWith(",") || word.endsWith(".")) {
+    const caption = (captions[index] as Caption).text.trim();
+    if (caption.endsWith(",") || caption.endsWith(".")) {
       bestCut = index + 1;
       break;
     }
   }
 
   while (
-    (bestCut > 1 && hasMonoSpaceInIt(words[bestCut - 1] as Word)) ||
-    (words[bestCut - 1] as Word).text.trim() === ""
+    (bestCut > 1 && hasMonoSpaceInCaption(captions[bestCut - 1] as Caption)) ||
+    (captions[bestCut - 1] as Caption).text.trim() === ""
   ) {
     bestCut--;
   }
 
-  const firstHalf = words.slice(0, bestCut);
-  const secondHalf = words.slice(bestCut);
+  const firstHalf = captions.slice(0, bestCut);
+  const secondHalf = captions.slice(bestCut);
 
   return [
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    ...cutWords({
-      words: firstHalf,
+    ...cutCaptions({
+      captions: firstHalf,
       boxWidth,
       maxLines,
       fontSize,
     }),
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    ...cutWords({
-      words: secondHalf,
+    ...cutCaptions({
+      captions: secondHalf,
       boxWidth,
       maxLines,
       fontSize,
@@ -69,25 +72,29 @@ const balanceWords = ({
   ];
 };
 
-const cutWords = ({
-  words,
+const cutCaptions = ({
+  captions,
   boxWidth,
   maxLines,
   fontSize,
 }: {
-  words: Word[];
+  captions: Caption[];
   boxWidth: number;
   maxLines: number;
   fontSize: number;
 }): CaptionPage[] => {
   const { add } = fillTextBox({ maxBoxWidth: boxWidth, maxLines });
-  let wordsFitted = 0;
+  let captionsFitted = 0;
 
-  for (const word of words) {
+  for (const caption of captions) {
     const { exceedsBox } = add({
-      text: word.text,
-      fontFamily: word.monospace ? MONOSPACE_FONT_FAMILY : REGULAR_FONT_FAMILY,
-      fontWeight: word.monospace ? MONOSPACE_FONT_WEIGHT : REGULAR_FONT_WEIGHT,
+      text: caption.text,
+      fontFamily: isCaptionMonospace(caption)
+        ? MONOSPACE_FONT_FAMILY
+        : REGULAR_FONT_FAMILY,
+      fontWeight: isCaptionMonospace(caption)
+        ? MONOSPACE_FONT_WEIGHT
+        : REGULAR_FONT_WEIGHT,
       fontSize,
       validateFontIsLoaded: true,
     });
@@ -95,20 +102,20 @@ const cutWords = ({
     if (exceedsBox) {
       break;
     } else {
-      wordsFitted++;
+      captionsFitted++;
     }
   }
 
-  if (wordsFitted === words.length) {
-    return [{ words }];
+  if (captionsFitted === captions.length) {
+    return [{ captions: captions }];
   }
 
-  return balanceWords({
-    words,
+  return balanceCaptions({
+    captions: captions,
     boxWidth,
     fontSize,
     maxLines,
-    wordsFitted,
+    captionsFitted: captionsFitted,
   });
 };
 
@@ -117,18 +124,18 @@ export const getHorizontalPaddingForSubtitles = () => {
 };
 
 export const layoutCaptions = ({
-  words,
+  captions,
   boxWidth,
   fontSize,
   maxLines,
 }: {
-  words: Word[];
+  captions: Caption[];
   boxWidth: number;
   maxLines: number;
   fontSize: number;
 }): LayoutedCaptions => {
-  const segments = cutWords({
-    words,
+  const segments = cutCaptions({
+    captions: captions,
     boxWidth:
       boxWidth -
       getHorizontalPaddingForSubtitles() * 2 -
@@ -141,9 +148,9 @@ export const layoutCaptions = ({
     segments: segments.map((segment) => {
       return {
         ...segment,
-        words: segment.words
-          .map((word) => {
-            return splitWordIntoMonospaceSegment(word);
+        captions: segment.captions
+          .map((caption) => {
+            return splitCaptionIntoMonospaceSegments(caption);
           })
           .flat(1),
       };

@@ -1,9 +1,9 @@
+import { Caption } from "@remotion/captions";
 import React, { useContext, useMemo } from "react";
-import type { Word } from "../../../config/autocorrect";
 
 type CaptionOverlayContext = {
-  open: Word | false;
-  setOpen: React.Dispatch<React.SetStateAction<Word | false>>;
+  open: Caption | false;
+  setOpen: React.Dispatch<React.SetStateAction<Caption | false>>;
 };
 
 const context = React.createContext<CaptionOverlayContext>({
@@ -14,8 +14,8 @@ const context = React.createContext<CaptionOverlayContext>({
 });
 
 export const useCaptionOverlay = (): {
-  isOpen: Word | false;
-  setOpen: React.Dispatch<React.SetStateAction<Word | false>>;
+  isOpen: Caption | false;
+  setOpen: React.Dispatch<React.SetStateAction<Caption | false>>;
 } => {
   const ctx = useContext(context);
 

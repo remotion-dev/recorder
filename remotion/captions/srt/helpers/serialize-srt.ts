@@ -1,11 +1,11 @@
-import { Word } from "../../../../config/autocorrect";
+import { Caption } from "@remotion/captions";
 
 export type UnserializedSrt = {
-  firstTimestamp: number;
-  lastTimestamp: number;
+  firstTimestampMs: number;
+  lastTimestampMs: number;
   text: string;
-  // Not effectively used for SRT serializing, but allows for clicking on a word to jump to it
-  words: Word[];
+  // Not effectively used for SRT serializing, but allows for clicking on a caption to jump to it
+  captions: Caption[];
 };
 
 const formatSingleSrtTimestamp = (timestamp: number) => {
@@ -30,7 +30,7 @@ export const serializeSrt = (srt: UnserializedSrt[]) => {
       return [
         // Index
         currentIndex,
-        formatSrtTimestamp(s.firstTimestamp, s.lastTimestamp),
+        formatSrtTimestamp(s.firstTimestampMs, s.lastTimestampMs),
         // Text
         s.text,
       ].join("\n");
