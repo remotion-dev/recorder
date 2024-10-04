@@ -38,6 +38,7 @@ type Props = {
   chapters: ChapterType[];
   theme: Theme;
   platform: Platform;
+  hovered: boolean;
 };
 
 const InnerScene: React.FC<
@@ -55,6 +56,8 @@ const InnerScene: React.FC<
   enterProgress,
   exitProgress,
   platform,
+  index,
+  hovered,
 }) => {
   if (sceneAndMetadata.type === "video-scene") {
     return (
@@ -67,11 +70,8 @@ const InnerScene: React.FC<
         sceneAndMetadata={sceneAndMetadata}
         theme={theme}
         chapters={chapters}
-        willTransitionToNextScene={getShouldTransitionOut({
-          nextSceneAndMetadata: nextScene,
-          sceneAndMetadata,
-          canvasLayout,
-        })}
+        sceneIndex={index}
+        hovered={hovered}
       />
     );
   }
@@ -223,6 +223,7 @@ export const Scene: React.FC<Props> = ({
   chapters,
   theme,
   platform,
+  hovered,
 }) => {
   const chapter = useMemo(() => {
     if (sceneAndMetadata.scene.type === "videoscene") {
@@ -256,6 +257,7 @@ export const Scene: React.FC<Props> = ({
         sceneAndMetadata={sceneAndMetadata}
         theme={theme}
         platform={platform}
+        hovered={hovered}
       />
     </Sequence>
   );

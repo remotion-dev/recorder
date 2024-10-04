@@ -37,7 +37,6 @@ export const COLORS: { [key in Theme]: ColorTheme } = {
     WORD_COLOR_ON_BG_GREYED: "rgba(255, 255, 255, 0.3)",
     WORD_HIGHLIGHT_COLOR: "#3B82EB",
     ACCENT_COLOR: "#3B82EB",
-
     CTA_BUTTON_COLOR: "black",
     CTA_BUTTON_BACKGROUND_COLOR: "white",
     ENDCARD_TEXT_COLOR: "white",
