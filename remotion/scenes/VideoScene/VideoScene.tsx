@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { getRemotionEnvironment } from "remotion";
 import type { CanvasLayout } from "../../../config/layout";
 import type {
   SceneAndMetadata,
@@ -117,11 +118,13 @@ export const VideoScene: React.FC<{
           theme={theme}
         ></SrtPreviewAndEditor>
       ) : null}
-      <Actions
-        visible={hovered}
-        sceneIndex={sceneIndex}
-        cameras={sceneAndMetadata.cameras}
-      />
+      {getRemotionEnvironment().isStudio ? (
+        <Actions
+          visible={hovered}
+          sceneIndex={sceneIndex}
+          cameras={sceneAndMetadata.cameras}
+        />
+      ) : null}
     </>
   );
 };
