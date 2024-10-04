@@ -24,10 +24,13 @@ const deriveStartFrameFromSubsJSON = (captions: Caption[] | null): number => {
   if (!captions) {
     return 0;
   }
+  if (captions.length === 0) {
+    return 0;
+  }
 
   // taking the first real word and take its start timestamp in ms.
-  const startFromInHundrethsOfSec = captions[0]?.startMs;
-  if (startFromInHundrethsOfSec === undefined) {
+  const startFromInHundrethsOfSec = (captions[0] as Caption).timestampMs;
+  if (startFromInHundrethsOfSec === null) {
     return 0;
   }
 
