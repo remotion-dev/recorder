@@ -12,6 +12,7 @@ import { CaptionPage, LayoutedCaptions } from "../types";
 import { hasMonoSpaceInCaption } from "./has-monospace-in-caption";
 import {
   isCaptionMonospace,
+  removeMonospaceTicks,
   splitCaptionIntoMonospaceSegments,
 } from "./split-caption-into-monospace-segments";
 
@@ -88,7 +89,7 @@ const cutCaptions = ({
 
   for (const caption of captions) {
     const { exceedsBox } = add({
-      text: caption.text,
+      text: removeMonospaceTicks(caption).text,
       fontFamily: isCaptionMonospace(caption)
         ? MONOSPACE_FONT_FAMILY
         : REGULAR_FONT_FAMILY,

@@ -15,7 +15,10 @@ import {
 import type { Theme } from "../../../../config/themes";
 import { COLORS } from "../../../../config/themes";
 import { useCaptionOverlay } from "../../editor/use-caption-overlay";
-import { isCaptionMonospace } from "../../processing/split-caption-into-monospace-segments";
+import {
+  isCaptionMonospace,
+  removeMonospaceTicks,
+} from "../../processing/split-caption-into-monospace-segments";
 
 type CaptionColor = {
   appeared: string;
@@ -180,6 +183,8 @@ export const BoxedSingleCaption: React.FC<{
     overlay.setOpen(caption);
   }, [overlay, caption]);
 
+  const actualText = removeMonospaceTicks(caption).text;
+
   return (
     <span
       style={style}
@@ -187,7 +192,7 @@ export const BoxedSingleCaption: React.FC<{
       onPointerLeave={onPointerLeave}
       onClick={onClick}
     >
-      {caption.text}
+      {actualText}
     </span>
   );
 };

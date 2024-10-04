@@ -34,3 +34,14 @@ export const splitCaptionIntoMonospaceSegments = (
 export const isCaptionMonospace = (caption: Caption) => {
   return caption.text.startsWith("`") && caption.text.endsWith("`");
 };
+
+export const removeMonospaceTicks = (caption: Caption) => {
+  if (!isCaptionMonospace(caption)) {
+    return caption;
+  }
+
+  return {
+    ...caption,
+    text: caption.text.slice(1, -1),
+  };
+};

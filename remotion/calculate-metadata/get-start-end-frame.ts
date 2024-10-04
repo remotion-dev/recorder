@@ -12,11 +12,11 @@ const deriveEndFrameFromSubs = (captions: Caption[] | null) => {
   }
 
   const lastCaption = captions[captions.length - 1];
-  if (!lastCaption || !lastCaption.endMs) {
+  if (!lastCaption || !lastCaption.timestampMs) {
     return null;
   }
 
-  const lastFrame = Math.floor((lastCaption.endMs / 1000) * FPS);
+  const lastFrame = Math.floor((lastCaption.timestampMs / 1000) * FPS);
   return lastFrame;
 };
 
