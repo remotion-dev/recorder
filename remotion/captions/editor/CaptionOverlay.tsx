@@ -65,7 +65,7 @@ export const CaptionOverlay: React.FC<{
     };
   }, [captions]);
 
-  if (!captionState) {
+  if (!captionState.captions) {
     return null;
   }
 

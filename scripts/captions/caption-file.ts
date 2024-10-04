@@ -70,7 +70,7 @@ export const captionFile = async ({
     language: TRANSCRIPTION_LANGUAGE,
   });
 
-  const captions = toCaptions({ whisperCppOutput: whisperCppOutput });
+  const { captions } = toCaptions({ whisperCppOutput: whisperCppOutput });
 
   rmSync(wavFile);
   writeFileSync(outPath, JSON.stringify(captions, null, 2) + EOL);

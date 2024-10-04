@@ -26,7 +26,7 @@ export const CaptionsEditor: React.FC<{
   setCaptions,
 }) => {
   const overlay = useCaptionOverlay();
-  const setAndSaveWhisperOutput = useCallback(
+  const setAndSaveCaptions = useCallback(
     (updater: (old: Caption[]) => Caption[]) => {
       setCaptions((old) => {
         if (old === null) {
@@ -60,7 +60,7 @@ export const CaptionsEditor: React.FC<{
 
   const onChangeText = useCallback(
     (index: number, newText: string) => {
-      setAndSaveWhisperOutput((old) => {
+      setAndSaveCaptions((old) => {
         const newTranscription = old.map((t, i) => {
           if (i === index) {
             return {
@@ -71,13 +71,10 @@ export const CaptionsEditor: React.FC<{
 
           return t;
         });
-        return {
-          ...old,
-          transcription: newTranscription,
-        };
+        return newTranscription;
       });
     },
-    [setAndSaveWhisperOutput],
+    [setAndSaveCaptions],
   );
 
   useEffect(() => {

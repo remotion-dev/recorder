@@ -55,7 +55,7 @@ export const AnimatedCaptions: React.FC<{
     nextScene: previousScene,
   });
 
-  const whisperOutput = useCaptions();
+  const captions = useCaptions();
 
   const subtitleLines = getSubtitlesLines({
     boxHeight: subtitleLayout.height,
@@ -63,15 +63,15 @@ export const AnimatedCaptions: React.FC<{
   });
 
   const postprocessed = useMemo(() => {
-    const captions = postprocessCaptions(whisperOutput);
+    const processed = postprocessCaptions(captions);
 
     return layoutCaptions({
       boxWidth: subtitleLayout.width,
       maxLines: subtitleLines,
       fontSize: SUBTITLES_FONT_SIZE,
-      captions,
+      captions: processed,
     });
-  }, [whisperOutput, subtitleLayout, subtitleLines]);
+  }, [captions, subtitleLayout, subtitleLines]);
 
   const outer: React.CSSProperties = useMemo(() => {
     const backgroundColor = COLORS[theme].CAPTIONS_BACKGROUND;

@@ -60,7 +60,7 @@ export const addMetadataToScene = async ({
   const { actualStartFrame, derivedEndFrame } = await getStartEndFrame({
     scene,
     recordingDurationInSeconds: webcamMetadata.durationInSeconds,
-    captions: captions,
+    captions,
   });
 
   const srt = captions
