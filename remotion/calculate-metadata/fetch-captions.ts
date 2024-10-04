@@ -1,9 +1,9 @@
+import { Caption } from "@remotion/captions";
 import { StaticFile } from "@remotion/studio";
-import { WhisperCppOutput } from "../captions/types";
 
-export const fetchWhisperCppOutput = async (
+export const fetchCaptions = async (
   file: StaticFile | null,
-): Promise<WhisperCppOutput | null> => {
+): Promise<Caption[] | null> => {
   if (!file) {
     return null;
   }
@@ -11,7 +11,8 @@ export const fetchWhisperCppOutput = async (
   try {
     const res = await fetch(file.src);
     const data = await res.json();
-    return data as WhisperCppOutput;
+    const captions = data as Caption[];
+    return captions;
   } catch (error) {
     console.error("Error fetching WhisperOutput from JSON:", error);
     return null;

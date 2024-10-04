@@ -38,7 +38,7 @@ export const SquareSubtitles: React.FC<{
         {segment.words.map((word, index) => {
           return (
             <BoxedSingleWord
-              key={word.firstTimestamp + word.text + index}
+              key={word.startMs + word.text + index}
               isLast={index === segment.words.length - 1}
               word={word}
               theme={theme}

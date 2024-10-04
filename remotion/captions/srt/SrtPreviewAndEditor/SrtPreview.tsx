@@ -12,7 +12,7 @@ export const SrtPreview: React.FC<{
 
   const srt = useMemo(() => {
     return calculateSrt({
-      whisperCppOutput: captions,
+      captions,
       startFrame,
     });
   }, [captions, startFrame]);

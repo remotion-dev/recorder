@@ -1,33 +1,32 @@
-import { Word } from "../../config/autocorrect";
+import { Caption } from "@remotion/captions";
 import { FPS } from "../../config/fps";
 import { SelectableVideoScene } from "../../config/scenes";
 import { postprocessCaptions } from "../captions/processing/postprocess-subs";
-import { WhisperCppOutput } from "../captions/types";
 
 const START_FRAME_PADDING = Math.ceil(FPS / 4);
 const END_FRAME_PADDING = FPS / 2;
 
-const deriveEndFrameFromSubs = (words: Word[] | null) => {
+const deriveEndFrameFromSubs = (words: Caption[] | null) => {
   if (!words) {
     return null;
   }
 
   const lastWord = words[words.length - 1];
-  if (!lastWord || !lastWord.lastTimestamp) {
+  if (!lastWord || !lastWord.endMs) {
     return null;
   }
 
-  const lastFrame = Math.floor((lastWord.lastTimestamp / 1000) * FPS);
+  const lastFrame = Math.floor((lastWord.endMs / 1000) * FPS);
   return lastFrame;
 };
 
-const deriveStartFrameFromSubsJSON = (words: Word[] | null): number => {
+const deriveStartFrameFromSubsJSON = (words: Caption[] | null): number => {
   if (!words) {
     return 0;
   }
 
   // taking the first real word and take its start timestamp in ms.
-  const startFromInHundrethsOfSec = words[0]?.firstTimestamp;
+  const startFromInHundrethsOfSec = words[0]?.startMs;
   if (startFromInHundrethsOfSec === undefined) {
     return 0;
   }
@@ -84,18 +83,16 @@ const getClampedEndFrame = ({
 export const getStartEndFrame = async ({
   scene,
   recordingDurationInSeconds,
-  whisperCppOutput,
+  captions,
 }: {
   scene: SelectableVideoScene;
   recordingDurationInSeconds: number;
-  whisperCppOutput: WhisperCppOutput | null;
+  captions: Caption[] | null;
 }) => {
   // We calculate the subtitles only for
   // the purpose of calculating the durastion
   // and will not use this value further
-  const subsForTimestamps = whisperCppOutput
-    ? postprocessCaptions(whisperCppOutput)
-    : null;
+  const subsForTimestamps = captions ? postprocessCaptions(captions) : null;
 
   const endFrameFromCaptions = deriveEndFrameFromSubs(subsForTimestamps);
   const derivedEndFrame = getClampedEndFrame({

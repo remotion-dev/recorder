@@ -1,29 +1,7 @@
-import type { Word } from "../../config/autocorrect";
-
-export type Token = {
-  t_dtw: number;
-  offsets: {
-    from: number;
-    to: number;
-  };
-  text: string;
-  p: number;
-};
-
-export type WhisperWord = {
-  tokens: Token[];
-  text: string;
-};
-
-export type WhisperCppOutput = {
-  transcription: WhisperWord[];
-  result: {
-    language: string;
-  };
-};
+import { Caption } from "@remotion/captions";
 
 export type CaptionPage = {
-  words: Word[];
+  words: Caption[];
 };
 
 export type LayoutedCaptions = {

@@ -1,4 +1,4 @@
-import { transcribe } from "@remotion/install-whisper-cpp";
+import { toCaptions, transcribe } from "@remotion/install-whisper-cpp";
 import { spawn } from "child_process";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import { EOL, tmpdir } from "os";
@@ -53,7 +53,7 @@ export const captionFile = async ({
     });
   });
 
-  const output = await transcribe({
+  const whisperCppOutput = await transcribe({
     inputPath: wavFile,
     model: WHISPER_MODEL,
     tokenLevelTimestamps: true,
@@ -66,9 +66,12 @@ export const captionFile = async ({
         progressInPercent: Math.round(progress * 100),
       });
     },
+    splitOnWord: true,
     language: TRANSCRIPTION_LANGUAGE,
   });
 
+  const captions = toCaptions({ whisperCppOutput: whisperCppOutput });
+
   rmSync(wavFile);
-  writeFileSync(outPath, JSON.stringify(output, null, 2) + EOL);
+  writeFileSync(outPath, JSON.stringify(captions, null, 2) + EOL);
 };

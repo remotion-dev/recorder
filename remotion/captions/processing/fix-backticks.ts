@@ -1,7 +1,7 @@
-import type { Word } from "../../../config/autocorrect";
+import { Caption } from "@remotion/captions";
 
-export const fixBackticks = (_words: Word[]): Word[] => {
-  const newWords: Word[] = [];
+export const fixBackticks = (_words: Caption[]): Caption[] => {
+  const newWords: Caption[] = [];
 
   const words = _words.map((word) => {
     return {
@@ -11,19 +11,19 @@ export const fixBackticks = (_words: Word[]): Word[] => {
   });
 
   for (let i = 0; i < words.length; i++) {
-    const word = words[i] as Word;
+    const word = words[i] as Caption;
     const previousWord = words[i - 1] ?? null;
 
     if (word.text.startsWith(". ")) {
-      const lastAddedWord = newWords[newWords.length - 1] as Word;
+      const lastAddedWord = newWords[newWords.length - 1] as Caption;
       lastAddedWord.text += ".";
       word.text = word.text.slice(1);
     }
 
     if (!word.text.startsWith(" ") && previousWord) {
-      const lastAddedWord = newWords[newWords.length - 1] as Word;
+      const lastAddedWord = newWords[newWords.length - 1] as Caption;
       lastAddedWord.text += word.text;
-      lastAddedWord.lastTimestamp = word.lastTimestamp;
+      lastAddedWord.endMs = word.endMs;
     } else {
       newWords.push(word);
     }

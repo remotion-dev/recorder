@@ -1,8 +1,8 @@
+import { Caption } from "@remotion/captions";
 import { Word } from "../../../../config/autocorrect";
 import { FPS } from "../../../../config/fps";
 import { joinBackticks } from "../../processing/join-backticks";
 import { postprocessCaptions } from "../../processing/postprocess-subs";
-import { WhisperCppOutput } from "../../types";
 import { UnserializedSrt } from "./serialize-srt";
 
 // The SRT standard recommends not more than 42 characters per line
@@ -41,12 +41,12 @@ const segmentWords = (word: Word[]) => {
 
 export const calculateSrt = ({
   startFrame,
-  whisperCppOutput,
+  captions,
 }: {
-  whisperCppOutput: WhisperCppOutput;
+  captions: Caption[];
   startFrame: number;
 }) => {
-  const postprocessed = joinBackticks(postprocessCaptions(whisperCppOutput));
+  const postprocessed = joinBackticks(postprocessCaptions(captions));
   const segments = segmentWords(postprocessed);
 
   const srtSegments: UnserializedSrt[] = [];

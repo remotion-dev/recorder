@@ -1,6 +1,6 @@
+import { Caption } from "@remotion/captions";
 import type { Word } from "../../../config/autocorrect";
 import { autocorrectWords } from "../../../config/autocorrect";
-import { type WhisperCppOutput } from "../types";
 import { fixBackticks } from "./fix-backticks";
 import { removeBlankTokens } from "./remove-blank-tokens";
 import { whisperWordToWord } from "./whisper-word-to-word";
@@ -43,8 +43,8 @@ const removeWhisperBlankWords = (original: Word[]): Word[] => {
   return words;
 };
 
-export const postprocessCaptions = (subTypes: WhisperCppOutput): Word[] => {
-  const blankTokensRemoved = removeBlankTokens(subTypes.transcription);
+export const postprocessCaptions = (subTypes: Caption[]): Word[] => {
+  const blankTokensRemoved = removeBlankTokens(subTypes);
   const words = blankTokensRemoved.map((w, i) => {
     return whisperWordToWord(w, blankTokensRemoved[i + 1] ?? null);
   });

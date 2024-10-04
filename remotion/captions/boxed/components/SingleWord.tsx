@@ -1,3 +1,4 @@
+import { Caption } from "@remotion/captions";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   interpolateColors,
@@ -5,7 +6,6 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import type { Word } from "../../../../config/autocorrect";
 import {
   MONOSPACE_FONT_FAMILY,
   MONOSPACE_FONT_WEIGHT,
@@ -15,6 +15,7 @@ import {
 import type { Theme } from "../../../../config/themes";
 import { COLORS } from "../../../../config/themes";
 import { useCaptionOverlay } from "../../editor/use-caption-overlay";
+import { isCaptionMonospace } from "../../processing/split-word-into-monospace-segment";
 
 type WordColor = {
   appeared: string;
@@ -31,7 +32,7 @@ const getShownWordColor = ({
   active,
 }: {
   appeared: boolean;
-  word: Word;
+  word: Caption;
   time: number;
   wordColor: WordColor;
   active: boolean;
@@ -40,7 +41,7 @@ const getShownWordColor = ({
     return wordColor.greyed;
   }
 
-  if (word.monospace) {
+  if (isCaptionMonospace(word)) {
     if (active) {
       return "white";
     }
@@ -50,7 +51,7 @@ const getShownWordColor = ({
 
   return interpolateColors(
     time,
-    [word.firstTimestamp - WORD_FADE_IN_DURATION_IN_MS, word.firstTimestamp],
+    [word.startMs - WORD_FADE_IN_DURATION_IN_MS, word.startMs],
     [wordColor.greyed, wordColor.appeared],
   );
 };
@@ -80,7 +81,7 @@ const getWordColor = ({
 const WORD_HIGHLIGHT_BORDER_RADIUS = 10;
 
 export const BoxedSingleWord: React.FC<{
-  word: Word;
+  word: Caption;
   isLast: boolean;
   theme: Theme;
   startFrame: number;
@@ -91,15 +92,16 @@ export const BoxedSingleWord: React.FC<{
 
   const [hovered, setHovered] = useState(false);
 
-  const progress = word.monospace
-    ? word.firstTimestamp > time
+  const monospace = isCaptionMonospace(word);
+
+  const progress = monospace
+    ? word.startMs > time
       ? 1
       : spring({
           fps,
           frame,
           delay:
-            word.firstTimestamp * fps -
-            (WORD_FADE_IN_DURATION_IN_MS / 1000) * fps,
+            word.startMs * fps - (WORD_FADE_IN_DURATION_IN_MS / 1000) * fps,
           config: {
             damping: 200,
           },
@@ -109,15 +111,14 @@ export const BoxedSingleWord: React.FC<{
         0.95
     : 1;
 
-  const appeared = word.firstTimestamp - 100 <= time;
+  const appeared = word.startMs - 100 <= time;
 
   const active =
-    appeared &&
-    (word.lastTimestamp === null || word.lastTimestamp - 100 > time || isLast);
+    appeared && (word.endMs === null || word.endMs - 100 > time || isLast);
 
   const wordColor = getWordColor({
     appeared,
-    monospace: word.monospace ?? false,
+    monospace,
     theme,
   });
 
@@ -129,7 +130,7 @@ export const BoxedSingleWord: React.FC<{
     active,
   });
 
-  const shouldHighlight = active && word.monospace;
+  const shouldHighlight = active && monospace;
 
   const backgroundColor = shouldHighlight
     ? COLORS[theme].ACCENT_COLOR
@@ -138,16 +139,16 @@ export const BoxedSingleWord: React.FC<{
   const style: React.CSSProperties = useMemo(() => {
     return {
       display: "inline",
-      fontFamily: word.monospace ? MONOSPACE_FONT_FAMILY : REGULAR_FONT_FAMILY,
+      fontFamily: monospace ? MONOSPACE_FONT_FAMILY : REGULAR_FONT_FAMILY,
       color: shownWordColor,
-      fontWeight: word.monospace ? MONOSPACE_FONT_WEIGHT : REGULAR_FONT_WEIGHT,
+      fontWeight: monospace ? MONOSPACE_FONT_WEIGHT : REGULAR_FONT_WEIGHT,
       backgroundColor,
       outline: hovered
         ? "2px solid black"
         : active
           ? "5px solid " + backgroundColor
           : "none",
-      whiteSpace: word.monospace ? "nowrap" : undefined,
+      whiteSpace: monospace ? "nowrap" : undefined,
       // Fix gap inbetween background and outline
       boxShadow: shouldHighlight ? `0 0 0 1px ${backgroundColor}` : "none",
       borderRadius: WORD_HIGHLIGHT_BORDER_RADIUS,
@@ -158,10 +159,10 @@ export const BoxedSingleWord: React.FC<{
     active,
     backgroundColor,
     hovered,
+    monospace,
     progress,
     shouldHighlight,
     shownWordColor,
-    word.monospace,
   ]);
 
   const onPointerEnter = useCallback(() => {
