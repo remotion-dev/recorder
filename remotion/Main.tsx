@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { AbsoluteFill, Sequence } from "remotion";
 import type { Platform } from "../config/endcard";
 import type { CanvasLayout } from "../config/layout";
@@ -31,6 +31,15 @@ export const Main: React.FC<MainProps> = ({
     return makeChapters({ scenes: scenesAndMetadata });
   }, [scenesAndMetadata]);
 
+  const [hovered, setHovered] = useState(false);
+  const onPointerEnter = useCallback(() => {
+    setHovered(true);
+  }, []);
+
+  const onPointerLeave = useCallback(() => {
+    setHovered(false);
+  }, []);
+
   if (scenesAndMetadata.length === 0) {
     return <NoDataScene theme={theme} />;
   }
@@ -46,6 +55,8 @@ export const Main: React.FC<MainProps> = ({
       style={{
         background: COLORS[theme].BACKGROUND,
       }}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
     >
       {scenesAndMetadata.map((sceneAndMetadata, i) => {
         return (
@@ -59,6 +70,7 @@ export const Main: React.FC<MainProps> = ({
             sceneAndMetadata={sceneAndMetadata}
             theme={theme}
             platform={platform}
+            hovered={hovered}
           />
         );
       })}

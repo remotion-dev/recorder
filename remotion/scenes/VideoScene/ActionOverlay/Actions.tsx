@@ -13,33 +13,35 @@ const gradientOpacities = [
   91.9,
 ];
 
-const globalGradientOpacity = 1 / 0.8;
+const globalGradientOpacity = 1;
 
 export const container: React.CSSProperties = {
   height: 130,
-  backgroundImage: `linear-gradient(to bottom,${gradientSteps
+  backgroundImage: `linear-gradient(to top,${gradientSteps
     .map((g, i) => {
-      return `hsla(0, 0%, 0%, ${g}) ${
+      return `hsla(0, 100%, 100%, ${g}) ${
         (gradientOpacities[i] as number) * globalGradientOpacity
       }%`;
     })
     .join(", ")}, hsl(0, 0%, 0%) 100%)`,
-  bottom: 0,
+  top: 0,
   position: "absolute",
   justifyContent: "center",
   color: "white",
   display: "flex",
+  transition: "opacity 0.15s",
 };
 
 export const Actions: React.FC<{
   cameras: Cameras;
   sceneIndex: number;
-}> = ({ cameras, sceneIndex }) => {
+  visible: boolean;
+}> = ({ cameras, sceneIndex, visible }) => {
   const { width } = useVideoConfig();
 
   const style: React.CSSProperties = useMemo(() => {
-    return { width, ...container };
-  }, [width]);
+    return { width, ...container, opacity: visible ? 1 : 0 };
+  }, [visible, width]);
 
   return (
     <div style={style}>

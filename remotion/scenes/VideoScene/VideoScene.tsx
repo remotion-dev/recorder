@@ -25,6 +25,7 @@ export const VideoScene: React.FC<{
   theme: Theme;
   chapters: ChapterType[];
   sceneIndex: number;
+  hovered: boolean;
 }> = ({
   enterProgress,
   exitProgress,
@@ -35,6 +36,7 @@ export const VideoScene: React.FC<{
   theme,
   chapters,
   sceneIndex,
+  hovered,
 }) => {
   const startFrame = sceneAndMetadata.startFrame;
   const endAt = sceneAndMetadata.endFrame;
@@ -115,7 +117,11 @@ export const VideoScene: React.FC<{
           theme={theme}
         ></SrtPreviewAndEditor>
       ) : null}
-      <Actions sceneIndex={sceneIndex} cameras={sceneAndMetadata.cameras} />
+      <Actions
+        visible={hovered}
+        sceneIndex={sceneIndex}
+        cameras={sceneAndMetadata.cameras}
+      />
     </>
   );
 };
