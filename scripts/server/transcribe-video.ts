@@ -40,7 +40,7 @@ export const transcribeVideo = async ({
 
   if (webcamFiles.length === 0) {
     throw new Error(
-      `Webcam file ${WEBCAM_PREFIX}${endDateAsString}.mp4  not found.`,
+      `Webcam file ${WEBCAM_PREFIX}${endDateAsString}.mp4 not found.`,
     );
   }
 

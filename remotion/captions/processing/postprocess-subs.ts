@@ -3,7 +3,13 @@ import { autocorrectWords } from "../../../config/autocorrect";
 import { fixBackticks } from "./fix-backticks";
 import { removeBlankTokens } from "./remove-blank-tokens";
 
-const FILLER_WORDS = ["[PAUSE]", "[BLANK_AUDIO]", "[Silence]", "[INAUDIBLE]"];
+const FILLER_WORDS = [
+  "[PAUSE]",
+  "[BLANK_AUDIO]",
+  "[Silence]",
+  "[silence]",
+  "[INAUDIBLE]",
+];
 
 const removeWhisperBlankWords = (original: Caption[]): Caption[] => {
   let firstIdx = 0;

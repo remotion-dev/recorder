@@ -66,7 +66,6 @@ export const captionFile = async ({
         progressInPercent: Math.round(progress * 100),
       });
     },
-    splitOnWord: true,
     language: TRANSCRIPTION_LANGUAGE,
   });
 

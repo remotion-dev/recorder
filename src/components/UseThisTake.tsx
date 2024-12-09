@@ -1,6 +1,9 @@
+import { webFileReader } from "@remotion/media-parser/web-file";
+import { convertMedia } from "@remotion/webcodecs";
 import React, { useCallback } from "react";
 import { RecordingStatus } from "../RecordButton";
 import { downloadVideo } from "../helpers/download-video";
+import { formatMilliseconds } from "../helpers/format-time";
 import { uploadFileToServer } from "../helpers/upload-file";
 import { ProcessStatus } from "./ProcessingStatus";
 import { Button } from "./ui/button";
@@ -28,11 +31,29 @@ export const UseThisTake: React.FC<{
       currentProcessing = currentProcessing
         .then(() => {
           setStatus({
-            title: `Processing ${blob.prefix}${blob.endDate}.mp4`,
-            description: "Uploading...",
+            title: `Converting ${blob.prefix}${blob.endDate}.mp4`,
+            description: "Starting...",
+          });
+          return convertMedia({
+            container: "mp4",
+            src: blob.data,
+            reader: webFileReader,
+            onProgress: ({ millisecondsWritten }) => {
+              setStatus({
+                title: `Converting ${blob.prefix}${blob.endDate}.mp4`,
+                description: `${formatMilliseconds(millisecondsWritten)} processed`,
+              });
+            },
+          });
+        })
+        .then((d) => d.save())
+        .then((convertedBlob) => {
+          setStatus({
+            title: `Transcribing...`,
+            description: "Initiating Whisper.cpp",
           });
           return uploadFileToServer({
-            blob: blob.data,
+            blob: convertedBlob,
             endDate: recordingStatus.endDate,
             prefix: blob.prefix,
             selectedFolder,
@@ -53,17 +74,22 @@ export const UseThisTake: React.FC<{
     setRecordingStatus({ type: "idle" });
   }, [recordingStatus, selectedFolder, setRecordingStatus, setStatus]);
 
-  const keepVideoOnClient = useCallback(() => {
+  const keepVideoOnClient = useCallback(async () => {
     if (recordingStatus.type !== "recording-finished") {
       return Promise.resolve();
     }
 
     for (const blob of recordingStatus.blobs) {
-      downloadVideo(blob.data, recordingStatus.endDate, blob.prefix);
+      await downloadVideo(
+        blob.data,
+        recordingStatus.endDate,
+        blob.prefix,
+        setStatus,
+      );
     }
 
     setRecordingStatus({ type: "idle" });
-  }, [recordingStatus, setRecordingStatus]);
+  }, [recordingStatus, setRecordingStatus, setStatus]);
 
   const keepVideos = useCallback(async () => {
     if (window.remotionServerEnabled) {

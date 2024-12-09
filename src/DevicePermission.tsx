@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { CircleSpinner } from "./components/Spinner";
 import { PermissionError } from "./PermissionError";
+import { CircleSpinner } from "./components/Spinner";
 
 type PermissionState = "granted" | "denied" | "prompt" | "initial";
 
@@ -157,7 +157,7 @@ const Permission: React.FC<{
         stream.getVideoTracks().forEach((track) => track.stop());
         stream.getAudioTracks().forEach((track) => track.stop());
       } catch (err) {
-        console.log("Error on getUserMedia", err);
+        console.log("Error on getUserMedia(", err);
         handleError(err as Error);
         return;
       }
@@ -179,7 +179,7 @@ const Permission: React.FC<{
           audio: true,
         });
       } catch (err) {
-        console.log("Error on getUserMedia", err);
+        console.log("Error on getUserMedia()", err);
         handleError(err as Error);
         return;
       }

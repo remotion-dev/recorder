@@ -9,10 +9,12 @@ import { ResolutionLimiter } from "./ResolutionLimiter";
 import { ToggleRotate } from "./Rotate";
 import { ResolutionAndFps, Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
+import { ClearCurrentVideo } from "./components/ClearCurrentVideo";
 import { CurrentAudio } from "./components/CurrentAudio";
 import { CurrentVideo } from "./components/CurrentVideo";
+import { Divider } from "./components/Divider";
 import { StreamPicker } from "./components/StreamPicker";
-import { NoVolumeMeter, VolumeMeter } from "./components/VolumeMeter";
+import { VolumeMeter } from "./components/VolumeMeter";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
 import {
   MaxResolution,
@@ -45,9 +47,7 @@ const viewContainer: React.CSSProperties = {
 const topBar: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
-  padding: 4,
   paddingLeft: 10,
-  height: 48,
 };
 
 const streamViewport: React.CSSProperties = {
@@ -213,8 +213,10 @@ export const View: React.FC<{
   return (
     <div style={viewContainer}>
       <div style={topBar}>
+        <div style={{ width: 10 }}></div>
         <PrefixLabel prefix={prefix} />
         <div style={{ width: 15 }}></div>
+        <Divider></Divider>
         <CurrentVideo
           resolution={resolution}
           label={videoDeviceLabel ?? "No video selected"}
@@ -225,13 +227,24 @@ export const View: React.FC<{
           setResolutionLimiterOpen={setResolutionLimiterOpen}
           canShowResolutionLimiter={canShowResolutionLimiter}
         ></CurrentVideo>
-        {prefix === WEBCAM_PREFIX ? (
-          <CurrentAudio
+        {selectedVideoSource ? (
+          <ClearCurrentVideo
             onClick={() => {
-              setShowPicker((p) => !p);
+              setSelectedVideoDevice(null);
+              setResolution(null);
             }}
-            label={audioDeviceLabel}
           />
+        ) : null}
+        {prefix === WEBCAM_PREFIX ? (
+          <>
+            <Divider></Divider>
+            <CurrentAudio
+              onClick={() => {
+                setShowPicker((p) => !p);
+              }}
+              label={audioDeviceLabel}
+            />
+          </>
         ) : null}
         {prefix === WEBCAM_PREFIX ? (
           <ToggleCrop
@@ -248,9 +261,7 @@ export const View: React.FC<{
       </div>
       {prefix === WEBCAM_PREFIX ? (
         <VolumeMeter mediaStream={mediaStream} />
-      ) : (
-        <NoVolumeMeter></NoVolumeMeter>
-      )}
+      ) : null}
       <div style={streamViewport}>
         <Stream
           selectedAudioSource={selectedAudioDevice}

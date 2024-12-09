@@ -32,7 +32,7 @@ export const uploadFileToServer = async ({
   onProgress: (status: ProcessStatus) => void;
   expectedFrames: number;
 }) => {
-  const videoFile = new File([blob], "video.webm", { type: blob.type });
+  const videoFile = new File([blob], "video.mp4", { type: blob.type });
 
   const url = new URL(UPLOAD_VIDEO, window.location.origin);
 
@@ -60,13 +60,6 @@ export const uploadFileToServer = async ({
       },
     };
 
-    if (message.type === "converting-progress") {
-      onProgress({
-        title: `Converting ${message.payload.filename}`,
-        description: `${Math.round(message.payload.framesConverted)} frames (${Math.round(message.payload.progress * 100)}%)`,
-      });
-      return;
-    }
     if (message.type === "transcribing-progress") {
       onProgress({
         title: `Transcribing ${message.payload.filename}`,
