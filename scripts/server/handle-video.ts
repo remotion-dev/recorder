@@ -1,9 +1,7 @@
 import fs, { createWriteStream } from "fs";
 import { IncomingMessage, ServerResponse } from "http";
-import os from "os";
 import path from "path";
 import { ensureWhisper } from "../captions/install-whisper";
-import { convertVideo } from "../convert-video";
 import { makeStreamPayload } from "./streaming";
 import { transcribeVideo } from "./transcribe-video";
 
@@ -39,36 +37,15 @@ export const handleVideoUpload = async (
     const publicDir = path.join(process.cwd(), "public");
     const folderPath = path.join(publicDir, folder);
     const filePath = path.join(folderPath, file);
-    const input = path.join(os.tmpdir(), Math.random() + ".webm");
 
-    fs.mkdirSync(path.dirname(input), { recursive: true });
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-    const writeStream = createWriteStream(input);
+    const writeStream = createWriteStream(filePath);
 
     req.pipe(writeStream);
 
     await new Promise((resolve) => writeStream.on("finish", resolve));
-
-    await convertVideo({
-      input: input,
-      output: filePath,
-      onProgress: ({ filename, framesEncoded, progress }) => {
-        const payload = makeStreamPayload({
-          message: {
-            type: "converting-progress",
-            payload: {
-              progress,
-              framesConverted: framesEncoded,
-              filename,
-            },
-          },
-        });
-        res.write(payload);
-      },
-      signal: undefined,
-      expectedFrames,
-    });
 
     await ensureWhisper({
       onInstall: () => {

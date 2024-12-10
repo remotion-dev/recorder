@@ -1,19 +1,8 @@
 import { CameraIcon } from "lucide-react";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { DisplayIcon } from "../DeviceItem";
 import { Resolution } from "../PrefixAndResolution";
 import { ResolutionAndFps } from "../Stream";
-import { Divider } from "./Divider";
-
-const container: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "row",
-  fontSize: 13,
-  alignItems: "center",
-  flex: 1,
-  lineHeight: 1.4,
-  cursor: "pointer",
-};
 
 const spacer: React.CSSProperties = {
   width: 12,
@@ -47,9 +36,41 @@ export const CurrentVideo: React.FC<{
     },
     [setResolutionLimiterOpen],
   );
+
+  const [hovered, setHovered] = useState(false);
+
+  const onPointerEnter = useCallback(() => {
+    setHovered(true);
+  }, []);
+
+  const onPointerLeave = useCallback(() => {
+    setHovered(false);
+  }, []);
+
+  const container: React.CSSProperties = useMemo(() => {
+    return {
+      display: "flex",
+      flexDirection: "row",
+      fontSize: 13,
+      alignItems: "center",
+      flex: 1,
+      lineHeight: 1.4,
+      cursor: "pointer",
+      paddingTop: 4,
+      paddingBottom: 4,
+      paddingLeft: 10,
+      background: hovered ? "rgba(0, 0, 0, 0.5)" : "transparent",
+      minHeight: 48,
+    };
+  }, [hovered]);
+
   return (
-    <div style={container} onClick={onClick}>
-      <Divider></Divider>
+    <div
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+      style={container}
+      onClick={onClick}
+    >
       {isScreenshare ? <DisplayIcon></DisplayIcon> : <CameraIcon></CameraIcon>}
       <div style={spacer}></div>
       <div>
@@ -68,7 +89,7 @@ export const CurrentVideo: React.FC<{
                 <>
                   <div style={{ width: 4 }}></div>
                   <button onClick={onOpen} style={buttonStyle}>
-                    Change
+                    Settings
                   </button>
                 </>
               ) : null}

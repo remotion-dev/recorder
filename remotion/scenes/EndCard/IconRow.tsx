@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { Platform } from "../../../config/endcard";
 import {
   ENDCARD_FONT_FAMILY,
@@ -7,9 +8,10 @@ import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
 import { followButtonHeight } from "./FollowButton";
 import {
+  GitHubIcon,
   InstagramIcon,
-  LinkedInIcon,
   LinkIcon,
+  LinkedInIcon,
   XIcon,
   YouTubeIcon,
 } from "./icons";
@@ -38,29 +40,53 @@ export const IconRow: React.FC<{
   opacity: number;
   theme: Theme;
 }> = ({ type, label, opacity, theme }) => {
-  const labelStyle: React.CSSProperties = {
-    fontSize: 50,
-    fontFamily: ENDCARD_FONT_FAMILY,
-    fontWeight: ENDCARD_FONT_WEIGHT,
-    marginLeft: 20,
-    color: COLORS[theme].ENDCARD_TEXT_COLOR,
-  };
+  const labelStyle: React.CSSProperties = useMemo(
+    () => ({
+      fontSize: 50,
+      fontFamily: ENDCARD_FONT_FAMILY,
+      fontWeight: ENDCARD_FONT_WEIGHT,
+      marginLeft: 20,
+      color: COLORS[theme].ENDCARD_TEXT_COLOR,
+    }),
+    [theme],
+  );
+
+  const finalLabel = useMemo(() => {
+    if (label.startsWith("https://github.com/")) {
+      return label.substring("https://github.com/".length);
+    }
+
+    return label;
+  }, [label]);
+
+  const finalType = useMemo(() => {
+    if (label.startsWith("https://github.com/")) {
+      return "github";
+    }
+
+    return type;
+  }, [label, type]);
 
   return (
     <div style={{ ...iconRow, opacity }}>
       <div style={iconContainer}>
-        {type === "link" ? <LinkIcon theme={theme} height={60} /> : null}
-        {type === "youtube" ? <YouTubeIcon theme={theme} height={60} /> : null}
-        {type === "x" ? <XIcon theme={theme} height={60} /> : null}
-        {type === "instagram" ? (
+        {finalType === "github" ? (
+          <GitHubIcon theme={theme} height={60} />
+        ) : null}
+        {finalType === "link" ? <LinkIcon theme={theme} height={60} /> : null}
+        {finalType === "youtube" ? (
+          <YouTubeIcon theme={theme} height={60} />
+        ) : null}
+        {finalType === "x" ? <XIcon theme={theme} height={60} /> : null}
+        {finalType === "instagram" ? (
           <InstagramIcon theme={theme} height={70} />
         ) : null}
-        {type === "linkedin" ? (
+        {finalType === "linkedin" ? (
           <LinkedInIcon theme={theme} height={60} />
         ) : null}
       </div>
       <div style={{ width: spaceBetweenImgAndText }} />
-      <div style={labelStyle}>{label}</div>
+      <div style={labelStyle}>{finalLabel}</div>
     </div>
   );
 };
