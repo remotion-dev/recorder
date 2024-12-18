@@ -1,16 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   AbsoluteFill,
+  Img,
   continueRender,
   delayRender,
-  Img,
   interpolate,
   spring,
   useCurrentFrame,
   useCurrentScale,
   useVideoConfig,
 } from "remotion";
-import type { Brand, LinkType, Platform } from "../../../config/endcard";
+import type {
+  Brand,
+  ChannelConfigAndBusinessPage,
+  LinkType,
+  Platform,
+} from "../../../config/endcard";
 import { avatars, channels } from "../../../config/endcard";
 import type { Theme } from "../../../config/themes";
 import { SCENE_TRANSITION_DURATION } from "../../../config/transitions";
@@ -125,12 +130,17 @@ export const LeftSide: React.FC<{
     }[] = [];
 
     for (const c in channels[channel]) {
-      const name = channels[channel][c as Platform];
+      const name = channels[channel][
+        c as Platform
+      ] as keyof ChannelConfigAndBusinessPage;
       if (!name) {
         continue;
       }
 
       if (c === platform) {
+        continue;
+      }
+      if (name === "isLinkedInBusinessPage") {
         continue;
       }
 
@@ -147,6 +157,7 @@ export const LeftSide: React.FC<{
 
   const padding = 80;
   const maxWidth = width - padding * 2;
+
   return (
     <AbsoluteFill
       style={{

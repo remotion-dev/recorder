@@ -21,11 +21,12 @@ export const platform = z.enum([
 export type Platform = z.infer<typeof platform>;
 
 type ChannelConfig = { [key in Platform]: string | null };
+export type ChannelConfigAndBusinessPage = ChannelConfig & {
+  isLinkedInBusinessPage: boolean;
+};
 
 export const channels: {
-  [key in Brand]: ChannelConfig & {
-    isLinkedInBusinessPage: boolean;
-  };
+  [key in Brand]: ChannelConfigAndBusinessPage;
 } = {
   // TODO: 2. Fill out the socials
   jonny: {
