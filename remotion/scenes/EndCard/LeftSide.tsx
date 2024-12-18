@@ -10,12 +10,7 @@ import {
   useCurrentScale,
   useVideoConfig,
 } from "remotion";
-import type {
-  Brand,
-  ChannelConfigAndBusinessPage,
-  LinkType,
-  Platform,
-} from "../../../config/endcard";
+import type { Brand, LinkType, Platform } from "../../../config/endcard";
 import { avatars, channels } from "../../../config/endcard";
 import type { Theme } from "../../../config/themes";
 import { SCENE_TRANSITION_DURATION } from "../../../config/transitions";
@@ -130,9 +125,7 @@ export const LeftSide: React.FC<{
     }[] = [];
 
     for (const c in channels[channel]) {
-      const name = channels[channel][
-        c as Platform
-      ] as keyof ChannelConfigAndBusinessPage;
+      const name = channels[channel][c as Platform];
       if (!name) {
         continue;
       }
