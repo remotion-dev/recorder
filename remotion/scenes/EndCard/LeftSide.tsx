@@ -133,7 +133,7 @@ export const LeftSide: React.FC<{
       if (c === platform) {
         continue;
       }
-      if (name === "isLinkedInBusinessPage") {
+      if (c === "isLinkedInBusinessPage") {
         continue;
       }
 
