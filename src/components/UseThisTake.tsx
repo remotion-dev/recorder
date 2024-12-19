@@ -4,6 +4,7 @@ import React, { useCallback } from "react";
 import { RecordingStatus } from "../RecordButton";
 import { downloadVideo } from "../helpers/download-video";
 import { formatMilliseconds } from "../helpers/format-time";
+import { transcribeVideoOnServer } from "../helpers/transcribe-video";
 import { uploadFileToServer } from "../helpers/upload-file";
 import { ProcessStatus } from "./ProcessingStatus";
 import { Button } from "./ui/button";
@@ -49,17 +50,14 @@ export const UseThisTake: React.FC<{
         .then((d) => d.save())
         .then((convertedBlob) => {
           setStatus({
-            title: `Transcribing...`,
-            description: "Initiating Whisper.cpp",
+            title: `Transcribing ${blob.prefix}${blob.endDate}.mp4`,
+            description: "Initiating Whisper.cpp...",
           });
           return uploadFileToServer({
             blob: convertedBlob,
             endDate: recordingStatus.endDate,
             prefix: blob.prefix,
             selectedFolder,
-            onProgress: (stat) => {
-              setStatus(stat);
-            },
             expectedFrames: recordingStatus.expectedFrames,
           });
         })
@@ -70,6 +68,27 @@ export const UseThisTake: React.FC<{
           setStatus(null);
         });
     }
+
+    currentProcessing = currentProcessing
+      .then(() => {
+        setStatus({
+          title: `Transcribing...`,
+          description: "Initiating Whisper.cpp...",
+        });
+        return transcribeVideoOnServer({
+          endDate: recordingStatus.endDate,
+          selectedFolder,
+          onProgress: (stat) => {
+            setStatus(stat);
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .then(() => {
+        setStatus(null);
+      });
 
     setRecordingStatus({ type: "idle" });
   }, [recordingStatus, selectedFolder, setRecordingStatus, setStatus]);

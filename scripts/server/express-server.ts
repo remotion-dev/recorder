@@ -5,11 +5,16 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 import { SERVER_PORT } from "../../config/server";
-import { CREATE_FOLDER, GET_FOLDERS, UPLOAD_VIDEO } from "./constants";
+import {
+  CREATE_FOLDER,
+  GET_FOLDERS,
+  TRANSCRIBE_VIDEO,
+  UPLOAD_VIDEO,
+} from "./constants";
 import { createProject } from "./create-project";
-import { handleVideoUpload } from "./handle-video";
 import { indexHtmlDev } from "./index-html";
 import { getProjectFolder } from "./projects";
+import { handleTranscribeVideo, handleVideoUpload } from "./upload-video";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -46,6 +51,7 @@ export const startServer = async () => {
   });
 
   app.use(UPLOAD_VIDEO, handleVideoUpload);
+  app.use(TRANSCRIBE_VIDEO, handleTranscribeVideo);
   app.use("/", indexHtmlDev(vite, rootDir));
 
   const port = process.env.PORT || SERVER_PORT;
