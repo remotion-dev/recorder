@@ -3,12 +3,17 @@ import { convertMedia } from "@remotion/webcodecs";
 import { ProcessStatus } from "../components/ProcessingStatus";
 import { formatMilliseconds } from "./format-time";
 
-export const downloadVideo = async (
-  data: Blob,
-  endDate: number,
-  prefix: string,
-  setStatus: React.Dispatch<React.SetStateAction<ProcessStatus | null>>,
-) => {
+export const downloadVideo = async ({
+  data,
+  endDate,
+  prefix,
+  setStatus,
+}: {
+  data: Blob;
+  endDate: number;
+  prefix: string;
+  setStatus: React.Dispatch<React.SetStateAction<ProcessStatus | null>>;
+}) => {
   const webcamchunks: Blob[] = [];
   if (data.size > 0) {
     webcamchunks.push(data);

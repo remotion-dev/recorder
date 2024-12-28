@@ -115,12 +115,12 @@ export const UseThisTake: React.FC<{
     }
 
     for (const blob of recordingStatus.blobs) {
-      await downloadVideo(
-        blob.data,
-        recordingStatus.endDate,
-        blob.prefix,
+      await downloadVideo({
+        data: blob.data,
+        endDate: recordingStatus.endDate,
+        prefix: blob.prefix,
         setStatus,
-      );
+      });
     }
 
     setRecordingStatus({ type: "idle" });
