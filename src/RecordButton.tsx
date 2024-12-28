@@ -28,9 +28,6 @@ export type RecordingStatus =
       ongoing: OngoingRecording;
     }
   | {
-      type: "processing-recording";
-    }
-  | {
       type: "recording-finished";
       blobs: FinishedRecording[];
       expectedFrames: number;
@@ -78,8 +75,6 @@ export const RecordButton: React.FC<{
     if (recordingStatus.type !== "recording") {
       return;
     }
-
-    setRecordingStatus({ type: "processing-recording" });
 
     for (const recorder of recordingStatus.ongoing.recorders) {
       recorder.recorder.stop();
@@ -129,16 +124,12 @@ export const RecordButton: React.FC<{
 
   useKeyPress({ keys: ["r"], callback: onPressR, metaKey: false });
 
-  if (
-    recordingStatus.type === "recording" ||
-    recordingStatus.type === "processing-recording"
-  ) {
+  if (recordingStatus.type === "recording") {
     return (
       <>
         <Button
           variant="outline"
           type="button"
-          disabled={recordingStatus.type === "processing-recording"}
           style={{ display: "flex", alignItems: "center", gap: 10 }}
           title="Press R to stop recording"
           onClick={onStop}

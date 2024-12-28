@@ -41,7 +41,8 @@ export const TopBar: React.FC<{
   });
 
   const [folders, setFolders] = useState<string[] | null>(null);
-  const [status, setStatus] = useState<ProcessStatus | null>(null);
+  const [processingStatus, setProcessingStatus] =
+    useState<ProcessStatus | null>(null);
 
   const folderFromUrl: string | null = useMemo(() => {
     return loadFolderFromUrl();
@@ -89,7 +90,7 @@ export const TopBar: React.FC<{
       <div style={recordWrapper}>
         <RecordButton
           recordingStatus={recordingStatus}
-          recordingDisabled={recordingDisabled}
+          recordingDisabled={recordingDisabled || processingStatus !== null}
           mediaSources={mediaSources}
           setRecordingStatus={setRecordingStatus}
         />
@@ -99,16 +100,17 @@ export const TopBar: React.FC<{
             <Timer startDate={recordingStatus.ongoing.startDate} />
           </>
         ) : null}
-        {recordingStatus.type === "recording-finished" ||
-        recordingStatus.type === "processing-recording" ? (
+        {recordingStatus.type === "recording-finished" ? (
           <UseThisTake
             selectedFolder={selectedFolder}
             recordingStatus={recordingStatus}
             setRecordingStatus={setRecordingStatus}
-            setStatus={setStatus}
+            setStatus={setProcessingStatus}
           />
         ) : null}
-        {status && <ProcessingStatus status={status}></ProcessingStatus>}
+        {processingStatus && (
+          <ProcessingStatus status={processingStatus}></ProcessingStatus>
+        )}
       </div>
 
       <div style={{ flex: 1 }} />

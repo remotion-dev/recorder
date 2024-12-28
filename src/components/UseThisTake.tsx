@@ -140,13 +140,10 @@ export const UseThisTake: React.FC<{
       type="button"
       title="Copy this take"
       onClick={keepVideos}
-      disabled={recordingStatus.type === "processing-recording"}
     >
-      {recordingStatus.type === "processing-recording"
-        ? "Uploading..."
-        : window.remotionServerEnabled
-          ? `Copy to public/${selectedFolder}`
-          : "Download this take"}
+      {window.remotionServerEnabled
+        ? `Copy to public/${selectedFolder}`
+        : "Download this take"}
     </Button>
   );
 };
