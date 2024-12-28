@@ -88,8 +88,8 @@ export const UseThisTake: React.FC<{
     currentProcessing = currentProcessing
       .then(() => {
         setStatus({
-          title: `Transcribing...`,
-          description: "Initiating Whisper.cpp...",
+          title: `Initiating Whisper.cpp...`,
+          description: "See Terminal for progress",
         });
         return transcribeVideoOnServer({
           endDate: recordingStatus.endDate,
