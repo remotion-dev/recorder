@@ -19,7 +19,7 @@ export const UseThisTake: React.FC<{
 }> = ({ selectedFolder, recordingStatus, setRecordingStatus, setStatus }) => {
   const keepVideoOnServer = useCallback(async () => {
     if (recordingStatus.type !== "recording-finished") {
-      return Promise.resolve();
+      throw new Error("Recording not finished");
     }
 
     if (selectedFolder === null) {
@@ -39,6 +39,10 @@ export const UseThisTake: React.FC<{
             container: "webm",
             src: blob.data,
             reader: webFileReader,
+            resize: {
+              maxHeight: 1080,
+              mode: "max-height",
+            },
             onProgress: ({ millisecondsWritten }) => {
               setStatus({
                 title: `Converting ${blob.prefix}${blob.endDate}.mp4`,
@@ -107,7 +111,7 @@ export const UseThisTake: React.FC<{
 
   const keepVideoOnClient = useCallback(async () => {
     if (recordingStatus.type !== "recording-finished") {
-      return Promise.resolve();
+      throw new Error("Recording not finished");
     }
 
     for (const blob of recordingStatus.blobs) {
@@ -126,7 +130,7 @@ export const UseThisTake: React.FC<{
     if (window.remotionServerEnabled) {
       await keepVideoOnServer();
     } else {
-      keepVideoOnClient();
+      await keepVideoOnClient();
     }
   }, [keepVideoOnClient, keepVideoOnServer]);
 
