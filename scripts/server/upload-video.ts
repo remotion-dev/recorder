@@ -104,7 +104,7 @@ export const handleVideoUpload = async (
       throw new Error("No `expectedFrames` provided");
     }
 
-    const file = `${prefix}${endDateAsString}.mp4`;
+    const file = `${prefix}${endDateAsString}.webm`;
 
     const publicDir = path.join(process.cwd(), "public");
     const folderPath = path.join(publicDir, folder);

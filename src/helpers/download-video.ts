@@ -25,7 +25,7 @@ export const downloadVideo = async ({
     reader: webFileReader,
     onProgress: ({ millisecondsWritten }) => {
       setStatus({
-        title: `Converting ${prefix}${endDate}.mp4`,
+        title: `Converting ${prefix}${endDate}.webm`,
         description: `${formatMilliseconds(millisecondsWritten)} processed`,
       });
     },

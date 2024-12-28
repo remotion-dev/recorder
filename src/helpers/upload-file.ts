@@ -22,7 +22,7 @@ export const uploadFileToServer = async ({
   selectedFolder: string;
   expectedFrames: number;
 }) => {
-  const videoFile = new File([blob], "video.mp4", { type: blob.type });
+  const videoFile = new File([blob], "video.webm", { type: blob.type });
 
   const url = new URL(UPLOAD_VIDEO, window.location.origin);
 

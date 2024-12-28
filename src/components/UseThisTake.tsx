@@ -32,7 +32,7 @@ export const UseThisTake: React.FC<{
       currentProcessing = currentProcessing
         .then(() => {
           setStatus({
-            title: `Converting ${blob.prefix}${blob.endDate}.mp4`,
+            title: `Converting ${blob.prefix}${blob.endDate}.webm`,
             description: "Starting...",
           });
           return convertMedia({
@@ -45,7 +45,7 @@ export const UseThisTake: React.FC<{
             },
             onProgress: ({ millisecondsWritten }) => {
               setStatus({
-                title: `Converting ${blob.prefix}${blob.endDate}.mp4`,
+                title: `Converting ${blob.prefix}${blob.endDate}.webm`,
                 description: `${formatMilliseconds(millisecondsWritten)} processed`,
               });
             },
@@ -54,7 +54,7 @@ export const UseThisTake: React.FC<{
         .then((d) => d.save())
         .then((convertedBlob) => {
           setStatus({
-            title: `Transcribing ${blob.prefix}${blob.endDate}.mp4`,
+            title: `Transcribing ${blob.prefix}${blob.endDate}.webm`,
             description: "Initiating Whisper.cpp...",
           });
           return uploadFileToServer({
@@ -71,11 +71,11 @@ export const UseThisTake: React.FC<{
         .catch((err) => {
           // download blob
           blob.data.arrayBuffer().then((buffer) => {
-            const blobToDownload = new Blob([buffer], { type: "video/mp4" });
+            const blobToDownload = new Blob([buffer], { type: "video/webm" });
             const a = document.createElement("a");
             const url = URL.createObjectURL(blobToDownload);
             a.href = url;
-            a.download = `${blob.prefix}${blob.endDate}.mp4`;
+            a.download = `${blob.prefix}${blob.endDate}.webm`;
             a.click();
           });
           alert(
