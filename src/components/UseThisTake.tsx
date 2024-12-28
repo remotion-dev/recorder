@@ -36,7 +36,7 @@ export const UseThisTake: React.FC<{
             description: "Starting...",
           });
           return convertMedia({
-            container: "mp4",
+            container: "webm",
             src: blob.data,
             reader: webFileReader,
             onProgress: ({ millisecondsWritten }) => {
@@ -61,11 +61,23 @@ export const UseThisTake: React.FC<{
             expectedFrames: recordingStatus.expectedFrames,
           });
         })
-        .catch((err) => {
-          console.log(err);
-        })
         .then(() => {
           setStatus(null);
+        })
+        .catch((err) => {
+          // download blob
+          blob.data.arrayBuffer().then((buffer) => {
+            const blobToDownload = new Blob([buffer], { type: "video/mp4" });
+            const a = document.createElement("a");
+            const url = URL.createObjectURL(blobToDownload);
+            a.href = url;
+            a.download = `${blob.prefix}${blob.endDate}.mp4`;
+            a.click();
+          });
+          alert(
+            "Failed to convert video. Downloaded original video for backup.",
+          );
+          console.log(err);
         });
     }
 

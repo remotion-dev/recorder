@@ -14,6 +14,8 @@ export type MediaSources = {
 const mediaRecorderOptions: MediaRecorderOptions = {
   audioBitsPerSecond: 128000,
   videoBitsPerSecond: 8 * 4000000,
+  // @ts-expect-error - not in the types yet
+  videoKeyFrameIntervalDuration: 2,
 };
 
 type FinishedRecording = {

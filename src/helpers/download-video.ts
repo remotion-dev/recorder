@@ -15,7 +15,7 @@ export const downloadVideo = async (
   }
 
   const result = await convertMedia({
-    container: "mp4",
+    container: "webm",
     src: data,
     reader: webFileReader,
     onProgress: ({ millisecondsWritten }) => {
@@ -31,7 +31,7 @@ export const downloadVideo = async (
   const link = document.createElement("a");
   const blobUrl = URL.createObjectURL(saved);
   link.href = blobUrl;
-  link.download = `${prefix}${endDate}.mp4`;
+  link.download = `${prefix}${endDate}.webm`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
