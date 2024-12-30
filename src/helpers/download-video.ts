@@ -1,6 +1,5 @@
-import { webFileReader } from "@remotion/media-parser/web-file";
-import { convertMedia } from "@remotion/webcodecs";
 import { ProcessStatus } from "../components/ProcessingStatus";
+import { convertInBrowser } from "./convert-in-browser";
 import { formatMilliseconds } from "./format-time";
 
 export const downloadVideo = async ({
@@ -19,10 +18,8 @@ export const downloadVideo = async ({
     webcamchunks.push(data);
   }
 
-  const result = await convertMedia({
-    container: "webm",
+  const result = await convertInBrowser({
     src: data,
-    reader: webFileReader,
     onProgress: ({ millisecondsWritten }) => {
       setStatus({
         title: `Converting ${prefix}${endDate}.webm`,

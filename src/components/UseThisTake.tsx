@@ -1,13 +1,18 @@
-import { webFileReader } from "@remotion/media-parser/web-file";
-import { convertMedia } from "@remotion/webcodecs";
 import React, { useCallback } from "react";
 import { RecordingStatus } from "../RecordButton";
+import { convertInBrowser } from "../helpers/convert-in-browser";
 import { downloadVideo } from "../helpers/download-video";
 import { formatMilliseconds } from "../helpers/format-time";
 import { transcribeVideoOnServer } from "../helpers/transcribe-video";
 import { uploadFileToServer } from "../helpers/upload-file";
 import { ProcessStatus } from "./ProcessingStatus";
 import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 let currentProcessing = Promise.resolve();
 
@@ -38,14 +43,8 @@ export const UseThisTake: React.FC<{
           return blob.data();
         })
         .then((src) => {
-          return convertMedia({
-            container: "webm",
-            src: new File([src.slice()], `temp`),
-            reader: webFileReader,
-            resize: {
-              maxHeight: 1080,
-              mode: "max-height",
-            },
+          return convertInBrowser({
+            src: src,
             onProgress: ({ millisecondsWritten }) => {
               setStatus({
                 title: `Converting ${blob.prefix}${blob.endDate}.webm`,
@@ -135,24 +134,38 @@ export const UseThisTake: React.FC<{
     setRecordingStatus({ type: "idle" });
   }, [recordingStatus, setRecordingStatus, setStatus]);
 
-  const keepVideos = useCallback(async () => {
-    if (window.remotionServerEnabled) {
-      await keepVideoOnServer();
-    } else {
-      await keepVideoOnClient();
-    }
-  }, [keepVideoOnClient, keepVideoOnServer]);
-
   return (
-    <Button
-      variant="default"
-      type="button"
-      title="Copy this take"
-      onClick={keepVideos}
-    >
-      {window.remotionServerEnabled
-        ? `Copy to public/${selectedFolder}`
-        : "Download this take"}
-    </Button>
+    <>
+      <div className="flex items-center">
+        <Button
+          variant="default"
+          className={"rounded-r-none"}
+          onClick={keepVideoOnServer}
+        >
+          {`Copy to public/${selectedFolder}`}
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="default"
+              className={"rounded-l-none border-l-2 px-2"}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 448 512"
+                style={{ width: 12 }}
+              >
+                <path d="M201.4 374.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 306.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z" />
+              </svg>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={keepVideoOnClient}>
+              Download as file
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </>
   );
 };
