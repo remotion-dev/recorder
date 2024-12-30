@@ -13,6 +13,7 @@ const mediaRecorderOptions: MediaRecorderOptions = {
 export type FinishedRecording = {
   prefix: string;
   data: () => Promise<Blob>;
+  releaseData: () => Promise<void>;
   endDate: number;
 };
 
@@ -91,6 +92,7 @@ export const startMediaRecorder = async ({
               prefix,
               data: () => writer.save(),
               endDate: Date.now(),
+              releaseData: () => writer.release(),
             });
           })
           .catch((err) => reject(err));

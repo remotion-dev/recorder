@@ -73,18 +73,24 @@ export const UseThisTake: React.FC<{
         })
         .catch((err) => {
           // download blob
-          blob.data().then((buffer) => {
+          alert(
+            "Failed to convert video. Downloaded original video for backup.",
+          );
+          console.log(err);
+          return blob.data();
+        })
+        .then((buffer) => {
+          if (buffer) {
             const blobToDownload = new Blob([buffer], { type: "video/webm" });
             const a = document.createElement("a");
             const url = URL.createObjectURL(blobToDownload);
             a.href = url;
             a.download = `${blob.prefix}${blob.endDate}.webm`;
             a.click();
-          });
-          alert(
-            "Failed to convert video. Downloaded original video for backup.",
-          );
-          console.log(err);
+          }
+        })
+        .finally(() => {
+          blob.releaseData();
         });
     }
 

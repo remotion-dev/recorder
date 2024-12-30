@@ -39,5 +39,15 @@ export const createFileStorage = async (filename: string) => {
       return newFile;
     },
     getBytesWritten: () => written,
+    release: async () => {
+      try {
+        await writable.close();
+      } catch {
+        // Ignore, could already be closed
+      }
+      await directoryHandle.removeEntry(filename, {
+        recursive: true,
+      });
+    },
   };
 };
