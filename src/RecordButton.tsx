@@ -175,21 +175,6 @@ export const RecordButton: React.FC<{
     );
   }
 
-  if (recordingStatus.type === "recording-finished") {
-    return (
-      <Button
-        variant="outline"
-        type="button"
-        style={{ display: "flex", alignItems: "center", gap: 10 }}
-        title="Press R to start recording"
-        onClick={onDiscardAndRetake}
-      >
-        <RecordCircle />
-        Discard and retake
-      </Button>
-    );
-  }
-
   return (
     <div
       title={
@@ -204,12 +189,20 @@ export const RecordButton: React.FC<{
         disabled={disabled}
         title="Press R to start recording"
         className="flex flex-row items-center pl-3 pr-0 py-0"
-        onClick={start}
+        onClick={
+          recordingStatus.type === "recording-finished"
+            ? onDiscardAndRetake
+            : start
+        }
       >
         <RecordCircle />
         <div className="w-2"></div>
         <div>
-          {disabled ? "Select audio+video to record" : "Start recording"}
+          {disabled
+            ? "Select audio+video to record"
+            : recordingStatus.type === "recording-finished"
+              ? "Discard and retake"
+              : "Start recording"}
         </div>
         <div className="w-3"></div>
         {videoDeviceCount > 0 && !disabled && (
