@@ -117,6 +117,23 @@ export const UseThisTake: React.FC<{
     setRecordingStatus({ type: "idle" });
   }, [recordingStatus, selectedFolder, setRecordingStatus, setStatus]);
 
+  const keepVideosWithoutConverting = useCallback(async () => {
+    if (recordingStatus.type !== "recording-finished") {
+      throw new Error("Recording not finished");
+    }
+
+    for (const blob of recordingStatus.blobs) {
+      const buffer = await blob.data();
+
+      const blobToDownload = new Blob([buffer], { type: "video/webm" });
+      const a = document.createElement("a");
+      const url = URL.createObjectURL(blobToDownload);
+      a.href = url;
+      a.download = `${blob.prefix}${blob.endDate}-unprocessed.webm`;
+      a.click();
+    }
+  }, [recordingStatus]);
+
   const keepVideoOnClient = useCallback(async () => {
     if (recordingStatus.type !== "recording-finished") {
       throw new Error("Recording not finished");
@@ -130,9 +147,7 @@ export const UseThisTake: React.FC<{
         setStatus,
       });
     }
-
-    setRecordingStatus({ type: "idle" });
-  }, [recordingStatus, setRecordingStatus, setStatus]);
+  }, [recordingStatus, setStatus]);
 
   return (
     <>
@@ -162,6 +177,9 @@ export const UseThisTake: React.FC<{
           <DropdownMenuContent>
             <DropdownMenuItem onClick={keepVideoOnClient}>
               Download as file
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={keepVideosWithoutConverting}>
+              Download without conversion
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

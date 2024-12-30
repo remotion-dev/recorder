@@ -36,7 +36,7 @@ const makeInitialState = (
 ): PrefixState => {
   return {
     streamState: { type: "initial" },
-    audioDevice: null,
+    audioDevice: getPreferredDeviceIfExists(prefix, "audio", devices),
     videoDevice: getPreferredDeviceIfExists(prefix, "video", devices),
   };
 };
