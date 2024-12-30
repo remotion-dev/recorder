@@ -52,7 +52,7 @@ export const RecordButton: React.FC<{
     setRecordingStatus({ type: "idle" });
   }, [recordingStatus, setRecordingStatus]);
 
-  const mediaSources = useMediaSources();
+  const mediaSources = useMediaSources().mediaSources;
 
   const start = useCallback(async () => {
     const startDate = Date.now();
@@ -60,13 +60,13 @@ export const RecordButton: React.FC<{
       await Promise.all(
         Object.entries(mediaSources).map(
           ([prefix, source]): Promise<CurrentRecorder | null> => {
-            if (source.type !== "loaded") {
+            if (source.streamState.type !== "loaded") {
               return Promise.resolve(null);
             }
 
             return startMediaRecorder({
               prefix: prefix as Prefix,
-              source: source,
+              source: source.streamState,
               timestamp: startDate,
             });
           },

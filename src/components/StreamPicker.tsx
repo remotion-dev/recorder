@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
 import { AbsoluteFill } from "remotion";
-import { getDeviceLabel } from "../App";
 import { DeviceItem } from "../DeviceItem";
+import { useDevices } from "../WaitingForDevices";
+import { Label, formatDeviceLabel } from "../helpers/format-device-label";
 
 const title: React.CSSProperties = {
   fontWeight: "bold",
@@ -25,8 +26,17 @@ const clearStyle: React.CSSProperties = {
   cursor: "pointer",
 };
 
+export const getDeviceLabel = (device: MediaDeviceInfo): string => {
+  const labels: Label[] = JSON.parse(localStorage.getItem("labels") ?? "[]");
+  const found = labels.find((l) => l.id === device.deviceId);
+  if (found) {
+    return found.label;
+  }
+
+  return formatDeviceLabel(device.label);
+};
+
 export const StreamPicker: React.FC<{
-  devices: MediaDeviceInfo[];
   canSelectAudio: boolean;
   canSelectScreen: boolean;
   onPickVideo: (device: MediaDeviceInfo) => void;
@@ -38,7 +48,6 @@ export const StreamPicker: React.FC<{
   canClear: boolean;
 }> = ({
   canSelectAudio,
-  devices,
   canSelectScreen,
   onPickAudio,
   onPickVideo,
@@ -48,6 +57,7 @@ export const StreamPicker: React.FC<{
   clear,
   canClear,
 }) => {
+  const devices = useDevices();
   const videoInputs = useMemo(() => {
     return devices.filter((d) => d.kind === "videoinput");
   }, [devices]);

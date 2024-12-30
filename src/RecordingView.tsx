@@ -2,7 +2,6 @@
 /* eslint-disable no-alert */
 import { useCallback, useMemo, useState } from "react";
 import { WEBCAM_PREFIX } from "../config/cameras";
-import { getDeviceLabel } from "./App";
 import { CropIndicator } from "./CropIndicator";
 import { PrefixLabel } from "./PrefixAndResolution";
 import { RecordingStatus } from "./RecordButton";
@@ -10,11 +9,12 @@ import { ResolutionLimiter } from "./ResolutionLimiter";
 import { ToggleRotate } from "./Rotate";
 import { ResolutionAndFps, Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
+import { useDevices } from "./WaitingForDevices";
 import { ClearCurrentVideo } from "./components/ClearCurrentVideo";
 import { CurrentAudio } from "./components/CurrentAudio";
 import { CurrentVideo } from "./components/CurrentVideo";
 import { Divider } from "./components/Divider";
-import { StreamPicker } from "./components/StreamPicker";
+import { StreamPicker, getDeviceLabel } from "./components/StreamPicker";
 import { VolumeMeter } from "./components/VolumeMeter";
 import { canRotateCamera } from "./helpers/can-rotate-camera";
 import {
@@ -26,10 +26,7 @@ import {
   getSelectedVideoSource,
 } from "./helpers/get-selected-video-source";
 import { Prefix } from "./helpers/prefixes";
-import {
-  getPreferredDeviceIfExists,
-  setPreferredDeviceForPrefix,
-} from "./preferred-device-localstorage";
+import { setPreferredDeviceForPrefix } from "./preferred-device-localstorage";
 import { getPreferredResolutionForDevice } from "./preferred-resolution";
 import { useMediaSources } from "./state/media-sources";
 const viewContainer: React.CSSProperties = {
@@ -60,11 +57,10 @@ const streamViewport: React.CSSProperties = {
 const localStorageKey = "showCropIndicator";
 
 export const RecordingView: React.FC<{
-  devices: MediaDeviceInfo[];
   prefix: Prefix;
   recordingStatus: RecordingStatus;
-}> = ({ devices, prefix, recordingStatus }) => {
-  const mediaSources = useMediaSources();
+}> = ({ prefix, recordingStatus }) => {
+  const { mediaSources, setAudioDevice, setVideoDevice } = useMediaSources();
   const mediaStream = mediaSources[prefix];
 
   const initialCropIndicatorState = useMemo(() => {
@@ -78,23 +74,15 @@ export const RecordingView: React.FC<{
     initialCropIndicatorState,
   );
 
-  const [selectedVideoDevice, setSelectedVideoDevice] = useState<string | null>(
-    () => getPreferredDeviceIfExists(prefix, "video", devices),
-  );
-
-  const [selectedAudioDevice, setSelectedAudioDevice] = useState<string | null>(
-    () => getPreferredDeviceIfExists(prefix, "audio", devices),
-  );
-
   const [showPickerPreference, setShowPicker] = useState(
-    () => !selectedVideoDevice && !selectedAudioDevice,
+    () => !mediaStream.videoDevice && !mediaStream.audioDevice,
   );
 
   const recordAudio = prefix === WEBCAM_PREFIX;
   const [resolution, setResolution] = useState<ResolutionAndFps | null>(null);
   const [preferPortrait, setPreferPortrait] = useState(false);
   const [sizeConstraint, setSizeConstraint] = useState<SizeConstraint>(() =>
-    getPreferredResolutionForDevice(selectedVideoDevice),
+    getPreferredResolutionForDevice(mediaStream.videoDevice),
   );
 
   const onToggleCrop = useCallback(() => {
@@ -111,16 +99,18 @@ export const RecordingView: React.FC<{
   }, []);
 
   const selectScreen = useCallback(async () => {
-    setSelectedVideoDevice("display");
+    setVideoDevice(prefix, "display");
     setShowPicker(false);
-  }, []);
+  }, [prefix, setVideoDevice]);
+
+  const devices = useDevices();
 
   const activeVideoDevice = useMemo(() => {
-    return devices.find((d) => d.deviceId === selectedVideoDevice);
-  }, [selectedVideoDevice, devices]);
+    return devices.find((d) => d.deviceId === mediaStream.videoDevice);
+  }, [devices, mediaStream.videoDevice]);
   const activeAudioDevice = useMemo(() => {
-    return devices.find((d) => d.deviceId === selectedAudioDevice);
-  }, [selectedAudioDevice, devices]);
+    return devices.find((d) => d.deviceId === mediaStream.audioDevice);
+  }, [devices, mediaStream.audioDevice]);
 
   const maxResolution = useMemo(() => {
     if (!activeVideoDevice) {
@@ -131,7 +121,7 @@ export const RecordingView: React.FC<{
   }, [activeVideoDevice]);
 
   const selectedVideoSource = useMemo(() => {
-    if (selectedVideoDevice === "display") {
+    if (mediaStream.videoDevice === "display") {
       return { type: "display" as const };
     }
 
@@ -144,10 +134,15 @@ export const RecordingView: React.FC<{
       resolutionConstraint: sizeConstraint,
       maxResolution,
     });
-  }, [activeVideoDevice, maxResolution, selectedVideoDevice, sizeConstraint]);
+  }, [
+    activeVideoDevice,
+    maxResolution,
+    mediaStream.videoDevice,
+    sizeConstraint,
+  ]);
 
   const videoDeviceLabel = useMemo(() => {
-    if (selectedVideoDevice === "display") {
+    if (mediaStream.videoDevice === "display") {
       return "Screen Share";
     }
 
@@ -156,7 +151,7 @@ export const RecordingView: React.FC<{
     }
 
     return getDeviceLabel(activeVideoDevice);
-  }, [activeVideoDevice, selectedVideoDevice]);
+  }, [activeVideoDevice, mediaStream.videoDevice]);
 
   const audioDeviceLabel = useMemo(() => {
     if (!activeAudioDevice) {
@@ -176,36 +171,35 @@ export const RecordingView: React.FC<{
 
   const onPickVideo = useCallback(
     (device: MediaDeviceInfo) => {
-      setSelectedVideoDevice(device.deviceId);
+      setVideoDevice(prefix, device.deviceId);
       setPreferredDeviceForPrefix(prefix, "video", device.deviceId);
-      if (recordAudio && !selectedAudioDevice) {
+      if (recordAudio && !mediaStream.audioDevice) {
         return;
       }
       setShowPicker(false);
     },
-    [prefix, recordAudio, selectedAudioDevice],
+    [mediaStream.audioDevice, prefix, recordAudio, setVideoDevice],
   );
 
   const onPickAudio = useCallback(
     (device: MediaDeviceInfo) => {
-      setSelectedAudioDevice(device.deviceId);
+      setAudioDevice(prefix, device.deviceId);
       setPreferredDeviceForPrefix(prefix, "audio", device.deviceId);
-      if (!selectedVideoDevice) {
+      if (!mediaStream.videoDevice) {
         return;
       }
       setShowPicker(false);
     },
-    [prefix, selectedVideoDevice],
+    [mediaStream.videoDevice, prefix, setAudioDevice],
   );
 
   const clear = useCallback(() => {
-    setSelectedVideoDevice(null);
-    setSelectedAudioDevice(null);
+    setVideoDevice(prefix, null);
+    setAudioDevice(prefix, null);
     setPreferredDeviceForPrefix(prefix, "video", null);
     setShowPicker(true);
     setResolution(null);
-    console.log("clearing");
-  }, [prefix]);
+  }, [prefix, setAudioDevice, setVideoDevice]);
 
   const [resolutionLimiterOpen, setResolutionLimiterOpen] = useState(false);
 
@@ -216,7 +210,7 @@ export const RecordingView: React.FC<{
   );
 
   const hasSelectedVideoOrAudio = Boolean(
-    selectedVideoDevice || selectedAudioDevice,
+    mediaStream.videoDevice || mediaStream.audioDevice,
   );
 
   const showPicker =
@@ -231,7 +225,7 @@ export const RecordingView: React.FC<{
       data-recording={Boolean(
         recordingStatus.type === "recording" &&
           hasSelectedVideoOrAudio &&
-          mediaStream.type === "loaded",
+          mediaStream.streamState.type === "loaded",
       )}
       className="outline-red-600 outline-0 data-[recording=true]:outline-2 outline"
     >
@@ -277,11 +271,11 @@ export const RecordingView: React.FC<{
         ) : null}
       </div>
       {prefix === WEBCAM_PREFIX ? (
-        <VolumeMeter mediaStream={mediaStream} />
+        <VolumeMeter mediaStream={mediaStream.streamState} />
       ) : null}
       <div style={streamViewport}>
         <Stream
-          selectedAudioSource={selectedAudioDevice}
+          selectedAudioSource={mediaStream.audioDevice}
           selectedVideoSource={selectedVideoSource}
           recordAudio={recordAudio}
           setResolution={setResolution}
@@ -297,11 +291,10 @@ export const RecordingView: React.FC<{
             onPickVideo={onPickVideo}
             onPickAudio={onPickAudio}
             canSelectAudio={recordAudio}
-            devices={devices}
             canSelectScreen={prefix !== WEBCAM_PREFIX}
             onPickScreen={selectScreen}
-            selectedAudioDevice={selectedAudioDevice}
-            selectedVideoDevice={selectedVideoDevice}
+            selectedAudioDevice={mediaStream.audioDevice}
+            selectedVideoDevice={mediaStream.videoDevice}
             clear={clear}
             canClear={prefix !== WEBCAM_PREFIX}
           />

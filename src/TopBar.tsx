@@ -75,11 +75,11 @@ export const TopBar: React.FC<{
     persistSelectedFolder(selectedFolder ?? "");
   }, [selectedFolder]);
 
-  const mediaSources = useMediaSources();
+  const { mediaSources } = useMediaSources();
   const recordingDisabled = useMemo(() => {
     return (
-      mediaSources.webcam.type !== "loaded" ||
-      mediaSources.webcam.stream.getAudioTracks().length === 0
+      mediaSources.webcam.streamState.type !== "loaded" ||
+      mediaSources.webcam.streamState.stream.getAudioTracks().length === 0
     );
   }, [mediaSources.webcam]);
 
