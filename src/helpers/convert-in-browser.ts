@@ -1,13 +1,14 @@
 import { webFileReader } from "@remotion/media-parser/web-file";
-import { ConvertMediaOnProgress, convertMedia } from "@remotion/webcodecs";
+import { ConvertMediaProgress, convertMedia } from "@remotion/webcodecs";
 
 export const convertInBrowser = ({
   src,
   onProgress,
 }: {
   src: Blob;
-  onProgress: ConvertMediaOnProgress | undefined;
+  onProgress: (progress: ConvertMediaProgress, abort: () => void) => void;
 }) => {
+  const controller = new AbortController();
   return convertMedia({
     container: "webm",
     src: new File([src.slice()], `temp`),
@@ -16,6 +17,9 @@ export const convertInBrowser = ({
       maxHeight: 1080,
       mode: "max-height",
     },
-    onProgress,
+    onProgress: (progress) => {
+      onProgress?.(progress, () => controller.abort());
+    },
+    signal: controller.signal,
   });
 };

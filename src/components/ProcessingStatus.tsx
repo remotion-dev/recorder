@@ -3,6 +3,7 @@ import React from "react";
 export type ProcessStatus = {
   title: string;
   description: string;
+  abort: null | (() => void);
 };
 
 const statusStyle: React.CSSProperties = {

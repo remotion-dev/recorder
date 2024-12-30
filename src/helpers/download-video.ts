@@ -20,10 +20,11 @@ export const downloadVideo = async ({
 
   const result = await convertInBrowser({
     src: data,
-    onProgress: ({ millisecondsWritten }) => {
+    onProgress: ({ millisecondsWritten }, abortFn) => {
       setStatus({
         title: `Converting ${prefix}${endDate}.webm`,
         description: `${formatMilliseconds(millisecondsWritten)} processed`,
+        abort: abortFn,
       });
     },
   });

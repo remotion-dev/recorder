@@ -39,16 +39,18 @@ export const UseThisTake: React.FC<{
           setStatus({
             title: `Converting ${blob.prefix}${blob.endDate}.webm`,
             description: "Starting...",
+            abort: null,
           });
           return blob.data();
         })
         .then((src) => {
           return convertInBrowser({
             src: src,
-            onProgress: ({ millisecondsWritten }) => {
+            onProgress: ({ millisecondsWritten }, abortFn) => {
               setStatus({
                 title: `Converting ${blob.prefix}${blob.endDate}.webm`,
                 description: `${formatMilliseconds(millisecondsWritten)} processed`,
+                abort: abortFn,
               });
             },
           });
@@ -58,6 +60,7 @@ export const UseThisTake: React.FC<{
           setStatus({
             title: `Copying to public folder ${blob.prefix}${blob.endDate}.webm`,
             description: "Copying in progress",
+            abort: null,
           });
           return uploadFileToServer({
             blob: convertedBlob,
@@ -98,6 +101,7 @@ export const UseThisTake: React.FC<{
         setStatus({
           title: `Transcribing webcam${recordingStatus.endDate}.webm`,
           description: "See Terminal for progress",
+          abort: null,
         });
         return transcribeVideoOnServer({
           endDate: recordingStatus.endDate,
