@@ -7,14 +7,14 @@ import {
   WEBCAM_PREFIX,
 } from "../config/cameras";
 import "./App.css";
-import type { MediaSources, RecordingStatus } from "./RecordButton";
+import type { RecordingStatus } from "./RecordButton";
 import { RecordingView } from "./RecordingView";
 import { TopBar } from "./TopBar";
 import { Button } from "./components/ui/button";
 import { enumerateDevicesOrTimeOut } from "./helpers/enumerate-devices-or-time-out";
 import type { Label } from "./helpers/format-device-label";
 import { formatDeviceLabel } from "./helpers/format-device-label";
-import { Prefix } from "./helpers/prefixes";
+import { MediaSourcesProvider } from "./state/media-sources";
 
 export const getDeviceLabel = (device: MediaDeviceInfo): string => {
   const labels: Label[] = JSON.parse(localStorage.getItem("labels") ?? "[]");
@@ -79,13 +79,6 @@ const App = () => {
   );
   const [devices, setDevices] = useState<MediaDeviceInfo[] | null>(null);
 
-  const [mediaSources, setMediaSources] = useState<MediaSources>({
-    webcam: null,
-    display: null,
-    alternative1: null,
-    alternative2: null,
-  });
-
   const dynamicGridContainer = useMemo(() => {
     if (showAlternativeViews) {
       return { ...gridContainer, gridTemplateRows: "repeat(2, 1fr)" };
@@ -103,16 +96,6 @@ const App = () => {
     setShowAlternativeViews(false);
     localStorage.setItem("showAlternativeViews", "false");
   }, []);
-
-  const setMediaStream = useCallback(
-    (prefix: Prefix, source: MediaStream | null) => {
-      setMediaSources((prevMediaSources) => ({
-        ...prevMediaSources,
-        [prefix]: source,
-      }));
-    },
-    [],
-  );
 
   useEffect(() => {
     const checkDeviceLabels = async () => {
@@ -147,69 +130,62 @@ const App = () => {
   }, []);
 
   return (
-    <div style={outer}>
-      <TopBar
-        setRecordingStatus={setRecordingStatus}
-        recordingStatus={recordingStatus}
-        mediaSources={mediaSources}
-      />
-      {devices ? (
-        <div style={dynamicGridContainer}>
-          <RecordingView
-            recordingStatus={recordingStatus}
-            prefix={WEBCAM_PREFIX}
-            devices={devices}
-            setMediaStream={setMediaStream}
-            mediaStream={mediaSources.webcam}
-          />
-          <RecordingView
-            recordingStatus={recordingStatus}
-            prefix={DISPLAY_PREFIX}
-            devices={devices}
-            setMediaStream={setMediaStream}
-            mediaStream={mediaSources.display}
-          />
-          {showAlternativeViews ? (
-            <>
-              <RecordingView
-                recordingStatus={recordingStatus}
-                prefix={ALTERNATIVE1_PREFIX}
-                devices={devices}
-                setMediaStream={setMediaStream}
-                mediaStream={mediaSources.alternative1}
-              />
-              <RecordingView
-                recordingStatus={recordingStatus}
-                prefix={ALTERNATIVE2_PREFIX}
-                devices={devices}
-                setMediaStream={setMediaStream}
-                mediaStream={mediaSources.alternative2}
-              />
-            </>
-          ) : null}
-        </div>
-      ) : null}
+    <MediaSourcesProvider>
+      <div style={outer}>
+        <TopBar
+          setRecordingStatus={setRecordingStatus}
+          recordingStatus={recordingStatus}
+        />
+        {devices ? (
+          <div style={dynamicGridContainer}>
+            <RecordingView
+              recordingStatus={recordingStatus}
+              prefix={WEBCAM_PREFIX}
+              devices={devices}
+            />
+            <RecordingView
+              recordingStatus={recordingStatus}
+              prefix={DISPLAY_PREFIX}
+              devices={devices}
+            />
+            {showAlternativeViews ? (
+              <>
+                <RecordingView
+                  recordingStatus={recordingStatus}
+                  prefix={ALTERNATIVE1_PREFIX}
+                  devices={devices}
+                />
+                <RecordingView
+                  recordingStatus={recordingStatus}
+                  prefix={ALTERNATIVE2_PREFIX}
+                  devices={devices}
+                />
+              </>
+            ) : null}
+          </div>
+        ) : null}
 
-      <div style={{ marginBottom: 10, textAlign: "center" }}>
-        {showAlternativeViews ? (
-          <Button
-            variant={"ghost"}
-            onClick={handleShowLess}
-            style={{ margin: "0px 10px", width: 100 }}
-          >
-            Show Less
-          </Button>
-        ) : (
-          <Button
-            variant={"ghost"}
-            onClick={handleShowMore}
-            style={{ margin: "0px 10px" }}
-          >
-            Show more views
-          </Button>
-        )}
+        <div style={{ marginBottom: 10, textAlign: "center" }}>
+          {showAlternativeViews ? (
+            <Button
+              variant={"ghost"}
+              onClick={handleShowLess}
+              style={{ margin: "0px 10px", width: 100 }}
+            >
+              Show Less
+            </Button>
+          ) : (
+            <Button
+              variant={"ghost"}
+              onClick={handleShowMore}
+              style={{ margin: "0px 10px" }}
+            >
+              Show more views
+            </Button>
+          )}
+        </div>
       </div>
-    </div>
+    </MediaSourcesProvider>
   );
 };
 

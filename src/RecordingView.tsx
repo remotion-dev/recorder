@@ -31,6 +31,7 @@ import {
   setPreferredDeviceForPrefix,
 } from "./preferred-device-localstorage";
 import { getPreferredResolutionForDevice } from "./preferred-resolution";
+import { useMediaSources } from "./state/media-sources";
 const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
@@ -60,11 +61,12 @@ const localStorageKey = "showCropIndicator";
 
 export const RecordingView: React.FC<{
   devices: MediaDeviceInfo[];
-  setMediaStream: (prefix: Prefix, source: MediaStream | null) => void;
-  mediaStream: MediaStream | null;
   prefix: Prefix;
   recordingStatus: RecordingStatus;
-}> = ({ devices, setMediaStream, prefix, mediaStream, recordingStatus }) => {
+}> = ({ devices, prefix, recordingStatus }) => {
+  const mediaSources = useMediaSources();
+  const mediaStream = mediaSources[prefix];
+
   const initialCropIndicatorState = useMemo(() => {
     return (
       localStorage.getItem(localStorageKey) === "true" &&
@@ -229,7 +231,7 @@ export const RecordingView: React.FC<{
       data-recording={Boolean(
         recordingStatus.type === "recording" &&
           hasSelectedVideoOrAudio &&
-          mediaStream,
+          mediaStream.type === "loaded",
       )}
       className="outline-red-600 outline-0 data-[recording=true]:outline-2 outline"
     >
@@ -283,8 +285,6 @@ export const RecordingView: React.FC<{
           selectedVideoSource={selectedVideoSource}
           recordAudio={recordAudio}
           setResolution={setResolution}
-          mediaStream={mediaStream}
-          setMediaStream={setMediaStream}
           prefix={prefix}
           preferPortrait={preferPortrait}
           clear={clear}

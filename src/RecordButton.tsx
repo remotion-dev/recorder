@@ -9,10 +9,7 @@ import {
   startMediaRecorder,
 } from "./helpers/start-media-recorder";
 import { useKeyPress } from "./helpers/use-key-press";
-
-export type MediaSources = {
-  [key in Prefix]: MediaStream | null;
-};
+import { useMediaSources } from "./state/media-sources";
 
 export type CurrentRecorder = {
   recorder: MediaRecorder;
@@ -43,13 +40,7 @@ export const RecordButton: React.FC<{
   recordingStatus: RecordingStatus;
   setRecordingStatus: React.Dispatch<React.SetStateAction<RecordingStatus>>;
   recordingDisabled: boolean;
-  mediaSources: MediaSources;
-}> = ({
-  recordingDisabled,
-  mediaSources,
-  setRecordingStatus,
-  recordingStatus,
-}) => {
+}> = ({ recordingDisabled, setRecordingStatus, recordingStatus }) => {
   const discardVideos = useCallback(async () => {
     if (recordingStatus.type !== "recording-finished") {
       throw new Error("Recording not finished");
@@ -61,13 +52,15 @@ export const RecordButton: React.FC<{
     setRecordingStatus({ type: "idle" });
   }, [recordingStatus, setRecordingStatus]);
 
+  const mediaSources = useMediaSources();
+
   const start = useCallback(async () => {
     const startDate = Date.now();
     const recorders = (
       await Promise.all(
         Object.entries(mediaSources).map(
           ([prefix, source]): Promise<CurrentRecorder | null> => {
-            if (!source) {
+            if (source.type !== "loaded") {
               return Promise.resolve(null);
             }
 
@@ -109,7 +102,7 @@ export const RecordButton: React.FC<{
   }, [recordingStatus, setRecordingStatus]);
 
   const onPressR = useCallback(() => {
-    if (mediaSources.webcam === null || !mediaSources.webcam.active) {
+    if (recordingDisabled) {
       return;
     }
 
@@ -127,7 +120,7 @@ export const RecordButton: React.FC<{
     } else if (recordingStatus.type === "idle") {
       start();
     }
-  }, [mediaSources.webcam, onStop, recordingStatus.type, start]);
+  }, [onStop, recordingDisabled, recordingStatus.type, start]);
 
   const onDiscardAndRetake = useCallback(() => {
     discardVideos();

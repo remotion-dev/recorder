@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { AbsoluteFill } from "remotion";
 import { Spinner } from "./components/Spinner";
 import type { SelectedSource } from "./helpers/get-selected-video-source";
@@ -13,20 +7,13 @@ import {
   getVideoStream,
 } from "./helpers/get-video-stream";
 import { Prefix } from "./helpers/prefixes";
+import { useMediaSources, useSetMediaStream } from "./state/media-sources";
 
 const container: React.CSSProperties = {
   flex: 1,
   justifyContent: "center",
   alignItems: "center",
 };
-
-type StreamState =
-  | {
-      type: "initial";
-    }
-  | { type: "loading" }
-  | { type: "loaded" }
-  | { type: "error"; error: string };
 
 export type ResolutionAndFps = {
   width: number;
@@ -36,8 +23,6 @@ export type ResolutionAndFps = {
 
 export const Stream: React.FC<{
   prefix: Prefix;
-  setMediaStream: (prefix: Prefix, source: MediaStream | null) => void;
-  mediaStream: MediaStream | null;
   setResolution: React.Dispatch<React.SetStateAction<ResolutionAndFps | null>>;
   recordAudio: boolean;
   selectedVideoSource: SelectedSource | null;
@@ -46,8 +31,6 @@ export const Stream: React.FC<{
   clear: () => void;
 }> = ({
   prefix,
-  mediaStream,
-  setMediaStream,
   setResolution,
   recordAudio,
   selectedVideoSource,
@@ -55,9 +38,9 @@ export const Stream: React.FC<{
   preferPortrait,
   clear,
 }) => {
-  const [streamState, setStreamState] = useState<StreamState>({
-    type: "initial",
-  });
+  const mediaSources = useMediaSources();
+  const mediaStream = mediaSources[prefix];
+  const setStreamState = useSetMediaStream();
 
   const sourceRef = useRef<HTMLVideoElement>(null);
 
@@ -69,31 +52,31 @@ export const Stream: React.FC<{
   }, [mediaStream]);
 
   useEffect(() => {
-    if (!mediaStream) {
+    if (mediaStream.type !== "loaded") {
       return;
     }
 
-    const track = mediaStream.getVideoTracks()[0];
+    const track = mediaStream.stream.getVideoTracks()[0];
     if (!track) {
       return;
     }
 
     track.onended = () => {
-      setMediaStream(prefix, null);
+      setStreamState(prefix, { type: "initial" });
     };
-  }, [mediaStream, prefix, setMediaStream]);
+  }, [mediaStream, prefix, setStreamState]);
 
   useEffect(() => {
-    if (!mediaStream) {
+    if (mediaStream.type !== "loaded") {
       return;
     }
 
     return () => {
       if (recordAudio) {
-        mediaStream.getAudioTracks().forEach((track) => track.stop());
+        mediaStream.stream.getAudioTracks().forEach((track) => track.stop());
       }
 
-      mediaStream.getVideoTracks().forEach((track) => track.stop());
+      mediaStream.stream.getVideoTracks().forEach((track) => track.stop());
     };
   }, [mediaStream, recordAudio]);
 
@@ -104,11 +87,11 @@ export const Stream: React.FC<{
     }
 
     if (selectedVideoSource === null) {
-      setMediaStream(prefix, null);
+      setStreamState(prefix, { type: "initial" });
       return;
     }
 
-    setStreamState({ type: "loading" });
+    setStreamState(prefix, { type: "loading" });
 
     const cleanup: (() => void)[] = [];
 
@@ -128,7 +111,7 @@ export const Stream: React.FC<{
           "ended",
           () => {
             clear();
-            setMediaStream(prefix, null);
+            setStreamState(prefix, { type: "initial" });
           },
           { once: true },
         );
@@ -155,8 +138,7 @@ export const Stream: React.FC<{
           current.srcObject = null;
         });
 
-        setMediaStream(prefix, stream);
-        setStreamState({ type: "loaded" });
+        setStreamState(prefix, { type: "loaded", stream });
       })
       .catch((e) => {
         console.log(e);
@@ -173,8 +155,7 @@ export const Stream: React.FC<{
                 )}`
               : e.message || e.name;
 
-        setMediaStream(prefix, null);
-        setStreamState({
+        setStreamState(prefix, {
           type: "error",
           error: errMessage,
         });
@@ -190,8 +171,8 @@ export const Stream: React.FC<{
     recordAudio,
     selectedAudioSource,
     selectedVideoSource,
-    setMediaStream,
     setResolution,
+    setStreamState,
   ]);
 
   useEffect(() => {
@@ -223,17 +204,17 @@ export const Stream: React.FC<{
   }, [setResolution]);
 
   const onReset = useCallback(() => {
-    setStreamState({
+    setStreamState(prefix, {
       type: "initial",
     });
     clear();
-  }, [clear]);
+  }, [clear, prefix, setStreamState]);
 
   return (
     <AbsoluteFill style={container} id={prefix + "-video-container"}>
       <video ref={sourceRef} muted style={videoStyle} />
-      {streamState.type === "loading" ? <Spinner /> : null}
-      {streamState.type === "error" ? (
+      {mediaStream.type === "loading" ? <Spinner /> : null}
+      {mediaStream.type === "error" ? (
         <AbsoluteFill
           style={{
             padding: 20,
@@ -244,7 +225,7 @@ export const Stream: React.FC<{
             alignItems: "center",
           }}
         >
-          {streamState.error}
+          {mediaStream.error}
           <a className="underline cursor-pointer" onClick={onReset}>
             Try again
           </a>

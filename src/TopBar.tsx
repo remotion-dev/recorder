@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { BlinkingCircle } from "./BlinkingCircle";
 import { Logo } from "./Logo";
-import type { MediaSources, RecordingStatus } from "./RecordButton";
+import type { RecordingStatus } from "./RecordButton";
 import { RecordButton } from "./RecordButton";
 import { Timer } from "./Timer";
 import { fetchProjectFolders } from "./actions/fetch-project-folders";
@@ -15,6 +15,7 @@ import {
   loadSelectedFolder,
   persistSelectedFolder,
 } from "./helpers/get-folders";
+import { useMediaSources } from "./state/media-sources";
 
 const topBarContainer: React.CSSProperties = {
   display: "flex",
@@ -34,10 +35,9 @@ const recordWrapper: React.CSSProperties = {
 };
 
 export const TopBar: React.FC<{
-  mediaSources: MediaSources;
   recordingStatus: RecordingStatus;
   setRecordingStatus: React.Dispatch<React.SetStateAction<RecordingStatus>>;
-}> = ({ mediaSources, recordingStatus, setRecordingStatus }) => {
+}> = ({ recordingStatus, setRecordingStatus }) => {
   const [folders, setFolders] = useState<string[] | null>(null);
   const [processingStatus, setProcessingStatus] =
     useState<ProcessStatus | null>(null);
@@ -75,10 +75,11 @@ export const TopBar: React.FC<{
     persistSelectedFolder(selectedFolder ?? "");
   }, [selectedFolder]);
 
+  const mediaSources = useMediaSources();
   const recordingDisabled = useMemo(() => {
     return (
-      mediaSources.webcam === null ||
-      mediaSources.webcam.getAudioTracks().length === 0
+      mediaSources.webcam.type !== "loaded" ||
+      mediaSources.webcam.stream.getAudioTracks().length === 0
     );
   }, [mediaSources.webcam]);
 
@@ -89,7 +90,6 @@ export const TopBar: React.FC<{
         <RecordButton
           recordingStatus={recordingStatus}
           recordingDisabled={recordingDisabled || processingStatus !== null}
-          mediaSources={mediaSources}
           setRecordingStatus={setRecordingStatus}
         />
         {recordingStatus.type === "recording" ? (

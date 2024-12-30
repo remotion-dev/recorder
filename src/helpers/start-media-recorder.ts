@@ -1,5 +1,6 @@
 import { WEBCAM_PREFIX } from "../../config/cameras";
 import { CurrentRecorder } from "../RecordButton";
+import { StreamState } from "../state/media-sources";
 import { Prefix } from "./prefixes";
 import { createFileStorage } from "./store-file";
 
@@ -24,10 +25,10 @@ export const startMediaRecorder = async ({
 }: {
   prefix: Prefix;
   timestamp: number;
-  source: MediaStream | null;
+  source: StreamState;
 }): Promise<CurrentRecorder | null> => {
-  if (!source) {
-    return null;
+  if (source.type !== "loaded") {
+    throw new Error(`Source not loaded for ${prefix}`);
   }
 
   const mimeType =
@@ -42,7 +43,10 @@ export const startMediaRecorder = async ({
 
   const filename = `${prefix}${timestamp}.webm`;
 
-  const recorder = new MediaRecorder(source, completeMediaRecorderOptions);
+  const recorder = new MediaRecorder(
+    source.stream,
+    completeMediaRecorderOptions,
+  );
   const writer = await createFileStorage(`${filename}`);
 
   const periodicSaveController = new AbortController();
