@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { RecordingStatus } from "../RecordButton";
+import { cancelTranscribeOnServer } from "../helpers/cancel-transcribe";
 import { convertInBrowser } from "../helpers/convert-in-browser";
 import { downloadVideo } from "../helpers/download-video";
 import { formatMilliseconds } from "../helpers/format-time";
@@ -76,7 +77,7 @@ export const UseThisTake: React.FC<{
           setStatus(null);
         })
         .catch((err) => {
-          // download blob
+          // ⚠️ might come from @remotion/webcodecs or from transcribe-video.ts
           if ((err as Error).message.includes("aborted by user")) {
             aborted = true;
             return;
@@ -108,7 +109,7 @@ export const UseThisTake: React.FC<{
         setStatus({
           title: `Transcribing webcam${recordingStatus.endDate}.webm`,
           description: "See Terminal for progress",
-          abort: null,
+          abort: () => cancelTranscribeOnServer(),
         });
         return transcribeVideoOnServer({
           endDate: recordingStatus.endDate,
@@ -119,6 +120,11 @@ export const UseThisTake: React.FC<{
         });
       })
       .catch((err) => {
+        // ⚠️ might come from @remotion/webcodecs or from transcribe-video.ts
+        if ((err as Error).message.includes("aborted by user")) {
+          return;
+        }
+
         console.log(err);
       })
       .then(() => {

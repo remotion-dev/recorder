@@ -4,11 +4,13 @@ const transcribingProgress = "transcribing-progress" as const;
 const installWhisperProgress = "install-whisper-progress" as const;
 const downloadingWhisperModelProgress =
   "downloading-whisper-model-progress" as const;
+const whisperAbort = "whisper-abort" as const;
 
 const messageTypes = {
   "2": { type: transcribingProgress },
   "3": { type: installWhisperProgress },
   "4": { type: downloadingWhisperModelProgress },
+  "5": { type: whisperAbort },
 } as const;
 
 export type MessageTypeId = keyof typeof messageTypes;
@@ -18,6 +20,7 @@ export const formatMap: { [key in MessageType]: "json" | "binary" } = {
   [transcribingProgress]: "json",
   [installWhisperProgress]: "json",
   [downloadingWhisperModelProgress]: "json",
+  [whisperAbort]: "json",
 };
 
 type StreamingPayload =
@@ -37,6 +40,10 @@ type StreamingPayload =
       payload: {
         progressInPercent: number;
       };
+    }
+  | {
+      type: typeof whisperAbort;
+      payload: Record<string, never>;
     };
 
 export const messageTypeIdToMessageType = (

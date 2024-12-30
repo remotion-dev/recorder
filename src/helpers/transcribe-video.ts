@@ -7,6 +7,7 @@ import {
   messageTypeIdToMessageType,
 } from "../../scripts/server/streaming";
 import { ProcessStatus } from "../components/ProcessingStatus";
+import { cancelTranscribeOnServer } from "./cancel-transcribe";
 import { parseJsonOrThrowSource } from "./upload-file";
 
 export const transcribeVideoOnServer = async ({
@@ -46,22 +47,25 @@ export const transcribeVideoOnServer = async ({
       onProgress({
         title: `Transcribing ${message.payload.filename}`,
         description: `${message.payload.progress}%`,
-        abort: null,
+        abort: () => cancelTranscribeOnServer(),
       });
     }
     if (message.type === "install-whisper-progress") {
       onProgress({
         title: `Installing Whisper`,
         description: `See console for progress`,
-        abort: null,
+        abort: () => cancelTranscribeOnServer(),
       });
     }
     if (message.type === "downloading-whisper-model-progress") {
       onProgress({
         title: `Downloading Whisper model`,
         description: `${Math.round(message.payload.progressInPercent)}%`,
-        abort: null,
+        abort: () => cancelTranscribeOnServer(),
       });
+    }
+    if (message.type === "whisper-abort") {
+      throw new Error("aborted by user");
     }
   });
 

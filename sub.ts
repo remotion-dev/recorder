@@ -7,6 +7,7 @@ import { ensureWhisper } from "./scripts/captions/install-whisper";
 await ensureWhisper({
   onInstall: () => undefined,
   onModelProgressInPercent: () => undefined,
+  signal: new AbortController().signal,
 });
 
 const publicFolder = path.join(process.cwd(), "public");
@@ -42,7 +43,7 @@ for (const folder of foldersInPublicFolder) {
         onProgress(progress) {
           console.log(`${progress.progressInPercent}%`);
         },
-        signal: null,
+        signal: new AbortController().signal,
       });
       console.log("Transcribed to", outPath);
     }

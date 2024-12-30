@@ -5,6 +5,8 @@ import { ensureWhisper } from "../captions/install-whisper";
 import { makeStreamPayload } from "./streaming";
 import { transcribeVideo } from "./transcribe-video";
 
+let currentSignal = new AbortController();
+
 export const handleTranscribeVideo = async (
   req: IncomingMessage,
   res: ServerResponse,
@@ -14,6 +16,7 @@ export const handleTranscribeVideo = async (
   const endDateAsString = params.get("endDateAsString");
   const folder = params.get("folder");
   const publicDir = path.join(process.cwd(), "public");
+  currentSignal = new AbortController();
 
   if (typeof endDateAsString !== "string") {
     throw new Error("No `endDate` provided");
@@ -47,6 +50,7 @@ export const handleTranscribeVideo = async (
           }),
         );
       },
+      signal: currentSignal.signal,
     });
 
     await transcribeVideo({
@@ -65,9 +69,39 @@ export const handleTranscribeVideo = async (
         });
         res.write(payload);
       },
-      signal: null,
+      signal: currentSignal.signal,
     });
 
+    res.statusCode = 200;
+    res.end();
+  } catch (e) {
+    if (
+      (e as Error).name === "AbortError" ||
+      (e as Error).message.includes("SIGTERM")
+    ) {
+      const payload = makeStreamPayload({
+        message: {
+          type: "whisper-abort",
+          payload: {},
+        },
+      });
+      res.write(payload);
+      res.statusCode = 200;
+      res.end();
+      return;
+    }
+    console.error(e);
+    res.statusCode = 500;
+    res.end(JSON.stringify({ error: (e as Error).message }));
+  }
+};
+
+export const handleCancelTranscription = async (
+  req: IncomingMessage,
+  res: ServerResponse,
+) => {
+  try {
+    currentSignal.abort();
     res.statusCode = 200;
     res.end();
   } catch (e) {

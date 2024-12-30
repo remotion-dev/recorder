@@ -23,7 +23,7 @@ export const captionFile = async ({
     filename: string;
     progressInPercent: number;
   }) => void;
-  signal: AbortSignal | null;
+  signal: AbortSignal;
 }): Promise<void> => {
   const tmpDir = path.join(tmpdir(), "remotion-recorder");
 
@@ -66,6 +66,7 @@ export const captionFile = async ({
         progressInPercent: Math.round(progress * 100),
       });
     },
+    signal: signal,
     language: TRANSCRIPTION_LANGUAGE,
   });
 

@@ -17,7 +17,7 @@ export const transcribeVideo = async ({
     filename: string;
     progressInPercent: number;
   }) => void;
-  signal: AbortSignal | null;
+  signal: AbortSignal;
 }) => {
   if (typeof endDateAsString !== "string") {
     throw new Error("No `endDate` provided");
