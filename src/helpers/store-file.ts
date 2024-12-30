@@ -15,7 +15,6 @@ export const createFileStorage = async (filename: string) => {
       position: written,
       data: data,
     });
-    console.log("written at", written, data);
     written += data instanceof Blob ? data.size : data.byteLength;
   };
 
