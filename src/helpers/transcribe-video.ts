@@ -46,18 +46,21 @@ export const transcribeVideoOnServer = async ({
       onProgress({
         title: `Transcribing ${message.payload.filename}`,
         description: `${message.payload.progress}%`,
+        abort: null,
       });
     }
     if (message.type === "install-whisper-progress") {
       onProgress({
         title: `Installing Whisper`,
         description: `See console for progress`,
+        abort: null,
       });
     }
     if (message.type === "downloading-whisper-model-progress") {
       onProgress({
         title: `Downloading Whisper model`,
         description: `${Math.round(message.payload.progressInPercent)}%`,
+        abort: null,
       });
     }
   });

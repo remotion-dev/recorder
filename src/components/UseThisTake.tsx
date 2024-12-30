@@ -33,6 +33,8 @@ export const UseThisTake: React.FC<{
       return Promise.resolve();
     }
 
+    let aborted = false;
+
     for (const blob of recordingStatus.blobs) {
       currentProcessing = currentProcessing
         .then(() => {
@@ -75,6 +77,10 @@ export const UseThisTake: React.FC<{
         })
         .catch((err) => {
           // download blob
+          if ((err as Error).message.includes("aborted by user")) {
+            aborted = true;
+            return;
+          }
           alert(
             "Failed to convert video. Downloaded original video for backup.",
           );
@@ -89,11 +95,12 @@ export const UseThisTake: React.FC<{
             a.href = url;
             a.download = `${blob.prefix}${blob.endDate}.webm`;
             a.click();
+            blob.releaseData();
           }
-        })
-        .finally(() => {
-          blob.releaseData();
         });
+    }
+    if (aborted) {
+      return;
     }
 
     currentProcessing = currentProcessing
