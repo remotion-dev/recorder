@@ -11,6 +11,7 @@ import type { RecordingStatus } from "./RecordButton";
 import { RecordingView } from "./RecordingView";
 import { TopBar } from "./TopBar";
 import { WaitingForDevices } from "./WaitingForDevices";
+import { EnsureBrowserSupport } from "./components/EnsureBrowserSupport";
 import { Button } from "./components/ui/button";
 import { MediaSourcesProvider } from "./state/media-sources";
 
@@ -61,59 +62,61 @@ const App = () => {
   }, []);
 
   return (
-    <WaitingForDevices>
-      <MediaSourcesProvider>
-        <div style={outer}>
-          <TopBar
-            setRecordingStatus={setRecordingStatus}
-            recordingStatus={recordingStatus}
-            showAllViews={showAllViews}
-          />
-          <div style={dynamicGridContainer}>
-            <RecordingView
-              showAllViews={showAllViews}
+    <EnsureBrowserSupport>
+      <WaitingForDevices>
+        <MediaSourcesProvider>
+          <div style={outer}>
+            <TopBar
+              setRecordingStatus={setRecordingStatus}
               recordingStatus={recordingStatus}
-              prefix={WEBCAM_PREFIX}
-            />
-            <RecordingView
               showAllViews={showAllViews}
-              recordingStatus={recordingStatus}
-              prefix={DISPLAY_PREFIX}
             />
-            <RecordingView
-              showAllViews={showAllViews}
-              recordingStatus={recordingStatus}
-              prefix={ALTERNATIVE1_PREFIX}
-            />
-            <RecordingView
-              showAllViews={showAllViews}
-              recordingStatus={recordingStatus}
-              prefix={ALTERNATIVE2_PREFIX}
-            />
-          </div>
+            <div style={dynamicGridContainer}>
+              <RecordingView
+                showAllViews={showAllViews}
+                recordingStatus={recordingStatus}
+                prefix={WEBCAM_PREFIX}
+              />
+              <RecordingView
+                showAllViews={showAllViews}
+                recordingStatus={recordingStatus}
+                prefix={DISPLAY_PREFIX}
+              />
+              <RecordingView
+                showAllViews={showAllViews}
+                recordingStatus={recordingStatus}
+                prefix={ALTERNATIVE1_PREFIX}
+              />
+              <RecordingView
+                showAllViews={showAllViews}
+                recordingStatus={recordingStatus}
+                prefix={ALTERNATIVE2_PREFIX}
+              />
+            </div>
 
-          <div style={{ marginBottom: 10, textAlign: "center" }}>
-            {showAllViews ? (
-              <Button
-                variant={"ghost"}
-                onClick={handleShowLess}
-                style={{ margin: "0px 10px", width: 100 }}
-              >
-                Show Less
-              </Button>
-            ) : (
-              <Button
-                variant={"ghost"}
-                onClick={handleShowMore}
-                style={{ margin: "0px 10px" }}
-              >
-                Show more views
-              </Button>
-            )}
+            <div style={{ marginBottom: 10, textAlign: "center" }}>
+              {showAllViews ? (
+                <Button
+                  variant={"ghost"}
+                  onClick={handleShowLess}
+                  style={{ margin: "0px 10px", width: 100 }}
+                >
+                  Show Less
+                </Button>
+              ) : (
+                <Button
+                  variant={"ghost"}
+                  onClick={handleShowMore}
+                  style={{ margin: "0px 10px" }}
+                >
+                  Show more views
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
-      </MediaSourcesProvider>
-    </WaitingForDevices>
+        </MediaSourcesProvider>
+      </WaitingForDevices>
+    </EnsureBrowserSupport>
   );
 };
 
