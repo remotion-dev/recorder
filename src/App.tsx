@@ -7,9 +7,9 @@ import {
   WEBCAM_PREFIX,
 } from "../config/cameras";
 import "./App.css";
-import type { MediaSources } from "./RecordButton";
+import type { MediaSources, RecordingStatus } from "./RecordButton";
+import { RecordingView } from "./RecordingView";
 import { TopBar } from "./TopBar";
-import { View } from "./Views";
 import { Button } from "./components/ui/button";
 import { enumerateDevicesOrTimeOut } from "./helpers/enumerate-devices-or-time-out";
 import type { Label } from "./helpers/format-device-label";
@@ -70,6 +70,10 @@ const gridContainer: React.CSSProperties = {
 };
 
 const App = () => {
+  const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>({
+    type: "idle",
+  });
+
   const [showAlternativeViews, setShowAlternativeViews] = useState<boolean>(
     localStorage.getItem("showAlternativeViews") === "true",
   );
@@ -144,16 +148,22 @@ const App = () => {
 
   return (
     <div style={outer}>
-      <TopBar mediaSources={mediaSources} />
+      <TopBar
+        setRecordingStatus={setRecordingStatus}
+        recordingStatus={recordingStatus}
+        mediaSources={mediaSources}
+      />
       {devices ? (
         <div style={dynamicGridContainer}>
-          <View
+          <RecordingView
+            recordingStatus={recordingStatus}
             prefix={WEBCAM_PREFIX}
             devices={devices}
             setMediaStream={setMediaStream}
             mediaStream={mediaSources.webcam}
           />
-          <View
+          <RecordingView
+            recordingStatus={recordingStatus}
             prefix={DISPLAY_PREFIX}
             devices={devices}
             setMediaStream={setMediaStream}
@@ -161,13 +171,15 @@ const App = () => {
           />
           {showAlternativeViews ? (
             <>
-              <View
+              <RecordingView
+                recordingStatus={recordingStatus}
                 prefix={ALTERNATIVE1_PREFIX}
                 devices={devices}
                 setMediaStream={setMediaStream}
                 mediaStream={mediaSources.alternative1}
               />
-              <View
+              <RecordingView
+                recordingStatus={recordingStatus}
                 prefix={ALTERNATIVE2_PREFIX}
                 devices={devices}
                 setMediaStream={setMediaStream}

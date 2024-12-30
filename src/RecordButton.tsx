@@ -50,9 +50,16 @@ export const RecordButton: React.FC<{
   setRecordingStatus,
   recordingStatus,
 }) => {
-  const discardVideos = useCallback(() => {
+  const discardVideos = useCallback(async () => {
+    if (recordingStatus.type !== "recording-finished") {
+      throw new Error("Recording not finished");
+    }
+    for (const blob of recordingStatus.blobs) {
+      await blob.releaseData();
+    }
+
     setRecordingStatus({ type: "idle" });
-  }, [setRecordingStatus]);
+  }, [recordingStatus, setRecordingStatus]);
 
   const start = useCallback(async () => {
     const startDate = Date.now();

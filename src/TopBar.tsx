@@ -35,11 +35,9 @@ const recordWrapper: React.CSSProperties = {
 
 export const TopBar: React.FC<{
   mediaSources: MediaSources;
-}> = ({ mediaSources }) => {
-  const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>({
-    type: "idle",
-  });
-
+  recordingStatus: RecordingStatus;
+  setRecordingStatus: React.Dispatch<React.SetStateAction<RecordingStatus>>;
+}> = ({ mediaSources, recordingStatus, setRecordingStatus }) => {
   const [folders, setFolders] = useState<string[] | null>(null);
   const [processingStatus, setProcessingStatus] =
     useState<ProcessStatus | null>(null);

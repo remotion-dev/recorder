@@ -5,6 +5,7 @@ import { WEBCAM_PREFIX } from "../config/cameras";
 import { getDeviceLabel } from "./App";
 import { CropIndicator } from "./CropIndicator";
 import { PrefixLabel } from "./PrefixAndResolution";
+import { RecordingStatus } from "./RecordButton";
 import { ResolutionLimiter } from "./ResolutionLimiter";
 import { ToggleRotate } from "./Rotate";
 import { ResolutionAndFps, Stream } from "./Stream";
@@ -57,12 +58,13 @@ const streamViewport: React.CSSProperties = {
 
 const localStorageKey = "showCropIndicator";
 
-export const View: React.FC<{
+export const RecordingView: React.FC<{
   devices: MediaDeviceInfo[];
   setMediaStream: (prefix: Prefix, source: MediaStream | null) => void;
   mediaStream: MediaStream | null;
   prefix: Prefix;
-}> = ({ devices, setMediaStream, prefix, mediaStream }) => {
+  recordingStatus: RecordingStatus;
+}> = ({ devices, setMediaStream, prefix, mediaStream, recordingStatus }) => {
   const initialCropIndicatorState = useMemo(() => {
     return (
       localStorage.getItem(localStorageKey) === "true" &&
@@ -210,8 +212,18 @@ export const View: React.FC<{
       : videoDeviceLabel && activeVideoDevice && maxResolution,
   );
 
+  const hasSelectedVideoOrAudio = Boolean(
+    selectedVideoDevice || selectedAudioDevice,
+  );
+
   return (
-    <div style={viewContainer}>
+    <div
+      style={viewContainer}
+      data-recording={
+        recordingStatus.type === "recording" && hasSelectedVideoOrAudio
+      }
+      className="outline-red-600 outline-0 data-[recording=true]:outline-2 outline"
+    >
       <div style={topBar}>
         <div style={{ width: 10 }}></div>
         <PrefixLabel prefix={prefix} />
