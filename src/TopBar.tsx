@@ -15,7 +15,6 @@ import {
   loadSelectedFolder,
   persistSelectedFolder,
 } from "./helpers/get-folders";
-import { useMediaSources } from "./state/media-sources";
 
 const topBarContainer: React.CSSProperties = {
   display: "flex",
@@ -37,7 +36,8 @@ const recordWrapper: React.CSSProperties = {
 export const TopBar: React.FC<{
   recordingStatus: RecordingStatus;
   setRecordingStatus: React.Dispatch<React.SetStateAction<RecordingStatus>>;
-}> = ({ recordingStatus, setRecordingStatus }) => {
+  showAllViews: boolean;
+}> = ({ recordingStatus, setRecordingStatus, showAllViews }) => {
   const [folders, setFolders] = useState<string[] | null>(null);
   const [processingStatus, setProcessingStatus] =
     useState<ProcessStatus | null>(null);
@@ -75,22 +75,15 @@ export const TopBar: React.FC<{
     persistSelectedFolder(selectedFolder ?? "");
   }, [selectedFolder]);
 
-  const { mediaSources } = useMediaSources();
-  const recordingDisabled = useMemo(() => {
-    return (
-      mediaSources.webcam.streamState.type !== "loaded" ||
-      mediaSources.webcam.streamState.stream.getAudioTracks().length === 0
-    );
-  }, [mediaSources.webcam]);
-
   return (
     <div style={topBarContainer}>
       <Logo></Logo>
       <div style={recordWrapper}>
         <RecordButton
           recordingStatus={recordingStatus}
-          recordingDisabled={recordingDisabled || processingStatus !== null}
+          processingStatus={processingStatus}
           setRecordingStatus={setRecordingStatus}
+          showAllViews={showAllViews}
         />
         {recordingStatus.type === "recording" ? (
           <>

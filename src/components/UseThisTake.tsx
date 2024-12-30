@@ -56,8 +56,8 @@ export const UseThisTake: React.FC<{
         .then((d) => d.save())
         .then((convertedBlob) => {
           setStatus({
-            title: `Transcribing ${blob.prefix}${blob.endDate}.webm`,
-            description: "Initiating Whisper.cpp...",
+            title: `Copying to public folder ${blob.prefix}${blob.endDate}.webm`,
+            description: "Copying in progress",
           });
           return uploadFileToServer({
             blob: convertedBlob,
@@ -96,7 +96,7 @@ export const UseThisTake: React.FC<{
     currentProcessing = currentProcessing
       .then(() => {
         setStatus({
-          title: `Initiating Whisper.cpp...`,
+          title: `Transcribing webcam${recordingStatus.endDate}.webm`,
           description: "See Terminal for progress",
         });
         return transcribeVideoOnServer({

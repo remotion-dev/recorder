@@ -38,25 +38,25 @@ const App = () => {
     type: "idle",
   });
 
-  const [showAlternativeViews, setShowAlternativeViews] = useState<boolean>(
+  const [showAllViews, setShowAllViews] = useState<boolean>(
     localStorage.getItem("showAlternativeViews") === "true",
   );
 
   const dynamicGridContainer = useMemo(() => {
-    if (showAlternativeViews) {
+    if (showAllViews) {
       return { ...gridContainer, gridTemplateRows: "repeat(2, 1fr)" };
     }
 
     return { ...gridContainer, maxHeight: "50%" };
-  }, [showAlternativeViews]);
+  }, [showAllViews]);
 
   const handleShowMore = useCallback(() => {
-    setShowAlternativeViews(true);
+    setShowAllViews(true);
     localStorage.setItem("showAlternativeViews", "true");
   }, []);
 
   const handleShowLess = useCallback(() => {
-    setShowAlternativeViews(false);
+    setShowAllViews(false);
     localStorage.setItem("showAlternativeViews", "false");
   }, []);
 
@@ -67,32 +67,33 @@ const App = () => {
           <TopBar
             setRecordingStatus={setRecordingStatus}
             recordingStatus={recordingStatus}
+            showAllViews={showAllViews}
           />
           <div style={dynamicGridContainer}>
             <RecordingView
+              showAllViews={showAllViews}
               recordingStatus={recordingStatus}
               prefix={WEBCAM_PREFIX}
             />
             <RecordingView
+              showAllViews={showAllViews}
               recordingStatus={recordingStatus}
               prefix={DISPLAY_PREFIX}
             />
-            {showAlternativeViews ? (
-              <>
-                <RecordingView
-                  recordingStatus={recordingStatus}
-                  prefix={ALTERNATIVE1_PREFIX}
-                />
-                <RecordingView
-                  recordingStatus={recordingStatus}
-                  prefix={ALTERNATIVE2_PREFIX}
-                />
-              </>
-            ) : null}
+            <RecordingView
+              showAllViews={showAllViews}
+              recordingStatus={recordingStatus}
+              prefix={ALTERNATIVE1_PREFIX}
+            />
+            <RecordingView
+              showAllViews={showAllViews}
+              recordingStatus={recordingStatus}
+              prefix={ALTERNATIVE2_PREFIX}
+            />
           </div>
 
           <div style={{ marginBottom: 10, textAlign: "center" }}>
-            {showAlternativeViews ? (
+            {showAllViews ? (
               <Button
                 variant={"ghost"}
                 onClick={handleShowLess}

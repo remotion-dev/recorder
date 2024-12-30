@@ -29,6 +29,7 @@ import { Prefix } from "./helpers/prefixes";
 import { setPreferredDeviceForPrefix } from "./preferred-device-localstorage";
 import { getPreferredResolutionForDevice } from "./preferred-resolution";
 import { useMediaSources } from "./state/media-sources";
+import { visibleByDefault } from "./state/visible-views";
 const viewContainer: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
@@ -56,7 +57,7 @@ const streamViewport: React.CSSProperties = {
 
 const localStorageKey = "showCropIndicator";
 
-export const RecordingView: React.FC<{
+const InnerRecordingView: React.FC<{
   prefix: Prefix;
   recordingStatus: RecordingStatus;
 }> = ({ prefix, recordingStatus }) => {
@@ -312,5 +313,19 @@ export const RecordingView: React.FC<{
         ) : null}
       </div>
     </div>
+  );
+};
+
+export const RecordingView: React.FC<{
+  prefix: Prefix;
+  recordingStatus: RecordingStatus;
+  showAllViews: boolean;
+}> = ({ prefix, recordingStatus, showAllViews }) => {
+  if (!visibleByDefault[prefix] && !showAllViews) {
+    return null;
+  }
+
+  return (
+    <InnerRecordingView prefix={prefix} recordingStatus={recordingStatus} />
   );
 };

@@ -1,7 +1,9 @@
-import React, { useCallback } from "react";
+import { CameraIcon, MicIcon } from "lucide-react";
+import React, { useCallback, useMemo } from "react";
 import { FPS } from "../config/fps";
 import { truthy } from "../remotion/helpers/truthy";
 import { RecordCircle } from "./BlinkingCircle";
+import { ProcessStatus } from "./components/ProcessingStatus";
 import { Button } from "./components/ui/button";
 import { Prefix } from "./helpers/prefixes";
 import {
@@ -10,6 +12,7 @@ import {
 } from "./helpers/start-media-recorder";
 import { useKeyPress } from "./helpers/use-key-press";
 import { useMediaSources } from "./state/media-sources";
+import { visibleByDefault } from "./state/visible-views";
 
 export type CurrentRecorder = {
   recorder: MediaRecorder;
@@ -39,8 +42,14 @@ type OngoingRecording = {
 export const RecordButton: React.FC<{
   recordingStatus: RecordingStatus;
   setRecordingStatus: React.Dispatch<React.SetStateAction<RecordingStatus>>;
-  recordingDisabled: boolean;
-}> = ({ recordingDisabled, setRecordingStatus, recordingStatus }) => {
+  showAllViews: boolean;
+  processingStatus: ProcessStatus | null;
+}> = ({
+  setRecordingStatus,
+  recordingStatus,
+  showAllViews,
+  processingStatus,
+}) => {
   const discardVideos = useCallback(async () => {
     if (recordingStatus.type !== "recording-finished") {
       throw new Error("Recording not finished");
@@ -54,16 +63,32 @@ export const RecordButton: React.FC<{
 
   const mediaSources = useMediaSources().mediaSources;
 
+  const activeSources = useMemo(() => {
+    return Object.entries(mediaSources).filter(([prefix, source]) => {
+      return (
+        (showAllViews || visibleByDefault[prefix as Prefix]) &&
+        source.streamState.type === "loaded"
+      );
+    });
+  }, [mediaSources, showAllViews]);
+
+  const videoDeviceCount = useMemo(() => {
+    return activeSources.filter(([, source]) => {
+      return source.videoDevice !== null;
+    }).length;
+  }, [activeSources]);
+  const audioDeviceCount = useMemo(() => {
+    return activeSources.filter(([, source]) => {
+      return source.audioDevice !== null;
+    }).length;
+  }, [activeSources]);
+
   const start = useCallback(async () => {
     const startDate = Date.now();
     const recorders = (
       await Promise.all(
-        Object.entries(mediaSources).map(
+        activeSources.map(
           ([prefix, source]): Promise<CurrentRecorder | null> => {
-            if (source.streamState.type !== "loaded") {
-              return Promise.resolve(null);
-            }
-
             return startMediaRecorder({
               prefix: prefix as Prefix,
               source: source.streamState,
@@ -78,7 +103,7 @@ export const RecordButton: React.FC<{
       type: "recording",
       ongoing: { recorders: recorders, startDate },
     });
-  }, [mediaSources, setRecordingStatus]);
+  }, [activeSources, setRecordingStatus]);
 
   const onStop = useCallback(async () => {
     if (recordingStatus.type !== "recording") {
@@ -101,8 +126,13 @@ export const RecordButton: React.FC<{
     });
   }, [recordingStatus, setRecordingStatus]);
 
+  const disabled =
+    mediaSources.webcam.streamState.type !== "loaded" ||
+    mediaSources.webcam.streamState.stream.getAudioTracks().length === 0 ||
+    processingStatus !== null;
+
   const onPressR = useCallback(() => {
-    if (recordingDisabled) {
+    if (disabled) {
       return;
     }
 
@@ -120,7 +150,7 @@ export const RecordButton: React.FC<{
     } else if (recordingStatus.type === "idle") {
       start();
     }
-  }, [onStop, recordingDisabled, recordingStatus.type, start]);
+  }, [onStop, disabled, recordingStatus.type, start]);
 
   const onDiscardAndRetake = useCallback(() => {
     discardVideos();
@@ -154,7 +184,7 @@ export const RecordButton: React.FC<{
         title="Press R to start recording"
         onClick={onDiscardAndRetake}
       >
-        <RecordCircle recordingDisabled={recordingDisabled} />
+        <RecordCircle />
         Discard and retake
       </Button>
     );
@@ -163,7 +193,7 @@ export const RecordButton: React.FC<{
   return (
     <div
       title={
-        recordingDisabled
+        disabled
           ? "A webcam and an audio source have to be selected to start the recording"
           : undefined
       }
@@ -171,13 +201,29 @@ export const RecordButton: React.FC<{
       <Button
         variant="outline"
         type="button"
-        disabled={recordingDisabled}
-        style={{ display: "flex", alignItems: "center", gap: 10 }}
+        disabled={disabled}
         title="Press R to start recording"
+        className="flex flex-row items-center pl-3 pr-0 py-0"
         onClick={start}
       >
-        <RecordCircle recordingDisabled={recordingDisabled} />
-        Start recording
+        <RecordCircle />
+        <div className="w-2"></div>
+        <div>
+          {disabled ? "Select audio+video to record" : "Start recording"}
+        </div>
+        <div className="w-3"></div>
+        {videoDeviceCount > 0 && !disabled && (
+          <div className="flex flex-row items-center gap-1 border-l-[1px] h-full px-2">
+            <CameraIcon className="w-5" />
+            <div>{videoDeviceCount}</div>
+          </div>
+        )}
+        {audioDeviceCount > 0 && !disabled && (
+          <div className="flex flex-row items-center gap-1 border-l-[1px] h-full px-2">
+            <MicIcon className="w-5" />
+            <div>{audioDeviceCount}</div>
+          </div>
+        )}
       </Button>
     </div>
   );
