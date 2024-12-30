@@ -14,9 +14,9 @@ export type MediaSources = {
   [key in Prefix]: MediaStream | null;
 };
 
-type CurrentRecorder = {
+export type CurrentRecorder = {
   recorder: MediaRecorder;
-  waitUntilDone: Promise<FinishedRecording>;
+  stopAndWaitUntilDone: () => Promise<FinishedRecording>;
 };
 
 export type RecordingStatus =
@@ -54,20 +54,29 @@ export const RecordButton: React.FC<{
     setRecordingStatus({ type: "idle" });
   }, [setRecordingStatus]);
 
-  const start = useCallback(() => {
-    const recorders = Object.entries(mediaSources)
-      .map(([prefix, source]): CurrentRecorder | null => {
-        if (!source) {
-          return null;
-        }
+  const start = useCallback(async () => {
+    const startDate = Date.now();
+    const recorders = (
+      await Promise.all(
+        Object.entries(mediaSources).map(
+          ([prefix, source]): Promise<CurrentRecorder | null> => {
+            if (!source) {
+              return Promise.resolve(null);
+            }
 
-        return startMediaRecorder(prefix as Prefix, source);
-      })
-      .filter(truthy);
+            return startMediaRecorder({
+              prefix: prefix as Prefix,
+              source: source,
+              timestamp: startDate,
+            });
+          },
+        ),
+      )
+    ).filter(truthy);
 
     return setRecordingStatus({
       type: "recording",
-      ongoing: { recorders: recorders, startDate: Date.now() },
+      ongoing: { recorders: recorders, startDate },
     });
   }, [mediaSources, setRecordingStatus]);
 
@@ -76,12 +85,8 @@ export const RecordButton: React.FC<{
       return;
     }
 
-    for (const recorder of recordingStatus.ongoing.recorders) {
-      recorder.recorder.stop();
-    }
-
     const blobs = await Promise.all(
-      recordingStatus.ongoing.recorders.map((r) => r.waitUntilDone),
+      recordingStatus.ongoing.recorders.map((r) => r.stopAndWaitUntilDone()),
     );
 
     const endDate = Date.now();

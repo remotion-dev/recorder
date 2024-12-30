@@ -35,9 +35,12 @@ export const UseThisTake: React.FC<{
             title: `Converting ${blob.prefix}${blob.endDate}.webm`,
             description: "Starting...",
           });
+          return blob.data();
+        })
+        .then((src) => {
           return convertMedia({
             container: "webm",
-            src: blob.data,
+            src: new File([src.slice()], `temp`),
             reader: webFileReader,
             resize: {
               maxHeight: 1080,
@@ -70,7 +73,7 @@ export const UseThisTake: React.FC<{
         })
         .catch((err) => {
           // download blob
-          blob.data.arrayBuffer().then((buffer) => {
+          blob.data().then((buffer) => {
             const blobToDownload = new Blob([buffer], { type: "video/webm" });
             const a = document.createElement("a");
             const url = URL.createObjectURL(blobToDownload);
@@ -116,7 +119,7 @@ export const UseThisTake: React.FC<{
 
     for (const blob of recordingStatus.blobs) {
       await downloadVideo({
-        data: blob.data,
+        data: await blob.data(),
         endDate: recordingStatus.endDate,
         prefix: blob.prefix,
         setStatus,
