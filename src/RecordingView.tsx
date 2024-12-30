@@ -200,8 +200,9 @@ export const RecordingView: React.FC<{
     setSelectedVideoDevice(null);
     setSelectedAudioDevice(null);
     setPreferredDeviceForPrefix(prefix, "video", null);
-    setShowPicker(false);
+    setShowPicker(true);
     setResolution(null);
+    console.log("clearing");
   }, [prefix]);
 
   const [resolutionLimiterOpen, setResolutionLimiterOpen] = useState(false);
@@ -225,9 +226,11 @@ export const RecordingView: React.FC<{
   return (
     <div
       style={viewContainer}
-      data-recording={
-        recordingStatus.type === "recording" && hasSelectedVideoOrAudio
-      }
+      data-recording={Boolean(
+        recordingStatus.type === "recording" &&
+          hasSelectedVideoOrAudio &&
+          mediaStream,
+      )}
       className="outline-red-600 outline-0 data-[recording=true]:outline-2 outline"
     >
       <div style={topBar}>
@@ -245,12 +248,7 @@ export const RecordingView: React.FC<{
           disabled={recordingStatus.type === "recording"}
         ></CurrentVideo>
         {selectedVideoSource && recordingStatus.type !== "recording" ? (
-          <ClearCurrentVideo
-            onClick={() => {
-              setSelectedVideoDevice(null);
-              setResolution(null);
-            }}
-          />
+          <ClearCurrentVideo onClick={clear} />
         ) : null}
         {prefix === WEBCAM_PREFIX ? (
           <>

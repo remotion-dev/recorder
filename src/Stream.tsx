@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { AbsoluteFill } from "remotion";
 import { Spinner } from "./components/Spinner";
 import type { SelectedSource } from "./helpers/get-selected-video-source";
@@ -189,26 +195,39 @@ export const Stream: React.FC<{
   ]);
 
   useEffect(() => {
-    const resized = () => {
-      setResolution((r) => ({
-        width: sourceRef.current?.videoWidth ?? 0,
-        height: sourceRef.current?.videoHeight ?? 0,
-        fps: r?.fps ?? 0,
-      }));
-    };
-
     const { current } = sourceRef;
 
     if (!current) {
       return;
     }
 
-    current.addEventListener("resize", resized);
+    const onResize = () => {
+      setResolution((r) => {
+        if (r === null) {
+          return null;
+        }
+
+        return {
+          ...r,
+          width: current.videoWidth,
+          height: current.videoHeight,
+        };
+      });
+    };
+
+    current.addEventListener("resize", onResize);
 
     return () => {
-      current.removeEventListener("resize", resized);
+      current.removeEventListener("resize", onResize);
     };
   }, [setResolution]);
+
+  const onReset = useCallback(() => {
+    setStreamState({
+      type: "initial",
+    });
+    clear();
+  }, [clear]);
 
   return (
     <AbsoluteFill style={container} id={prefix + "-video-container"}>
@@ -226,6 +245,9 @@ export const Stream: React.FC<{
           }}
         >
           {streamState.error}
+          <a className="underline cursor-pointer" onClick={onReset}>
+            Try again
+          </a>
         </AbsoluteFill>
       ) : null}
     </AbsoluteFill>
