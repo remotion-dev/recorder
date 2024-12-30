@@ -118,7 +118,7 @@ export const convertVideos = async ({
     if (existsSync(src)) {
       await convertVideo({
         input: src,
-        output: path.join(folder, latest.replace(".webm", ".mp4")),
+        output: path.join(folder, latest),
         onProgress,
         signal: undefined,
         expectedFrames,

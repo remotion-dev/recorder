@@ -7,14 +7,17 @@ import { WHISPER_MODEL, WHISPER_PATH, WHISPER_REF } from "../../config/whisper";
 export const ensureWhisper = async ({
   onInstall,
   onModelProgressInPercent,
+  signal,
 }: {
   onInstall: () => void;
   onModelProgressInPercent: (progress: number) => void;
+  signal: AbortSignal;
 }) => {
   const installPromise = installWhisperCpp({
     to: WHISPER_PATH,
     version: WHISPER_REF,
     printOutput: true,
+    signal,
   });
 
   const timeout = setTimeout(() => {
@@ -31,5 +34,6 @@ export const ensureWhisper = async ({
     onProgress: (downloadedBytes: number, totalBytes: number) => {
       onModelProgressInPercent((downloadedBytes / totalBytes) * 100);
     },
+    signal,
   });
 };

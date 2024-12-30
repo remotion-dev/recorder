@@ -8,7 +8,13 @@ const getDisplayStream = async (selectedVideoSource: SelectedSource) => {
 
   const stream = await window.navigator.mediaDevices
     // GetDisplayMedia asks the user for permission to capture the screen
-    .getDisplayMedia({ video: true });
+    .getDisplayMedia({
+      video: {
+        height: {
+          ideal: 1080,
+        },
+      },
+    });
 
   return stream;
 };

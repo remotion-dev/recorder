@@ -56,6 +56,10 @@ export const calculateSrt = ({
       throw new Error(`Segment with index ${i} is undefined`);
     }
 
+    if (segment.length === 0) {
+      continue;
+    }
+
     const firstSegment = segment[0];
     const lastSegment = segment[segment.length - 1];
 

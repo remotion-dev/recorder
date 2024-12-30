@@ -1,5 +1,5 @@
 import { CameraIcon } from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { DisplayIcon } from "../DeviceItem";
 import { Resolution } from "../PrefixAndResolution";
 import { ResolutionAndFps } from "../Stream";
@@ -21,6 +21,7 @@ export const CurrentVideo: React.FC<{
   onClick: () => void;
   setResolutionLimiterOpen: React.Dispatch<React.SetStateAction<boolean>>;
   canShowResolutionLimiter: boolean | null;
+  disabled: boolean;
 }> = ({
   label,
   resolution,
@@ -28,6 +29,7 @@ export const CurrentVideo: React.FC<{
   onClick,
   setResolutionLimiterOpen,
   canShowResolutionLimiter,
+  disabled,
 }) => {
   const onOpen: React.MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
@@ -36,16 +38,6 @@ export const CurrentVideo: React.FC<{
     },
     [setResolutionLimiterOpen],
   );
-
-  const [hovered, setHovered] = useState(false);
-
-  const onPointerEnter = useCallback(() => {
-    setHovered(true);
-  }, []);
-
-  const onPointerLeave = useCallback(() => {
-    setHovered(false);
-  }, []);
 
   const container: React.CSSProperties = useMemo(() => {
     return {
@@ -59,16 +51,15 @@ export const CurrentVideo: React.FC<{
       paddingTop: 4,
       paddingBottom: 4,
       paddingLeft: 10,
-      background: hovered ? "rgba(0, 0, 0, 0.5)" : "transparent",
       minHeight: 48,
     };
-  }, [hovered]);
+  }, []);
 
   return (
     <div
-      onPointerEnter={onPointerEnter}
-      onPointerLeave={onPointerLeave}
       style={container}
+      data-disabled={disabled}
+      className="hover:bg-slate-950 data-[disabled=true]:opacity-50 data-[disabled=true]:pointer-events-none"
       onClick={onClick}
     >
       {isScreenshare ? <DisplayIcon></DisplayIcon> : <CameraIcon></CameraIcon>}

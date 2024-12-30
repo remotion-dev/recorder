@@ -3,6 +3,7 @@ import React from "react";
 export type ProcessStatus = {
   title: string;
   description: string;
+  abort: null | (() => void);
 };
 
 const statusStyle: React.CSSProperties = {
@@ -22,7 +23,17 @@ export const ProcessingStatus: React.FC<{
   return (
     <div style={statusStyle}>
       <div>{status.title}</div>
-      <div style={subtitle}>{status.description}</div>
+      <div style={subtitle}>
+        {status.description}{" "}
+        {status.abort !== null ? (
+          <a
+            className="underline cursor-pointer"
+            onClick={() => status.abort?.()}
+          >
+            Abort and discard
+          </a>
+        ) : null}{" "}
+      </div>
     </div>
   );
 };

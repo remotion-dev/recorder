@@ -22,16 +22,9 @@ export const BlinkingCircle: React.FC = () => {
   );
 };
 
-export const RecordCircle: React.FC<{
-  recordingDisabled: boolean;
-}> = ({ recordingDisabled }) => {
+export const RecordCircle: React.FC = () => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="10px"
-      viewBox="0 0 512 512"
-      style={{ opacity: recordingDisabled ? 0.4 : 1 }}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" height="10px" viewBox="0 0 512 512">
       <path fill="red" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" />
     </svg>
   );

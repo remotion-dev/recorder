@@ -4,10 +4,12 @@ import { Toggle } from "./components/ui/toggle";
 export const ToggleRotate: React.FC<{
   onPressedChange: (pressed: boolean) => void;
   pressed: boolean;
-}> = ({ onPressedChange, pressed }) => {
+  disabled: boolean;
+}> = ({ onPressedChange, pressed, disabled }) => {
   return (
     <Toggle
-      aria-label="Toggle italic"
+      data-disabled={disabled}
+      className="data-[disabled=true]:opacity-50 data-[disabled=true]:pointer-events-none"
       onPressedChange={onPressedChange}
       pressed={pressed}
     >

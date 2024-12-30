@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { BlinkingCircle } from "./BlinkingCircle";
 import { Logo } from "./Logo";
-import type { MediaSources, RecordingStatus } from "./RecordButton";
+import type { RecordingStatus } from "./RecordButton";
 import { RecordButton } from "./RecordButton";
 import { Timer } from "./Timer";
 import { fetchProjectFolders } from "./actions/fetch-project-folders";
@@ -34,14 +34,13 @@ const recordWrapper: React.CSSProperties = {
 };
 
 export const TopBar: React.FC<{
-  mediaSources: MediaSources;
-}> = ({ mediaSources }) => {
-  const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>({
-    type: "idle",
-  });
-
+  recordingStatus: RecordingStatus;
+  setRecordingStatus: React.Dispatch<React.SetStateAction<RecordingStatus>>;
+  showAllViews: boolean;
+}> = ({ recordingStatus, setRecordingStatus, showAllViews }) => {
   const [folders, setFolders] = useState<string[] | null>(null);
-  const [status, setStatus] = useState<ProcessStatus | null>(null);
+  const [processingStatus, setProcessingStatus] =
+    useState<ProcessStatus | null>(null);
 
   const folderFromUrl: string | null = useMemo(() => {
     return loadFolderFromUrl();
@@ -76,22 +75,15 @@ export const TopBar: React.FC<{
     persistSelectedFolder(selectedFolder ?? "");
   }, [selectedFolder]);
 
-  const recordingDisabled = useMemo(() => {
-    return (
-      mediaSources.webcam === null ||
-      mediaSources.webcam.getAudioTracks().length === 0
-    );
-  }, [mediaSources.webcam]);
-
   return (
     <div style={topBarContainer}>
       <Logo></Logo>
       <div style={recordWrapper}>
         <RecordButton
           recordingStatus={recordingStatus}
-          recordingDisabled={recordingDisabled}
-          mediaSources={mediaSources}
+          processingStatus={processingStatus}
           setRecordingStatus={setRecordingStatus}
+          showAllViews={showAllViews}
         />
         {recordingStatus.type === "recording" ? (
           <>
@@ -99,16 +91,17 @@ export const TopBar: React.FC<{
             <Timer startDate={recordingStatus.ongoing.startDate} />
           </>
         ) : null}
-        {recordingStatus.type === "recording-finished" ||
-        recordingStatus.type === "processing-recording" ? (
+        {recordingStatus.type === "recording-finished" ? (
           <UseThisTake
             selectedFolder={selectedFolder}
             recordingStatus={recordingStatus}
             setRecordingStatus={setRecordingStatus}
-            setStatus={setStatus}
+            setStatus={setProcessingStatus}
           />
         ) : null}
-        {status && <ProcessingStatus status={status}></ProcessingStatus>}
+        {processingStatus && (
+          <ProcessingStatus status={processingStatus}></ProcessingStatus>
+        )}
       </div>
 
       <div style={{ flex: 1 }} />
