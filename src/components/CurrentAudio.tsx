@@ -1,5 +1,5 @@
 import { MicIcon } from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 const spacer: React.CSSProperties = {
   width: 12,
@@ -8,9 +8,8 @@ const spacer: React.CSSProperties = {
 export const CurrentAudio: React.FC<{
   label: string | null;
   onClick: () => void;
-}> = ({ label, onClick }) => {
-  const [hovered, setHovered] = useState(false);
-
+  disabled: boolean;
+}> = ({ label, onClick, disabled }) => {
   const container: React.CSSProperties = useMemo(() => {
     return {
       display: "flex",
@@ -21,23 +20,14 @@ export const CurrentAudio: React.FC<{
       lineHeight: 1.4,
       paddingLeft: 10,
       cursor: "pointer",
-      background: hovered ? "rgba(0, 0, 0, 0.5)" : "transparent",
       height: "100%",
     };
-  }, [hovered]);
-
-  const onPointerEnter = useCallback(() => {
-    setHovered(true);
-  }, []);
-
-  const onPointerLeave = useCallback(() => {
-    setHovered(false);
   }, []);
 
   return (
     <div
-      onPointerLeave={onPointerLeave}
-      onPointerEnter={onPointerEnter}
+      data-disabled={disabled}
+      className="hover:bg-slate-950 data-[disabled=true]:opacity-50 data-[disabled=true]:pointer-events-none"
       style={container}
       onClick={onClick}
     >

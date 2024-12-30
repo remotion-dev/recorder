@@ -84,7 +84,7 @@ export const RecordingView: React.FC<{
     () => getPreferredDeviceIfExists(prefix, "audio", devices),
   );
 
-  const [showPicker, setShowPicker] = useState(
+  const [showPickerPreference, setShowPicker] = useState(
     () => !selectedVideoDevice && !selectedAudioDevice,
   );
 
@@ -216,6 +216,12 @@ export const RecordingView: React.FC<{
     selectedVideoDevice || selectedAudioDevice,
   );
 
+  const showPicker =
+    showPickerPreference && recordingStatus.type !== "recording";
+  const togglePicker = useCallback(() => {
+    setShowPicker((prev) => !prev);
+  }, []);
+
   return (
     <div
       style={viewContainer}
@@ -233,13 +239,12 @@ export const RecordingView: React.FC<{
           resolution={resolution}
           label={videoDeviceLabel ?? "No video selected"}
           isScreenshare={selectedVideoSource?.type === "display"}
-          onClick={() => {
-            setShowPicker((p) => !p);
-          }}
+          onClick={togglePicker}
           setResolutionLimiterOpen={setResolutionLimiterOpen}
           canShowResolutionLimiter={canShowResolutionLimiter}
+          disabled={recordingStatus.type === "recording"}
         ></CurrentVideo>
-        {selectedVideoSource ? (
+        {selectedVideoSource && recordingStatus.type !== "recording" ? (
           <ClearCurrentVideo
             onClick={() => {
               setSelectedVideoDevice(null);
@@ -251,9 +256,8 @@ export const RecordingView: React.FC<{
           <>
             <Divider></Divider>
             <CurrentAudio
-              onClick={() => {
-                setShowPicker((p) => !p);
-              }}
+              disabled={recordingStatus.type === "recording"}
+              onClick={togglePicker}
               label={audioDeviceLabel}
             />
           </>
@@ -268,6 +272,7 @@ export const RecordingView: React.FC<{
           <ToggleRotate
             pressed={preferPortrait}
             onPressedChange={onToggleRotate}
+            disabled={recordingStatus.type === "recording"}
           />
         ) : null}
       </div>
