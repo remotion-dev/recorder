@@ -17,6 +17,7 @@ import { visibleByDefault } from "./state/visible-views";
 export type CurrentRecorder = {
   recorder: MediaRecorder;
   stopAndWaitUntilDone: () => Promise<FinishedRecording>;
+  mimeType: string;
 };
 
 export type RecordingStatus =

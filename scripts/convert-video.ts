@@ -111,14 +111,26 @@ export const convertVideos = async ({
   const fileLocation = getDownloadsFolder();
 
   for (const prefix of prefixes) {
-    const latest = `${prefix}${latestTimestamp}.webm`;
-    const src = path.join(fileLocation, latest);
+    const latestWebM = `${prefix}${latestTimestamp}.webm`;
+    const latestMP4 = `${prefix}${latestTimestamp}.mp4`;
+    const srcWebM = path.join(fileLocation, latestWebM);
+    const srcMP4 = path.join(fileLocation, latestMP4);
     const folder = path.join("public", compositionId);
 
-    if (existsSync(src)) {
+    if (existsSync(srcWebM)) {
       await convertVideo({
-        input: src,
-        output: path.join(folder, latest),
+        input: srcWebM,
+        output: path.join(folder, latestWebM),
+        onProgress,
+        signal: undefined,
+        expectedFrames,
+      });
+    }
+
+    if (existsSync(srcMP4)) {
+      await convertVideo({
+        input: srcMP4,
+        output: path.join(folder, latestMP4),
         onProgress,
         signal: undefined,
         expectedFrames,

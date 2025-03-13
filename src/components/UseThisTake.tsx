@@ -1,8 +1,10 @@
 import React, { useCallback } from "react";
+import { WEBCAM_PREFIX } from "../../config/cameras";
 import { RecordingStatus } from "../RecordButton";
 import { cancelTranscribeOnServer } from "../helpers/cancel-transcribe";
 import { convertInBrowser } from "../helpers/convert-in-browser";
 import { downloadVideo } from "../helpers/download-video";
+import { getExtension } from "../helpers/find-good-supported-codec";
 import { formatMilliseconds } from "../helpers/format-time";
 import { transcribeVideoOnServer } from "../helpers/transcribe-video";
 import { uploadFileToServer } from "../helpers/upload-file";
@@ -14,7 +16,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-
 let currentProcessing = Promise.resolve();
 
 export const UseThisTake: React.FC<{
@@ -37,10 +38,11 @@ export const UseThisTake: React.FC<{
     let aborted = false;
 
     for (const blob of recordingStatus.blobs) {
+      const extension = getExtension(blob.mimeType);
       currentProcessing = currentProcessing
         .then(() => {
           setStatus({
-            title: `Converting ${blob.prefix}${blob.endDate}.webm`,
+            title: `Converting ${blob.prefix}${blob.endDate}.${extension}`,
             description: "Starting...",
             abort: null,
           });
@@ -49,9 +51,10 @@ export const UseThisTake: React.FC<{
         .then((src) => {
           return convertInBrowser({
             src: src,
+            mimeType: blob.mimeType,
             onProgress: ({ millisecondsWritten }, abortFn) => {
               setStatus({
-                title: `Converting ${blob.prefix}${blob.endDate}.webm`,
+                title: `Converting ${blob.prefix}${blob.endDate}.${extension}`,
                 description: `${formatMilliseconds(millisecondsWritten)} processed`,
                 abort: abortFn,
               });
@@ -61,7 +64,7 @@ export const UseThisTake: React.FC<{
         .then((d) => d.save())
         .then((convertedBlob) => {
           setStatus({
-            title: `Copying to public folder ${blob.prefix}${blob.endDate}.webm`,
+            title: `Copying to public folder ${blob.prefix}${blob.endDate}.${extension}`,
             description: "Copying in progress",
             abort: null,
           });
@@ -71,6 +74,7 @@ export const UseThisTake: React.FC<{
             prefix: blob.prefix,
             selectedFolder,
             expectedFrames: recordingStatus.expectedFrames,
+            mimeType: blob.mimeType,
           });
         })
         .then(() => {
@@ -90,11 +94,13 @@ export const UseThisTake: React.FC<{
         })
         .then((buffer) => {
           if (buffer) {
-            const blobToDownload = new Blob([buffer], { type: "video/webm" });
+            const blobToDownload = new Blob([buffer], {
+              type: blob.mimeType.includes("webm") ? "video/webm" : "video/mp4",
+            });
             const a = document.createElement("a");
             const url = URL.createObjectURL(blobToDownload);
             a.href = url;
-            a.download = `${blob.prefix}${blob.endDate}.webm`;
+            a.download = `${blob.prefix}${blob.endDate}.${extension}`;
             a.click();
             blob.releaseData();
           }
@@ -107,7 +113,7 @@ export const UseThisTake: React.FC<{
     currentProcessing = currentProcessing
       .then(() => {
         setStatus({
-          title: `Transcribing webcam${recordingStatus.endDate}.webm`,
+          title: `Transcribing ${WEBCAM_PREFIX}${recordingStatus.endDate}.${recordingStatus.blobs.find((b) => b.prefix === WEBCAM_PREFIX)?.mimeType.includes("webm") ? "webm" : "mp4"}`,
           description: "See Terminal for progress",
           abort: () => cancelTranscribeOnServer(),
         });
@@ -141,12 +147,15 @@ export const UseThisTake: React.FC<{
 
     for (const blob of recordingStatus.blobs) {
       const buffer = await blob.data();
+      const extension = getExtension(blob.mimeType);
 
-      const blobToDownload = new Blob([buffer], { type: "video/webm" });
+      const blobToDownload = new Blob([buffer], {
+        type: blob.mimeType.includes("webm") ? "video/webm" : "video/mp4",
+      });
       const a = document.createElement("a");
       const url = URL.createObjectURL(blobToDownload);
       a.href = url;
-      a.download = `${blob.prefix}${blob.endDate}-unprocessed.webm`;
+      a.download = `${blob.prefix}${blob.endDate}-unprocessed.${extension}`;
       a.click();
     }
   }, [recordingStatus]);
@@ -161,6 +170,7 @@ export const UseThisTake: React.FC<{
         data: await blob.data(),
         endDate: recordingStatus.endDate,
         prefix: blob.prefix,
+        mimeType: blob.mimeType,
         setStatus,
       });
     }

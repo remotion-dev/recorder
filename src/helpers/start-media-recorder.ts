@@ -1,6 +1,9 @@
-import { WEBCAM_PREFIX } from "../../config/cameras";
 import { CurrentRecorder } from "../RecordButton";
 import { StreamState } from "../state/media-sources";
+import {
+  findGoodSupportedCodec,
+  getExtension,
+} from "./find-good-supported-codec";
 import { Prefix } from "./prefixes";
 import { createFileStorage } from "./store-file";
 
@@ -16,6 +19,7 @@ export type FinishedRecording = {
   data: () => Promise<Blob>;
   releaseData: () => Promise<void>;
   endDate: number;
+  mimeType: string;
 };
 
 export const startMediaRecorder = async ({
@@ -31,17 +35,17 @@ export const startMediaRecorder = async ({
     throw new Error(`Source not loaded for ${prefix}`);
   }
 
-  const mimeType =
-    prefix === WEBCAM_PREFIX
-      ? "video/webm;codecs=vp8,opus"
-      : "video/webm;codecs=vp8";
+  const mimeType = findGoodSupportedCodec(
+    source.stream.getAudioTracks().length > 0,
+  );
 
   const completeMediaRecorderOptions = {
     ...mediaRecorderOptions,
     mimeType,
   };
 
-  const filename = `${prefix}${timestamp}.webm`;
+  const extension = getExtension(mimeType);
+  const filename = `${prefix}${timestamp}.${extension}`;
 
   const recorder = new MediaRecorder(
     source.stream,
@@ -97,6 +101,7 @@ export const startMediaRecorder = async ({
               data: () => writer.save(),
               endDate: Date.now(),
               releaseData: () => writer.release(),
+              mimeType,
             });
           })
           .catch((err) => reject(err));
@@ -115,5 +120,5 @@ export const startMediaRecorder = async ({
   // Trigger a save every 10 seconds
   recorder.start(10_000);
 
-  return { recorder, stopAndWaitUntilDone };
+  return { recorder, stopAndWaitUntilDone, mimeType };
 };

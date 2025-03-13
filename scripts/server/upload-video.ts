@@ -120,6 +120,7 @@ export const handleVideoUpload = async (
   const endDateAsString = params.get("endDateAsString");
   const folder = params.get("folder");
   const prefix = params.get("prefix");
+  const extension = params.get("extension");
   const expectedFrames = Number(params.get("expectedFrames"));
   try {
     if (typeof prefix !== "string") {
@@ -138,7 +139,7 @@ export const handleVideoUpload = async (
       throw new Error("No `expectedFrames` provided");
     }
 
-    const file = `${prefix}${endDateAsString}.webm`;
+    const file = `${prefix}${endDateAsString}.${extension}`;
 
     const publicDir = path.join(process.cwd(), "public");
     const folderPath = path.join(publicDir, folder);

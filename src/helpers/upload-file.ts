@@ -1,4 +1,5 @@
 import { UPLOAD_VIDEO } from "../../scripts/server/constants";
+import { getExtension } from "./find-good-supported-codec";
 
 export const parseJsonOrThrowSource = (data: Uint8Array, type: string) => {
   const asString = new TextDecoder("utf-8").decode(data);
@@ -15,14 +16,19 @@ export const uploadFileToServer = async ({
   prefix,
   selectedFolder,
   expectedFrames,
+  mimeType,
 }: {
   blob: Blob;
   endDate: number;
   prefix: string;
   selectedFolder: string;
   expectedFrames: number;
+  mimeType: string;
 }) => {
-  const videoFile = new File([blob], "video.webm", { type: blob.type });
+  const extension = getExtension(mimeType);
+  const videoFile = new File([blob], `${prefix}${endDate}.${extension}`, {
+    type: mimeType,
+  });
 
   const url = new URL(UPLOAD_VIDEO, window.location.origin);
 
@@ -31,6 +37,7 @@ export const uploadFileToServer = async ({
     prefix,
     endDateAsString: endDate.toString(),
     expectedFrames: String(expectedFrames),
+    extension,
   }).toString();
 
   const res = await fetch(url, {

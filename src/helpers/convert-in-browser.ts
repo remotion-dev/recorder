@@ -4,18 +4,20 @@ import {
   convertMedia,
   webcodecsController,
 } from "@remotion/webcodecs";
-
+import { getExtension } from "./find-good-supported-codec";
 export const convertInBrowser = ({
   src,
   onProgress,
+  mimeType,
 }: {
   src: Blob;
   onProgress: (progress: ConvertMediaProgress, abort: () => void) => void;
+  mimeType: string;
 }) => {
   const controller = webcodecsController();
 
   return convertMedia({
-    container: "webm",
+    container: getExtension(mimeType),
     src: new File([src.slice()], `temp`),
     reader: webReader,
     resize: {
