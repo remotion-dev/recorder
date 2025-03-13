@@ -1,16 +1,12 @@
 import { AbsoluteFill } from "remotion";
-import {
-  REGULAR_FONT_FAMILY,
-  REGULAR_FONT_WEIGHT,
-} from "../../../config/fonts";
+import { REGULAR_FONT } from "../../../config/fonts";
 
 const container: React.CSSProperties = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
   flex: 1,
-  fontFamily: REGULAR_FONT_FAMILY,
-  fontWeight: REGULAR_FONT_WEIGHT,
+  ...REGULAR_FONT,
   fontSize: 36,
   gap: 10,
   flexDirection: "column",

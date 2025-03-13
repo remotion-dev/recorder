@@ -6,12 +6,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import {
-  MONOSPACE_FONT_FAMILY,
-  MONOSPACE_FONT_WEIGHT,
-  REGULAR_FONT_FAMILY,
-  REGULAR_FONT_WEIGHT,
-} from "../../../../config/fonts";
+import { MONOSPACE_FONT, REGULAR_FONT } from "../../../../config/fonts";
 import type { Theme } from "../../../../config/themes";
 import { COLORS } from "../../../../config/themes";
 import { useCaptionOverlay } from "../../editor/use-caption-overlay";
@@ -143,9 +138,8 @@ export const BoxedSingleCaption: React.FC<{
   const style: React.CSSProperties = useMemo(() => {
     return {
       display: "inline",
-      fontFamily: monospace ? MONOSPACE_FONT_FAMILY : REGULAR_FONT_FAMILY,
       color: shownCaptionColor,
-      fontWeight: monospace ? MONOSPACE_FONT_WEIGHT : REGULAR_FONT_WEIGHT,
+      ...(monospace ? MONOSPACE_FONT : REGULAR_FONT),
       backgroundColor,
       outline: hovered
         ? "2px solid black"

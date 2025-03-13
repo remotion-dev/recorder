@@ -1,15 +1,10 @@
 import { AbsoluteFill, useVideoConfig } from "remotion";
-import {
-  MONOSPACE_FONT_FAMILY,
-  REGULAR_FONT_FAMILY,
-  REGULAR_FONT_WEIGHT,
-} from "../../../config/fonts";
+import { MONOSPACE_FONT, REGULAR_FONT } from "../../../config/fonts";
 import { SERVER_PORT } from "../../../config/server";
 import { COLORS } from "../../../config/themes";
 
 const container: React.CSSProperties = {
-  fontFamily: REGULAR_FONT_FAMILY,
-  fontWeight: REGULAR_FONT_WEIGHT,
+  ...REGULAR_FONT,
   fontSize: 36,
   padding: 60,
   flexDirection: "column",
@@ -20,7 +15,7 @@ const container: React.CSSProperties = {
 };
 
 const accent: React.CSSProperties = {
-  fontFamily: MONOSPACE_FONT_FAMILY,
+  ...MONOSPACE_FONT,
   color: COLORS.light.ACCENT_COLOR,
 };
 

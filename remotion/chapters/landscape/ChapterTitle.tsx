@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
+import { TITLE_FONT } from "../../../config/fonts";
 import { COLORS, Theme } from "../../../config/themes";
 import { ChapterType } from "../make-chapters";
 
@@ -15,8 +15,7 @@ export const ChapterTitle: React.FC<{
     return {
       padding: "0px 20px",
       fontSize: 36,
-      fontFamily: TITLE_FONT_FAMILY,
-      fontWeight: TITLE_FONT_WEIGHT,
+      ...TITLE_FONT,
       height: "100%",
       display: "flex",
       justifyContent: "center",

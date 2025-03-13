@@ -1,11 +1,17 @@
-import React, { useMemo } from "react";
-import { getRemotionEnvironment } from "remotion";
+import React, { useCallback, useMemo } from "react";
+import {
+  AbsoluteFill,
+  getRemotionEnvironment,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import type { CanvasLayout } from "../../../config/layout";
 import type {
   SceneAndMetadata,
   VideoSceneAndMetadata,
 } from "../../../config/scenes";
 import type { Theme } from "../../../config/themes";
+import { B_ROLL_TRANSITION_DURATION } from "../../../config/transitions";
 import { getShouldTransitionIn } from "../../animations/transitions";
 import { BoxedCaptions } from "../../captions/boxed/BoxedCaptions";
 import { SrtPreviewAndEditor } from "../../captions/srt/SrtPreviewAndEditor/SrtPreviewAndEditor";
@@ -14,6 +20,7 @@ import type { ChapterType } from "../../chapters/make-chapters";
 import { SquareChapter } from "../../chapters/square/SquareChapter";
 import { Actions } from "./ActionOverlay/Actions";
 import { Display } from "./Display";
+import { onBRollDragOver, onBRollDropHandler } from "./DragDropBRoll";
 import { Webcam } from "./Webcam";
 
 export const VideoScene: React.FC<{
@@ -59,8 +66,23 @@ export const VideoScene: React.FC<{
     return sceneAndMetadata.bRolls;
   }, [sceneAndMetadata.bRolls, sceneAndMetadata.cameras.display]);
 
+  const { id } = useVideoConfig();
+  const frame = useCurrentFrame();
+
+  const onDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      onBRollDropHandler({
+        e,
+        composition: id,
+        sceneIndex,
+        from: frame - B_ROLL_TRANSITION_DURATION,
+      });
+    },
+    [frame, id, sceneIndex],
+  );
+
   return (
-    <>
+    <AbsoluteFill onDragOver={onBRollDragOver} onDrop={onDrop}>
       {sceneAndMetadata.cameras.display ? (
         <Display
           scene={sceneAndMetadata}
@@ -125,6 +147,6 @@ export const VideoScene: React.FC<{
           cameras={sceneAndMetadata.cameras}
         />
       ) : null}
-    </>
+    </AbsoluteFill>
   );
 };

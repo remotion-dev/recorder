@@ -1,10 +1,6 @@
 import { useMemo } from "react";
 import { AbsoluteFill } from "remotion";
-import {
-  MONOSPACE_FONT_FAMILY,
-  REGULAR_FONT_FAMILY,
-  TITLE_FONT_WEIGHT,
-} from "../../../config/fonts";
+import { MONOSPACE_FONT, REGULAR_FONT } from "../../../config/fonts";
 import { COLORS } from "../../../config/themes";
 
 const textWrapper = {
@@ -13,8 +9,7 @@ const textWrapper = {
   alignItems: "center",
   height: "100%",
   gap: 10,
-  fontFamily: REGULAR_FONT_FAMILY,
-  fontWeight: TITLE_FONT_WEIGHT,
+  ...REGULAR_FONT,
   fontSize: 40,
 };
 
@@ -24,7 +19,7 @@ export const NoDataScene: React.FC<{
   const spanStyle: React.CSSProperties = useMemo(() => {
     return {
       color: COLORS[theme].ACCENT_COLOR,
-      fontFamily: MONOSPACE_FONT_FAMILY,
+      ...MONOSPACE_FONT,
     };
   }, [theme]);
 

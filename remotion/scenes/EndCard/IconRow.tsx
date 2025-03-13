@@ -1,9 +1,6 @@
 import { useMemo } from "react";
 import type { Platform } from "../../../config/endcard";
-import {
-  ENDCARD_FONT_FAMILY,
-  ENDCARD_FONT_WEIGHT,
-} from "../../../config/fonts";
+import { ENDCARD_FONT } from "../../../config/fonts";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
 import { followButtonHeight } from "./FollowButton";
@@ -43,8 +40,7 @@ export const IconRow: React.FC<{
   const labelStyle: React.CSSProperties = useMemo(
     () => ({
       fontSize: 50,
-      fontFamily: ENDCARD_FONT_FAMILY,
-      fontWeight: ENDCARD_FONT_WEIGHT,
+      ...ENDCARD_FONT,
       marginLeft: 20,
       color: COLORS[theme].ENDCARD_TEXT_COLOR,
     }),

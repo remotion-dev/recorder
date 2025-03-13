@@ -152,7 +152,11 @@ export const handleVideoUpload = async (
 
     req.pipe(writeStream);
 
-    await new Promise((resolve) => writeStream.on("finish", resolve));
+    await new Promise<void>((resolve) =>
+      writeStream.on("finish", () => {
+        resolve();
+      }),
+    );
 
     res.statusCode = 200;
     res.end();

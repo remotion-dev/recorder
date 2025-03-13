@@ -5,7 +5,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { TITLE_FONT_FAMILY, TITLE_FONT_WEIGHT } from "../../../config/fonts";
+import { TITLE_FONT } from "../../../config/fonts";
 import { getSafeSpace } from "../../../config/layout";
 import { SCENE_TRANSITION_DURATION } from "../../../config/transitions";
 import { borderRadius } from "../../layout/get-layout";
@@ -84,14 +84,13 @@ export const SquareChapter: React.FC<{
             color: "white",
             padding: "0 30px",
             background: "black",
-            fontFamily: TITLE_FONT_FAMILY,
             position: "absolute",
             top: top + toTop,
             height: HEIGHT,
             left: getSafeSpace("square"),
             borderRadius,
             fontSize: 40,
-            fontWeight: TITLE_FONT_WEIGHT,
+            ...TITLE_FONT,
             display: "flex",
             alignItems: "center",
             transform: `translateX(${toLeft}px)`,

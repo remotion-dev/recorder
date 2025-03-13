@@ -1,9 +1,6 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
-import {
-  REGULAR_FONT_FAMILY,
-  REGULAR_FONT_WEIGHT,
-} from "../../../config/fonts";
+import { REGULAR_FONT } from "../../../config/fonts";
 import type { Theme } from "../../../config/themes";
 import { COLORS } from "../../../config/themes";
 import type { ChapterType } from "../../chapters/make-chapters";
@@ -26,8 +23,7 @@ export const TableOfContents: React.FC<{
     >
       <strong
         style={{
-          fontFamily: REGULAR_FONT_FAMILY,
-          fontWeight: REGULAR_FONT_WEIGHT,
+          ...REGULAR_FONT,
           fontSize: 46,
           marginBottom: 30,
         }}

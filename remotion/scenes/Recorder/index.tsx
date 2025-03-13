@@ -11,7 +11,7 @@ import type { Theme } from "../../../config/themes";
 
 import { Rect, Triangle } from "@remotion/shapes";
 import { AbsoluteFill, interpolateColors } from "remotion";
-import { REGULAR_FONT_FAMILY } from "../../../config/fonts";
+import { REGULAR_FONT } from "../../../config/fonts";
 
 const getBackground = (theme: Theme) => {
   return theme === "dark" ? "#2E2E2E" : "rgba(255, 255, 255, 1)";
@@ -542,8 +542,7 @@ const Attribution: React.FC<{
         justifyContent: "center",
         alignItems: "center",
         fontSize: 30,
-        fontFamily: REGULAR_FONT_FAMILY,
-        fontWeight: 500,
+        ...REGULAR_FONT,
         marginTop: 450,
         color: getColor(theme),
         opacity,

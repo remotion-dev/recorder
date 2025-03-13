@@ -1,11 +1,6 @@
 import { Caption } from "@remotion/captions";
 import { fillTextBox } from "@remotion/layout-utils";
-import {
-  MONOSPACE_FONT_FAMILY,
-  MONOSPACE_FONT_WEIGHT,
-  REGULAR_FONT_FAMILY,
-  REGULAR_FONT_WEIGHT,
-} from "../../../config/fonts";
+import { MONOSPACE_FONT, REGULAR_FONT } from "../../../config/fonts";
 import { getSafeSpace } from "../../../config/layout";
 import { getBorderWidthForSubtitles } from "../boxed/components/CaptionSentence";
 import { CaptionPage, LayoutedCaptions } from "../types";
@@ -88,15 +83,18 @@ const cutCaptions = ({
   let captionsFitted = 0;
 
   for (const caption of captions) {
+    const { fontFamily, fontWeight, ...additionalStyles } = isCaptionMonospace(
+      caption,
+    )
+      ? MONOSPACE_FONT
+      : REGULAR_FONT;
+
     const { exceedsBox } = add({
       text: removeMonospaceTicks(caption).text,
-      fontFamily: isCaptionMonospace(caption)
-        ? MONOSPACE_FONT_FAMILY
-        : REGULAR_FONT_FAMILY,
-      fontWeight: isCaptionMonospace(caption)
-        ? MONOSPACE_FONT_WEIGHT
-        : REGULAR_FONT_WEIGHT,
+      fontFamily: fontFamily as string,
+      fontWeight: fontWeight as string,
       fontSize,
+      additionalStyles,
       validateFontIsLoaded: true,
     });
 

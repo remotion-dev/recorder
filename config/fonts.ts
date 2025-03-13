@@ -1,11 +1,11 @@
 import {
-  fontFamily as regularFont,
   loadFont as loadRegular,
+  fontFamily as regularFont,
 } from "@remotion/google-fonts/Inter";
 
 import {
-  fontFamily as monospaceFont,
   loadFont as loadMonospace,
+  fontFamily as monospaceFont,
 } from "@remotion/google-fonts/RobotoMono";
 
 import {
@@ -24,17 +24,26 @@ export const waitForFonts = async () => {
   await endcard.waitUntilDone();
 };
 
-export const REGULAR_FONT_FAMILY = regularFont;
-export const REGULAR_FONT_WEIGHT = 600;
+export const REGULAR_FONT: React.CSSProperties = {
+  fontFamily: regularFont,
+  fontWeight: 600,
+};
 
-export const MONOSPACE_FONT_FAMILY = monospaceFont;
-export const MONOSPACE_FONT_WEIGHT = 500;
+export const MONOSPACE_FONT: React.CSSProperties = {
+  fontFamily: monospaceFont,
+  fontWeight: 500,
+  fontFeatureSettings: '"ss03" on',
+};
 
-export const TITLE_FONT_FAMILY = regularFont;
-export const TITLE_FONT_WEIGHT = 500;
+export const TITLE_FONT: React.CSSProperties = {
+  fontFamily: regularFont,
+  fontWeight: 700,
+};
 
-export const ENDCARD_FONT_FAMILY = endcardFont;
-export const ENDCARD_FONT_WEIGHT = 500;
+export const ENDCARD_FONT: React.CSSProperties = {
+  fontFamily: endcardFont,
+  fontWeight: 500,
+};
 
 const delay = delayRender("Loading fonts");
 

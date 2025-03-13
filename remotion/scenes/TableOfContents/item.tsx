@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useVideoConfig } from "remotion";
-import { REGULAR_FONT_WEIGHT, TITLE_FONT_FAMILY } from "../../../config/fonts";
+import { REGULAR_FONT } from "../../../config/fonts";
 import { formatMilliseconds } from "../../../src/helpers/format-time";
 
 export const TableOfContentItem: React.FC<{
@@ -16,9 +16,8 @@ export const TableOfContentItem: React.FC<{
   return (
     <div
       style={{
-        fontFamily: TITLE_FONT_FAMILY,
+        ...REGULAR_FONT,
         fontSize: 46,
-        fontWeight: REGULAR_FONT_WEIGHT,
         display: "flex",
         flexDirection: "row",
         width: "100%",

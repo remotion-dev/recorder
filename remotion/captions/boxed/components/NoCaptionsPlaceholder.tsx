@@ -1,9 +1,6 @@
 import React, { useMemo } from "react";
 import { AbsoluteFill, getRemotionEnvironment } from "remotion";
-import {
-  MONOSPACE_FONT_FAMILY,
-  REGULAR_FONT_FAMILY,
-} from "../../../../config/fonts";
+import { MONOSPACE_FONT, REGULAR_FONT } from "../../../../config/fonts";
 import type { Theme } from "../../../../config/themes";
 import { COLORS } from "../../../../config/themes";
 import type { Layout } from "../../../layout/layout-types";
@@ -20,7 +17,7 @@ export const NoCaptionsPlaceholder: React.FC<{
       alignItems: "center",
       position: "absolute",
       color: COLORS[theme].WORD_COLOR_ON_BG_APPEARED,
-      fontFamily: REGULAR_FONT_FAMILY,
+      ...REGULAR_FONT,
       border: `2px ${COLORS[theme].BORDER_COLOR} solid`,
       backgroundColor: COLORS[theme].BACKGROUND,
       fontSize: 28,
@@ -31,7 +28,7 @@ export const NoCaptionsPlaceholder: React.FC<{
 
   const monospaceStyle: React.CSSProperties = useMemo(() => {
     return {
-      fontFamily: MONOSPACE_FONT_FAMILY,
+      ...MONOSPACE_FONT,
       color: COLORS[theme].ACCENT_COLOR,
       display: "inline",
     };

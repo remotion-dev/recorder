@@ -1,5 +1,5 @@
 import { AbsoluteFill } from "remotion";
-import { REGULAR_FONT_FAMILY, REGULAR_FONT_WEIGHT } from "../config/fonts";
+import { REGULAR_FONT } from "../config/fonts";
 import { SERVER_PORT } from "../config/server";
 import { COLORS } from "../config/themes";
 import { WaitForFonts } from "./helpers/WaitForFonts";
@@ -8,10 +8,9 @@ const container: React.CSSProperties = {
   justifyContent: "center",
   alignItems: "center",
   backgroundColor: "#fff",
-  fontFamily: REGULAR_FONT_FAMILY,
   fontSize: 30,
-  fontWeight: REGULAR_FONT_WEIGHT,
   textAlign: "center",
+  ...REGULAR_FONT,
 };
 
 const link: React.CSSProperties = {

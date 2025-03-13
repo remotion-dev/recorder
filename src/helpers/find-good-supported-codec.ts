@@ -26,3 +26,15 @@ export const findGoodSupportedCodec = (withAudio: boolean) => {
 
   throw new Error("No supported codec found");
 };
+
+export const getExtension = (mimeType: string) => {
+  if (mimeType.includes("mp4")) {
+    return "mp4";
+  }
+
+  if (mimeType.includes("webm")) {
+    return "webm";
+  }
+
+  throw new Error("Unsupported mime type: " + mimeType);
+};
