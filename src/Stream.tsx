@@ -144,8 +144,6 @@ export const Stream: React.FC<{
         setMediaStream(prefix, { type: "loaded", stream });
       })
       .catch((e) => {
-        console.log(e);
-
         const errMessage =
           e.name === "NotReadableError"
             ? "The selected device is not readable. This could be due to another app using this camera."
