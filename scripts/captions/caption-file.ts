@@ -7,6 +7,7 @@ import {
   TRANSCRIPTION_LANGUAGE,
   WHISPER_MODEL,
   WHISPER_PATH,
+  WHISPER_REF,
 } from "../../config/whisper";
 
 export const captionFile = async ({
@@ -68,6 +69,7 @@ export const captionFile = async ({
     },
     signal: signal,
     language: TRANSCRIPTION_LANGUAGE,
+    whisperCppVersion: WHISPER_REF,
   });
 
   const { captions } = toCaptions({ whisperCppOutput: whisperCppOutput });
