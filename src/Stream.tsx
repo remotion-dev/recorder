@@ -71,17 +71,15 @@ export const Stream: React.FC<{
         return;
       }
 
-      if (recordAudio) {
-        mediaStream.streamState.stream
-          .getAudioTracks()
-          .forEach((track) => track.stop());
-      }
+      mediaStream.streamState.stream
+        .getAudioTracks()
+        .forEach((track) => track.stop());
 
       mediaStream.streamState.stream
         .getVideoTracks()
         .forEach((track) => track.stop());
     };
-  }, [mediaStream, recordAudio]);
+  }, [mediaStream]);
 
   useEffect(() => {
     const { current } = sourceRef;

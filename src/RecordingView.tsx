@@ -99,8 +99,12 @@ const InnerRecordingView: React.FC<{
     });
   }, []);
 
-  const selectScreen = useCallback(async () => {
-    setVideoDevice(prefix, "display");
+  const selectScreenWithoutAudio = useCallback(async () => {
+    setVideoDevice(prefix, "display-without-audio");
+    setShowPicker(false);
+  }, [prefix, setVideoDevice]);
+  const selectScreenWithAudio = useCallback(async () => {
+    setVideoDevice(prefix, "display-with-audio");
     setShowPicker(false);
   }, [prefix, setVideoDevice]);
 
@@ -122,8 +126,11 @@ const InnerRecordingView: React.FC<{
   }, [activeVideoDevice]);
 
   const selectedVideoSource = useMemo(() => {
-    if (mediaStream.videoDevice === "display") {
-      return { type: "display" as const };
+    if (mediaStream.videoDevice === "display-without-audio") {
+      return { type: "display-without-audio" as const };
+    }
+    if (mediaStream.videoDevice === "display-with-audio") {
+      return { type: "display-with-audio" as const };
     }
 
     if (!activeVideoDevice) {
@@ -143,8 +150,11 @@ const InnerRecordingView: React.FC<{
   ]);
 
   const videoDeviceLabel = useMemo(() => {
-    if (mediaStream.videoDevice === "display") {
+    if (mediaStream.videoDevice === "display-without-audio") {
       return "Screen Share";
+    }
+    if (mediaStream.videoDevice === "display-with-audio") {
+      return "Screen Share with audio";
     }
 
     if (!activeVideoDevice) {
@@ -205,7 +215,8 @@ const InnerRecordingView: React.FC<{
   const [resolutionLimiterOpen, setResolutionLimiterOpen] = useState(false);
 
   const canShowResolutionLimiter = Boolean(
-    selectedVideoSource?.type === "display"
+    selectedVideoSource?.type === "display-without-audio" ||
+      selectedVideoSource?.type === "display-with-audio"
       ? false
       : videoDeviceLabel && activeVideoDevice && maxResolution,
   );
@@ -238,7 +249,10 @@ const InnerRecordingView: React.FC<{
         <CurrentVideo
           resolution={resolution}
           label={videoDeviceLabel ?? "No video selected"}
-          isScreenshare={selectedVideoSource?.type === "display"}
+          isScreenshare={
+            selectedVideoSource?.type === "display-without-audio" ||
+            selectedVideoSource?.type === "display-with-audio"
+          }
           onClick={togglePicker}
           setResolutionLimiterOpen={setResolutionLimiterOpen}
           canShowResolutionLimiter={canShowResolutionLimiter}
@@ -293,7 +307,8 @@ const InnerRecordingView: React.FC<{
             onPickAudio={onPickAudio}
             canSelectAudio={recordAudio}
             canSelectScreen={prefix !== WEBCAM_PREFIX}
-            onPickScreen={selectScreen}
+            onPickScreenWithoutAudio={selectScreenWithoutAudio}
+            onPickScreenWithAudio={selectScreenWithAudio}
             selectedAudioDevice={mediaStream.audioDevice}
             selectedVideoDevice={mediaStream.videoDevice}
             clear={clear}

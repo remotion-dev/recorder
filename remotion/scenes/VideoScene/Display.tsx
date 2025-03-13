@@ -82,7 +82,6 @@ export const Display: React.FC<{
           frame={frame}
         >
           <OffthreadVideo
-            muted
             startFrom={startFrame}
             endAt={endAt}
             src={scene.cameras.display.src}

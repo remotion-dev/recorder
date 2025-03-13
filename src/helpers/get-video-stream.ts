@@ -2,7 +2,10 @@ import { DEFAULT_MINIMUM_FPS } from "../preferred-resolution";
 import { SelectedSource } from "./get-selected-video-source";
 
 const getDisplayStream = async (selectedVideoSource: SelectedSource) => {
-  if (selectedVideoSource.type !== "display") {
+  if (
+    selectedVideoSource.type !== "display-without-audio" &&
+    selectedVideoSource.type !== "display-with-audio"
+  ) {
     throw new Error("Unknown video source type");
   }
 
@@ -14,6 +17,7 @@ const getDisplayStream = async (selectedVideoSource: SelectedSource) => {
           ideal: 1080,
         },
       },
+      audio: selectedVideoSource.type === "display-with-audio",
     });
 
   return stream;
@@ -83,7 +87,10 @@ export const getVideoStream = async ({
   recordAudio: boolean;
   selectedAudioSource: ConstrainDOMString | null;
 }): Promise<MediaStream> => {
-  if (selectedVideoSource.type === "display") {
+  if (selectedVideoSource.type === "display-with-audio") {
+    return getDisplayStream(selectedVideoSource);
+  }
+  if (selectedVideoSource.type === "display-without-audio") {
     return getDisplayStream(selectedVideoSource);
   }
   if (selectedVideoSource.type === "camera") {

@@ -41,7 +41,8 @@ export const StreamPicker: React.FC<{
   canSelectScreen: boolean;
   onPickVideo: (device: MediaDeviceInfo) => void;
   onPickAudio: (device: MediaDeviceInfo) => void;
-  onPickScreen: () => void;
+  onPickScreenWithoutAudio: () => void;
+  onPickScreenWithAudio: () => void;
   selectedVideoDevice: string | null;
   selectedAudioDevice: string | null;
   clear: () => void;
@@ -51,7 +52,8 @@ export const StreamPicker: React.FC<{
   canSelectScreen,
   onPickAudio,
   onPickVideo,
-  onPickScreen,
+  onPickScreenWithoutAudio,
+  onPickScreenWithAudio,
   selectedAudioDevice,
   selectedVideoDevice,
   clear,
@@ -81,11 +83,21 @@ export const StreamPicker: React.FC<{
           {canSelectScreen ? (
             <DeviceItem
               handleClick={() => {
-                onPickScreen();
+                onPickScreenWithoutAudio();
               }}
               deviceLabel={"Screen capture"}
               type="screen"
-              selected={selectedVideoDevice === "display"}
+              selected={selectedVideoDevice === "display-without-audio"}
+            />
+          ) : null}
+          {canSelectScreen ? (
+            <DeviceItem
+              handleClick={() => {
+                onPickScreenWithAudio();
+              }}
+              deviceLabel={"Screen capture with audio"}
+              type="screen"
+              selected={selectedVideoDevice === "display-with-audio"}
             />
           ) : null}
           {videoInputs.map((d) => {

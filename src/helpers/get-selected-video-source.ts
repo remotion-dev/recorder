@@ -11,7 +11,10 @@ export type SelectedSource =
       minFps: number | null;
     }
   | {
-      type: "display";
+      type: "display-without-audio";
+    }
+  | {
+      type: "display-with-audio";
     };
 
 export type VideoSize = "4K" | "1080p" | "720p" | "480p";
