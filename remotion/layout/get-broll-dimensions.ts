@@ -36,10 +36,12 @@ export const getBRollDimensions = async (
     const metadata = await parseMedia({
       src: bRoll.source,
       fields: { dimensions: true },
+      acknowledgeRemotionLicense: true
     });
     if (!metadata.dimensions) {
       throw new Error("No dimensions found for bRoll: " + bRoll.source);
     }
+
     return {
       ...bRoll,
       type: "video",
