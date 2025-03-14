@@ -163,8 +163,8 @@ export const RecordButton: React.FC<{
     }
   }, [onStop, disabled, recordingStatus.type, start]);
 
-  const onDiscardAndRetake = useCallback(() => {
-    discardVideos();
+  const onDiscardAndRetake = useCallback(async () => {
+    await discardVideos();
     start();
   }, [discardVideos, start]);
 
