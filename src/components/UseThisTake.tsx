@@ -6,6 +6,7 @@ import { convertInBrowser } from "../helpers/convert-in-browser";
 import { downloadVideo } from "../helpers/download-video";
 import { getExtension } from "../helpers/find-good-supported-codec";
 import { formatMilliseconds } from "../helpers/format-time";
+import { Prefix } from "../helpers/prefixes";
 import { transcribeVideoOnServer } from "../helpers/transcribe-video";
 import { uploadFileToServer } from "../helpers/upload-file";
 import { ProcessStatus } from "./ProcessingStatus";
@@ -176,6 +177,27 @@ export const UseThisTake: React.FC<{
     }
   }, [recordingStatus, setStatus]);
 
+  const previewWebcam = useCallback(
+    async (prefix: Prefix) => {
+      if (recordingStatus.type !== "recording-finished") {
+        throw new Error("Recording not finished");
+      }
+
+      const webcamBlob = recordingStatus.blobs.find((b) => b.prefix === prefix);
+      if (!webcamBlob) {
+        throw new Error("No webcam blob");
+      }
+
+      // turn into blob url and open in new tab
+      const blob = new Blob([await webcamBlob.data()], {
+        type: webcamBlob.mimeType,
+      });
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    },
+    [recordingStatus],
+  );
+
   return (
     <>
       <div className="flex items-center">
@@ -220,6 +242,17 @@ export const UseThisTake: React.FC<{
             <DropdownMenuItem onClick={keepVideosWithoutConverting}>
               Download without conversion
             </DropdownMenuItem>
+            {recordingStatus.type === "recording-finished" &&
+              recordingStatus.blobs.map((blob) => (
+                <DropdownMenuItem
+                  key={blob.prefix}
+                  onClick={() => {
+                    previewWebcam(blob.prefix as Prefix);
+                  }}
+                >
+                  Preview {blob.prefix}
+                </DropdownMenuItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
