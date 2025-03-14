@@ -179,13 +179,23 @@ export const UseThisTake: React.FC<{
   return (
     <>
       <div className="flex items-center">
-        <Button
-          variant="default"
-          className={"rounded-r-none"}
-          onClick={keepVideoOnServer}
-        >
-          {`Copy to public/${selectedFolder}`}
-        </Button>
+        {window.remotionServerEnabled ? (
+          <Button
+            variant="default"
+            className={"rounded-r-none"}
+            onClick={keepVideoOnServer}
+          >
+            {`Copy to public/${selectedFolder}`}
+          </Button>
+        ) : (
+          <Button
+            variant="default"
+            className={"rounded-r-none"}
+            onClick={keepVideoOnClient}
+          >
+            {`Download files`}
+          </Button>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -202,9 +212,11 @@ export const UseThisTake: React.FC<{
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={keepVideoOnClient}>
-              Download as file
-            </DropdownMenuItem>
+            {window.remotionServerEnabled ? (
+              <DropdownMenuItem onClick={keepVideoOnClient}>
+                Download as file
+              </DropdownMenuItem>
+            ) : null}
             <DropdownMenuItem onClick={keepVideosWithoutConverting}>
               Download without conversion
             </DropdownMenuItem>
