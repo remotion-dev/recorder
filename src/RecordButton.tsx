@@ -1,5 +1,5 @@
 import { CameraIcon, MicIcon } from "lucide-react";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { FPS } from "../config/fps";
 import { truthy } from "../remotion/helpers/truthy";
 import { RecordCircle } from "./BlinkingCircle";
@@ -126,6 +126,16 @@ export const RecordButton: React.FC<{
       endDate,
     });
   }, [recordingStatus, setRecordingStatus]);
+
+  useEffect(() => {
+    return () => {
+      if (recordingStatus.type === "recording") {
+        recordingStatus.ongoing.recorders.forEach((r) => {
+          r.recorder.stop();
+        });
+      }
+    };
+  }, [recordingStatus]);
 
   const disabled =
     mediaSources.webcam.streamState.type !== "loaded" ||
