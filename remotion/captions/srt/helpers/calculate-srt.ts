@@ -1,8 +1,8 @@
-import { Caption } from "@remotion/captions";
+import type { Caption } from "@remotion/captions";
 import { FPS } from "../../../../config/fps";
 import { joinBackticks } from "../../processing/join-backticks";
 import { postprocessCaptions } from "../../processing/postprocess-subs";
-import { UnserializedSrt } from "./serialize-srt";
+import type { UnserializedSrt } from "./serialize-srt";
 
 // The SRT standard recommends not more than 42 characters per line
 
@@ -72,12 +72,12 @@ export const calculateSrt = ({
 
     const offset = -(startFrame / FPS) * 1000;
 
-    const firstTimestampMs = Math.round(firstSegment.startMs + offset);
+    const firstTimestampMs = Math.max(0, Math.round(firstSegment.startMs + offset));
     if (lastSegment.endMs === null) {
       throw new Error("Cannot serialize .srt file: lastTimestamp is null");
     }
 
-    const lastTimestampMs = lastSegment.endMs + offset;
+    const lastTimestampMs = Math.max(0, lastSegment.endMs + offset);
 
     const unserialized: UnserializedSrt = {
       firstTimestampMs,
