@@ -9,6 +9,7 @@ import { ResolutionLimiter } from "./ResolutionLimiter";
 import { ToggleRotate } from "./Rotate";
 import { ResolutionAndFps, Stream } from "./Stream";
 import { ToggleCrop } from "./ToggleCrop";
+import { ToggleMirror } from "./ToggleMirror";
 import { useDevices } from "./WaitingForDevices";
 import { ClearCurrentVideo } from "./components/ClearCurrentVideo";
 import { CurrentAudio } from "./components/CurrentAudio";
@@ -56,6 +57,7 @@ const streamViewport: React.CSSProperties = {
 };
 
 const localStorageKey = "showCropIndicator";
+const mirrorLocalStorageKey = "mirrorWebcam";
 
 const InnerRecordingView: React.FC<{
   prefix: Prefix;
@@ -71,9 +73,20 @@ const InnerRecordingView: React.FC<{
     );
   }, [prefix]);
 
+  const initialMirrorState = useMemo(() => {
+    const stored = localStorage.getItem(mirrorLocalStorageKey);
+    if (stored !== null) {
+      return stored === "true";
+    }
+    // Default to true (mirrored) for webcam prefix
+    return prefix === WEBCAM_PREFIX;
+  }, [prefix]);
+
   const [showCropIndicator, setShowCropIndicator] = useState(
     initialCropIndicatorState,
   );
+
+  const [mirror, setMirror] = useState(initialMirrorState);
 
   const [showPickerPreference, setShowPicker] = useState(
     () => !mediaStream.videoDevice && !mediaStream.audioDevice,
@@ -89,6 +102,13 @@ const InnerRecordingView: React.FC<{
   const onToggleCrop = useCallback(() => {
     setShowCropIndicator((prev) => {
       window.localStorage.setItem(localStorageKey, String(!prev));
+      return !prev;
+    });
+  }, []);
+
+  const onToggleMirror = useCallback(() => {
+    setMirror((prev) => {
+      window.localStorage.setItem(mirrorLocalStorageKey, String(!prev));
       return !prev;
     });
   }, []);
@@ -277,6 +297,12 @@ const InnerRecordingView: React.FC<{
             onPressedChange={onToggleCrop}
           />
         ) : null}
+        {prefix === WEBCAM_PREFIX ? (
+          <ToggleMirror
+            pressed={mirror}
+            onPressedChange={onToggleMirror}
+          />
+        ) : null}
         {cameraRotateable ? (
           <ToggleRotate
             pressed={preferPortrait}
@@ -296,6 +322,7 @@ const InnerRecordingView: React.FC<{
           setResolution={setResolution}
           prefix={prefix}
           preferPortrait={preferPortrait}
+          mirror={mirror}
           clear={clear}
         />
         {showCropIndicator && resolution && !showPicker ? (
