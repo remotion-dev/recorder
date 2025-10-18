@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import {
   AbsoluteFill,
-  getRemotionEnvironment,
+  useRemotionEnvironment,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
@@ -46,8 +46,9 @@ export const VideoScene: React.FC<{
   sceneIndex,
   hovered,
 }) => {
+  const env = useRemotionEnvironment();
   const startFrame = sceneAndMetadata.startFrame;
-  const endAt = sceneAndMetadata.endFrame;
+  const trimAfter = sceneAndMetadata.endFrame;
 
   if (sceneAndMetadata.type !== "video-scene") {
     throw new Error("Not a camera scene");
@@ -91,14 +92,14 @@ export const VideoScene: React.FC<{
           nextScene={nextScene}
           previousScene={previousScene}
           startFrame={startFrame}
-          endAt={endAt}
+          trimAfter={trimAfter}
           canvasLayout={canvasLayout}
         />
       ) : null}
       <Webcam
         bRolls={bRollsOnTopOfWebcam}
         currentScene={sceneAndMetadata}
-        endAt={endAt}
+        trimAfter={trimAfter}
         enterProgress={enterProgress}
         exitProgress={exitProgress}
         startFrame={startFrame}
@@ -140,7 +141,7 @@ export const VideoScene: React.FC<{
           theme={theme}
         ></SrtPreviewAndEditor>
       ) : null}
-      {getRemotionEnvironment().isStudio ? (
+      {env.isStudio ? (
         <Actions
           visible={hovered}
           sceneIndex={sceneIndex}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { cancelRender, continueRender, delayRender } from "remotion";
+import { cancelRender, useDelayRender } from "remotion";
 import { waitForFonts } from "../../config/fonts";
 
 // Missing fonts can influence the layout calculation
@@ -10,7 +10,10 @@ export const WaitForFonts: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
-  const [handle] = useState(() => delayRender());
+  const { delayRender, continueRender } = useDelayRender();
+  const [handle] = useState(() =>
+    delayRender("Waiting for fonts to be loaded"),
+  );
 
   useEffect(() => {
     const delay = delayRender("Waiting for fonts to be loaded");
@@ -24,7 +27,7 @@ export const WaitForFonts: React.FC<{
       .catch((err) => {
         cancelRender(err);
       });
-  }, [fontsLoaded, handle]);
+  }, [fontsLoaded, handle, continueRender, delayRender]);
 
   if (!fontsLoaded) {
     return null;

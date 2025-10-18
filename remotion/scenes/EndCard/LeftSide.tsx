@@ -2,12 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   AbsoluteFill,
   Img,
-  continueRender,
-  delayRender,
   interpolate,
   spring,
   useCurrentFrame,
   useCurrentScale,
+  useDelayRender,
   useVideoConfig,
 } from "remotion";
 import type { Brand, LinkType, Platform } from "../../../config/endcard";
@@ -70,7 +69,8 @@ export const LeftSide: React.FC<{
 }> = ({ platform, channel, links, theme }) => {
   const ref = useRef<HTMLDivElement>(null);
   const scaler = useRef<HTMLDivElement>(null);
-  const [handle] = useState(() => delayRender());
+  const { delayRender, continueRender } = useDelayRender();
+  const [handle] = useState(() => delayRender("Waiting for measurement"));
   const [contentHeight, setHeight] = useState(0);
 
   const { fps, width } = useVideoConfig();
@@ -116,7 +116,7 @@ export const LeftSide: React.FC<{
     return () => {
       cleanup();
     };
-  }, [handle, scale]);
+  }, [handle, scale, continueRender]);
 
   const otherPlatforms = useMemo(() => {
     const configs: {
